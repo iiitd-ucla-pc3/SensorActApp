@@ -1,0 +1,46 @@
+
+ul, p, h2 {
+	font-family: Arial, "MS Trebuchet", sans-serif;
+	padding: 10px;
+}
+
+ul li {
+	display:inline-block;
+}
+
+ul li a {
+	background: #333;
+	color: #fff;
+	padding:10px;
+	text-decoration: none;
+}
+
+ul li a:hover {
+	text-decoration: underline;
+}
+
+label {
+	width: 200px;
+	display: inline-block;
+}
+
+input.error {
+	border: 5px solid #f00;
+}
+
+div.errorDiv
+{
+	background: #000080;
+	color: #fff;
+	padding:20px;
+}
+
+h1
+{
+	background: #333;
+	color: #fff;
+	padding:30px;
+	font-family: Arial, "MS Trebuchet", sans-serif;
+	
+}
+

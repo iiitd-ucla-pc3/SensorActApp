@@ -1,0 +1,450 @@
+<html>
+	<head>
+		<title>SensorAct</title>
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery-ui-1.8.16.custom.css'}">
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery-ui-timepicker-addon.css'}">
+				<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/styles_non_centered.css'}">
+
+
+		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/jquery-ui-1.8.16.custom.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/highcharts.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/utilityFunctions.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/exporting.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/jquery-ui-timepicker-addon.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/jquery.cookie.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+
+				//Setting up in async mode
+				jQuery.ajaxSetup({
+					async : false
+				});
+				/*
+				* Global variables and settings
+				*/
+
+				//Setting the charting library to use local time
+				Highcharts.setOptions({
+					global : {
+						useUTC : false
+					}
+				});
+
+				var chart = new Highcharts.Chart({
+					chart : {
+						renderTo : 'container',
+						type : 'line',
+						marginRight : 130,
+						marginBottom : 25,
+						useUTC : false,
+						zoomType : 'x',
+
+						events : {
+							redraw : function() {
+								//alert ('The chart was just redrawn');
+							}
+						}
+					},
+					title : {
+						text : 'Data',
+						x : -20 //center
+					},
+					subtitle : {
+						text : '',
+						x : -20
+					},
+					xAxis : {
+						type : 'datetime',
+
+					},
+					plotOptions : {
+						line : {
+							marker : {
+								enabled : false
+							}
+						}
+					},
+					yAxis : {
+						title : {
+							text : 'Readings'
+						},
+						plotLines : [{
+							value : 0,
+							width : 1,
+							color : '#808080',
+							line : {
+								marker : {
+									enabled : true
+								}
+							}
+						}]
+					},
+					tooltip : {
+						formatter : function() {
+							return '<b>' + this.series.name + '</b><br/>' + Highcharts.dateFormat('%e%b', this.x) + ': ' + this.y;
+						}
+					},
+					credits : {
+						enabled : false
+					},
+					legend : {
+						layout : 'vertical',
+						align : 'right',
+						verticalAlign : 'top',
+						x : -10,
+						y : 100,
+						borderWidth : 0
+					},
+					series : series
+				});
+				
+				$("#logout").attr('href', URL_LOGOUT_USER);
+				$("#home").attr('href', URL_HOME);
+				$("#errorDiv").hide();
+
+				
+				function alertError(errorMessage)
+				{
+					$("#errorDiv").html(errorMessage);
+					$("#errorDiv").fadeIn('slow');
+					return false;
+				}
+				
+				function removeError()
+				{
+					$("#errorDiv").html("");
+					$("#errorDiv").hide();
+					return false;
+				}
+
+
+				//series=appendElementsToSeries(series,SAMPLE_QUERY_DATA_QUERY_RESPONSE);
+
+				//Setting the correct datetime format to start and end time dialog
+				$(ID_START_DATE_TIME_DISPLAY).datetimepicker({
+					changeMonth : true,
+					changeYear : true,
+					dateFormat : "yy-mm-dd",
+					separator : "-"
+				});
+
+				$(ID_END_DATE_TIME_DISPLAY).datetimepicker({
+					changeMonth : true,
+					changeYear : true,
+					dateFormat : "yy-mm-dd",
+					separator : "-"
+				});
+
+				var startTime;
+				var endTime;
+				var receivedData;
+				var errorState;
+				var errorInformation;
+				var query;
+				var username = $("#username").val();
+				var secretkey = FAKE_SECRET_KEY;
+				var series = new Array();
+				var receivedDeviceData = {};
+
+				/*
+				 * Description:This function takes the device name,selected set of sensors and start
+				 * and end time and for each sensor makes a request to the Server to fetch the data
+				 * It also calls the function appendElementToSeries which for each Sensor adds it to
+				 * the charting library
+				 *
+				 * I/P:
+				 * 1.Name of device
+				 * 2.Array Of Selected Sensors
+				 * 3.Start Time					//$.get("http://www.google.com" + "?secretkey=" + secretkey, function(data){
+
+				 * 4.End Time
+				 *
+				 * O/P:
+				 * 1.AJAX POST to UI Server+Adding the new series to the chart
+				 */
+
+				function makeRequestAndDisplayChart(selectedDeviceName, selectedSensorArray, startTime, endTime) {
+					for(var i = 0; i < selectedSensorArray.length; i++) {
+						var query = {};
+						query[QUERY_CONDITIONS] = {};
+						query[QUERY_CONDITIONS][QUERY_CONDITIONS_FROM_TIME] = startTime;
+						query[QUERY_CONDITIONS][QUERY_CONDITIONS_TO_TIME] = endTime;
+						query[QUERY_DEVICE_NAME] = selectedDeviceName;
+						query[QUERY_SENSOR_NAME] = selectedSensorArray[i];
+						query[QUERY_USER_NAME] = username;
+						//alert(JSON.stringify(query));
+
+						//receivedData = SAMPLE_QUERY_DATA_QUERY_RESPONSE;
+						try {
+
+							$.post(URL_QUERY_DATA, JSON.stringify(query), function(data) {
+								receivedData = data;
+
+							});
+							if(!(receivedData.hasOwnProperty(RESPONSE_STATUS_CODE)))
+							//Means it contains data
+							{
+								removeError();
+								series = appendElementsToSeries(series, receivedData);
+							} else {
+								alertError("Following error " + receivedData[RESPONSE_MESSAGE])
+							}
+
+						} catch(e) {
+							alertError(e.toString());
+						}
+
+					}
+				}
+
+				/*
+				 * Validate the parameters to query for visualization
+				 * I/p:
+				 * Device name,SelectedSensors,startTime,endTime
+				 * O/p:
+				 * An array of 2 objects:
+				 * 1.The error state:true/false
+				 * 2.Error Information associated
+				 */
+
+				function validateVisualizationQuery(deviceName, selectedSensorArray, startTime, endTime) {
+					errorState = false;
+					errorInformation = "";
+					if(deviceName == "None") {
+						errorState = true;
+						errorInformation += "Select a device ";
+					}
+					if(selectedSensorArray.length == 0) {
+						errorState = true;
+						errorInformation += "Select a sensor";
+					}
+					if(startTime.length == 0) {
+						errorState = true;
+						errorInformation += " Please provide a valid start time";
+					}
+					if(endTime.length == 0) {
+						errorState = true;
+						errorInformation += " Please provide a valid end time";
+					}
+					if(startTime >= endTime) {
+						errorState = true;
+						errorInformation += " Start Time should be less than end time";
+					}
+
+					return [errorState, errorInformation];
+				}
+
+				/*
+				 * Method to send the query
+				 * I/P
+				 * 1.Device Name
+				 * 2.Sensors under the device
+				 * 3.Start time and end time
+				 *
+				 * Validations
+				 * This method does validation on the all the specified fields
+				 * 1.Device must be selected(By default a None option is provided)
+				 * 2.Atleast one sensor must be selected
+				 * 3.Starttime should be less than the end time
+				 *
+				 * O/P
+				 * For each sensor in the selected list of sensors this function call would
+				 * make a call to the repository and fetch the daQUERY_CONDITIONSom it and append it to
+				 * the "series" variable which is passed as an argument to the charting library
+				 * If any of the validity tests fail then the corresponding information is alerted
+				 * to the user.In case all the validations pass a per sensor query of the format
+				 * defined in Constants.js is sent to the server component of the UI
+				 */
+				$("#IDSendQuery").click(function() {
+
+					var query = {};
+
+					//Empty the previous entries
+					while(chart.series.length > 0) {
+
+						chart.series[0].remove();
+					}//CLearing data from previous calls
+					var selectedSensorArray = new Array();
+
+					var selectedSensorArrayLength = 0;
+
+					var selectedDeviceName = $("#IDDeviceSelect").val();
+
+					$("#IDSensorsSelect").find("input").each(function() {
+						selectedSensorArrayLength = selectedSensorArray.length;
+						if($(this).prop("checked")) {
+							selectedSensorArray[selectedSensorArrayLength] = $(this).val();
+							selectedSensorArrayLength++;
+						}
+
+					});
+					if($(ID_START_DATE_TIME_DISPLAY).val().length > 0) {
+						startTime = datetimeToEpoch($(ID_START_DATE_TIME_DISPLAY).val());
+					} else {
+						startTime = $(ID_START_DATE_TIME_DISPLAY).val();
+					}
+					if($(ID_END_DATE_TIME_DISPLAY).val().length > 0) {
+						endTime = datetimeToEpoch($(ID_END_DATE_TIME_DISPLAY).val());
+					} else {
+						endTime = $(ID_END_DATE_TIME_DISPLAY).val();
+					}
+					var errorStatus = validateVisualizationQuery(selectedDeviceName, selectedSensorArray, startTime, endTime);
+					if(errorStatus[0]) {
+						alertError(errorStatus[1]);
+						return false;
+					}
+					else{
+						removeError();
+					}
+					//Now for each sensor in the selectedSensorList we would make a query and fetch the data and draw chart
+					makeRequestAndDisplayChart(selectedDeviceName, selectedSensorArray, startTime, endTime);
+
+				});
+				try {
+					$.get(URL_LIST_ALL_DEVICES, function(data) {
+						//alert(data);
+						receivedDeviceData = data;
+						//alert(receivedDeviceData);
+
+					});
+				} catch(e) {
+					alertError(e.toString());
+				}
+				//Make a get request to get all the devices available
+				if(!(receivedDeviceData.hasOwnProperty(RESPONSE_STATUS_CODE)))//Success
+				{
+
+					if(receivedDeviceData[DEVICE_ARRAY].length > 0) {
+
+						for(var index in receivedDeviceData[DEVICE_ARRAY]) {
+							var name = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_NAME];
+
+							$("#IDDeviceSelect").append("<option value=\"" + name + "\">" + name + "</option>");
+						}
+
+						/*
+						 * Description:This function is used to change the HTML contents corresponding to a selected device
+						 * It basically adds relevant HTMl in accordance with the device selected
+						 *
+						 * Nature:Anonmyous function
+						 *
+						 * Called:Called every time a change occurs in the dropdown menu
+						 *
+						 */
+						$("#IDDeviceSelect").change(function() {
+							$("#IDSensorsSelect").html("");
+							var deviceName = $(this).val();
+							//alert(JSON.stringify(receivedDeviceData));
+							for(var index in receivedDeviceData[DEVICE_ARRAY]) {
+								var name = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_NAME];
+								if(name == deviceName) {
+									if(DEVICE_SENSORS in receivedDeviceData[DEVICE_ARRAY][index] )
+									{
+										removeError();
+									var sensorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS];
+									for(var sensor in sensorArray) {
+										$("#IDSensorsSelect").append("<input type=\"checkbox\"value=" + sensorArray[sensor][DEVICE_SENSOR_NAME] + ">" + sensorArray[sensor][DEVICE_SENSOR_NAME] + "<br /></input>");
+									}
+									return false;
+								}
+								else
+								{
+									alertError("The selected device contains no sensors");
+								}
+								}
+							}
+
+							return false;
+						});
+					}
+					else{
+						alertError("No devices found");
+					}
+				} else {
+					alertError("The following error occured " + receivedDeviceData[RESPONSE_MESSAGE]);
+				}
+
+				/*
+				 * Description:This function is used to append series to the chart
+				 *
+				 * I/P:Response to the query to view data which is of the form of
+				 * SAMPLE_QUERY_DATA_QUERY_RESPONSE in constants.js
+				 *
+				 *
+				 */
+				function appendElementsToSeries(series, receivedData) {
+					//alert(JSON.stringify(receivedData));
+					var numberOfSeries = receivedData[WAVESEGMENT_ARRAY][0][WAVESEGMENT_DATA][WAVESEGMENT_CHANNELS].length;
+					//alert(numberOfSeries);
+					var sensorName = receivedData[WAVESEGMENT_ARRAY][0][WAVESEGMENT_DATA][WAVESEGMENT_SENSOR_NAME];
+					var seriesLength = series.length;
+					//alert(seriesLength);
+
+					for(var i = 0; i < numberOfSeries; i++) {
+						series[i] = {};
+						series[i][CHART_SERIES_DATA] = new Array();
+						series[i][CHART_SERIES_NAME] = receivedData[WAVESEGMENT_ARRAY][0][WAVESEGMENT_DATA][WAVESEGMENT_CHANNELS][i][WAVESEGMENT_CHANNEL_NAME] + sensorName;
+					}
+					var numberOfWavesegs = receivedData[WAVESEGMENT_ARRAY].length;
+					console.log(numberOfWavesegs);
+					for(var i = 0; i < numberOfWavesegs; i++) {
+						var timestamp = receivedData[WAVESEGMENT_ARRAY][i][WAVESEGMENT_DATA][WAVESEGMENT_TIMESTAMP];
+						console.log(timestamp);
+						var samplingPeriod = 1 / receivedData[WAVESEGMENT_ARRAY][i][WAVESEGMENT_DATA][WAVESEGMENT_SAMPLING_INTERVAL];
+						for(var j = 0; j < numberOfSeries; j++) {
+
+							var numberOfReadings = receivedData[WAVESEGMENT_ARRAY][i][WAVESEGMENT_DATA][WAVESEGMENT_CHANNELS][j][WAVESEGMENT_READINGS].length;
+							for(var k = 0; k < numberOfReadings; k++) {
+								series[j][CHART_SERIES_DATA].push([(timestamp + k * samplingPeriod * 1000), receivedData[WAVESEGMENT_ARRAY][i][WAVESEGMENT_DATA][WAVESEGMENT_CHANNELS][j][WAVESEGMENT_READINGS][k]]);
+							}
+						}
+					}
+					for(var i = 0; i < numberOfSeries; i++) {
+
+						//Adding series to the Chart Object
+						chart.showLoading();
+						chart.addSeries(series[i]);
+						chart.hideLoading();
+					}
+
+					console.log('Exiting make series');
+					return series;
+				}
+
+			});
+
+		</script>
+	</head>
+	<body>
+		<ul>
+			<li>
+				<a id="home" >Home</a>
+			</li>
+			
+			<li>
+				<a id="logout">Logout</a>
+			</li>
+		</ul>
+		<div id="errorDiv" class="errorDiv"></div>
+		<div>
+			<label>Select Device</label>
+			<select id="IDDeviceSelect">
+				<option value="None">None</option>
+			</select>
+			<div id="IDSensorsSelect"></div>
+			Start Date :
+			<input type="text" id ="start_date_time" readonly='true' />
+			End Date Time :
+			<input type="text" id ="end_date_time" readonly='true' />
+			<button id="IDSendQuery">
+				View Data
+			</button>
+		</div>
+		<div id="container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+		</input>
+		<input type="hidden" id =username value =${username}>
+		</input>
+	</body>
+</html>

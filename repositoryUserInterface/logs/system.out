@@ -1,0 +1,4 @@
+Listening for transport dt_socket at address: 8000
+18:29:10,738 INFO  ~ Starting /home/nipun/ui
+18:29:12,188 WARN  ~ You're running Play! in DEV mode
+18:29:12,567 INFO  ~ Listening for HTTP on port 9002 (Waiting a first request to start) ...
