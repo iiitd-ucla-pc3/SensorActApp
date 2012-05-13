@@ -1,9 +1,11 @@
 //Common constants 
 var FAKE_SECRET_KEY="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 var SECRET_KEY="secretkey";
-var USER_NAME="username";
+var USERNAME="username";
 var SUCCESS=0;
 var FAILURE="Failure";
+var PASSWORD="password";
+var EMAIL="email";
 //Dictionary constants associated with device profile
 var DEVICE_ARRAY="devicelist";
 var DEVICE_PROFILE="deviceprofile";
@@ -89,10 +91,13 @@ var MIN_LENGTH_DEVICE_IP=7;
 var MAX_LENGTH_DEVICE_IP=15;
 var MIN_LENGTH_DEVICE_LOCATION=2;
 var MAX_LENGTH_DEVICE_LOCATION=20;
+var MIN_LENGTH_USERNAME=8;
+var MIN_LENGTH_PASSWORD=6;
 var MIN_VALUE_CHANNEL_SAMPLING_PERIOD=1;
 var MAX_VALUE_CHANNEL_SAMPLING_PERIOD=100;
 var MIN_VALUE_SENSOR_ID=1;
 var MAX_VALUE_SENSOR_ID=100;
+
 
 
 

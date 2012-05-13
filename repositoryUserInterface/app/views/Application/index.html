@@ -50,8 +50,8 @@
 
 				function validateSignIn(username, password) {
 					var flag = true;
-					if(username.length < 6) {
-						$("#span_sign_in_username").text("Must be atleast 6 characters");
+					if(username.length < MIN_LENGTH_USERNAME) {
+						$("#span_sign_in_username").text("Must be atleast "+MIN_LENGTH_USERNAME+" characters");
 						$("#sign_in_username").addClass("error");
 						flag = false;
 					} else {
@@ -59,8 +59,8 @@
 
 						$("#sign_in_username").removeClass("error")
 					}
-					if(password.length < 6) {
-						$("#span_sign_in_password").text("Must be atleast 6 characters");
+					if(password.length < MIN_LENGTH_PASSWORD) {
+						$("#span_sign_in_password").text("Must be atleast "+MIN_LENGTH_PASSWORD+" characters");
 						$("#sign_in_password").addClass("error");
 						flag = false;
 					} else {
@@ -72,8 +72,8 @@
 
 				function validateSignUp(username, password, confirm_password, email) {
 					var flag = true;
-					if(username.length < 6) {
-						$("#span_sign_up_username").text("Must be atleast 6 characters");
+					if(username.length < MIN_LENGTH_USERNAME) {
+						$("#span_sign_up_username").text("Must be atleast "+MIN_LENGTH_USERNAME+" characters");
 						$("#sign_up_username").addClass("error");
 						flag = false;
 					} else {
@@ -82,8 +82,8 @@
 
 						$("#sign_up_username").removeClass("error")
 					}
-					if(password.length < 6) {
-						$("#span_sign_up_password").text("Must be atleast 6 characters");
+					if(password.length < MIN_LENGTH_PASSWORD) {
+						$("#span_sign_up_password").text("Must be atleast "+MIN_LENGTH_PASSWORD+" characters");
 						$("#sign_up_password").addClass("error");
 						flag = false;
 					} else {
@@ -98,7 +98,7 @@
 						$("#span_sign_up_confirmation").text("");
 						$("#sign_up_confirmation").removeClass("error")
 					}
-					if(!emailReg.test(email)) {
+					if((!emailReg.test(email))||(email.length==0)) {
 						$("#span_sign_up_email").text("Invalid Email Id");
 						$("#sign_up_email").addClass("error");
 						flag = false;
@@ -126,8 +126,8 @@
 					sign_in_validation_state = validateSignIn(sign_in_username, sign_in_password);
 					if(sign_in_validation_state) {
 						var sign_in = {};
-						sign_in["username"] = sign_in_username;
-						sign_in["password"] = sign_in_password;
+						sign_in[USERNAME] = sign_in_username;
+						sign_in[PASSWORD] = sign_in_password;
 						//Submit the login details
 						try {
 
@@ -159,9 +159,9 @@
 					sign_up_validation_state = validateSignUp(sign_up_username, sign_up_password, sign_up_confirmation, sign_up_email);
 					if(sign_up_validation_state) {
 						var sign_up = {};
-						sign_up["username"] = sign_up_username;
-						sign_up["password"] = sign_up_password;
-						sign_up["email"] = sign_up_email;
+						sign_up[USERNAME] = sign_up_username;
+						sign_up[PASSWORD] = sign_up_password;
+						sign_up[EMAIL] = sign_up_email;
 						//Submit the login details
 						try {
 
