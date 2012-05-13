@@ -241,7 +241,7 @@
 					});
 					$('.newSensorAddChannel').unbind('click').click(function() {
 
-						($(this).siblings(".newSensorChannels")).append("<tr><td><label>ChannelName</label></td><td><input class='labName'/></td><td><label>ChannelUnit</label></td><td><input class='labUnit'/><td><label>ChannelType</label></td><td><input class='labType'/></td><td><label>ChannelSamplingInterval</label></td><td><input class='labSampling'/><td><button class='removeChannel'>Remove Channel</button></td></tr>");
+						($(this).siblings(".newSensorChannels")).append("<tr><td><label>Name</label></td><td><input class='labName'/></td><td><label>Unit</label></td><td><input class='labUnit'/><td><label>Type</label></td><td><input class='labType'/></td><td><label>SamplingPeriod</label></td><td><input class='labSampling'/><td><button class='removeChannel'>Remove Channel</button></td></tr>");
 						$(".removeChannel").click(function() {
 
 							$(this).parent().parent().remove();
@@ -422,19 +422,19 @@
 		<div id ="newDevice">
 			<h1>Add new Device</h1>
 			<br/>
-			<label id="newDeviceNameLabel">New Device Name</label>
+			<label id="newDeviceNameLabel">Name</label>
 			<input type="text" id="newDeviceName">
 			</input>
 			<br/>
-			<label id="newDeviceLocationLabel">New Device Location</label>
+			<label id="newDeviceLocationLabel">Location</label>
 			<input type="text" id="newDeviceLocation">
 			</input>
 			<br/>
-			<label id="newDeviceIPLabel">New Device IP</label>
+			<label id="newDeviceIPLabel">IP</label>
 			<input type="text" id="newDeviceIP">
 			</input>
 			<br/>
-			<label id="newDeviceTagsLabel">New Device Tags</label>
+			<label id="newDeviceTagsLabel">Tags</label>
 			<input type="text" id="newDeviceTags">
 			</input>
 			<br/>

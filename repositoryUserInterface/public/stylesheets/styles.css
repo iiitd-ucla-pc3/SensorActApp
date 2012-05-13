@@ -1,4 +1,6 @@
-
+body {
+	margin: auto;
+}
 ul, p, h2, h1 {
 	font-family: Arial, "MS Trebuchet", sans-serif;
 	padding: 10px;
@@ -32,7 +34,7 @@ div.errorDiv
 {
 	background: #000080;
 	color: #fff;
-	
+	padding:20px;
 }
 
 #full-screen-background-image {
@@ -44,5 +46,4 @@ div.errorDiv
         position: fixed;
         top: 0;
         left: 0;
-        opacity:1;
       }

@@ -20,7 +20,7 @@ ul li a:hover {
 }
 
 label {
-	width: 200px;
+	width: 140px;
 	display: inline-block;
 }
 
@@ -34,7 +34,10 @@ div.errorDiv
 	color: #fff;
 	padding:20px;
 }
-
+input
+{
+	width :120px;
+}
 h1
 {
 	background: #333;
