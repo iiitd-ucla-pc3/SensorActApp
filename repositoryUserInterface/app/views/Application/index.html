@@ -32,26 +32,22 @@
 					$(idToShow).show().siblings(".forms").hide();
 					return false;
 				});
-				
-				function alertError(errorMessage)
-				{
+				function alertError(errorMessage) {
 					$("#errorDiv").html(errorMessage);
 					$("#errorDiv").fadeIn('slow');
 					return false;
 				}
-				
-				function removeError()
-				{
+
+				function removeError() {
 					$("#errorDiv").html("");
 					$("#errorDiv").hide();
 					return false;
 				}
 
-
 				function validateSignIn(username, password) {
 					var flag = true;
 					if(username.length < MIN_LENGTH_USERNAME) {
-						$("#span_sign_in_username").text("Must be atleast "+MIN_LENGTH_USERNAME+" characters");
+						$("#span_sign_in_username").text("Must be atleast " + MIN_LENGTH_USERNAME + " characters");
 						$("#sign_in_username").addClass("error");
 						flag = false;
 					} else {
@@ -60,7 +56,7 @@
 						$("#sign_in_username").removeClass("error")
 					}
 					if(password.length < MIN_LENGTH_PASSWORD) {
-						$("#span_sign_in_password").text("Must be atleast "+MIN_LENGTH_PASSWORD+" characters");
+						$("#span_sign_in_password").text("Must be atleast " + MIN_LENGTH_PASSWORD + " characters");
 						$("#sign_in_password").addClass("error");
 						flag = false;
 					} else {
@@ -73,17 +69,17 @@
 				function validateSignUp(username, password, confirm_password, email) {
 					var flag = true;
 					if(username.length < MIN_LENGTH_USERNAME) {
-						$("#span_sign_up_username").text("Must be atleast "+MIN_LENGTH_USERNAME+" characters");
+						$("#span_sign_up_username").text("Must be atleast " + MIN_LENGTH_USERNAME + " characters");
 						$("#sign_up_username").addClass("error");
 						flag = false;
 					} else {
 						$("#span_sign_up_username").text("");
-				var receivedData;
+						var receivedData;
 
 						$("#sign_up_username").removeClass("error")
 					}
 					if(password.length < MIN_LENGTH_PASSWORD) {
-						$("#span_sign_up_password").text("Must be atleast "+MIN_LENGTH_PASSWORD+" characters");
+						$("#span_sign_up_password").text("Must be atleast " + MIN_LENGTH_PASSWORD + " characters");
 						$("#sign_up_password").addClass("error");
 						flag = false;
 					} else {
@@ -98,7 +94,7 @@
 						$("#span_sign_up_confirmation").text("");
 						$("#sign_up_confirmation").removeClass("error")
 					}
-					if((!emailReg.test(email))||(email.length==0)) {
+					if((!emailReg.test(email)) || (email.length == 0)) {
 						$("#span_sign_up_email").text("Invalid Email Id");
 						$("#sign_up_email").addClass("error");
 						flag = false;
@@ -135,14 +131,11 @@
 								responseFromServer = data;
 
 							});
-							if((responseFromServer[RESPONSE_STATUS_CODE])==0) {
-								window.location=URL_HOME;
-								
+							if((responseFromServer[RESPONSE_STATUS_CODE]) == 0) {
+								window.location = URL_HOME;
 
-							}
-							else
-							{
-								alertError("Following error occured "+responseFromServer[RESPONSE_MESSAGE]);
+							} else {
+								alertError("Following error occured " + responseFromServer[RESPONSE_MESSAGE]);
 							}
 
 						} catch(e) {
@@ -172,8 +165,7 @@
 							if((responseFromServer.hasOwnProperty("statuscode"))) {
 								alertError("Following error occured " + responseFromServer["message"])
 
-							}
-							else{
+							} else {
 								removeError();
 							}
 
@@ -188,9 +180,9 @@
 		</script>
 	</head>
 	<body>
-		
 		<!--<img alt="full screen background image" src="@{'/public/images/background.jpg'}" id="full-screen-background-image">-->
-		<div><img src="@{'/public/images/logo_transparent.png'}" alt="Logo"/></div>
+		<div><img src="@{'/public/images/logo_transparent.png'}" alt="Logo"/>
+		</div>
 		<ul>
 			<li>
 				<a href="#sign_in">Sign In</a>
@@ -200,7 +192,6 @@
 			</li>
 		</ul>
 		<div id="errorDiv" class="errorDiv"></div>
-		
 		<div id="sign_in" class="forms">
 			<h2>Sign In</h2>
 			<p>
@@ -248,8 +239,6 @@
 			</p>
 		</div>
 		<div id="article">
-			
-			
 			Intro video will be added at this location
 			CC Sensors/Actuators B/G image to be added
 		</div>

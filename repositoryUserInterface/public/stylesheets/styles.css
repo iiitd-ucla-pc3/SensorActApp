@@ -35,6 +35,10 @@ div.errorDiv
 	background: #000080;
 	color: #fff;
 	padding:20px;
+	-moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    border-radius: 15px;
+    border: 2px solid;
 }
 
 #full-screen-background-image {
