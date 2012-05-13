@@ -24,6 +24,7 @@
 				});
 				//Hide all forms
 				$(".forms").hide();
+				$("#errorDiv").hide();
 
 				//Show relevant form
 				$("ul li a").click(function() {
@@ -31,6 +32,22 @@
 					$(idToShow).show().siblings(".forms").hide();
 					return false;
 				});
+				
+				function alertError(errorMessage)
+				{
+					$("#errorDiv").html(errorMessage);
+					$("#errorDiv").fadeIn('slow');
+					return false;
+				}
+				
+				function removeError()
+				{
+					$("#errorDiv").html("");
+					$("#errorDiv").hide();
+					return false;
+				}
+
+
 				function validateSignIn(username, password) {
 					var flag = true;
 					if(username.length < 6) {
@@ -125,11 +142,11 @@
 							}
 							else
 							{
-								alert("Following error occured "+responseFromServer[RESPONSE_MESSAGE]);
+								alertError("Following error occured "+responseFromServer[RESPONSE_MESSAGE]);
 							}
 
 						} catch(e) {
-							alert(e);
+							alertError(e);
 						}
 					}
 
@@ -153,12 +170,15 @@
 
 							});
 							if((responseFromServer.hasOwnProperty("statuscode"))) {
-								alert("Following error occured " + responseFromServer["message"])
+								alertError("Following error occured " + responseFromServer["message"])
 
+							}
+							else{
+								removeError();
 							}
 
 						} catch(e) {
-							alert(e);
+							alertError(e);
 						}
 					}
 
@@ -176,6 +196,8 @@
 				<a href="#sign_up">Sign Up</a>
 			</li>
 		</ul>
+		<div id="errorDiv" class="errorDiv"></div>
+		
 		<div id="sign_in" class="forms">
 			<h2>Sign In</h2>
 			<p>

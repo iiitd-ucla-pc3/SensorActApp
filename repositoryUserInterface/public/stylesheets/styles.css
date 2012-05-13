@@ -31,3 +31,9 @@ img {
 	margin-right: auto;
 	padding:10px;
 }
+div.errorDiv
+{
+	background: #000080;
+	color: #fff;
+	padding:20px;
+}
