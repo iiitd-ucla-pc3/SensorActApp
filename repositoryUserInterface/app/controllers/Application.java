@@ -12,7 +12,7 @@ import edu.iiitd.muc.sensoract.constants.Const;
 import edu.iiitd.muc.sensoract.exceptions.InvalidJsonException;
 
 /**
- * Application class, entry point for all APIs.
+ * Application class, entry point for all APIs for the repo
  * 
  * @author Nipun Batra
  * @version 1.0
