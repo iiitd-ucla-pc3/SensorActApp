@@ -75,7 +75,7 @@ public class RegisterUser extends SensorActAPI {
 	private HttpResponse sendRequestToBroker(String bodyToSendToBroker) {
 		HttpResponse response = null;
 		try {
-			response = WS.url(Const.URL_REPOSITORY_REGISTER_USER)
+			response = WS.url(Const.URL_BROKER_REGISTER_USER)
 					.body(bodyToSendToBroker).mimeType("application/json")
 					.post();
 		} catch (Exception e) {

@@ -108,19 +108,4 @@ public class Application extends Controller {
 
 	}
 
-	public static void getrepositoryinfo()
-
-	{
-		api.getRepositoryInfo.doProcess();
-
-	}
-
-	public static void generatesecretkey()
-
-	{
-		String body = request.params.get(Const.REQUEST_BODY);
-		api.generateSecretKey.doProcess(body);
-
-	}
-
 }

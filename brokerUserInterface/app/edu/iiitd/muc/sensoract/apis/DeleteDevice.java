@@ -44,7 +44,7 @@ public class DeleteDevice extends SensorActAPI {
 		String deleteDeviceRequestWithSecretKey = deleteDeviceRequest.replace(
 				Const.FAKE_SECRET_KEY, secretkey);
 		try {
-			response = WS.url(Const.URL_REPOSITORY_DELETE_DEVICE)
+			response = WS.url(Const.URL_BROKER_DELETE_DEVICE)
 					.body(deleteDeviceRequestWithSecretKey)
 					.mimeType("application/json").post();
 		} catch (Exception e) {
