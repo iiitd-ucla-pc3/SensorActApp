@@ -98,8 +98,9 @@ var MAX_VALUE_CHANNEL_SAMPLING_PERIOD=100;
 var MIN_VALUE_SENSOR_ID=1;
 var MAX_VALUE_SENSOR_ID=100;
 
-
-
+//Dictionary elements associated with Repository information
+var REPOSITORY_NAME="name";
+var REPOSITORY_URL="URL"
 
 
 
@@ -120,6 +121,12 @@ var URL_HOME=URL_UI_SERVER+"home";
 var URL_DEVICES=URL_UI_SERVER+"device"
 var URL_LOGOUT_USER=URL_UI_SERVER+"logout";
 var URL_VISUALIZATION=URL_UI_SERVER+"display2";
+var URL_REPOSITORY_INFO=URL_UI_SERVER+"repository";
+var URL_GET_REPOSITORY_INFO=URL_UI_SERVER+"getrepositoryinfo";
+var URL_GENERATE_SECRET_KEY=URL_UI_SERVER+"generatesecretkey";
+
+
+
 
 
 

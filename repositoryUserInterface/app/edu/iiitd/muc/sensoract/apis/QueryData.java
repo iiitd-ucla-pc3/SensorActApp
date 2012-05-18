@@ -12,7 +12,7 @@ public class QueryData extends SensorActAPI {
 		String secretkey=null;
 		try
 		{
-			secretkey=keyMap.get(session.get(Const.USERNAME));
+			secretkey=usernameToSecretKeyMap.get(session.get(Const.USERNAME));
 		}
 		catch(Exception e)
 		{

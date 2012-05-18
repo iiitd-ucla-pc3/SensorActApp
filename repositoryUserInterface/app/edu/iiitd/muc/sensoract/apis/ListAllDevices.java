@@ -30,7 +30,7 @@ public class ListAllDevices extends SensorActAPI {
 		HttpResponse response = null;
 		String secretkey = null;
 		try {
-			secretkey = keyMap.get(session.get(Const.USERNAME));
+			secretkey = usernameToSecretKeyMap.get(session.get(Const.USERNAME));
 		} catch (Exception e) {
 			renderJSON(gson.toJson(new APIResponse(Const.API_LISTALLDEVICES, 1,
 					"Session Expired.Login Again")));

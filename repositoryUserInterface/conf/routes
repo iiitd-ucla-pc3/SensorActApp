@@ -17,6 +17,10 @@ GET     /device2                                Application.device2
 POST    /adddevice                              Application.adddevice
 GET     /listalldevices							Application.listalldevices
 POST    /querydata                              Application.querydata
+GET     /repository							  Application.repository
+GET     /getrepositoryinfo							  Application.getrepositoryinfo
+POST     /generatesecretkey							  Application.generatesecretkey
+
 
 
 

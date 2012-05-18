@@ -22,8 +22,11 @@ import edu.iiitd.muc.sensoract.exceptions.InvalidJsonException;
 public class Application extends Controller {
 
 	public static SensorActAPI api = new SensorActAPI();
-	public static HashMap<String, String> keyMap = new HashMap<String, String>();
+	public static HashMap<String, String> usernameToSecretKeyMap = new HashMap<String, String>();
 
+	/*
+	 * If a user has not logged in,he is redirected to the index page
+	 */
 	@Before(unless = { "login", "index", "registeruser" })
 	static void checkAuthentication() {
 		System.out.println(session);
@@ -36,7 +39,7 @@ public class Application extends Controller {
 	}
 
 	public static void logout() {
-		keyMap.remove(session.get(Const.USERNAME));
+		usernameToSecretKeyMap.remove(session.get(Const.USERNAME));
 		session.clear();
 		redirect(Const.URL_UI_SERVER);
 	}
@@ -92,11 +95,31 @@ public class Application extends Controller {
 		render();
 	}
 
+	public static void repository() {
+		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		render();
+	}
+
 	public static void login() throws InvalidJsonException
 
 	{
 		String loginBody = request.params.get(Const.REQUEST_BODY);
 		api.login.doProcess(loginBody);
+
+	}
+
+	public static void getrepositoryinfo()
+
+	{
+		api.getRepositoryInfo.doProcess();
+
+	}
+
+	public static void generatesecretkey()
+
+	{
+		String body = request.params.get(Const.REQUEST_BODY);
+		api.generateSecretKey.doProcess(body);
 
 	}
 

@@ -39,7 +39,10 @@ public class AddDevice extends SensorActAPI {
 	public final void doProcess(String deviceBody) {
 		String secretkey = null;
 		try {
-			secretkey = keyMap.get(session.get(Const.USERNAME));
+			/*
+			 * Get the secret key from the HashMap
+			 */
+			secretkey = usernameToSecretKeyMap.get(session.get(Const.USERNAME));
 		} catch (Exception e) {
 			renderJSON(gson.toJson(new APIResponse(Const.API_ADDDEVICE, 1,
 					"Session Expired.Login Again")));

@@ -32,7 +32,7 @@ public class Login extends SensorActAPI {
 					responseFromBroker.getString(), APIResponse.class);
 			if (apiResponse.statuscode == Const.SUCCESS) {
 				session.put(Const.USERNAME, loginUserRequest.username);
-				keyMap.put(loginUserRequest.username,
+				usernameToSecretKeyMap.put(loginUserRequest.username,
 						apiResponse.message.toString());
 				renderJSON(responseFromBroker.getString());
 
