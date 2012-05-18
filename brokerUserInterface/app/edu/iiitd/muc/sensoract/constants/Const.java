@@ -100,8 +100,8 @@ public class Const {
 	/*
 	 * URL's
 	 */
-	public static final String URL_UI_SERVER = "http://localhost:9003/";
-	public static final String URL_BROKER_SERVER = "http://192.168.1.174:9001/";
+	public static final String URL_UI_SERVER = "http://muc.iiitd.com:9003/";
+	public static final String URL_BROKER_SERVER = "http://muc.iiitd.com:9001/";
 	public static final String URL_BROKER_REGISTER_USER = URL_BROKER_SERVER
 			+ "user/register";
 	public static final String URL_BROKER_LOGIN_USER = URL_BROKER_SERVER
