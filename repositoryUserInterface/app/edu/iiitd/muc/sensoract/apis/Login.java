@@ -26,19 +26,20 @@ public class Login extends SensorActAPI {
 			renderJSON(gson.toJson(new APIResponse(Const.API_LOGIN, 1, e
 					.toString())));
 		}
-		HttpResponse responseFromBroker = sendRequestToBroker(loginBody);
+		HttpResponse responseFromRepository = sendRequestToBroker(loginBody);
+		System.out.println(responseFromRepository.getString());
 		try {
 			APIResponse apiResponse = gson.fromJson(
-					responseFromBroker.getString(), APIResponse.class);
+					responseFromRepository.getString(), APIResponse.class);
 			if (apiResponse.statuscode == Const.SUCCESS) {
 				session.put(Const.USERNAME, loginUserRequest.username);
 				usernameToSecretKeyMap.put(loginUserRequest.username,
 						apiResponse.message.toString());
-				renderJSON(responseFromBroker.getString());
+				renderJSON(responseFromRepository.getString());
 
 			} else {
 
-				renderJSON(responseFromBroker.getString());
+				renderJSON(responseFromRepository.getString());
 			}
 		} catch (Exception e) {
 			renderJSON(gson.toJson(new APIResponse(Const.API_LOGIN, 1, e
