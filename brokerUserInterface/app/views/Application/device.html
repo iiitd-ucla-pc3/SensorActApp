@@ -1,0 +1,457 @@
+<html>
+	<head>
+		<title>SensorAct</title>
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery-ui-1.7.2.custom.css'}">
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/styles_non_centered.css'}">
+		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/jquery-ui-1.7.2.custom.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+
+				/**
+				 * Global Variables used during the lifecycle of the page
+				 *
+				 */
+				var newSensorCount = 0;
+				var newActuatorCount = 0;
+				var secretkey = FAKE_SECRET_KEY;
+				var errorState = false;
+				var errorInformation = "";
+				var receivedData = {};
+				var deviceObject = {};
+				var newNumberOfSensors = 0;
+				var newNumberOfActuators = 0;
+
+				/*
+				 * Setting the AJAX to work in sycnhronous fashion
+				 */
+				jQuery.ajaxSetup({
+					async : false
+				});
+
+				/*
+				 * Adding the link attribute to Logout,Home element
+				 */
+				$("#logout").attr('href', URL_LOGOUT_USER);
+				$("#home").attr('href', URL_HOME);
+
+				/*
+				 * Hiding Error Divs
+				 */
+				$("#errorDiv").hide();
+				$("#getDeviceErrorDiv").hide();
+
+				/**
+				 * @param :Error Information
+				 * This function appends the passed string to the AddDeviceErrorDiv and shows the relevant error container
+				 */
+				function alertAddDeviceError(errorInformation) {
+					$("#errorDiv").html(errorInformation);
+					$("#errorDiv").fadeIn('slow');
+					return false;
+				}
+
+				/**
+				 * @param :Error Information
+				 * This function appends the passed string to the GetDeviceErrorDiv and shows the relevant error container
+				 */
+				function alertGetDeviceError(errorInformation) {
+					$("#getDeviceErrorDiv").html(errorInformation);
+					$("#getDeviceErrorDiv").fadeIn('slow');
+					return false;
+				}
+
+				/**
+				 * @param:
+				 * 1.Object Reference(object)  :JQuery Object Reference to the object under test
+				 * 2.Minimum Length (int)   :Minimum Length of the attribute
+				 * 3.Maximum Length (int)   :Maximum Length of the attribute
+				 * 4.ErrorField    (string) :The name of the attribute
+				 * 5.ErrorFieldAttribute1(string) :The name of the first relevant attribute
+				 * 6.ErrorFieldAttribute2(string) :The name of the second relevant attribute
+				 *
+				 * An example call would be like (this,2,20,"sensor","name",sensorCount=2)
+				 * If the validation fails it shall append "Enter name of 2th sensor within 2 and 20 characters"
+				 *
+				 * This function can also be called like
+				 * (this,2,20,"device","name","") for attributes like device where the last attribute may not be required
+				 * In case validation fails an error like "Enter name of device within 2 and 20 characters" shall be appended
+				 *
+				 * In either case the error is appended to the error div and the corresponding faulty elements are highlighted
+				 */
+				function validateFieldAndMakeErrorInformation(objectReference, minimumLength, maximumLength, errorField, errorFieldAttribute1, errorFieldAttribute2) {
+					if((($(objectReference).val().length) < minimumLength ) || (($(objectReference).val().length) > maximumLength )) {
+						$(objectReference).addClass("error");
+						errorState = true;
+						if(errorFieldAttribute2.length > 0) {
+							errorInformation = errorInformation + " Enter " + errorFieldAttribute1 + " of " + errorFieldAttribute2 + " th " + errorField + " within " + minimumLength + " and " + maximumLength + "characters";
+						} else {
+							errorInformation = errorInformation + " Enter " + errorFieldAttribute1 + " of " + errorField + " within " + minimumLength + " and " + maximumLength + " characters";
+
+						}
+					} else {
+						$(objectReference).removeClass("error");
+					}
+				}
+
+				function validateNumericFieldValue(objectReference, minimumValue, maximumValue, errorField, errorFieldAttribute1, errorFieldAttribute2) {
+					var temp;
+					temp = parseInt($(objectReference).val());
+
+					if(isNaN(temp)) {
+
+						$(objectReference).addClass("error");
+						errorState = true;
+						errorInformation = errorInformation + " " + errorFieldAttribute1 + " of " + errorFieldAttribute2 + " th " + errorField + " must be an integer";
+					} else {
+						if(temp < minimumValue || temp > maximumValue) {
+							$(objectReference).addClass("error");
+							errorState = true;
+							errorInformation = errorInformation + " Enter " + errorFieldAttribute1 + " of " + errorFieldAttribute2 + " th " + errorField + "'s value within " + minimumValue + " and " + maximumValue;
+
+						} else {
+							$(objectReference).removeClass("error");
+						}
+					}
+
+				}
+				
+
+				/*
+				 * Make a query to fetch all the devices associated with the user
+				 */
+				try {
+					$.get(URL_LIST_ALL_DEVICES, function(data) {
+						receivedData = data;
+
+						//Successfully received data
+						if(receivedData.hasOwnProperty(RESPONSE_STATUS_CODE))//Means a failure has occured {
+						//The API call has failed
+						{
+							alertGetDeviceError("Following errors occured " + receivedData[RESPONSE_MESSAGE]);
+						} else {
+
+							var numberOfDevices = receivedData[DEVICE_ARRAY].length;
+							if(numberOfDevices > 0) {
+								$("#getDeviceErrorDiv").html("");
+								$("#getDeviceErrorDiv").hide();
+
+								for(var i = 0; i < numberOfDevices; i++) {
+									var id = "device" + i.toString();
+									$("<div></div>").attr('id', id).appendTo('#deviceTable');
+								}
+								for(var i = 0; i < numberOfDevices; i++) {
+									var idSelector = "#device" + i.toString();
+									var removeDeviceButton = "removeDevice_" + i.toString();
+									//alert(removeDeviceButton);
+									var deviceName = receivedData[DEVICE_ARRAY][i][DEVICE_NAME];
+									var deviceLocation = receivedData[DEVICE_ARRAY][i][DEVICE_LOCATION];
+									var deviceIP = receivedData[DEVICE_ARRAY][i][DEVICE_IP];
+									var deviceTags = receivedData[DEVICE_ARRAY][i][DEVICE_TAGS];
+
+									$(idSelector).append("<p><b>Device Name: " + deviceName + "</b> <br/> <b>Device Location: " + deviceLocation + "</b> <br/><b>Device IP: " + deviceIP + "</b> <br/><b>Device Tags: " + deviceTags + "</b> <br/></p>");
+
+									$(idSelector).append("<button id=" + removeDeviceButton + ">Remove Device</button>");
+									$('#' + removeDeviceButton).click(function() {
+
+										var deviceIndex = this.id.toString();
+										deviceIndex = parseInt(deviceIndex.substr(deviceIndex.length - 1));
+										var deviceToBeRemoved = receivedData[DEVICE_ARRAY][deviceIndex][DEVICE_NAME];
+										var messageToDeleteDevice = {}
+										messageToDeleteDevice["devicename"] = deviceToBeRemoved;
+										messageToDeleteDevice[SECRET_KEY] = secretkey;
+										$.post(URL_DELETE_DEVICE, JSON.stringify(messageToDeleteDevice), function(data) {
+
+											if(data[RESPONSE_STATUS_CODE] == SUCCESS) {
+												window.location.reload();
+											} else {
+												alertGetDeviceError(data[RESPONSE_MESSAGE]);
+											}
+
+										});
+									});
+									if(receivedData[DEVICE_ARRAY][i].hasOwnProperty(DEVICE_SENSORS)) {
+
+										$(idSelector).append("<p><b>Sensors</b></p>");
+										var sensor = receivedData[DEVICE_ARRAY][i][DEVICE_SENSORS];
+										var numberOfSensors = sensor.length;
+										for(var j = 0; j < numberOfSensors; j++) {
+											var sensorName = sensor[j][DEVICE_SENSOR_NAME];
+											var sensorId = "sensor_" + i.toString() + "_" + j.toString();
+											$(idSelector).append("<table id=" + sensorId + "><tr><td><p> SensorName: " + sensorName + "</p></td></tr></table>");
+											var channel = sensor[j][DEVICE_SENSOR_CHANNELS];
+											var numberOfChannels = channel.length;
+
+											$(idSelector).append("<p>Channels</p>");
+											var channelTableId = sensorId + "channel";
+											$(idSelector).append("<table id=" + channelTableId + "></table>");
+											for(var k = 0; k < numberOfChannels; k++) {
+												var channelName = channel[k][DEVICE_SENSOR_CHANNEL_NAME];
+												var channelType = channel[k][DEVICE_SENSOR_CHANNEL_TYPE];
+												var channelUnit = channel[k][DEVICE_SENSOR_CHANNEL_UNIT];
+												var channelSamplingPeriod = channel[k][DEVICE_SENSOR_CHANNEL_SAMPLING_PERIOD];
+												$("#" + channelTableId).append("<p><tr><td>ChannelName " + channelName + "</td><td>  ChannelType " + channelType + "</td><td>  ChannelUnit  " + channelUnit + "</td><td>  ChannelSamplingPeriod  " + channelSamplingPeriod + "</td></tr></p>");
+
+											}
+
+											$(idSelector).append("<hr/>");
+										}
+									}
+
+									$(idSelector).append("<hr/>");
+									if(receivedData[DEVICE_ARRAY][i].hasOwnProperty(DEVICE_ACTUATORS)) {
+
+										$(idSelector).append("<p><dd><b>Actuators</b></dd></p>");
+										var actuator = receivedData[DEVICE_ARRAY][i][DEVICE_ACTUATORS];
+										var numberOfActuators = actuator.length;
+										for(var j = 0; j < numberOfActuators; j++) {
+											var actuatorName = actuator[j][DEVICE_ACTUATOR_NAME];
+											var sensorId = "actuator_" + i.toString() + "_" + j.toString();
+											$(idSelector).append("<dd><tr><td> ActuatorName: " + actuatorName + "</td></tr></table></dd>");
+											$(idSelector).append("<hr/>");
+										}
+
+									}
+
+									$(idSelector).append("<hr/>");
+
+								}
+
+							}
+
+						}
+
+					});
+				} catch(e) {
+					alertGetDeviceError(e);
+				}
+
+				/*
+				 * Description:This function is used to add a new sensor
+				 */
+
+				$("#addNewSensor").click(function() {
+					$("#newSensorsDiv").append("<div id='newSensor'><hr/><label>SensorName</label><input id='newSensorName' class='newSensor'></input><br/><label>SensorID</label><input id='newSensorID' class='newSensorID'></input><br/>" + "<button class='newSensorAddChannel'>Add channels</button>" + "<button class='newSensorRemove'>Delete Sensor</button>" + "<div class='newSensorChannels'></div></div>");
+					$(".newSensorRemove").click(function() {
+
+						$(this).parent().remove();
+						newNumberOfSensors--;
+						return false;
+					});
+					$('.newSensorAddChannel').unbind('click').click(function() {
+
+						($(this).siblings(".newSensorChannels")).append("<tr><td><label>Name</label></td><td><input class='labName'/></td><td><label>Unit</label></td><td><input class='labUnit'/><td><label>Type</label></td><td><input class='labType'/></td><td><label>SamplingPeriod</label></td><td><input class='labSampling'/><td><button class='removeChannel'>Remove Channel</button></td></tr>");
+						$(".removeChannel").click(function() {
+
+							$(this).parent().parent().remove();
+
+						});
+						return false;
+					});
+					newNumberOfSensors++;
+					return false;
+				});
+				/*
+				 * Description:Function to add a new Actuator
+				 * This function is called when the button corresponding to add new actuator is clicked
+				 * It would create new DIV and place in it the new Actuator within a HTML label
+				 * It also binds a function to remove the actuator
+				 */
+
+				$("#addNewActuator").click(function() {
+					$("#newActuatorsDiv").append("<div id='newActuator'><label>ActuatorName</label><input></input><br/><button class='removeActuator'>Remove Actuator</button></div>");
+					newNumberOfActuators++;
+					$(".removeActuator").click(function() {
+						$(this).parent().remove();
+						newNumberOfActuators--;
+					});
+					return false;
+				});
+				/*
+				 * This function is invoked when Done Device is clicked.
+				 * It does a validation for all the fields present in the device
+				 */
+				$("#doneDevice").click(function() {
+					errorState = false;
+					errorInformation = "";
+					deviceObject[DEVICE_ACTUATORS] = new Array();
+					deviceObject[DEVICE_SENSORS] = new Array();
+					var actuatorCount = 0;
+					var sensorCount = 0;
+
+					//Adding Actuators
+					$("#newActuatorsDiv").find("input").each(function() {
+
+						deviceObject[DEVICE_ACTUATORS][actuatorCount] = {};
+						deviceObject[DEVICE_ACTUATORS][actuatorCount][DEVICE_ACTUATOR_NAME] = $(this).val();
+						validateFieldAndMakeErrorInformation(this, MIN_LENGTH_ACTUATOR_NAME, MAX_LENGTH_ACTUATOR_NAME, "actuator", "name", actuatorCount);
+						actuatorCount++;
+					});
+					//Adding sensors
+					$("#newSensorsDiv").find("input.newSensor").each(function() {
+
+						deviceObject[DEVICE_SENSORS][sensorCount] = {};
+						if($(this).attr('id') == "newSensorName") {
+							deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_NAME] = $(this).val();
+
+							validateFieldAndMakeErrorInformation(this, MIN_LENGTH_SENSOR_NAME, MAX_LENGTH_SENSOR_NAME, "sensor", "name", sensorCount);
+							deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_ID] = $(this).siblings(".newSensorID").val();
+							validateFieldAndMakeErrorInformation($(this).siblings(".newSensorID"), MIN_LENGTH_SENSOR_ID, MAX_LENGTH_SENSOR_ID, "sensor", "id", sensorCount);
+							validateNumericFieldValue($(this).siblings(".newSensorID"), MIN_VALUE_SENSOR_ID, MAX_VALUE_SENSOR_ID, "sensor", "ID", sensorCount);
+						}
+
+						deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_CHANNELS] = new Array();
+						//Now attaching it's channels to it
+						var newChannelCount = 0;
+						$(this).parent().children(".newSensorChannels").find("tr").each(function() {
+							deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_CHANNELS][newChannelCount] = {};
+							$(this).find('td').each(function() {
+								$(this).find('input').each(function() {
+
+									if(($(this).attr("class")).toString().indexOf(CLASS_DEVICE_SENSOR_CHANNEL_NAME) >= 0) {
+
+										deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_CHANNELS][newChannelCount][DEVICE_SENSOR_CHANNEL_NAME] = $(this).val();
+										validateFieldAndMakeErrorInformation(this, MIN_LENGTH_CHANNEL_NAME, MAX_LENGTH_CHANNEL_NAME, "sensor's " + newChannelCount.toString() + " th channel", "name", sensorCount);
+
+									}
+									if(($(this).attr("class")).toString().indexOf(CLASS_DEVICE_SENSOR_CHANNEL_UNIT) >= 0) {
+										deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_CHANNELS][newChannelCount][DEVICE_SENSOR_CHANNEL_UNIT] = $(this).val();
+										validateFieldAndMakeErrorInformation(this, MIN_LENGTH_CHANNEL_UNIT, MAX_LENGTH_CHANNEL_UNIT, "sensor's " + newChannelCount.toString() + " th channel", "unit", sensorCount);
+
+									}
+									if(($(this).attr("class")).toString().indexOf(CLASS_DEVICE_SENSOR_CHANNEL_SAMPLING_PERIOD) >= 0) {
+										deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_CHANNELS][newChannelCount][DEVICE_SENSOR_CHANNEL_SAMPLING_PERIOD] = $(this).val();
+										validateFieldAndMakeErrorInformation(this, MIN_LENGTH_CHANNEL_SAMPLING_PERIOD, MAX_LENGTH_CHANNEL_SAMPLING_PERIOD, "sensor's " + newChannelCount.toString() + " th channel", "sampling period", sensorCount);
+										validateNumericFieldValue(this, MIN_VALUE_CHANNEL_SAMPLING_PERIOD, MAX_VALUE_CHANNEL_SAMPLING_PERIOD, "sensor's " + newChannelCount.toString(), "sampling period", sensorCount);
+
+									}
+									if(($(this).attr("class")).toString().indexOf(CLASS_DEVICE_SENSOR_CHANNEL_TYPE) >= 0) {
+										deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_CHANNELS][newChannelCount][DEVICE_SENSOR_CHANNEL_TYPE] = $(this).val();
+										validateFieldAndMakeErrorInformation(this, MIN_LENGTH_CHANNEL_TYPE, MAX_LENGTH_CHANNEL_TYPE, "sensor's " + newChannelCount.toString() + " th channel", "type", sensorCount);
+
+									}
+								});
+							});
+							newChannelCount++;
+
+						});
+						if(newChannelCount == 0)//Did not add any channel for this sensor
+						{
+							errorState = true;
+							errorInformation = errorInformation + " Enter channel for " + sensorCount.toString() + "sensor";
+						}
+						sensorCount++;
+
+					});
+					//Adding device information
+					//Adding fake info for LAT/LON
+					deviceObject[DEVICE_LATITUDE] = "1";
+					deviceObject[DEVICE_LONGITUDE] = "1";
+					deviceObject[DEVICE_NAME] = $("#newDeviceName").val();
+					validateFieldAndMakeErrorInformation($("#newDeviceName"), MIN_LENGTH_DEVICE_NAME, MAX_LENGTH_DEVICE_NAME, "device", "name", "");
+					deviceObject[DEVICE_LOCATION] = $("#newDeviceLocation").val();
+					validateFieldAndMakeErrorInformation($("#newDeviceLocation"), MIN_LENGTH_DEVICE_LOCATION, MAX_LENGTH_DEVICE_LOCATION, "device", "location", "");
+
+					deviceObject[DEVICE_TAGS] = $("#newDeviceTags").val();
+					validateFieldAndMakeErrorInformation($("#newDeviceTags"), MIN_LENGTH_DEVICE_TAGS, MAX_LENGTH_DEVICE_TAGS, "device", "tags", "");
+
+					deviceObject[DEVICE_IP] = $("#newDeviceIP").val();
+					validateFieldAndMakeErrorInformation($("#newDeviceIP"), MIN_LENGTH_DEVICE_IP, MAX_LENGTH_DEVICE_IP, "device", "IP", "");
+
+					if((sensorCount == 0) && (actuatorCount == 0)) {
+						errorState = true;
+						errorInformation += " Please add either a sensor or an actuator to the device";
+
+					}
+					if(actuatorCount == 0) {
+						delete deviceObject["actuators"];
+					}
+					if(sensorCount == 0) {
+						delete deviceObject["sensors"];
+					}
+
+					if(errorState == true) {
+
+						alertAddDeviceError(errorInformation);
+
+						return false;
+					} else {
+						$("#errorDiv").html("");
+						$("#errorDiv").hide();
+						//Hide error div
+					}
+
+					//Now the actual object to be sent to the broker is created,after all validation  has been done
+					var deviceRequestToSend = {};
+					deviceRequestToSend[DEVICE_PROFILE] = deviceObject;
+					deviceRequestToSend[SECRET_KEY] = secretkey;
+					try {
+						$.post(URL_ADD_DEVICE, JSON.stringify(deviceRequestToSend), function(data) {
+							receivedData = data;
+							if(data[RESPONSE_STATUS_CODE] == 0) {
+								window.location.reload();
+							} else {
+								alertAddDeviceError("Following error occured: " + data[RESPONSE_MESSAGE]);
+							}
+
+						});
+					} catch(e) {
+						alertAddDeviceError(e);
+					}
+					return false;
+				});
+			});
+
+		</script>
+	</head>
+	<body>
+		<ul>
+			<li>
+				<a id="home" >Home</a>
+			</li>
+			<li>
+				<a id="logout">Logout</a>
+			</li>
+		</ul>
+		<div id="getDeviceErrorDiv" class ="errorDiv"></div>
+		<div id ="deviceTable" class="deviceTable">
+			<h1>List of devices</h1>
+		</div>
+		<div id="errorDiv" class="errorDiv"></div>
+		<div id ="newDevice">
+			<h1>Add new Device</h1>
+			<br/>
+			<label id="newDeviceNameLabel">Name</label>
+			<input type="text" id="newDeviceName">
+			</input>
+			<br/>
+			<label id="newDeviceLocationLabel">Location</label>
+			<input type="text" id="newDeviceLocation">
+			</input>
+			<br/>
+			<label id="newDeviceIPLabel">IP</label>
+			<input type="text" id="newDeviceIP">
+			</input>
+			<br/>
+			<label id="newDeviceTagsLabel">Tags</label>
+			<input type="text" id="newDeviceTags">
+			</input>
+			<br/>
+		</div>
+		<button id ="addNewSensor">
+			Add a sensor
+		</button>
+		<br/>
+		<div id="newSensorsDiv"></div>
+		<button id ="addNewActuator">
+			Add an actuator
+		</button>
+		<div id="newActuatorsDiv"></div>
+		<button id ="doneDevice">
+			Device Done
+		</button>
+		<input type="hidden" id =username value =${username}>
+		</input>
+	</body>
+</html>

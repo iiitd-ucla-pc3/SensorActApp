@@ -1,0 +1,171 @@
+<html>
+	<head>
+		<title> SensorAct </title>
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/styles.css'}">
+		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+
+				var repsonseFromServer;
+				
+					/*
+				 * Adding the link attribute to Logout,Home element
+				 */
+				$("#logout").attr('href', URL_LOGOUT_USER);
+				$("#home").attr('href', URL_HOME);
+				//Setting up in async mode
+				jQuery.ajaxSetup({
+					async : false
+				});
+				//Hide all forms
+
+				$("#errorDiv").hide();
+				
+				$("#generateRepoKeyDiv").hide();
+				$("#generatedRepoKeyDiv").hide();
+
+			function alertError(errorMessage) {
+					$("#errorDiv").html(errorMessage);
+					$("#errorDiv").fadeIn('slow');
+					return false;
+				}
+
+				function removeError() {
+					$("#errorDiv").html("");
+					$("#errorDiv").hide();
+					return false;
+				}
+
+
+				function validateSignIn(username, password) {
+					var flag = true;
+					if(username.length < MIN_LENGTH_USERNAME) {
+						$("#span_sign_in_username").text("Must be atleast " + MIN_LENGTH_USERNAME + " characters");
+						$("#sign_in_username").addClass("error");
+						flag = false;
+					} else {
+						$("#span_sign_in_username").text("");
+
+						$("#sign_in_username").removeClass("error")
+					}
+					if(password.length < MIN_LENGTH_PASSWORD) {
+						$("#span_sign_in_password").text("Must be atleast " + MIN_LENGTH_PASSWORD + " characters");
+						$("#sign_in_password").addClass("error");
+						flag = false;
+					} else {
+						$("#span_sign_in_password").text("");
+						$("#sign_in_password").removeClass("error")
+					}
+					return flag;
+				}
+				//Get the repository information
+				try {
+
+					$.get(URL_GET_REPOSITORY_INFO, function(data) {
+						responseFromServer = data;
+						alert(responseFromServer[REPOSITORY_NAME]);
+
+					});
+					if(responseFromServer.hasOwnProperty(RESPONSE_STATUS_CODE)) {
+						alertError("Following error occured " + responseFromServer[RESPONSE_MESSAGE]);
+					} else {
+						$("#repoName").html(responseFromServer[REPOSITORY_NAME]);
+						$("#repoURL").html(responseFromServer[REPOSITORY_URL]);
+					}
+
+				} catch(e) {
+					alertError(e);
+				}
+				
+				$("#generateRepoKey").click(function()
+				{
+					$("#generateRepoKeyDiv").fadeIn('slow');
+				});
+				
+					$("#Done").click(function() {
+					sign_in_username = $("#sign_in_username").val();
+					sign_in_password = $("#sign_in_password").val();
+					sign_in_validation_state = validateSignIn(sign_in_username, sign_in_password);
+					if(sign_in_validation_state) {
+						var sign_in = {};
+						sign_in[USERNAME] = sign_in_username;
+						sign_in[PASSWORD] = sign_in_password;
+						sign_in[SECRET_KEY]=FAKE_SECRET_KEY;
+						//Submit the login details
+						try {
+
+							$.post(URL_GENERATE_SECRET_KEY, JSON.stringify(sign_in), function(data) {
+								responseFromServer = data;
+
+							});
+							if(responseFromServer[RESPONSE_STATUS_CODE]!=0) {
+						alertError("Following error occured " + responseFromServer[RESPONSE_MESSAGE]);
+					} else {
+						$("#generatedKey").html(responseFromServer[RESPONSE_MESSAGE]);
+						$("#generatedRepoKeyDiv").show();
+					}
+							
+
+						} catch(e) {
+							alertError(e);
+						}
+					}
+
+				});
+				
+
+				//If button is clicked generate a call to get the secret key from repo
+				
+
+			});
+
+		</script>
+	</head>
+	<body>
+		<ul>
+			<li>
+				<a id="home" >Home</a>
+			</li>
+			<li>
+				<a id="logout">Logout</a>
+			</li>
+		</ul>
+		<div id="errorDiv" class="errorDiv"></div>
+		<div id="repoInfo">
+			Please note down this information carefully for registering your repository account with the Broker
+			<br/>
+			<label>Repo Name</label>
+			<span id="repoName"></span>
+			<br/>
+			<label>Repo URL</label>
+			<span id="repoURL"></span>
+			<br/>
+			<button id ="generateRepoKey">
+				Generate Key to register repository to Broker
+			</button>
+			<div id="generateRepoKeyDiv">
+				<h2>Sign In with your Repository Credentials</h2>
+			<p>
+				<label for="sign_in_username">Username</label>
+				<input type="text" name="sign_in_username" id="sign_in_username" />
+				<span id="span_sign_in_username"></span>
+			</p>
+			<p>
+				<label for="sign_in_password">Password</label>
+				<input type="password" name="sign_in_password" id="sign_in_password" />
+				<span id="span_sign_in_password"></span>
+			</p>
+			<button id ="Done">
+				Done
+			</button>
+			</div>
+			<div id="generatedRepoKeyDiv">
+				<label>Generated Key</label>
+				<span id="generatedKey"></span>
+				
+				
+			</div>
+		</div>
+	</body>
+</html>
