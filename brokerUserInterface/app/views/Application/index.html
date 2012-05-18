@@ -1,0 +1,246 @@
+<html>
+	<head>
+		<title> SensorAct </title>
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/styles.css'}">
+		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				var sign_in_username;
+				var sign_in_password;
+				var sign_in_validation_state = false;
+
+				var sign_up_username;
+				var sign_up_password;
+				var sign_up_confirmation;
+
+				var sign_up_email;
+				var sign_up_validation_state = false;
+				var responseFromServer = {};
+				var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+				//Setting up in async mode
+				jQuery.ajaxSetup({
+					async : false
+				});
+				//Hide all forms
+				$(".forms").hide();
+				$("#errorDiv").hide();
+
+				//Show relevant form
+				$("ul li a").click(function() {
+					var idToShow = $(this).attr("href");
+					$(idToShow).show().siblings(".forms").hide();
+					return false;
+				});
+				function alertError(errorMessage) {
+					$("#errorDiv").html(errorMessage);
+					$("#errorDiv").fadeIn('slow');
+					return false;
+				}
+
+				function removeError() {
+					$("#errorDiv").html("");
+					$("#errorDiv").hide();
+					return false;
+				}
+
+				function validateSignIn(username, password) {
+					var flag = true;
+					if(username.length < MIN_LENGTH_USERNAME) {
+						$("#span_sign_in_username").text("Must be atleast " + MIN_LENGTH_USERNAME + " characters");
+						$("#sign_in_username").addClass("error");
+						flag = false;
+					} else {
+						$("#span_sign_in_username").text("");
+
+						$("#sign_in_username").removeClass("error")
+					}
+					if(password.length < MIN_LENGTH_PASSWORD) {
+						$("#span_sign_in_password").text("Must be atleast " + MIN_LENGTH_PASSWORD + " characters");
+						$("#sign_in_password").addClass("error");
+						flag = false;
+					} else {
+						$("#span_sign_in_password").text("");
+						$("#sign_in_password").removeClass("error")
+					}
+					return flag;
+				}
+
+				function validateSignUp(username, password, confirm_password, email) {
+					var flag = true;
+					if(username.length < MIN_LENGTH_USERNAME) {
+						$("#span_sign_up_username").text("Must be atleast " + MIN_LENGTH_USERNAME + " characters");
+						$("#sign_up_username").addClass("error");
+						flag = false;
+					} else {
+						$("#span_sign_up_username").text("");
+						var receivedData;
+
+						$("#sign_up_username").removeClass("error")
+					}
+					if(password.length < MIN_LENGTH_PASSWORD) {
+						$("#span_sign_up_password").text("Must be atleast " + MIN_LENGTH_PASSWORD + " characters");
+						$("#sign_up_password").addClass("error");
+						flag = false;
+					} else {
+						$("#span_sign_up_password").text("");
+						$("#sign_up_password").removeClass("error")
+					}
+					if(confirm_password != password) {
+						$("#span_sign_up_confirmation").text("Must be same as password");
+						$("#sign_up_confirmation").addClass("error");
+						flag = false;
+					} else {
+						$("#span_sign_up_confirmation").text("");
+						$("#sign_up_confirmation").removeClass("error")
+					}
+					if((!emailReg.test(email)) || (email.length == 0)) {
+						$("#span_sign_up_email").text("Invalid Email Id");
+						$("#sign_up_email").addClass("error");
+						flag = false;
+
+					} else {
+						$("#span_sign_up_email").text("");
+						$("#sign_up_email").removeClass("error")
+					}
+
+					return flag;
+				}
+
+
+				$("#sign_up_confirmation").keyup(function() {
+					if($(this).val() != $("#sign_up_password").val()) {
+						$(this).addClass("error").next().text("Passwords don't match.");
+					} else {
+						$(this).removeClass("error").next().text("");
+					}
+				});
+
+				$("#sign_in_submit").click(function() {
+					sign_in_username = $("#sign_in_username").val();
+					sign_in_password = $("#sign_in_password").val();
+					sign_in_validation_state = validateSignIn(sign_in_username, sign_in_password);
+					if(sign_in_validation_state) {
+						var sign_in = {};
+						sign_in[USERNAME] = sign_in_username;
+						sign_in[PASSWORD] = sign_in_password;
+						//Submit the login details
+						try {
+
+							$.post(URL_LOGIN_USER, JSON.stringify(sign_in), function(data) {
+								responseFromServer = data;
+
+							});
+							if((responseFromServer[RESPONSE_STATUS_CODE]) == 0) {
+								window.location = URL_HOME;
+
+							} else {
+								alertError("Following error occured " + responseFromServer[RESPONSE_MESSAGE]);
+							}
+
+						} catch(e) {
+							alertError(e);
+						}
+					}
+
+				});
+				$("#sign_up_submit").click(function() {
+					sign_up_username = $("#sign_up_username").val();
+					sign_up_password = $("#sign_up_password").val();
+					sign_up_confirmation = $("#sign_up_confirmation").val();
+					sign_up_email = $("#sign_up_email").val();
+					sign_up_validation_state = validateSignUp(sign_up_username, sign_up_password, sign_up_confirmation, sign_up_email);
+					if(sign_up_validation_state) {
+						var sign_up = {};
+						sign_up[USERNAME] = sign_up_username;
+						sign_up[PASSWORD] = sign_up_password;
+						sign_up[EMAIL] = sign_up_email;
+						//Submit the login details
+						try {
+
+							$.post(URL_REGISTER_USER, JSON.stringify(sign_up), function(data) {
+								responseFromServer = data;
+
+							});
+							if((responseFromServer.hasOwnProperty("statuscode"))) {
+								alertError("Following error occured " + responseFromServer["message"])
+
+							} else {
+								removeError();
+							}
+
+						} catch(e) {
+							alertError(e);
+						}
+					}
+
+				});
+			});
+
+		</script>
+	</head>
+	<body>
+		<img alt="full screen background image" src="@{'/public/images/background.jpg'}" id="full-screen-background-image">
+		<div><img src="@{'/public/images/logo_transparent.png'}" alt="Logo"/>
+		</div>
+		<ul>
+			<li>
+				<a href="#sign_in">Sign In</a>
+			</li>
+			<li>
+				<a href="#sign_up">Sign Up</a>
+			</li>
+		</ul>
+		<div id="errorDiv" class="errorDiv"></div>
+		<div id="sign_in" class="forms">
+			<h2>Sign In</h2>
+			<p>
+				<label for="sign_in_username">Username</label>
+				<input type="text" name="sign_in_username" id="sign_in_username" />
+				<span id="span_sign_in_username"></span>
+			</p>
+			<p>
+				<label for="sign_in_password">Password</label>
+				<input type="password" name="sign_in_password" id="sign_in_password" />
+				<span id="span_sign_in_password"></span>
+			</p>
+			<p>
+				<button id="sign_in_submit">
+					Sign In
+				</button>
+			</p>
+		</div>
+		<div id="sign_up" class="forms">
+			<h2>Sign Up</h2>
+			<p>
+				<label for="sign_up_username">Username</label>
+				<input type="text" name="sign_up_username" id="sign_up_username" />
+				<span id="span_sign_up_username"></span>
+			</p>
+			<p>
+				<label for="sign_up_password">Password</label>
+				<input type="password" name="sign_up_password" id="sign_up_password" />
+				<span id="span_sign_up_password"></span>
+			</p>
+			<p>
+				<label for="sign_up_confirmation">Confirm Password</label>
+				<input type="password" name="sign_up_confirmation" id="sign_up_confirmation" />
+				<span id="span_sign_up_confirmation"></span>
+			</p>
+			<p>
+				<label for="sign_up_email">Email ID</label>
+				<input type="email" name="sign_up_email" id="sign_up_email" />
+				<span id="span_sign_up_email"></span>
+			</p>
+			<p>
+				<button id ="sign_up_submit">
+					Sign Up
+				</button>
+			</p>
+		</div>
+		<div id="article">
+			Intro video will be added at this location
+			CC Sensors/Actuators B/G image to be added
+		</div>
+	</body>
+</html>

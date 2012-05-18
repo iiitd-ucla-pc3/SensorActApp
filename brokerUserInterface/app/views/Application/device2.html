@@ -1,0 +1,246 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery-ui-1.7.2.custom.css'}">
+<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+<script src="@{'/public/javascripts/jquery-ui-1.7.2.custom.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+
+
+<script type="text/javascript">  
+function addNewDeviceFunction()
+		{
+        var deviceObject = {};
+		
+		var newNumberOfSensors=0;
+		var newNumberOfActuators=0;
+		
+		$("#addNewSensor").click(function()
+		{						
+			$("#newSensorsDiv").append("<div id='newSensor'><hr/><label>SensorName</label><input class='newSensor'></input><br/>"+
+			"<button class='newSensorAddChannel'>Add channels</button>"+
+			"<button class='newSensorRemove'>Delete Sensor</button>"+
+			"<div class='newSensorChannels'></div></div>");
+			$(".newSensorRemove").click(function()
+			
+			{
+			
+			$(this).parent().remove();
+			
+			newNumberOfSensors--;
+			return false;
+			});
+			
+			//TODO:Change this using this and get the reference to the specific element
+			$('.newSensorAddChannel').unbind('click').click(function()
+			
+			{
+			alert($(this).siblings().html());
+			//alert(this);
+			($(this).siblings(".newSensorChannels")).append("<tr><td><label>ChannelName</label></td><td><input class='labName'/></td><td><label>ChannelUnit</label></td><td><input class='labUnit'/><td><label>ChannelType</label></td><td><input class='labType'/><td><button class='removeChannel'>Remove Channel</button></td></tr>");
+			$(".removeChannel").click(function()
+			
+			{
+				//alert($(this).parent().parent().html());
+			$(this).parent().parent().remove();
+			
+			});
+			return false;
+			});
+					
+			newNumberOfSensors++;
+			return false;
+		});
+		
+		$("#addNewActuator").click(function()
+		{
+			$("#newActuatorsDiv").append("<div id='newActuator'><label>ActuatorName</label><input></input><br/><button class='removeActuator'>Remove Actuator</button></div>");
+			newNumberOfActuators++;
+			$(".removeActuator").click(function(){
+				$(this).parent().remove();
+				newNumberOfActuators--;
+			});
+			return false;
+		});
+		
+		$("#doneDevice").click(function()
+		{
+			deviceObject[DEVICE_ACTUATORS]=new Array();
+			deviceObject[DEVICE_SENSORS]=new Array();
+			var actuatorCount=0;
+			var sensorCount=0;
+			
+			//Adding Actuators
+			$("#newActuatorsDiv").find("input").each(function(){
+				
+				deviceObject[DEVICE_ACTUATORS][actuatorCount]={};
+				deviceObject[DEVICE_ACTUATORS][actuatorCount][DEVICE_ACTUATOR_NAME]=$(this).val();
+				alert($(this).val()+actuatorCount.toString());
+				actuatorCount++;
+			});
+			
+			//Adding sensors
+			$("#newSensorsDiv").find("input.newSensor").each(function(){
+				
+				deviceObject[DEVICE_SENSORS][sensorCount]={};
+				deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_NAME]=$(this).val();
+				deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_CHANNELS]=new Array();
+				//Now attaching it's channels to it
+				var newChannelCount=0;
+				$(this).parent().children(".newSensorChannels").find("tr").each(function(){
+				deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_CHANNELS][newChannelCount]={};
+				$(this).find('td').each(function(){
+  				$(this).find('input').each(function(){
+  				
+  				if (($(this).attr("class")).toString()==CLASS_DEVICE_SENSOR_CHANNEL_NAME)
+  					{   deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_CHANNELS][newChannelCount][DEVICE_SENSOR_CHANNEL_NAME]=$(this).val();
+  					
+  					}
+  				if (($(this).attr("class")).toString()==CLASS_DEVICE_SENSOR_CHANNEL_UNIT)
+  					{   deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_CHANNELS][newChannelCount][DEVICE_SENSOR_CHANNEL_UNIT]=$(this).val();
+  					
+  					}
+  				if (($(this).attr("class")).toString()==CLASS_DEVICE_SENSOR_CHANNEL_TYPE)
+  					{   deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_CHANNELS][newChannelCount][DEVICE_SENSOR_CHANNEL_TYPE]=$(this).val();
+  					
+  					}
+  				});
+  				});
+				newChannelCount++;
+				
+				});
+				sensorCount++;
+			});
+			
+			//Adding device information
+			deviceObject[DEVICE_NAME]=$("#newDeviceName").val();
+			deviceObject[DEVICE_LOCATION]=$("#newDeviceLocation").val();
+			var deviceRequestToSend={};
+			deviceRequestToSend[DEVICE_PROFILE]=deviceObject;
+			deviceRequestToSend[SECRET_KEY]=secretkey;
+			
+			console.log(deviceRequestToSend);
+			alert(JSON.stringify(deviceRequestToSend));
+			$.post(URL_ADD_DEVICE, JSON.stringify(deviceRequestToSend), function(data)
+    		{
+    		
+			
+			alert(data);
+			//alert(status);
+			
+				
+			
+			});
+			
+			return false;
+		});
+		};    
+$(document).ready(function() {
+	
+	var newSensorCount=0;
+	var newActuatorCount=0;
+	var secretkey="01234567890123456789";
+	alert(secretkey);
+	
+	var receivedData=RECEIVED_DATA_QUERY_RESPONSE;    
+var numberOfDevices=receivedData[DEVICE_ARRAY].length;
+for(var i=0;i<numberOfDevices;i++)
+{
+	var id="device"+i.toString();
+	$("<div></div>").attr('id',id).appendTo('#deviceTable'); 	
+}
+for(var i=0;i<numberOfDevices;i++)
+{
+	var idSelector="#device"+i.toString();
+	var removeDeviceButton="removeDevice_"+i.toString();
+	alert(removeDeviceButton);
+	var deviceName=receivedData[DEVICE_ARRAY][i][DEVICE_PROFILE][DEVICE_NAME];
+	var deviceLocation=receivedData['devices'][i]['deviceprofile']['location'];
+	
+	$(idSelector).append("<p><b>Device Name:"+deviceName+"</b> <br/> <b>Device Location "+deviceLocation+"</b> <br/></p>");
+	$(idSelector).append("<button id="+removeDeviceButton+">Remove Device</button>"); 
+	$('#'+removeDeviceButton).click(function() {
+		 
+		 var deviceIndex=this.id.toString();
+		 deviceIndex=parseInt(deviceIndex.substr(deviceIndex.length - 1));
+		 var deviceToBeRemoved=receivedData[DEVICE_ARRAY][deviceIndex][DEVICE_PROFILE][DEVICE_NAME];
+		 var messageToDeleteDevice={}
+		 messageToDeleteDevice["deviceName"]=deviceToBeRemoved;
+		 messageToDeleteDevice["secretkey"]=secretkey;
+		 alert(JSON.stringify(messageToDeleteDevice));
+		 $.post(URL_DELETE_DEVICE,JSON.stringify(messageToDeleteDevice), function(data) {
+			
+			alert("Response received "+data);
+				});
+
+			
+		});
+	$(idSelector).append("<p><dd><b>Sensors</b></dd></p>");
+	var sensor=receivedData[DEVICE_ARRAY][i][DEVICE_PROFILE][DEVICE_SENSORS];
+	var numberOfSensors=sensor.length;
+	for(var j=0;j<numberOfSensors;j++)
+	
+		{   var sensorName=sensor[j][DEVICE_SENSOR_NAME];
+		    var sensorId="sensor_"+i.toString()+"_"+j.toString();		    
+			$(idSelector).append("<dd><table id="+sensorId+"><tr><td> SensorName: "+sensorName+"<td/></tr></table></dd>");
+			var channel=sensor[j][DEVICE_SENSOR_CHANNELS];
+			var numberOfChannels=channel.length;
+			
+			$(idSelector).append("<p><dd>&nbsp&nbsp&nbsp&nbspChannels</dd></p>");
+			var channelTableId=sensorId+"channel";
+			$(idSelector).append("<table id="+channelTableId+"></table>");
+			for(var k=0;k<numberOfChannels;k++)
+				{
+					var channelName=channel[k][DEVICE_SENSOR_CHANNEL_NAME];
+					var channelType=channel[k][DEVICE_SENSOR_CHANNEL_TYPE];
+					$("#"+channelTableId).append("<dd>&nbsp&nbsp&nbsp&nbsp<tr><td>ChannelName  "+channelName+"<td/><td>ChannelType  "+channelType+"<td/></tr><dd>");
+					
+				}
+				
+			$(idSelector).append("<hr/>");
+		}
+		
+	$(idSelector).append("<hr/>");
+	$(idSelector).append("<hr/>");
+	
+	
+	
+	
+	
+	
+} 
+		
+	addNewDeviceFunction();
+
+	});
+	</script>
+</head>
+
+<body>
+	<div id ="deviceTable">
+		List of devices
+	</div>
+	<div id ="newDevice">
+		<h2><b>Add new Device</b></h2>
+		<br/>
+		<label id="newDeviceNameLabel">New Device Name</label>
+		<input type="text" id="newDeviceName"></input>
+		<label id="newDeviceLocationLabel">New Device Location</label>
+		<input type="text" id="newDeviceLocation"></input>
+		
+	</div>
+	<button id ="addNewSensor">Add a sensor</button>
+	<br/>
+	<div id="newSensorsDiv"></div>
+	<button id ="addNewActuator">Add an actuator</button>
+	<div id="newActuatorsDiv"></div>
+	<button id ="doneDevice">Device Done</button>
+
+
+
+	
+	<input type="hidden" id =secretkey />
+	
+</body>
+
+
+</html>

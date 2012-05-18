@@ -1,0 +1,41 @@
+<html>
+	
+	<br/>
+	
+	<head>
+		<title>SensorAct</title>
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/styles.css'}">
+		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+
+				$("#devices").attr('href', URL_DEVICES);
+				$("#visualization").attr('href', URL_VISUALIZATION);
+				$("#logout").attr('href', URL_LOGOUT_USER);
+				$("#repositoryInformation").attr('href', URL_REPOSITORY_INFO);
+
+			});
+
+		</script>
+	</head>
+	<body>
+		<ul>
+			<li>
+				<a id="devices" >Devices</a>
+			</li>
+			<li>
+				<a id="visualization">Visualization</a>
+			</li>
+			<li>
+				<a id="repositoryInformation">Repository Information</a>
+			</li>
+			<li>
+				<a id="logout">Logout</a>
+			</li>
+			<li>
+				Hi ${flash.username}
+			</li>
+		</ul>
+	</body>
+</html>
