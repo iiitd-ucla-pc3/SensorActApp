@@ -162,11 +162,14 @@
 								responseFromServer = data;
 
 							});
-							if((responseFromServer.hasOwnProperty("statuscode"))) {
-								alertError("Following error occured " + responseFromServer["message"])
+							if((responseFromServer[RESPONSE_STATUS_CODE]!=0)) {
+								alertError("Following error occured " + responseFromServer[RESPONSE_MESSAGE])
 
 							} else {
 								removeError();
+								window.location = URL_HOME;
+								
+								
 							}
 
 						} catch(e) {

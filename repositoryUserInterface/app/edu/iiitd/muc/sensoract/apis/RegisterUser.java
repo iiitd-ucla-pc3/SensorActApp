@@ -33,8 +33,8 @@ public class RegisterUser extends SensorActAPI {
 
 		}
 
-		HttpResponse responseFromBroker = sendRequestToBroker(body);
-		APIResponse responseStatus = getStatusFromResponse(responseFromBroker);
+		HttpResponse responseFromRepository = sendRequestToBroker(body);
+		APIResponse responseStatus = getStatusFromResponse(responseFromRepository);
 		if (responseStatus.statuscode == Const.SUCCESS)
 
 		{
@@ -49,6 +49,8 @@ public class RegisterUser extends SensorActAPI {
 
 			}
 
+		} else {
+			renderJSON(responseFromRepository.getString());
 		}
 
 	}

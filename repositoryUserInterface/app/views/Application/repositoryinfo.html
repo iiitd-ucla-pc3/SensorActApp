@@ -1,0 +1,69 @@
+<html>
+	<head>
+		<title> SensorAct </title>
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/styles.css'}">
+		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				
+				
+				var repsonseFromServer;
+				//Setting up in async mode
+				jQuery.ajaxSetup({
+					async : false
+				});
+				//Hide all forms
+				
+				$("#errorDiv").hide();
+
+			
+				function alertError(errorMessage) {
+					$("#errorDiv").html(errorMessage);
+					$("#errorDiv").fadeIn('slow');
+					return false;
+				}
+
+				function removeError() {
+					$("#errorDiv").html("");
+					$("#errorDiv").hide();
+					return false;
+				}
+				
+				//Get the repository information
+				try {
+
+					$.get(URL_GET_REPOSITORY_INFO, function(data) {
+								responseFromServer = data;
+
+							});
+						if(receivedData.hasOwnProperty(RESPONSE_STATUS_CODE))
+						{
+							alertError("Following error occured " + responseFromServer[RESPONSE_MESSAGE]);
+							}
+							else{
+								$("#repoName").val=responseFromServer[REPOSITORY_NAME];
+								$("#repoURL").val=responseFromServer[REPOSITORY_URL];
+							}
+
+						} catch(e) {
+							alertError(e);
+						}
+			
+			});
+
+		</script>
+	</head>
+	<body>
+		<div id="errorDiv" class="errorDiv"></div>
+		<div id="repoInfo">
+			Please note down this information carefully for registering your repository account with the Broker
+			<label>Repo Name</label>
+			<input id="repoName"></input>
+			<label>Repo URL</label>
+			<input id="repoURL"></input>
+			
+		</div>
+		
+	</body>
+</html>
