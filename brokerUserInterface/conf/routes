@@ -18,8 +18,9 @@ POST    /adddevice                              Application.adddevice
 GET     /listalldevices							Application.listalldevices
 POST    /querydata                              Application.querydata
 GET     /repository							  Application.repository
-GET     /getrepositoryinfo							  Application.getrepositoryinfo
-POST     /generatesecretkey							  Application.generatesecretkey
+GET     /listallrepositories						Application.listallrepositories
+POST    /registerrepository                         Application.registerrepository
+
 
 
 

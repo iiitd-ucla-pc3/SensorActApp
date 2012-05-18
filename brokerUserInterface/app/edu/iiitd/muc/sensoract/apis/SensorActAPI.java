@@ -14,5 +14,7 @@ public class SensorActAPI extends Application {
 	public static DeleteDevice deleteDevice = new DeleteDevice();
 	public static QueryData queryData = new QueryData();
 	public static Login login = new Login();
+	public static ListAllRepositories listAllRepositories = new ListAllRepositories();
+	public static RegisterRepository registerRepository = new RegisterRepository();
 
 }

@@ -114,6 +114,10 @@ public class Const {
 			+ "device/list";
 	public static final String URL_BROKER_QUERY_DATA = URL_BROKER_SERVER
 			+ "data/query";
+	public static final String URL_BROKER_LIST_ALL_REPOSITORIES = URL_BROKER_SERVER
+			+ "user/repo/list";
+	public static final String URL_BROKER_REGISTER_REPOSITORY = URL_BROKER_SERVER
+			+ "user/repo/register";
 
 	public static final String URL_HOME = URL_UI_SERVER + "home";
 	public static final String URL_LOGIN = URL_UI_SERVER + "login";

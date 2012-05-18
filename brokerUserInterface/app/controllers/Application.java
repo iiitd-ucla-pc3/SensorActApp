@@ -108,4 +108,12 @@ public class Application extends Controller {
 
 	}
 
+	public static void listallrepositories() {
+		api.listAllRepositories.doProcess();
+	}
+
+	public static void registerrepository() {
+		String body = request.params.get(Const.REQUEST_BODY);
+		api.registerRepository.doProcess(body);
+	}
 }

@@ -100,7 +100,9 @@ var MAX_VALUE_SENSOR_ID=100;
 
 //Dictionary elements associated with Repository information
 var REPOSITORY_NAME="name";
-var REPOSITORY_URL="URL"
+var REPOSITORY_URL="URL";
+var REPOSITORY_LIST="repolist";
+var REPOSITORY_KEY="repokey";
 
 
 
@@ -117,6 +119,7 @@ var URL_DELETE_DEVICE=URL_UI_SERVER+"deletedevice";
 var URL_REGISTER_USER=URL_UI_SERVER+"register";
 var URL_QUERY_DATA=URL_UI_SERVER+"querydata";
 var URL_LIST_ALL_DEVICES=URL_UI_SERVER+"listalldevices";
+var URL_LIST_ALL_REPOSITORIES=URL_UI_SERVER+"listallrepositories";
 var URL_HOME=URL_UI_SERVER+"home";
 var URL_DEVICES=URL_UI_SERVER+"device"
 var URL_LOGOUT_USER=URL_UI_SERVER+"logout";
@@ -124,6 +127,8 @@ var URL_VISUALIZATION=URL_UI_SERVER+"display2";
 var URL_REPOSITORY_INFO=URL_UI_SERVER+"repository";
 var URL_GET_REPOSITORY_INFO=URL_UI_SERVER+"getrepositoryinfo";
 var URL_GENERATE_SECRET_KEY=URL_UI_SERVER+"generatesecretkey";
+var URL_REGISTER_REPOSITORY=URL_UI_SERVER+"registerrepository";
+
 
 
 
