@@ -39,7 +39,7 @@ public class ListAllDevices extends SensorActAPI {
 		String reqStr = "{\"secretkey\":" + secretkey + "}";
 
 		try {
-			response = WS.url(Const.URL_REPOSITORY_LIST_ALL_DEVICES)
+			response = WS.url(Const.URL_BROKER_LIST_ALL_DEVICES)
 					.body(reqStr).mimeType("application/json").post();
 		} catch (Exception e) {
 			renderJSON(gson.toJson(new APIResponse(Const.API_LISTALLDEVICES, 1,

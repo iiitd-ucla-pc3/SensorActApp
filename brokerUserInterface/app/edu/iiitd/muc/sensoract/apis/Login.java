@@ -56,7 +56,7 @@ public class Login extends SensorActAPI {
 	private HttpResponse sendRequestToBroker(String body) {
 		HttpResponse response = null;
 		try {
-			response = WS.url(Const.URL_REPOSITORY_LOGIN_USER).body(body)
+			response = WS.url(Const.URL_BROKER_LOGIN_USER).body(body)
 					.mimeType("application/json").post();
 		} catch (Exception e) {
 			renderJSON(gson.toJson(new APIResponse(Const.API_LOGIN, 1, e

@@ -28,7 +28,7 @@ public class QueryData extends SensorActAPI {
 	private HttpResponse sendRequestToBroker(String queryBody) {
 		HttpResponse response=null;
 		try{
-		response = WS.url(Const.URL_REPOSITORY_QUERY_DATA).body(queryBody).mimeType("application/json").post(); 
+		response = WS.url(Const.URL_BROKER_QUERY_DATA).body(queryBody).mimeType("application/json").post(); 
 		}
 		catch (Exception e)
 		{

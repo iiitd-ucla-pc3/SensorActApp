@@ -100,40 +100,23 @@ public class Const {
 	/*
 	 * URL's
 	 */
-	public static final String URL_UI_SERVER = "http://localhost:9002/";
-	public static final String URL_BROKER_SERVER = "http://muc.iiitd.com:9001/";
-	public static final String URL_REPOSITORY_SERVER = "http://localhost:9000/";
-	public static final String URL_REPOSITORY_REGISTER_USER = URL_REPOSITORY_SERVER
+	public static final String URL_UI_SERVER = "http://localhost:9003/";
+	public static final String URL_BROKER_SERVER = "http://192.168.1.174:9001/";
+	public static final String URL_BROKER_REGISTER_USER = URL_BROKER_SERVER
 			+ "user/register";
-	public static final String URL_REPOSITORY_LOGIN_USER = URL_REPOSITORY_SERVER
+	public static final String URL_BROKER_LOGIN_USER = URL_BROKER_SERVER
 			+ "user/login";
-	public static final String URL_REPOSITORY_ADD_DEVICE = URL_REPOSITORY_SERVER
+	public static final String URL_BROKER_ADD_DEVICE = URL_BROKER_SERVER
 			+ "device/add";
-	public static final String URL_REPOSITORY_DELETE_DEVICE = URL_REPOSITORY_SERVER
-			+ "device/delete";
-	public static final String URL_REPOSITORY_LIST_ALL_DEVICES = URL_REPOSITORY_SERVER
-			+ "device/list";
-	public static final String URL_REPOSITORY_QUERY_DATA = URL_REPOSITORY_SERVER
-			+ "data/query";
-	public static final String URL_REPOSITORY_GET_INFO = URL_REPOSITORY_SERVER
-			+ "repo/info";
-	public static final String URL_REPOSITORY_GENERATE_SECRET_KEY = URL_REPOSITORY_SERVER
-			+ "user/generate/secretkey";
-
-	public static final String URL_BROKER_ADD_USER = URL_BROKER_SERVER
-			+ "registeruser";
-	// public static final String URL_REPSOSITORY_ADD_DEVICE =
-	// URL_BROKER_SERVER+"adddevice";
 	public static final String URL_BROKER_DELETE_DEVICE = URL_BROKER_SERVER
-			+ "deletedevice";
-	public static final String URL_BROKER_QUERY_DATA = URL_REPOSITORY_SERVER
-			+ "querydata";
-	public static final String URL_BROKER_LOGIN = URL_BROKER_SERVER + "login";
+			+ "device/delete";
+	public static final String URL_BROKER_LIST_ALL_DEVICES = URL_BROKER_SERVER
+			+ "device/list";
+	public static final String URL_BROKER_QUERY_DATA = URL_BROKER_SERVER
+			+ "data/query";
+
 	public static final String URL_HOME = URL_UI_SERVER + "home";
 	public static final String URL_LOGIN = URL_UI_SERVER + "login";
-
-	public static final String URL_BROKER_LIST_ALL_DEVICES = URL_BROKER_SERVER
-			+ "listalldevices";
 
 	/*
 	 * Parameters

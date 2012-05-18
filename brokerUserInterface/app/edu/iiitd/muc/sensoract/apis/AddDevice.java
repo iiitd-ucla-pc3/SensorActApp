@@ -66,7 +66,7 @@ public class AddDevice extends SensorActAPI {
 	private HttpResponse sendRequestToRepository(String deviceBody) {
 		HttpResponse response = null;
 		try {
-			response = WS.url(Const.URL_REPOSITORY_ADD_DEVICE).body(deviceBody)
+			response = WS.url(Const.URL_BROKER_ADD_DEVICE).body(deviceBody)
 					.mimeType("application/json").post();
 		} catch (Exception e) {
 			renderJSON(gson.toJson(new APIResponse(Const.API_ADDDEVICE, 1, e
