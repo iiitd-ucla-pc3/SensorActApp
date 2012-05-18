@@ -1,0 +1,30 @@
+#{extends 'main.html' /}
+#{set title:'Register' /}
+
+<h1>Register</h1>
+
+#{form @adduser()}
+    #{field 'username'}
+        <p class="${field.errorClass}">
+            <strong>Username:</strong> <input type="text" name="${field.name}" size="16" value="${username}"> *
+            <span class="error">${field.error}</span>
+        </p>
+    #{/field}
+   
+    #{field 'password'}
+        <p class="${field.errorClass}">
+            <strong>Password:</strong> <input type="password" name="${field.name}" size="16" value="${password}"> *
+            <span class="error">${field.error}</span>
+        </p>
+    #{/field}
+     #{field 'email'}
+        <p class="${field.errorClass}">
+            <strong>EmailID:</strong> <input type="text" name="${field.name}" size="16" value="${email}"> *
+            <span class="error">${field.error}</span>
+        </p>
+    #{/field}
+      
+    <p class="buttons">
+        <input type="submit" value="Register"> <a href="@{index()}">Cancel</a>    
+    </p>
+#{/form}
