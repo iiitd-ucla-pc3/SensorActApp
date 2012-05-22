@@ -25,7 +25,7 @@ label {
 }
 
 input.error {
-	border: 5px solid #f00;
+	border: 3px solid #f00;
 }
 
 div.errorDiv
@@ -45,5 +45,56 @@ h1
 	padding:30px;
 	font-family: Arial, "MS Trebuchet", sans-serif;
 	
+}
+
+div#newSensor
+{
+	background: rgb(70,136,71);
+	color: rgb(223,240,216);
+	padding:20px;
+	-moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    border-radius: 15px;
+    border: 2px solid;
+}
+div#newActuator
+{
+	background: rgb(70,136,71);
+	color: rgb(223,240,216);
+	padding:20px;
+	-moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    border-radius: 15px;
+    border: 2px solid;
+}
+div#newSensor
+{
+	background: rgb(70,136,71);
+	color: rgb(223,240,216);
+	padding:20px;
+	-moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    border-radius: 15px;
+    border: 2px solid;
+}
+div.oldSensor
+{
+	background: rgb(70,136,71);
+	color: rgb(223,240,216);
+	padding:20px;
+	-moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    border-radius: 15px;
+    border: 2px solid;
+}
+div#oldActuator
+{
+	background: rgb(70,136,71);
+	color: rgb(223,240,216);
+	padding:20px;
+	-moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    border-radius: 15px;
+    border: 2px solid;
 }
 

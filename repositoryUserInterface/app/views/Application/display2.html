@@ -391,7 +391,8 @@
 					for(var i = 0; i < numberOfWavesegs; i++) {
 						var timestamp = receivedData[WAVESEGMENT_ARRAY][i][WAVESEGMENT_DATA][WAVESEGMENT_TIMESTAMP];
 						console.log(timestamp);
-						var samplingPeriod = 1 / receivedData[WAVESEGMENT_ARRAY][i][WAVESEGMENT_DATA][WAVESEGMENT_SAMPLING_INTERVAL];
+						var samplingPeriod=1;
+						//var samplingPeriod = 1 / receivedData[WAVESEGMENT_ARRAY][i][WAVESEGMENT_DATA][WAVESEGMENT_SAMPLING_INTERVAL];
 						for(var j = 0; j < numberOfSeries; j++) {
 
 							var numberOfReadings = receivedData[WAVESEGMENT_ARRAY][i][WAVESEGMENT_DATA][WAVESEGMENT_CHANNELS][j][WAVESEGMENT_READINGS].length;
