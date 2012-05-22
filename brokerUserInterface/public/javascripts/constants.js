@@ -110,7 +110,7 @@ var REPOSITORY_KEY="repokey";
 //URL's ------------------------------------------------------------------------
 //Note that this needs to be modified when on LAN etc to http://192.168.1.122:9000
 //############# DEVICE  ###################################
-var URL_UI_SERVER="http://localhost:9003/";
+var URL_UI_SERVER="http://muc.iiitd.com:9003/";
 
 var URL_LOGIN_USER=URL_UI_SERVER+"login";
 var URL_REGISTER_USER=URL_UI_SERVER+"register";
