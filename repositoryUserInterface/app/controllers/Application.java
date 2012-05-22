@@ -29,8 +29,9 @@ public class Application extends Controller {
 	 */
 	@Before(unless = { "login", "index", "registeruser" })
 	static void checkAuthentication() {
-		System.out.println(session);
 		if (session.get(Const.USERNAME) == null)
+			index();
+		if (usernameToSecretKeyMap.get(session.get(Const.USERNAME)) == null)
 			index();
 	}
 
