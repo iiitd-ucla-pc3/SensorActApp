@@ -109,6 +109,9 @@ public class Const {
 			+ "user/login";
 	public static final String URL_REPOSITORY_ADD_DEVICE = URL_REPOSITORY_SERVER
 			+ "device/add";
+	public static final String URL_REPOSITORY_FIND_DEVICE = URL_REPOSITORY_SERVER
+			+ "device/get";
+
 	public static final String URL_REPOSITORY_DELETE_DEVICE = URL_REPOSITORY_SERVER
 			+ "device/delete";
 	public static final String URL_REPOSITORY_LIST_ALL_DEVICES = URL_REPOSITORY_SERVER

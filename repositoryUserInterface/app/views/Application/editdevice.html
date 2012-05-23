@@ -13,6 +13,7 @@
 				 * Global Variables used during the lifecycle of the page
 				 *
 				 */
+				var deviceToEdit = $("#devicename").val();
 				var newSensorCount = 0;
 				var newActuatorCount = 0;
 				var secretkey = FAKE_SECRET_KEY;
@@ -40,14 +41,7 @@
 				 * Hiding Error Divs
 				 */
 				$("#errorDiv").hide();
-				$("#newDevice").hide();
-
 				$("#getDeviceErrorDiv").hide();
-				$( "#dialog" ).dialog({
-			autoOpen: false,
-			show: "blind",
-			hide: "explode"
-		})
 
 				/**
 				 * @param :Error Information
@@ -125,11 +119,14 @@
 
 				}
 
+				var editDevice = {};
+				editDevice["devicename"] = deviceToEdit;
+				editDevice[SECRET_KEY] = secretkey;
 				/*
-				 * Make a query to fetch all the devices associated with the user
+				 * Make a query to fetch the device
 				 */
 				try {
-					$.get(URL_LIST_ALL_DEVICES, function(data) {
+					$.post(URL_FIND_DEVICE, JSON.stringify(editDevice), function(data) {
 						receivedData = data;
 						//alert(JSON.stringify(receivedData));
 
@@ -139,109 +136,65 @@
 						{
 							alertGetDeviceError("Following errors occured " + receivedData[RESPONSE_MESSAGE]);
 						} else {
+							//Got the device profile
+							//Add highest level information
+							$("#newDeviceName").val(receivedData[DEVICE_NAME]);
+							$("#newDeviceLocation").val(receivedData[DEVICE_LOCATION]);
+							$("#newDeviceIP").val(receivedData[DEVICE_IP]);
+							$("#newDeviceTags").val(receivedData[DEVICE_TAGS]);
 
-							var numberOfDevices = receivedData[DEVICE_ARRAY].length;
-							//alert(numberOfDevices);
-							if(numberOfDevices > 0) {
-								$("#getDeviceErrorDiv").html("");
-								$("#getDeviceErrorDiv").hide();
-
-								for(var i = 0; i < numberOfDevices; i++) {
-									var id = "device" + i.toString();
-									$("<h2><a href=\"#\">" + receivedData[DEVICE_ARRAY][i][DEVICE_NAME] + "  " + receivedData[DEVICE_ARRAY][i][DEVICE_LOCATION] + "</a><h2><div id=\"" + id + "\"></div>").appendTo('#accordion');
+							//Add actuators
+							if(receivedData.hasOwnProperty(DEVICE_ACTUATORS)) {
+								var actuatorsArray = receivedData[DEVICE_ACTUATORS];
+								for(var i = 0; i < actuatorsArray.length; i++) {
+									$("#newActuatorsDiv").append("<div id='newActuator'><hr/><label>ActuatorName</label><input value=" + actuatorsArray[i][DEVICE_ACTUATOR_NAME] + "></input><br/><button class='removeActuator'>Remove Actuator</button></div>");
+									newNumberOfActuators++;
+									$(".removeActuator").click(function() {
+										$(this).parent().remove();
+										newNumberOfActuators--;
+									});
 								}
-								for(var i = 0; i < numberOfDevices; i++) {
-									var idSelector = "#device" + i.toString();
-									var removeDeviceButton = "removeDevice_" + i.toString();
-									var editDeviceButton = "editDevice_" + i.toString();
-									//alert(removeDeviceButton);
-									var deviceName = receivedData[DEVICE_ARRAY][i][DEVICE_NAME];
-									var deviceLocation = receivedData[DEVICE_ARRAY][i][DEVICE_LOCATION];
-									var deviceIP = receivedData[DEVICE_ARRAY][i][DEVICE_IP];
-									var deviceTags = receivedData[DEVICE_ARRAY][i][DEVICE_TAGS];
-									//$('#accordion').append("<h3><a href=\"#\">"+deviceName+"</a></h3>")
+							}
+							if(receivedData.hasOwnProperty(DEVICE_SENSORS)) {
+								var sensorsArray = receivedData[DEVICE_SENSORS];
+								//alert(JSON.stringify(sensorsArray));
+								for(var i = 0; i < sensorsArray.length; i++) {
+									//alert(sensorsArray[i]["name"]);
+									$("#newSensorsDiv").append("<div class='sensorDiv'><hr/><label>SensorName</label><input id='newSensorName' class='newSensor' value=" + sensorsArray[i][DEVICE_SENSOR_NAME] + "></input><br/><label>SensorID</label><input id='newSensorID' class='newSensorID'></input><br/>" + "<button class='newSensorAddChannel'>Add channels</button>" + "<button class='newSensorRemove'>Delete Sensor</button>" + "<div class='newSensorChannels'></div></div>");
+									$(".newSensorRemove").click(function() {
 
-									//$(idSelector).append("<p><b>Device Name: " + deviceName + "</b> <br/> <b>Device Location: " + deviceLocation + "</b> <br/><b>Device IP: " + deviceIP + "</b> <br/><b>Device Tags: " + deviceTags + "</b> <br/></p>");
+										$(this).parent().remove();
+										newNumberOfSensors--;
+										return false;
+									});
+									var channelsArray = sensorsArray[i][DEVICE_SENSOR_CHANNELS];
+									var ctr = 0;
 
-									$(idSelector).append("<button id=" + removeDeviceButton + ">Remove Device</button>");
-									$(idSelector).append("<button id=" + editDeviceButton + ">Edit Device</button>");
+									$("#newSensorsDiv").find(".sensorDiv").each(function() {
+										if(ctr == i) {
+											for(var j = 0; j < channelsArray.length; j++) {
+												($(this).children(".newSensorChannels")).append("<tr><td><label>Name</label></td><td><input class='labName' value=" + channelsArray[j]["name"] + "></input></td><td><label>Unit</label></td><td><input class='labUnit' value=" + channelsArray[j]["unit"] + "></input><td><label>Type</label></td><td><input class='labType' value=" + channelsArray[j]["type"] + "></input></td><td><label>SamplingPeriod</label></td><td><input class='labSampling'/><td><button class='removeChannel'>Remove Channel</button></td></tr>");
+												$(".removeChannel").click(function() {
 
-									$('#' + removeDeviceButton).click(function() {
+													$(this).parent().parent().remove();
 
-										var deviceIndex = this.id.toString();
-										deviceIndex = parseInt(deviceIndex.substr(deviceIndex.length - 1));
-										var deviceToBeRemoved = receivedData[DEVICE_ARRAY][deviceIndex][DEVICE_NAME];
-										var messageToDeleteDevice = {}
-										messageToDeleteDevice["devicename"] = deviceToBeRemoved;
-										messageToDeleteDevice[SECRET_KEY] = secretkey;
-										$.post(URL_DELETE_DEVICE, JSON.stringify(messageToDeleteDevice), function(data) {
-
-											if(data[RESPONSE_STATUS_CODE] == SUCCESS) {
-												window.location.reload();
-											} else {
-												alertGetDeviceError(data[RESPONSE_MESSAGE]);
+												});
 											}
+										}
+										ctr++;
+									});
+
+									$('.newSensorAddChannel').unbind('click').click(function() {
+
+										($(this).siblings(".newSensorChannels")).append("<tr><td><label>Name</label></td><td><input class='labName'/></td><td><label>Unit</label></td><td><input class='labUnit'/><td><label>Type</label></td><td><input class='labType'/></td><td><label>SamplingPeriod</label></td><td><input class='labSampling'/><td><button class='removeChannel'>Remove Channel</button></td></tr>");
+										$(".removeChannel").click(function() {
+
+											$(this).parent().parent().remove();
 
 										});
+										return false;
 									});
-									$('#' + editDeviceButton).click(function() {
-
-										var deviceIndex = this.id.toString();
-										deviceIndex = parseInt(deviceIndex.substr(deviceIndex.length - 1));
-										var deviceToBeEdited = receivedData[DEVICE_ARRAY][deviceIndex][DEVICE_NAME];
-										var messageToEditDevice = {}
-										messageToEditDevice["devicename"] = deviceToBeEdited;
-										messageToEditDevice[SECRET_KEY] = secretkey;
-										window.location=URL_EDIT_DEVICE+"?devicename="+deviceToBeEdited;
-
-										
-									});
-									if(receivedData[DEVICE_ARRAY][i].hasOwnProperty(DEVICE_SENSORS)) {
-										$(idSelector).append("<div class=\"oldSensors\"></div>");
-
-
-										//$(idSelector).append("<p><b>Sensors</b></p>");
-										var sensor = receivedData[DEVICE_ARRAY][i][DEVICE_SENSORS];
-										var numberOfSensors = sensor.length;
-										for(var j = 0; j < numberOfSensors; j++) {
-											//alert(numberOfSensors);
-											var sensorName = sensor[j][DEVICE_SENSOR_NAME];
-											//var sensorName = sensor[j][DEVICE_SENSOR_ID];
-
-											var sensorId = "sensor_" + i.toString() + "_" + j.toString();
-
-											$(idSelector).children(".oldSensors").append("<div class=oldSensor id ="+sensorId+"><label>SensorName<label><input value=" + sensorName + "></input><label>SensorID<label><input value=" + sensorId + "></input></div>");
-											var channel = sensor[j][DEVICE_SENSOR_CHANNELS];
-											var numberOfChannels = channel.length;
-
-											//$(idSelector).children("#oldSensor").append("<p>Channels</p>");
-											var channelTableId = sensorId + "channel";
-											$(idSelector).children(".oldSensors").children("#"+sensorId).append("<table id=" + channelTableId + "></table>");
-											for(var k = 0; k < numberOfChannels; k++) {
-												var channelName = channel[k][DEVICE_SENSOR_CHANNEL_NAME];
-												var channelType = channel[k][DEVICE_SENSOR_CHANNEL_TYPE];
-												var channelUnit = channel[k][DEVICE_SENSOR_CHANNEL_UNIT];
-												var channelSamplingPeriod = channel[k][DEVICE_SENSOR_CHANNEL_SAMPLING_PERIOD];
-												$("#" + channelTableId).append("<tr><td><label>ChannelName</label><input value=" + channelName + "></input></td><td><label>ChannelType</label><input value=" + channelType + "></input></td><td><label>ChannelUnit</label><input value=" + channelUnit + "></input></td><td><label>ChannelSamplingPeriod</label><input value=" + channelSamplingPeriod + "></input></td></tr>");
-
-											}
-
-										}
-									}
-
-									if(receivedData[DEVICE_ARRAY][i].hasOwnProperty(DEVICE_ACTUATORS)) {
-
-										$(idSelector).append("<div class=\"oldActuators\"></div>");
-										var actuator = receivedData[DEVICE_ARRAY][i][DEVICE_ACTUATORS];
-										var numberOfActuators = actuator.length;
-										for(var j = 0; j < numberOfActuators; j++) {
-											var actuatorName = actuator[j][DEVICE_ACTUATOR_NAME];
-											//var sensorId = "actuator_" + i.toString() + "_" + j.toString();
-											$(idSelector).children(".oldActuators").append("<div id=\"oldActuator\"><label>ActuatorName</label><input value=\"" + actuatorName + "\"></input></div>");
-										}
-
-									}
-
+									newNumberOfSensors++;
 								}
 
 							}
@@ -258,25 +211,8 @@
 				 * Description:This function is used to add a new sensor
 				 */
 
-				$("#accordion").accordion({
-					autoHeight : false,
-					active : -1,
-					collapsible : true,
-					icons : {
-						"header" : "ui-icon-plus",
-						"headerSelected" : "ui-icon-minus"
-					}
-				});
-				$(".accordion").accordion();
-				
-				$("#newDeviceButton").click(function() {
-			//$( "#dialog" ).dialog( "open" );
-			$("#newDevice").show();
-			return false;
-		});
-
 				$("#addNewSensor").click(function() {
-					$("#newSensorsDiv").append("<div id='newSensor'><hr/><label>SensorName</label><input id='newSensorName' class='newSensor'></input><br/><label>SensorID</label><input id='newSensorID' class='newSensorID'></input><br/>" + "<button class='newSensorAddChannel'>Add channels</button>" + "<button class='newSensorRemove'>Delete Sensor</button>" + "<div class='newSensorChannels'></div></div>");
+					$("#newSensorsDiv").append("<div class='sensorDiv'><hr/><label>SensorName</label><input id='newSensorName' class='newSensor'></input><br/><label>SensorID</label><input id='newSensorID' class='newSensorID'></input><br/>" + "<button class='newSensorAddChannel'>Add channels</button>" + "<button class='newSensorRemove'>Delete Sensor</button>" + "<div class='newSensorChannels'></div></div>");
 					$(".newSensorRemove").click(function() {
 
 						$(this).parent().remove();
@@ -430,10 +366,30 @@
 					var deviceRequestToSend = {};
 					deviceRequestToSend[DEVICE_PROFILE] = deviceObject;
 					deviceRequestToSend[SECRET_KEY] = secretkey;
+					var messageToDeleteDevice={};
+					messageToDeleteDevice["devicename"] = deviceToEdit;
+					messageToDeleteDevice[SECRET_KEY] = secretkey;
+					//Delete older device
+					var isDeleteSuccessful = false;
+					try {
+						$.post(URL_DELETE_DEVICE, JSON.stringify(messageToDeleteDevice), function(data) {
+
+							if(data[RESPONSE_STATUS_CODE] == SUCCESS) {
+								isDeleteSuccessful = true;
+							} else {
+								alertGetDeviceError(data[RESPONSE_MESSAGE]);
+							}
+
+						});
+					} catch(e) {
+						alertAddDeviceError(e);
+					}
+					if(isDeleteSuccessful)
+					{
 					try {
 						$.post(URL_ADD_DEVICE, JSON.stringify(deviceRequestToSend), function(data) {
 							if(data[RESPONSE_STATUS_CODE] == 0) {
-								window.location.reload();
+								window.location = URL_DEVICES;
 							} else {
 								alertAddDeviceError("Following error occured: " + data[RESPONSE_MESSAGE]);
 							}
@@ -441,6 +397,7 @@
 						});
 					} catch(e) {
 						alertAddDeviceError(e);
+					}
 					}
 					return false;
 				});
@@ -458,12 +415,8 @@
 			</li>
 		</ul>
 		<div id="getDeviceErrorDiv" class ="errorDiv"></div>
-		<h1>List of devices</h1>
-		<div id="accordion"></div>
 		<div id="errorDiv" class="errorDiv"></div>
-		<h2 id="newDeviceButton">Add new Device</h2>
 		<div id ="newDevice">
-			
 			<br/>
 			<label id="newDeviceNameLabel">Name</label>
 			<input type="text" id="newDeviceName">
@@ -481,23 +434,19 @@
 			<input type="text" id="newDeviceTags">
 			</input>
 			<br/>
-		
-		<button id ="addNewSensor">
-			Add a sensor
-		</button>
-		<button id ="addNewActuator">
-			Add an actuator
-		</button>
-		<div id="newSensorsDiv"></div>
-		<div id="newActuatorsDiv"></div>
-		<button id ="doneDevice">
-			Device Done
-		</button>
+			<button id ="addNewSensor">
+				Add a sensor
+			</button>
+			<button id ="addNewActuator">
+				Add an actuator
+			</button>
+			<div id="newSensorsDiv"></div>
+			<div id="newActuatorsDiv"></div>
+			<button id ="doneDevice">
+				Device Done
+			</button>
 		</div>
-		<div id="dialog" title="Basic dialog">
-	<p>This is an animated dialog which is useful for displaying information. The dialog window can be moved, resized and closed with the 'x' icon.</p>
-</div>
-		<input type="hidden" id =username value =${username}>
+		<input type="hidden" id =devicename value =${devicename}>
 		</input>
 	</body>
 </html>

@@ -114,6 +114,11 @@ var URL_LOGIN_USER=URL_UI_SERVER+"login";
 var URL_REGISTER_USER=URL_UI_SERVER+"register";
 var URL_ADD_DEVICE=URL_UI_SERVER+"adddevice";
 var URL_DELETE_DEVICE=URL_UI_SERVER+"deletedevice";
+var URL_EDIT_DEVICE=URL_UI_SERVER+"editdevice";
+var URL_FIND_DEVICE=URL_UI_SERVER+"finddevice";
+
+
+
 var URL_REGISTER_USER=URL_UI_SERVER+"register";
 var URL_QUERY_DATA=URL_UI_SERVER+"querydata";
 var URL_LIST_ALL_DEVICES=URL_UI_SERVER+"listalldevices";

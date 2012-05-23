@@ -20,8 +20,8 @@ POST    /querydata                              Application.querydata
 GET     /repository							  Application.repository
 GET     /getrepositoryinfo							  Application.getrepositoryinfo
 POST     /generatesecretkey							  Application.generatesecretkey
-
-
+GET      /editdevice                                 Application.editdevice
+POST     /finddevice                                 Application.finddevice
 
 
 # Ignore favicon requests

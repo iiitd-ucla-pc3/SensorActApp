@@ -16,5 +16,6 @@ public class SensorActAPI extends Application {
 	public static Login login = new Login();
 	public static GetRepositoryInfo getRepositoryInfo = new GetRepositoryInfo();
 	public static GenerateSecretKey generateSecretKey = new GenerateSecretKey();
+	public static FindDevice findDevice = new FindDevice();
 
 }

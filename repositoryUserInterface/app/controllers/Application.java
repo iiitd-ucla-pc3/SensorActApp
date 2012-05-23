@@ -55,6 +55,17 @@ public class Application extends Controller {
 		render();
 	}
 
+	public static void editdevice(String devicename) {
+		renderArgs.put("devicename", devicename);
+		render();
+	}
+
+	public static void finddevice() {
+		String body = request.params.get(Const.REQUEST_BODY);
+		api.findDevice.doProcess(body);
+
+	}
+
 	public static void device2() {
 		render();
 	}

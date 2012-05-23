@@ -57,6 +57,16 @@ div#newSensor
     border-radius: 15px;
     border: 2px solid;
 }
+div.sensorDiv
+{
+	background: rgb(70,136,71);
+	color: rgb(223,240,216);
+	padding:20px;
+	-moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    border-radius: 15px;
+    border: 2px solid;
+}
 div#newActuator
 {
 	background: rgb(70,136,71);
