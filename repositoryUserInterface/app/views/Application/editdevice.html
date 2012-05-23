@@ -15,7 +15,6 @@
 				 */
 				var deviceToEdit = $("#devicename").val();
 				var isDevice = $("#isdevice").val();
-				alert(isDevice);
 				var mode=$("#mode").val();
 				var deleteDeviceOrTemplate;
 				var findDeviceOrTemplate;
@@ -159,17 +158,13 @@
 
 							//Add actuators
 							if(receivedData.hasOwnProperty(DEVICE_ACTUATORS)) {
-								alert(receivedData[DEVICE_IP]);
 								$("#newActuatorsDiv").append("<div id=ipDiv><label id=\"newDeviceIPLabel\">IP</label><input id=newDeviceIP value=" + receivedData[DEVICE_IP] + "></input></div>");
 								var actuatorsArray = receivedData[DEVICE_ACTUATORS];
 								for(var i = 0; i < actuatorsArray.length; i++) {
-									alert(newNumberOfActuators);
 									$("#newActuatorsDiv").append("<div id='newActuator'><hr/><label>ActuatorName</label><input class=labActName value=" + actuatorsArray[i][DEVICE_ACTUATOR_NAME] + "></input><br/><button class='removeActuator'>Remove Actuator</button></div>");
 									newNumberOfActuators++;
 									$(".removeActuator").unbind('click').click(function() {
 										
-										alert("Local remove");
-										alert(newNumberOfActuators);
 										$(this).parent().remove();
 										newNumberOfActuators--;
 										if(newNumberOfActuators == 0) {
@@ -263,8 +258,7 @@
 				 */
 
 				$("#addNewActuator").unbind('click').click(function() {
-					alert("Global add");
-					alert(newNumberOfActuators);
+					
 					newNumberOfActuators++;
 					
 					if(newNumberOfActuators == 1) {
@@ -273,8 +267,6 @@
 					
 					$("#newActuatorsDiv").append("<div id='newActuator'><hr/><label>ActuatorName</label><input class=labActName></input><br/><button class='removeActuator'>Remove Actuator</button></div>");
 					$(".removeActuator").unbind('click').click(function() {
-						alert("Global remove");
-						alert(newNumberOfActuators);
 						$(this).parent().remove();
 						newNumberOfActuators--;
 						if(newNumberOfActuators == 0) {

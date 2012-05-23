@@ -70,6 +70,12 @@ public class Application extends Controller {
 
 	}
 
+	public static void finddevicetemplate() {
+		String body = request.params.get(Const.REQUEST_BODY);
+		api.findDeviceTemplate.doProcess(body);
+
+	}
+
 	public static void device2() {
 		render();
 	}
@@ -80,9 +86,20 @@ public class Application extends Controller {
 
 	}
 
+	public static void adddevicetemplate() {
+		String deviceBody = request.params.get(Const.REQUEST_BODY);
+		api.addDeviceTemplate.doProcess(deviceBody);
+
+	}
+
 	public static void deletedevice() {
 		String deleteDeviceRequest = request.params.get(Const.REQUEST_BODY);
 		api.deleteDevice.doProcess(deleteDeviceRequest);
+	}
+
+	public static void deletedevicetemplate() {
+		String deleteDeviceRequest = request.params.get(Const.REQUEST_BODY);
+		api.deleteDeviceTemplate.doProcess(deleteDeviceRequest);
 	}
 
 	public static void querydata() {
@@ -92,6 +109,10 @@ public class Application extends Controller {
 
 	public static void listalldevices() {
 		api.listAllDevices.doProcess();
+	}
+
+	public static void listalldevicetemplates() {
+		api.listAllDeviceTemplates.doProcess();
 	}
 
 	public static void registeruser() {

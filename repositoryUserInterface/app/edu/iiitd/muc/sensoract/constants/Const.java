@@ -102,20 +102,31 @@ public class Const {
 	 */
 	public static final String URL_UI_SERVER = "http://localhost:9002/";
 	public static final String URL_BROKER_SERVER = "http://muc.iiitd.com:9001/";
-	public static final String URL_REPOSITORY_SERVER = "http://localhost:9000/";
+	public static final String URL_REPOSITORY_SERVER = "http://muc.iiitd.com:9001/";
 	public static final String URL_REPOSITORY_REGISTER_USER = URL_REPOSITORY_SERVER
 			+ "user/register";
 	public static final String URL_REPOSITORY_LOGIN_USER = URL_REPOSITORY_SERVER
 			+ "user/login";
 	public static final String URL_REPOSITORY_ADD_DEVICE = URL_REPOSITORY_SERVER
 			+ "device/add";
+	public static final String URL_REPOSITORY_ADD_DEVICE_TEMPLATE = URL_REPOSITORY_SERVER
+			+ "device/template/add";
+
 	public static final String URL_REPOSITORY_FIND_DEVICE = URL_REPOSITORY_SERVER
 			+ "device/get";
+	public static final String URL_REPOSITORY_FIND_DEVICE_TEMPLATE = URL_REPOSITORY_SERVER
+			+ "device/template/get";
 
 	public static final String URL_REPOSITORY_DELETE_DEVICE = URL_REPOSITORY_SERVER
 			+ "device/delete";
+	public static final String URL_REPOSITORY_DELETE_DEVICE_TEMPLATE = URL_REPOSITORY_SERVER
+			+ "device/template/delete";
+
 	public static final String URL_REPOSITORY_LIST_ALL_DEVICES = URL_REPOSITORY_SERVER
 			+ "device/list";
+	public static final String URL_REPOSITORY_LIST_ALL_DEVICE_TEMPLATES = URL_REPOSITORY_SERVER
+			+ "device/template/list";
+
 	public static final String URL_REPOSITORY_QUERY_DATA = URL_REPOSITORY_SERVER
 			+ "data/query";
 	public static final String URL_REPOSITORY_GET_INFO = URL_REPOSITORY_SERVER

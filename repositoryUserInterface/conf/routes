@@ -12,16 +12,24 @@ POST    /register                               Application.registeruser
 GET     /home									Application.home
 GET     /logout                                 Application.logout
 POST    /deletedevice                           Application.deletedevice
+POST    /deletedevicetemplate                           Application.deletedevicetemplate
+
 GET     /device                                 Application.device
 GET     /device2                                Application.device2
 POST    /adddevice                              Application.adddevice
+POST    /adddevicetemplate                              Application.adddevicetemplate
+
 GET     /listalldevices							Application.listalldevices
+GET     /listalldevicetemplates							Application.listalldevicetemplates
+
 POST    /querydata                              Application.querydata
 GET     /repository							  Application.repository
 GET     /getrepositoryinfo							  Application.getrepositoryinfo
 POST     /generatesecretkey							  Application.generatesecretkey
 GET      /editdevice                                 Application.editdevice
 POST     /finddevice                                 Application.finddevice
+POST     /finddevicetemplate                                 Application.finddevicetemplate
+
 
 
 # Ignore favicon requests

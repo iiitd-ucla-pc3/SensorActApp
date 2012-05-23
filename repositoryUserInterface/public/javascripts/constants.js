@@ -118,7 +118,7 @@ var URL_DELETE_DEVICE=URL_UI_SERVER+"deletedevice";
 var URL_EDIT_DEVICE=URL_UI_SERVER+"editdevice";
 var URL_FIND_DEVICE=URL_UI_SERVER+"finddevice";
 var URL_ADD_DEVICE_TEMPLATE=URL_UI_SERVER+"adddevicetemplate";
-var URL_DELETE_DEVICE_TEMPLATE=URL_UI_SERVER+"deletedevice";
+var URL_DELETE_DEVICE_TEMPLATE=URL_UI_SERVER+"deletedevicetemplate";
 var URL_FIND_DEVICE_TEMPLATE=URL_UI_SERVER+"finddevicetemplate";
 
 
