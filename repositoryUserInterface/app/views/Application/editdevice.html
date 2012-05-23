@@ -14,6 +14,21 @@
 				 *
 				 */
 				var deviceToEdit = $("#devicename").val();
+				var isDevice = $("#isdevice").val();
+				alert(isDevice);
+				var mode=$("#mode").val();
+				var deleteDeviceOrTemplate;
+				var findDeviceOrTemplate;
+				if(isDevice == "true") {
+					deleteDeviceOrTemplate = URL_DELETE_DEVICE;
+					findDeviceOrTemplate = URL_FIND_DEVICE;
+
+				} else {
+					deleteDeviceOrTemplate = URL_DELETE_DEVICE_TEMPLATE;
+					findDeviceOrTemplate = URL_FIND_DEVICE_TEMPLATE;
+
+				}
+
 				var newSensorCount = 0;
 				var newActuatorCount = 0;
 				var secretkey = FAKE_SECRET_KEY;
@@ -126,7 +141,7 @@
 				 * Make a query to fetch the device
 				 */
 				try {
-					$.post(URL_FIND_DEVICE, JSON.stringify(editDevice), function(data) {
+					$.post(findDeviceOrTemplate, JSON.stringify(editDevice), function(data) {
 						receivedData = data;
 						//alert(JSON.stringify(receivedData));
 
@@ -140,18 +155,26 @@
 							//Add highest level information
 							$("#newDeviceName").val(receivedData[DEVICE_NAME]);
 							$("#newDeviceLocation").val(receivedData[DEVICE_LOCATION]);
-							$("#newDeviceIP").val(receivedData[DEVICE_IP]);
 							$("#newDeviceTags").val(receivedData[DEVICE_TAGS]);
 
 							//Add actuators
 							if(receivedData.hasOwnProperty(DEVICE_ACTUATORS)) {
+								alert(receivedData[DEVICE_IP]);
+								$("#newActuatorsDiv").append("<div id=ipDiv><label id=\"newDeviceIPLabel\">IP</label><input id=newDeviceIP value=" + receivedData[DEVICE_IP] + "></input></div>");
 								var actuatorsArray = receivedData[DEVICE_ACTUATORS];
 								for(var i = 0; i < actuatorsArray.length; i++) {
-									$("#newActuatorsDiv").append("<div id='newActuator'><hr/><label>ActuatorName</label><input value=" + actuatorsArray[i][DEVICE_ACTUATOR_NAME] + "></input><br/><button class='removeActuator'>Remove Actuator</button></div>");
+									alert(newNumberOfActuators);
+									$("#newActuatorsDiv").append("<div id='newActuator'><hr/><label>ActuatorName</label><input class=labActName value=" + actuatorsArray[i][DEVICE_ACTUATOR_NAME] + "></input><br/><button class='removeActuator'>Remove Actuator</button></div>");
 									newNumberOfActuators++;
-									$(".removeActuator").click(function() {
+									$(".removeActuator").unbind('click').click(function() {
+										
+										alert("Local remove");
+										alert(newNumberOfActuators);
 										$(this).parent().remove();
 										newNumberOfActuators--;
+										if(newNumberOfActuators == 0) {
+											$('#ipDiv').remove();
+										}
 									});
 								}
 							}
@@ -239,12 +262,24 @@
 				 * It also binds a function to remove the actuator
 				 */
 
-				$("#addNewActuator").click(function() {
-					$("#newActuatorsDiv").append("<div id='newActuator'><hr/><label>ActuatorName</label><input></input><br/><button class='removeActuator'>Remove Actuator</button></div>");
+				$("#addNewActuator").unbind('click').click(function() {
+					alert("Global add");
+					alert(newNumberOfActuators);
 					newNumberOfActuators++;
-					$(".removeActuator").click(function() {
+					
+					if(newNumberOfActuators == 1) {
+						$("#newActuatorsDiv").append("<div id=ipDiv><label id=\"newDeviceIPLabel\">IP</label><input type=\"text\" id=\"newDeviceIP\"></input></div>");
+					}
+					
+					$("#newActuatorsDiv").append("<div id='newActuator'><hr/><label>ActuatorName</label><input class=labActName></input><br/><button class='removeActuator'>Remove Actuator</button></div>");
+					$(".removeActuator").unbind('click').click(function() {
+						alert("Global remove");
+						alert(newNumberOfActuators);
 						$(this).parent().remove();
 						newNumberOfActuators--;
+						if(newNumberOfActuators == 0) {
+							$('#ipDiv').remove();
+						}
 					});
 					return false;
 				});
@@ -261,7 +296,7 @@
 					var sensorCount = 0;
 
 					//Adding Actuators
-					$("#newActuatorsDiv").find("input").each(function() {
+					$("#newActuatorsDiv").find("input.labActName").each(function() {
 
 						deviceObject[DEVICE_ACTUATORS][actuatorCount] = {};
 						deviceObject[DEVICE_ACTUATORS][actuatorCount][DEVICE_ACTUATOR_NAME] = $(this).val();
@@ -336,8 +371,7 @@
 					deviceObject[DEVICE_TAGS] = $("#newDeviceTags").val();
 					validateFieldAndMakeErrorInformation($("#newDeviceTags"), MIN_LENGTH_DEVICE_TAGS, MAX_LENGTH_DEVICE_TAGS, "device", "tags", "");
 
-					deviceObject[DEVICE_IP] = $("#newDeviceIP").val();
-					validateFieldAndMakeErrorInformation($("#newDeviceIP"), MIN_LENGTH_DEVICE_IP, MAX_LENGTH_DEVICE_IP, "device", "IP", "");
+					
 
 					if((sensorCount == 0) && (actuatorCount == 0)) {
 						errorState = true;
@@ -351,6 +385,11 @@
 						delete deviceObject["sensors"];
 					}
 
+					if(actuatorCount>0)
+					{
+						deviceObject[DEVICE_IP] = $("#newDeviceIP").val();
+					validateFieldAndMakeErrorInformation($("#newDeviceIP"), MIN_LENGTH_DEVICE_IP, MAX_LENGTH_DEVICE_IP, "device", "IP", "");
+					}
 					if(errorState == true) {
 
 						alertAddDeviceError(errorInformation);
@@ -366,39 +405,83 @@
 					var deviceRequestToSend = {};
 					deviceRequestToSend[DEVICE_PROFILE] = deviceObject;
 					deviceRequestToSend[SECRET_KEY] = secretkey;
-					var messageToDeleteDevice={};
-					messageToDeleteDevice["devicename"] = deviceToEdit;
-					messageToDeleteDevice[SECRET_KEY] = secretkey;
-					//Delete older device
-					var isDeleteSuccessful = false;
-					try {
-						$.post(URL_DELETE_DEVICE, JSON.stringify(messageToDeleteDevice), function(data) {
+					var addDeviceOrTemplateURL;
+					if($("#deviceOrTemplateSelect").find(":selected").text() == "Device") {
+						addDeviceOrTemplateURL = URL_ADD_DEVICE;
+					} else {
+						addDeviceOrTemplateURL = URL_ADD_DEVICE_TEMPLATE;
+					}
+					if(deviceToEdit != FAKE_DEVICE_NAME) {
 
-							if(data[RESPONSE_STATUS_CODE] == SUCCESS) {
-								isDeleteSuccessful = true;
-							} else {
-								alertGetDeviceError(data[RESPONSE_MESSAGE]);
+						var messageToDeleteDevice = {};
+						messageToDeleteDevice["devicename"] = deviceToEdit;
+						messageToDeleteDevice[SECRET_KEY] = secretkey;
+
+						//Delete older device
+						if(mode=="update")
+						{
+						var isDeleteSuccessful = false;
+						
+						try {
+							$.post(deleteDeviceOrTemplate, JSON.stringify(messageToDeleteDevice), function(data) {
+
+								if(data[RESPONSE_STATUS_CODE] == SUCCESS) {
+									isDeleteSuccessful = true;
+								} else {
+									alertGetDeviceError(data[RESPONSE_MESSAGE]);
+								}
+
+							});
+						} catch(e) {
+							alertAddDeviceError(e);
+						}
+						if(isDeleteSuccessful) {
+							try {
+								$.post(addDeviceOrTemplateURL, JSON.stringify(deviceRequestToSend), function(data) {
+									if(data[RESPONSE_STATUS_CODE] == 0) {
+										window.location = URL_DEVICES;
+									} else {
+										alertAddDeviceError("Following error occured: " + data[RESPONSE_MESSAGE]);
+									}
+
+								});
+							} catch(e) {
+								alertAddDeviceError(e);
 							}
+						}
+						}
+						else
+						{
+							try {
+								$.post(addDeviceOrTemplateURL, JSON.stringify(deviceRequestToSend), function(data) {
+									if(data[RESPONSE_STATUS_CODE] == 0) {
+										window.location = URL_DEVICES;
+									} else {
+										alertAddDeviceError("Following error occured: " + data[RESPONSE_MESSAGE]);
+									}
 
-						});
-					} catch(e) {
-						alertAddDeviceError(e);
-					}
-					if(isDeleteSuccessful)
-					{
-					try {
-						$.post(URL_ADD_DEVICE, JSON.stringify(deviceRequestToSend), function(data) {
-							if(data[RESPONSE_STATUS_CODE] == 0) {
-								window.location = URL_DEVICES;
-							} else {
-								alertAddDeviceError("Following error occured: " + data[RESPONSE_MESSAGE]);
+								});
+							} catch(e) {
+								alertAddDeviceError(e);
 							}
+							
+						}
+					}//
+					else {
+						//Device/Template was added from scratch
+						try {
+							$.post(addDeviceOrTemplateURL, JSON.stringify(deviceRequestToSend), function(data) {
+								if(data[RESPONSE_STATUS_CODE] == 0) {
+									window.location = URL_DEVICES;
+								} else {
+									alertAddDeviceError("Following error occured: " + data[RESPONSE_MESSAGE]);
+								}
 
-						});
-					} catch(e) {
-						alertAddDeviceError(e);
-					}
-					}
+							});
+						} catch(e) {
+							alertAddDeviceError(e);
+						}
+					}//End else
 					return false;
 				});
 			});
@@ -426,10 +509,6 @@
 			<input type="text" id="newDeviceLocation">
 			</input>
 			<br/>
-			<label id="newDeviceIPLabel">IP</label>
-			<input type="text" id="newDeviceIP">
-			</input>
-			<br/>
 			<label id="newDeviceTagsLabel">Tags</label>
 			<input type="text" id="newDeviceTags">
 			</input>
@@ -445,8 +524,14 @@
 			<button id ="doneDevice">
 				Device Done
 			</button>
+			<select id=deviceOrTemplateSelect>
+				<option value="device">Device</option>
+				<option value="template">Template</option>
+			</select>
 		</div>
 		<input type="hidden" id =devicename value =${devicename}>
+		<input type="hidden" id =isdevice value =${isdevice}>
+		<input type="hidden" id =mode value =${mode}>
 		</input>
 	</body>
 </html>

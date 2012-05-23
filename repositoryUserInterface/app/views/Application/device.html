@@ -154,6 +154,8 @@
 									var idSelector = "#device" + i.toString();
 									var removeDeviceButton = "removeDevice_" + i.toString();
 									var editDeviceButton = "editDevice_" + i.toString();
+									var saveAsButton = "saveAsDevice_" + i.toString();
+
 									//alert(removeDeviceButton);
 									var deviceName = receivedData[DEVICE_ARRAY][i][DEVICE_NAME];
 									var deviceLocation = receivedData[DEVICE_ARRAY][i][DEVICE_LOCATION];
@@ -165,6 +167,8 @@
 
 									$(idSelector).append("<button id=" + removeDeviceButton + ">Remove Device</button>");
 									$(idSelector).append("<button id=" + editDeviceButton + ">Edit Device</button>");
+									$(idSelector).append("<button id=" + saveAsButton + ">Save As</button>");
+
 
 									$('#' + removeDeviceButton).click(function() {
 
@@ -192,7 +196,19 @@
 										var messageToEditDevice = {}
 										messageToEditDevice["devicename"] = deviceToBeEdited;
 										messageToEditDevice[SECRET_KEY] = secretkey;
-										window.location=URL_EDIT_DEVICE+"?devicename="+deviceToBeEdited;
+										window.location=URL_EDIT_DEVICE+"?devicename="+deviceToBeEdited+"&isdevice=true&mode=update";
+
+										
+									});
+									$('#' + saveAsButton).click(function() {
+
+										var deviceIndex = this.id.toString();
+										deviceIndex = parseInt(deviceIndex.substr(deviceIndex.length - 1));
+										var deviceToBeEdited = receivedData[DEVICE_ARRAY][deviceIndex][DEVICE_NAME];
+										var messageToEditDevice = {}
+										messageToEditDevice["devicename"] = deviceToBeEdited;
+										messageToEditDevice[SECRET_KEY] = secretkey;
+										window.location=URL_EDIT_DEVICE+"?devicename="+deviceToBeEdited+"&isdevice=true&mode=create";
 
 										
 									});
@@ -494,9 +510,7 @@
 			Device Done
 		</button>
 		</div>
-		<div id="dialog" title="Basic dialog">
-	<p>This is an animated dialog which is useful for displaying information. The dialog window can be moved, resized and closed with the 'x' icon.</p>
-</div>
+		
 		<input type="hidden" id =username value =${username}>
 		</input>
 	</body>
