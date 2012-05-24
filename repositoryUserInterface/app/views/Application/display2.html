@@ -185,8 +185,15 @@
 							if(!(receivedData.hasOwnProperty(RESPONSE_STATUS_CODE)))
 							//Means it contains data
 							{
+								if(receivedData[WAVESEGMENT_ARRAY].length>0)
+								{
 								removeError();
 								series = appendElementsToSeries(series, receivedData);
+								}
+								else
+								{
+									alertError("No Data found");
+								}
 							} else {
 								alertError("Following error " + receivedData[RESPONSE_MESSAGE])
 							}
