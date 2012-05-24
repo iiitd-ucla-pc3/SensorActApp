@@ -1,6 +1,6 @@
 //Common constants 
 var FAKE_SECRET_KEY="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-var FAKE_DEVICE_NAME="!@#$%^&*()!@#$%^&*()";
+var FAKE_DEVICE_NAME="aaaaaaaaaaaaaaaaaaa";
 var SECRET_KEY="secretkey";
 var USERNAME="username";
 var SUCCESS=0;

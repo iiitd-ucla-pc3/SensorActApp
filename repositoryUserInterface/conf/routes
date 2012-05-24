@@ -12,7 +12,7 @@ POST    /register                               Application.registeruser
 GET     /home									Application.home
 GET     /logout                                 Application.logout
 POST    /deletedevice                           Application.deletedevice
-POST    /deletedevicetemplate                           Application.deletedevicetemplate
+POST    /deletedevicetemplate                   Application.deletedevicetemplate
 
 GET     /device                                 Application.device
 GET     /device2                                Application.device2

@@ -15,7 +15,7 @@
 				 */
 				var deviceToEdit = $("#devicename").val();
 				var isDevice = $("#isdevice").val();
-				var mode=$("#mode").val();
+				var mode = $("#mode").val();
 				var deleteDeviceOrTemplate;
 				var findDeviceOrTemplate;
 				if(isDevice == "true") {
@@ -139,90 +139,92 @@
 				/*
 				 * Make a query to fetch the device
 				 */
-				try {
-					$.post(findDeviceOrTemplate, JSON.stringify(editDevice), function(data) {
-						receivedData = data;
-						//alert(JSON.stringify(receivedData));
+				if(deviceToEdit != FAKE_DEVICE_NAME) {
+					try {
+						$.post(findDeviceOrTemplate, JSON.stringify(editDevice), function(data) {
+							receivedData = data;
+							//alert(JSON.stringify(receivedData));
 
-						//Successfully received data
-						if(receivedData.hasOwnProperty(RESPONSE_STATUS_CODE))//Means a failure has occured {
-						//The API call has failed
-						{
-							alertGetDeviceError("Following errors occured " + receivedData[RESPONSE_MESSAGE]);
-						} else {
-							//Got the device profile
-							//Add highest level information
-							$("#newDeviceName").val(receivedData[DEVICE_NAME]);
-							$("#newDeviceLocation").val(receivedData[DEVICE_LOCATION]);
-							$("#newDeviceTags").val(receivedData[DEVICE_TAGS]);
+							//Successfully received data
+							if(receivedData.hasOwnProperty(RESPONSE_STATUS_CODE))//Means a failure has occured {
+							//The API call has failed
+							{
+								alertGetDeviceError("Following errors occured " + receivedData[RESPONSE_MESSAGE]);
+							} else {
+								//Got the device profile
+								//Add highest level information
+								$("#newDeviceName").val(receivedData[DEVICE_NAME]);
+								$("#newDeviceLocation").val(receivedData[DEVICE_LOCATION]);
+								$("#newDeviceTags").val(receivedData[DEVICE_TAGS]);
 
-							//Add actuators
-							if(receivedData.hasOwnProperty(DEVICE_ACTUATORS)) {
-								$("#newActuatorsDiv").append("<div id=ipDiv><label id=\"newDeviceIPLabel\">IP</label><input id=newDeviceIP value=" + receivedData[DEVICE_IP] + "></input></div>");
-								var actuatorsArray = receivedData[DEVICE_ACTUATORS];
-								for(var i = 0; i < actuatorsArray.length; i++) {
-									$("#newActuatorsDiv").append("<div id='newActuator'><hr/><label>ActuatorName</label><input class=labActName value=" + actuatorsArray[i][DEVICE_ACTUATOR_NAME] + "></input><br/><button class='removeActuator'>Remove Actuator</button></div>");
-									newNumberOfActuators++;
-									$(".removeActuator").unbind('click').click(function() {
-										
-										$(this).parent().remove();
-										newNumberOfActuators--;
-										if(newNumberOfActuators == 0) {
-											$('#ipDiv').remove();
-										}
-									});
-								}
-							}
-							if(receivedData.hasOwnProperty(DEVICE_SENSORS)) {
-								var sensorsArray = receivedData[DEVICE_SENSORS];
-								//alert(JSON.stringify(sensorsArray));
-								for(var i = 0; i < sensorsArray.length; i++) {
-									//alert(sensorsArray[i]["name"]);
-									$("#newSensorsDiv").append("<div class='sensorDiv'><hr/><label>SensorName</label><input id='newSensorName' class='newSensor' value=" + sensorsArray[i][DEVICE_SENSOR_NAME] + "></input><br/><label>SensorID</label><input id='newSensorID' class='newSensorID'></input><br/>" + "<button class='newSensorAddChannel'>Add channels</button>" + "<button class='newSensorRemove'>Delete Sensor</button>" + "<div class='newSensorChannels'></div></div>");
-									$(".newSensorRemove").click(function() {
+								//Add actuators
+								if(receivedData.hasOwnProperty(DEVICE_ACTUATORS)) {
+									$("#newActuatorsDiv").append("<div id=ipDiv><label id=\"newDeviceIPLabel\">IP</label><input id=newDeviceIP value=" + receivedData[DEVICE_IP] + "></input></div>");
+									var actuatorsArray = receivedData[DEVICE_ACTUATORS];
+									for(var i = 0; i < actuatorsArray.length; i++) {
+										$("#newActuatorsDiv").append("<div id='newActuator'><hr/><label>ActuatorName</label><input class=labActName value=" + actuatorsArray[i][DEVICE_ACTUATOR_NAME] + "></input><br/><button class='removeActuator'>Remove Actuator</button></div>");
+										newNumberOfActuators++;
+										$(".removeActuator").unbind('click').click(function() {
 
-										$(this).parent().remove();
-										newNumberOfSensors--;
-										return false;
-									});
-									var channelsArray = sensorsArray[i][DEVICE_SENSOR_CHANNELS];
-									var ctr = 0;
-
-									$("#newSensorsDiv").find(".sensorDiv").each(function() {
-										if(ctr == i) {
-											for(var j = 0; j < channelsArray.length; j++) {
-												($(this).children(".newSensorChannels")).append("<tr><td><label>Name</label></td><td><input class='labName' value=" + channelsArray[j]["name"] + "></input></td><td><label>Unit</label></td><td><input class='labUnit' value=" + channelsArray[j]["unit"] + "></input><td><label>Type</label></td><td><input class='labType' value=" + channelsArray[j]["type"] + "></input></td><td><label>SamplingPeriod</label></td><td><input class='labSampling'/><td><button class='removeChannel'>Remove Channel</button></td></tr>");
-												$(".removeChannel").click(function() {
-
-													$(this).parent().parent().remove();
-
-												});
+											$(this).parent().remove();
+											newNumberOfActuators--;
+											if(newNumberOfActuators == 0) {
+												$('#ipDiv').remove();
 											}
-										}
-										ctr++;
-									});
-
-									$('.newSensorAddChannel').unbind('click').click(function() {
-
-										($(this).siblings(".newSensorChannels")).append("<tr><td><label>Name</label></td><td><input class='labName'/></td><td><label>Unit</label></td><td><input class='labUnit'/><td><label>Type</label></td><td><input class='labType'/></td><td><label>SamplingPeriod</label></td><td><input class='labSampling'/><td><button class='removeChannel'>Remove Channel</button></td></tr>");
-										$(".removeChannel").click(function() {
-
-											$(this).parent().parent().remove();
-
 										});
-										return false;
-									});
-									newNumberOfSensors++;
+									}
+								}
+								if(receivedData.hasOwnProperty(DEVICE_SENSORS)) {
+									var sensorsArray = receivedData[DEVICE_SENSORS];
+									//alert(JSON.stringify(sensorsArray));
+									for(var i = 0; i < sensorsArray.length; i++) {
+										//alert(sensorsArray[i]["name"]);
+										$("#newSensorsDiv").append("<div class='sensorDiv'><hr/><label>SensorName</label><input id='newSensorName' class='newSensor' value=" + sensorsArray[i][DEVICE_SENSOR_NAME] + "></input><br/><label>SensorID</label><input id='newSensorID' class='newSensorID' value="+sensorsArray[i][DEVICE_SENSOR_ID]+"></input><br/>" + "<button class='newSensorAddChannel'>Add channels</button>" + "<button class='newSensorRemove'>Delete Sensor</button>" + "<div class='newSensorChannels'></div></div>");
+										$(".newSensorRemove").click(function() {
+
+											$(this).parent().remove();
+											newNumberOfSensors--;
+											return false;
+										});
+										var channelsArray = sensorsArray[i][DEVICE_SENSOR_CHANNELS];
+										var ctr = 0;
+
+										$("#newSensorsDiv").find(".sensorDiv").each(function() {
+											if(ctr == i) {
+												for(var j = 0; j < channelsArray.length; j++) {
+													($(this).children(".newSensorChannels")).append("<tr><td><label>Name</label></td><td><input class='labName' value=" + channelsArray[j]["name"] + "></input></td><td><label>Unit</label></td><td><input class='labUnit' value=" + channelsArray[j]["unit"] + "></input><td><label>Type</label></td><td><input class='labType' value=" + channelsArray[j]["type"] + "></input></td><td><label>SamplingPeriod</label></td><td><input class='labSampling'value="+channelsArray[j]["samplingperiod"]+"></input><td><button class='removeChannel'>Remove Channel</button></td></tr>");
+													$(".removeChannel").click(function() {
+
+														$(this).parent().parent().remove();
+
+													});
+												}
+											}
+											ctr++;
+										});
+
+										$('.newSensorAddChannel').unbind('click').click(function() {
+
+											($(this).siblings(".newSensorChannels")).append("<tr><td><label>Name</label></td><td><input class='labName'/></td><td><label>Unit</label></td><td><input class='labUnit'/><td><label>Type</label></td><td><input class='labType'/></td><td><label>SamplingPeriod</label></td><td><input class='labSampling'/><td><button class='removeChannel'>Remove Channel</button></td></tr>");
+											$(".removeChannel").click(function() {
+
+												$(this).parent().parent().remove();
+
+											});
+											return false;
+										});
+										newNumberOfSensors++;
+									}
+
 								}
 
 							}
 
-						}
-
-					});
-				} catch(e) {
-					//alert("here i am");
-					alertGetDeviceError(e);
+						});
+					} catch(e) {
+						//alert("here i am");
+						alertGetDeviceError(e);
+					}
 				}
 
 				/*
@@ -258,13 +260,12 @@
 				 */
 
 				$("#addNewActuator").unbind('click').click(function() {
-					
 					newNumberOfActuators++;
-					
+
 					if(newNumberOfActuators == 1) {
 						$("#newActuatorsDiv").append("<div id=ipDiv><label id=\"newDeviceIPLabel\">IP</label><input type=\"text\" id=\"newDeviceIP\"></input></div>");
 					}
-					
+
 					$("#newActuatorsDiv").append("<div id='newActuator'><hr/><label>ActuatorName</label><input class=labActName></input><br/><button class='removeActuator'>Remove Actuator</button></div>");
 					$(".removeActuator").unbind('click').click(function() {
 						$(this).parent().remove();
@@ -363,8 +364,6 @@
 					deviceObject[DEVICE_TAGS] = $("#newDeviceTags").val();
 					validateFieldAndMakeErrorInformation($("#newDeviceTags"), MIN_LENGTH_DEVICE_TAGS, MAX_LENGTH_DEVICE_TAGS, "device", "tags", "");
 
-					
-
 					if((sensorCount == 0) && (actuatorCount == 0)) {
 						errorState = true;
 						errorInformation += " Please add either a sensor or an actuator to the device";
@@ -377,10 +376,9 @@
 						delete deviceObject["sensors"];
 					}
 
-					if(actuatorCount>0)
-					{
+					if(actuatorCount > 0) {
 						deviceObject[DEVICE_IP] = $("#newDeviceIP").val();
-					validateFieldAndMakeErrorInformation($("#newDeviceIP"), MIN_LENGTH_DEVICE_IP, MAX_LENGTH_DEVICE_IP, "device", "IP", "");
+						validateFieldAndMakeErrorInformation($("#newDeviceIP"), MIN_LENGTH_DEVICE_IP, MAX_LENGTH_DEVICE_IP, "device", "IP", "");
 					}
 					if(errorState == true) {
 
@@ -410,24 +408,37 @@
 						messageToDeleteDevice[SECRET_KEY] = secretkey;
 
 						//Delete older device
-						if(mode=="update")
-						{
-						var isDeleteSuccessful = false;
-						
-						try {
-							$.post(deleteDeviceOrTemplate, JSON.stringify(messageToDeleteDevice), function(data) {
+						if(mode == "update") {
+							var isDeleteSuccessful = false;
 
-								if(data[RESPONSE_STATUS_CODE] == SUCCESS) {
-									isDeleteSuccessful = true;
-								} else {
-									alertGetDeviceError(data[RESPONSE_MESSAGE]);
+							try {
+								$.post(deleteDeviceOrTemplate, JSON.stringify(messageToDeleteDevice), function(data) {
+
+									if(data[RESPONSE_STATUS_CODE] == SUCCESS) {
+										isDeleteSuccessful = true;
+									} else {
+										alertGetDeviceError(data[RESPONSE_MESSAGE]);
+									}
+
+								});
+							} catch(e) {
+								alertAddDeviceError(e);
+							}
+							if(isDeleteSuccessful) {
+								try {
+									$.post(addDeviceOrTemplateURL, JSON.stringify(deviceRequestToSend), function(data) {
+										if(data[RESPONSE_STATUS_CODE] == 0) {
+											window.location = URL_DEVICES;
+										} else {
+											alertAddDeviceError("Following error occured: " + data[RESPONSE_MESSAGE]);
+										}
+
+									});
+								} catch(e) {
+									alertAddDeviceError(e);
 								}
-
-							});
-						} catch(e) {
-							alertAddDeviceError(e);
-						}
-						if(isDeleteSuccessful) {
+							}
+						} else {
 							try {
 								$.post(addDeviceOrTemplateURL, JSON.stringify(deviceRequestToSend), function(data) {
 									if(data[RESPONSE_STATUS_CODE] == 0) {
@@ -440,23 +451,7 @@
 							} catch(e) {
 								alertAddDeviceError(e);
 							}
-						}
-						}
-						else
-						{
-							try {
-								$.post(addDeviceOrTemplateURL, JSON.stringify(deviceRequestToSend), function(data) {
-									if(data[RESPONSE_STATUS_CODE] == 0) {
-										window.location = URL_DEVICES;
-									} else {
-										alertAddDeviceError("Following error occured: " + data[RESPONSE_MESSAGE]);
-									}
 
-								});
-							} catch(e) {
-								alertAddDeviceError(e);
-							}
-							
 						}
 					}//
 					else {
