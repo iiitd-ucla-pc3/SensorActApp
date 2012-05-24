@@ -305,7 +305,7 @@
 
 							validateFieldAndMakeErrorInformation(this, MIN_LENGTH_SENSOR_NAME, MAX_LENGTH_SENSOR_NAME, "sensor", "name", sensorCount);
 							deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_ID] = $(this).siblings(".newSensorID").val();
-							validateFieldAndMakeErrorInformation($(this).siblings(".newSensorID"), MIN_LENGTH_SENSOR_ID, MAX_LENGTH_SENSOR_ID, "sensor", "id", sensorCount);
+							//validateFieldAndMakeErrorInformation($(this).siblings(".newSensorID"), MIN_LENGTH_SENSOR_ID, MAX_LENGTH_SENSOR_ID, "sensor", "id", sensorCount);
 							validateNumericFieldValue($(this).siblings(".newSensorID"), MIN_VALUE_SENSOR_ID, MAX_VALUE_SENSOR_ID, "sensor", "ID", sensorCount);
 						}
 
@@ -330,7 +330,7 @@
 									}
 									if(($(this).attr("class")).toString().indexOf(CLASS_DEVICE_SENSOR_CHANNEL_SAMPLING_PERIOD) >= 0) {
 										deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_CHANNELS][newChannelCount][DEVICE_SENSOR_CHANNEL_SAMPLING_PERIOD] = $(this).val();
-										validateFieldAndMakeErrorInformation(this, MIN_LENGTH_CHANNEL_SAMPLING_PERIOD, MAX_LENGTH_CHANNEL_SAMPLING_PERIOD, "sensor's " + newChannelCount.toString() + " th channel", "sampling period", sensorCount);
+										//validateFieldAndMakeErrorInformation(this, MIN_LENGTH_CHANNEL_SAMPLING_PERIOD, MAX_LENGTH_CHANNEL_SAMPLING_PERIOD, "sensor's " + newChannelCount.toString() + " th channel", "sampling period", sensorCount);
 										validateNumericFieldValue(this, MIN_VALUE_CHANNEL_SAMPLING_PERIOD, MAX_VALUE_CHANNEL_SAMPLING_PERIOD, "sensor's " + newChannelCount.toString(), "sampling period", sensorCount);
 
 									}
