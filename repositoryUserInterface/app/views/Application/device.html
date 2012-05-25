@@ -18,10 +18,14 @@
 				var secretkey = FAKE_SECRET_KEY;
 				var errorState = false;
 				var errorInformation = "";
-				var receivedData = {};
+				var receivedDeviceData = {};
+				var receivedDeviceTemplateData = {};
 				var deviceObject = {};
 				var newNumberOfSensors = 0;
 				var newNumberOfActuators = 0;
+				var deviceOrTemplateDataList = {};
+				deviceOrTemplateDataList[0] = {};
+				deviceOrTemplateDataList[1] = {};
 
 				/*
 				 * Setting the AJAX to work in sycnhronous fashion
@@ -43,11 +47,6 @@
 				$("#newDevice").hide();
 
 				$("#getDeviceErrorDiv").hide();
-				$("#dialog").dialog({
-					autoOpen : false,
-					show : "blind",
-					hide : "explode"
-				})
 
 				/**
 				 * @param :Error Information
@@ -128,149 +127,180 @@
 				/*
 				 * Make a query to fetch all the devices associated with the user
 				 */
-				try {
-					$.get(URL_LIST_ALL_DEVICES, function(data) {
-						receivedData = data;
-						//alert(JSON.stringify(receivedData));
+				function displayDevicesOrTemplates(urlDevicesOrTemplatesList, urlDevicesOrTemplatesDelete, isDevice) {
 
-						//Successfully received data
-						if(receivedData.hasOwnProperty(RESPONSE_STATUS_CODE))//Means a failure has occured {
-						//The API call has failed
-						{
-							alertGetDeviceError("Following errors occured " + receivedData[RESPONSE_MESSAGE]);
-						} else {
+					var isdevice = isDevice.toString();
+					var index;
+					if(isDevice == "true") {
+						index = 0;
+					} else {
+						index = 1;
+					}
+					try {
+						$.get(urlDevicesOrTemplatesList, function(data) {
+							deviceOrTemplateDataList[index] = data;
+							//alert(JSON.stringify(deviceOrTemplateDataList[index]));
 
-							var numberOfDevices = receivedData[DEVICE_ARRAY].length;
-							//alert(numberOfDevices);
-							if(numberOfDevices > 0) {
-								$("#getDeviceErrorDiv").html("");
-								$("#getDeviceErrorDiv").hide();
+							//alert(JSON.stringify(receivedDeviceData ));
+							//alert(JSON.stringify(deviceOrTemplateDataList[index]));
 
-								for(var i = 0; i < numberOfDevices; i++) {
-									var id = "device" + i.toString();
-									$("<h2><a href=\"#\">" + receivedData[DEVICE_ARRAY][i][DEVICE_NAME] + "  " + receivedData[DEVICE_ARRAY][i][DEVICE_LOCATION] + "</a><h2><div id=\"" + id + "\"></div>").appendTo('#accordion');
-								}
-								for(var i = 0; i < numberOfDevices; i++) {
-									var idSelector = "#device" + i.toString();
-									var removeDeviceButton = "removeDevice_" + i.toString();
-									var editDeviceButton = "editDevice_" + i.toString();
-									var saveAsButton = "saveAsDevice_" + i.toString();
+							//Successfully received data
+							if(deviceOrTemplateDataList[index].hasOwnProperty(RESPONSE_STATUS_CODE))//Means a failure has occured {
+							//The API call has failed
+							{
+								alertGetDeviceError("Following errors occured " + deviceOrTemplateDataList[index][RESPONSE_MESSAGE]);
+							} else {
 
-									//alert(removeDeviceButton);
-									var deviceName = receivedData[DEVICE_ARRAY][i][DEVICE_NAME];
-									var deviceLocation = receivedData[DEVICE_ARRAY][i][DEVICE_LOCATION];
-									var deviceIP = receivedData[DEVICE_ARRAY][i][DEVICE_IP];
-									var deviceTags = receivedData[DEVICE_ARRAY][i][DEVICE_TAGS];
-									//$('#accordion').append("<h3><a href=\"#\">"+deviceName+"</a></h3>")
+								var numberOfDevices = deviceOrTemplateDataList[index][DEVICE_ARRAY].length;
+								//alert(numberOfDevices);
+								if(numberOfDevices > 0) {
+									$("#getDeviceErrorDiv").html("");
+									$("#getDeviceErrorDiv").hide();
 
-									//$(idSelector).append("<p><b>Device Name: " + deviceName + "</b> <br/> <b>Device Location: " + deviceLocation + "</b> <br/><b>Device IP: " + deviceIP + "</b> <br/><b>Device Tags: " + deviceTags + "</b> <br/></p>");
+									for(var i = 0; i < numberOfDevices; i++) {
+										if(index == 0) {
+											var id = "device" + i.toString();
+											$("<h2><a href=\"#\">" + deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_NAME] + "  " + deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_LOCATION] + "</a></h2><div id=\"" + id + "\"></div>").appendTo("#accordion");
+										} else {
+											var id = "devicetemplate" + i.toString();
+											$("<h2><a href=\"#\">" + deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_NAME] + "  " + deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_LOCATION] + "</a></h2><div id=\"" + id + "\"></div>").appendTo("#accordion1");
+										}
 
-									$(idSelector).append("<button id=" + removeDeviceButton + ">Remove Device</button>");
-									$(idSelector).append("<button id=" + editDeviceButton + ">Edit Device</button>");
-									$(idSelector).append("<button id=" + saveAsButton + ">Save As</button>");
+									}
+									for(var i = 0; i < numberOfDevices; i++) {
+										if(index == 0) {
+											var idSelector = "#device" + i.toString();
+											var removeDeviceButton = "removeDevice_" + i.toString();
+											var editDeviceButton = "editDevice_" + i.toString();
+											var saveAsButton = "saveAsDevice_" + i.toString();
+										} else {
+											var idSelector = "#devicetemplate" + i.toString();
+											var removeDeviceButton = "removeDeviceTemplate_" + i.toString();
+											var editDeviceButton = "editDeviceTemplate_" + i.toString();
+											var saveAsButton = "saveAsDeviceTemplate_" + i.toString();
+										}
 
-									$('#' + removeDeviceButton).click(function() {
+										//alert(removeDeviceButton);
+										var deviceName = deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_NAME];
+										var deviceLocation = deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_LOCATION];
+										var deviceIP = deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_IP];
+										var deviceTags = deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_TAGS];
+										//$('#accordion').append("<h3><a href=\"#\">"+deviceName+"</a></h3>")
 
-										var deviceIndex = this.id.toString();
-										deviceIndex = parseInt(deviceIndex.substr(deviceIndex.length - 1));
-										var deviceToBeRemoved = receivedData[DEVICE_ARRAY][deviceIndex][DEVICE_NAME];
-										var messageToDeleteDevice = {}
-										messageToDeleteDevice["devicename"] = deviceToBeRemoved;
-										messageToDeleteDevice[SECRET_KEY] = secretkey;
-										$.post(URL_DELETE_DEVICE, JSON.stringify(messageToDeleteDevice), function(data) {
+										//$(idSelector).append("<p><b>Device Name: " + deviceName + "</b> <br/> <b>Device Location: " + deviceLocation + "</b> <br/><b>Device IP: " + deviceIP + "</b> <br/><b>Device Tags: " + deviceTags + "</b> <br/></p>");
 
-											if(data[RESPONSE_STATUS_CODE] == SUCCESS) {
-												window.location.reload();
-											} else {
-												alertGetDeviceError(data[RESPONSE_MESSAGE]);
-											}
+										$(idSelector).append("<button id=" + removeDeviceButton + ">Remove</button>");
+										$(idSelector).append("<button id=" + editDeviceButton + ">Edit</button>");
+										$(idSelector).append("<button id=" + saveAsButton + ">Save As</button>");
+
+										$('#' + removeDeviceButton).click(function() {
+
+											var deviceIndex = this.id.toString();
+											deviceIndex = parseInt(deviceIndex.substr(deviceIndex.length - 1));
+											var deviceToBeRemoved = deviceOrTemplateDataList[index][DEVICE_ARRAY][deviceIndex][DEVICE_NAME];
+											var messageToDeleteDevice = {}
+											messageToDeleteDevice["devicename"] = deviceToBeRemoved;
+											messageToDeleteDevice[SECRET_KEY] = secretkey;
+											$.post(urlDevicesOrTemplatesDelete, JSON.stringify(messageToDeleteDevice), function(data) {
+
+												if(data[RESPONSE_STATUS_CODE] == SUCCESS) {
+													window.location.reload();
+												} else {
+													alertGetDeviceError(data[RESPONSE_MESSAGE]);
+												}
+
+											});
+										});
+										$('#' + editDeviceButton).click(function() {
+
+											var deviceIndex = this.id.toString();
+											deviceIndex = parseInt(deviceIndex.substr(deviceIndex.length - 1));
+											var deviceToBeEdited = deviceOrTemplateDataList[index][DEVICE_ARRAY][deviceIndex][DEVICE_NAME];
+											var messageToEditDevice = {}
+											messageToEditDevice["devicename"] = deviceToBeEdited;
+											messageToEditDevice[SECRET_KEY] = secretkey;
+											window.location = URL_EDIT_DEVICE + "?devicename=" + deviceToBeEdited + "&isdevice=" + isdevice + "&mode=update";
 
 										});
-									});
-									$('#' + editDeviceButton).click(function() {
+										$('#' + saveAsButton).click(function() {
 
-										var deviceIndex = this.id.toString();
-										deviceIndex = parseInt(deviceIndex.substr(deviceIndex.length - 1));
-										var deviceToBeEdited = receivedData[DEVICE_ARRAY][deviceIndex][DEVICE_NAME];
-										var messageToEditDevice = {}
-										messageToEditDevice["devicename"] = deviceToBeEdited;
-										messageToEditDevice[SECRET_KEY] = secretkey;
-										window.location = URL_EDIT_DEVICE + "?devicename=" + deviceToBeEdited + "&isdevice=true&mode=update";
+											var deviceIndex = this.id.toString();
+											deviceIndex = parseInt(deviceIndex.substr(deviceIndex.length - 1));
+											var deviceToBeEdited = deviceOrTemplateDataList[index][DEVICE_ARRAY][deviceIndex][DEVICE_NAME];
+											var messageToEditDevice = {}
+											messageToEditDevice["devicename"] = deviceToBeEdited;
+											messageToEditDevice[SECRET_KEY] = secretkey;
+											window.location = URL_EDIT_DEVICE + "?devicename=" + deviceToBeEdited + "&isdevice=" + isdevice + "&mode=create";
 
-									});
-									$('#' + saveAsButton).click(function() {
+										});
+										if(deviceOrTemplateDataList[index][DEVICE_ARRAY][i].hasOwnProperty(DEVICE_SENSORS)) {
+											$(idSelector).append("<div class=\"oldSensors\"></div>");
 
-										var deviceIndex = this.id.toString();
-										deviceIndex = parseInt(deviceIndex.substr(deviceIndex.length - 1));
-										var deviceToBeEdited = receivedData[DEVICE_ARRAY][deviceIndex][DEVICE_NAME];
-										var messageToEditDevice = {}
-										messageToEditDevice["devicename"] = deviceToBeEdited;
-										messageToEditDevice[SECRET_KEY] = secretkey;
-										window.location = URL_EDIT_DEVICE + "?devicename=" + deviceToBeEdited + "&isdevice=true&mode=create";
+											//$(idSelector).append("<p><b>Sensors</b></p>");
+											var sensor = deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_SENSORS];
+											var numberOfSensors = sensor.length;
+											for(var j = 0; j < numberOfSensors; j++) {
+												//alert(numberOfSensors);
+												var sensorName = sensor[j][DEVICE_SENSOR_NAME];
+												var sensorID = sensor[j][DEVICE_SENSOR_ID];
+												//var sensorName = sensor[j][DEVICE_SENSOR_ID];
 
-									});
-									if(receivedData[DEVICE_ARRAY][i].hasOwnProperty(DEVICE_SENSORS)) {
-										$(idSelector).append("<div class=\"oldSensors\"></div>");
+												var sensorId = "sensor_" + i.toString() + "_" + j.toString();
 
-										//$(idSelector).append("<p><b>Sensors</b></p>");
-										var sensor = receivedData[DEVICE_ARRAY][i][DEVICE_SENSORS];
-										var numberOfSensors = sensor.length;
-										for(var j = 0; j < numberOfSensors; j++) {
-											//alert(numberOfSensors);
-											var sensorName = sensor[j][DEVICE_SENSOR_NAME];
-											var sensorID = sensor[j][DEVICE_SENSOR_ID];
-											//var sensorName = sensor[j][DEVICE_SENSOR_ID];
+												$(idSelector).children(".oldSensors").append("<div class=oldSensor id =" + sensorId + "><label>SensorName<label><input value=" + sensorName + "></input><label>SensorID<label><input value=" + sensorID + "></input></div>");
+												var channel = sensor[j][DEVICE_SENSOR_CHANNELS];
+												var numberOfChannels = channel.length;
 
-											var sensorId = "sensor_" + i.toString() + "_" + j.toString();
+												//$(idSelector).children("#oldSensor").append("<p>Channels</p>");
+												var channelTableId = sensorId + "channel";
+												$(idSelector).children(".oldSensors").children("#" + sensorId).append("<table id=" + channelTableId + "></table>");
+												for(var k = 0; k < numberOfChannels; k++) {
+													var channelName = channel[k][DEVICE_SENSOR_CHANNEL_NAME];
+													var channelType = channel[k][DEVICE_SENSOR_CHANNEL_TYPE];
+													var channelUnit = channel[k][DEVICE_SENSOR_CHANNEL_UNIT];
+													var channelSamplingPeriod = channel[k][DEVICE_SENSOR_CHANNEL_SAMPLING_PERIOD];
+													$("#" + channelTableId).append("<tr><td><label>Name</label><input value=" + channelName + "></input></td><td><label>Type</label><input value=" + channelType + "></input></td><td><label>Unit</label><input value=" + channelUnit + "></input></td><td><label>SamplingPeriod</label><input value=" + channelSamplingPeriod + "></input></td></tr>");
 
-											$(idSelector).children(".oldSensors").append("<div class=oldSensor id =" + sensorId + "><label>SensorName<label><input value=" + sensorName + "></input><label>SensorID<label><input value=" + sensorID + "></input></div>");
-											var channel = sensor[j][DEVICE_SENSOR_CHANNELS];
-											var numberOfChannels = channel.length;
+												}
 
-											//$(idSelector).children("#oldSensor").append("<p>Channels</p>");
-											var channelTableId = sensorId + "channel";
-											$(idSelector).children(".oldSensors").children("#" + sensorId).append("<table id=" + channelTableId + "></table>");
-											for(var k = 0; k < numberOfChannels; k++) {
-												var channelName = channel[k][DEVICE_SENSOR_CHANNEL_NAME];
-												var channelType = channel[k][DEVICE_SENSOR_CHANNEL_TYPE];
-												var channelUnit = channel[k][DEVICE_SENSOR_CHANNEL_UNIT];
-												var channelSamplingPeriod = channel[k][DEVICE_SENSOR_CHANNEL_SAMPLING_PERIOD];
-												$("#" + channelTableId).append("<tr><td><label>Name</label><input value=" + channelName + "></input></td><td><label>Type</label><input value=" + channelType + "></input></td><td><label>Unit</label><input value=" + channelUnit + "></input></td><td><label>SamplingPeriod</label><input value=" + channelSamplingPeriod + "></input></td></tr>");
+											}
+										}
 
+										if(deviceOrTemplateDataList[index][DEVICE_ARRAY][i].hasOwnProperty(DEVICE_ACTUATORS)) {
+
+											$(idSelector).append("<div class=\"oldActuators\"></div>");
+											$(idSelector).children(".oldActuators").append("<div id=ipDiv><label id=\"newDeviceIPLabel\">IP</label><input id=newDeviceIP value=" + deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_IP] + "></input></div>");
+											var actuator = deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_ACTUATORS];
+											var numberOfActuators = actuator.length;
+											for(var j = 0; j < numberOfActuators; j++) {
+												var actuatorName = actuator[j][DEVICE_ACTUATOR_NAME];
+												//var sensorId = "actuator_" + i.toString() + "_" + j.toString();
+												$(idSelector).children(".oldActuators").append("<div id=\"oldActuator\"><label>ActuatorName</label><input value=\"" + actuatorName + "\"></input></div>");
 											}
 
 										}
-									}
-
-									if(receivedData[DEVICE_ARRAY][i].hasOwnProperty(DEVICE_ACTUATORS)) {
-
-										$(idSelector).append("<div class=\"oldActuators\"></div>");
-										$(idSelector).children(".oldActuators").append("<div id=ipDiv><label id=\"newDeviceIPLabel\">IP</label><input id=newDeviceIP value=" + receivedData[DEVICE_ARRAY][i][DEVICE_IP] + "></input></div>");
-										var actuator = receivedData[DEVICE_ARRAY][i][DEVICE_ACTUATORS];
-										var numberOfActuators = actuator.length;
-										for(var j = 0; j < numberOfActuators; j++) {
-											var actuatorName = actuator[j][DEVICE_ACTUATOR_NAME];
-											//var sensorId = "actuator_" + i.toString() + "_" + j.toString();
-											$(idSelector).children(".oldActuators").append("<div id=\"oldActuator\"><label>ActuatorName</label><input value=\"" + actuatorName + "\"></input></div>");
-										}
 
 									}
 
+								} else {
+									$("#getDeviceErrorDiv").html("No device registered");
+									$("#getDeviceErrorDiv").show();
 								}
 
-							} else {
-								$("#getDeviceErrorDiv").html("No device registered");
-								$("#getDeviceErrorDiv").show();
 							}
 
-						}
-
-					});
-				} catch(e) {
-					//alert("here i am");
-					alertGetDeviceError(e);
+						});
+					} catch(e) {
+						//alert("here i am");
+						alertGetDeviceError(e);
+					}
+					return deviceOrTemplateDataList[index];
 				}
 
+				displayDevicesOrTemplates(URL_LIST_ALL_DEVICES, URL_DELETE_DEVICE, "true", "#accordion");
+				displayDevicesOrTemplates(URL_LIST_ALL_DEVICE_TEMPLATES, URL_DELETE_DEVICE_TEMPLATE,"false", "#accordion1");
+
+				
 				/*
 				 * Description:This function is used to add a new sensor
 				 */
@@ -284,10 +314,19 @@
 						"headerSelected" : "ui-icon-minus"
 					}
 				});
+				$("#accordion1").accordion({
+					autoHeight : false,
+					active : -1,
+					collapsible : true,
+					icons : {
+						"header" : "ui-icon-plus",
+						"headerSelected" : "ui-icon-minus"
+					}
+				});
 				$(".accordion").accordion();
 
 				$("#addNewDeviceOrTemplate").click(function() {
-					//$( "#dialog" ).dialog( "open" );
+
 					window.location = URL_EDIT_DEVICE + "?devicename=" + FAKE_DEVICE_NAME + "&isdevice=true&mode=create";
 					return false;
 				});
@@ -307,6 +346,7 @@
 		<div id="getDeviceErrorDiv" class ="errorDiv"></div>
 		<h1>Registered devices</h1>
 		<div id="accordion"></div>
+		shkdjasda <div id="accordion1"></div>
 		<div id="errorDiv" class="errorDiv"></div>
 		<button id="addNewDeviceOrTemplate">
 			Create New Device/Template

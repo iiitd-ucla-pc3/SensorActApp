@@ -126,6 +126,8 @@ var URL_FIND_DEVICE_TEMPLATE=URL_UI_SERVER+"finddevicetemplate";
 var URL_REGISTER_USER=URL_UI_SERVER+"register";
 var URL_QUERY_DATA=URL_UI_SERVER+"querydata";
 var URL_LIST_ALL_DEVICES=URL_UI_SERVER+"listalldevices";
+var URL_LIST_ALL_DEVICE_TEMPLATES=URL_UI_SERVER+"listalldevicetemplates";
+
 var URL_HOME=URL_UI_SERVER+"home";
 var URL_DEVICES=URL_UI_SERVER+"device"
 var URL_LOGOUT_USER=URL_UI_SERVER+"logout";
