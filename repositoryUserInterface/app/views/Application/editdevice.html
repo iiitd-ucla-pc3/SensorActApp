@@ -1,8 +1,20 @@
-<html>
-	<head>
-		<title>SensorAct</title>
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<title> SensorAct </title>
 		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/styles_non_centered.css'}">
-		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery-ui-1.8.20.custom.css'}">
+		
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/style.css'}">
+		
+    	
+		<script src="@{'/public/js/libs/modernizr-2.0.6.min.js'}"></script>
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery-ui-1.8.21.custom.css'}">
 		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 		<script src="@{'/public/javascripts/jquery-ui-1.8.20.custom.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
@@ -192,7 +204,7 @@
 										$("#newSensorsDiv").find(".sensorDiv").each(function() {
 											if(ctr == i) {
 												for(var j = 0; j < channelsArray.length; j++) {
-													($(this).children(".newSensorChannels")).append("<tr><td><label>Name</label></td><td><input class='labName' value=" + channelsArray[j]["name"] + "></input></td><td><label>Unit</label></td><td><input class='labUnit' value=" + channelsArray[j]["unit"] + "></input><td><label>Type</label></td><td><input class='labType' value=" + channelsArray[j]["type"] + "></input></td><td><label>SamplingPeriod</label></td><td><input class='labSampling'value="+channelsArray[j]["samplingperiod"]+"></input><td><button class='removeChannel'>Remove Channel</button></td></tr>");
+													($(this).children(".newSensorChannels")).append("<tr style='text-align:center;'><td><label>Name</label></td><td><input class='labName' value=" + channelsArray[j]["name"] + "></input></td><td><label>Unit</label></td><td><input class='labUnit' value=" + channelsArray[j]["unit"] + "></input><td><label>Type</label></td><td><input class='labType' value=" + channelsArray[j]["type"] + "></input></td><td><label>Sampling Period</label></td><td><input class='labSampling'value="+channelsArray[j]["samplingperiod"]+"></input><td><button class='removeChannel'>Remove Channel</button></td></tr>");
 													$(".removeChannel").click(function() {
 
 														$(this).parent().parent().remove();
@@ -410,7 +422,7 @@
 						//Delete older device
 						if(mode == "update") {
 							var isDeleteSuccessful = false;
-
+							
 							try {
 								$.post(deleteDeviceOrTemplate, JSON.stringify(messageToDeleteDevice), function(data) {
 
@@ -476,14 +488,31 @@
 		</script>
 	</head>
 	<body>
-		<ul>
-			<li>
-				<a id="home" >Home</a>
-			</li>
-			<li>
-				<a id="logout">Logout</a>
-			</li>
-		</ul>
+		<div id="header-container">
+		<header class="wrapper clearfix">
+			<h1 id="title">SensorAct<br /><br /><span style="font-size:25px;">Sense - Interact - Actuate</span></h1>
+			
+			
+			<nav>	
+	
+			
+				<ul>
+					<li>
+						<a id="home" >Home</a>
+					</li>
+					
+					<li>
+						<a id="logout">Logout</a>
+					</li>
+				</ul>
+						
+			</nav>
+	
+		</header>
+	</div>
+	<div class="wrapper" style="width:90%;">
+		<div id="modeDiv"><h1 class="newfont" style="text-align:center">Edit Device/Template</h1></div>
+		<hr>
 		<div id="getDeviceErrorDiv" class ="errorDiv"></div>
 		<div id="errorDiv" class="errorDiv"></div>
 		<div id ="newDevice">
@@ -520,5 +549,15 @@
 		<input type="hidden" id =isdevice value =${isdevice}>
 		<input type="hidden" id =mode value =${mode}>
 		</input>
-	</body>
+		<hr>
+		</div>
+		<hr>
+	<div style="clear:both;" id="footer-container">
+		<footer class="wrapper">
+			<h4 align="center">&copy2012 |MUC,IIIT-Delhi</h4>
+		</footer>
+	</div>
+
+</body>
+	
 </html>
