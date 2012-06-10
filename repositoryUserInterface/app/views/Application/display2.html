@@ -1,11 +1,22 @@
-<html>
-	<head>
-		<title>SensorAct</title>
-		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery-ui-1.8.20.custom.css'}">
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<title> Display </title>
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/style.css'}">
+		
+    	
+	
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery-ui-1.8.21.custom.css'}">
 		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery-ui-timepicker-addon.css'}">
-				<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/styles_non_centered.css'}">
+				<!--<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/styles_non_centered.css'}">-->
 
-
+		<script src="@{'/public/js/libs/modernizr-2.0.6.min.js'}"></script>
 		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 		<script src="@{'/public/javascripts/jquery-ui-1.8.20.custom.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 		<script src="@{'/public/javascripts/highcharts.js'}" type="text/javascript" charset="${_response_encoding}"></script>
@@ -352,7 +363,7 @@
 										removeError();
 									var sensorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS];
 									for(var sensor in sensorArray) {
-										$("#IDSensorsSelect").append("<input type=\"checkbox\"value=" + sensorArray[sensor][DEVICE_SENSOR_NAME] + ">" + sensorArray[sensor][DEVICE_SENSOR_NAME] + "<br /></input>");
+										$("#IDSensorsSelect").append("<input id=\"sensorID\" type=\"checkbox\"value=" + sensorArray[sensor][DEVICE_SENSOR_NAME] + ">" + sensorArray[sensor][DEVICE_SENSOR_NAME] + "<br /></input>");
 									}
 									return false;
 								}
@@ -426,25 +437,46 @@
 		</script>
 	</head>
 	<body>
-		<ul>
-			<li>
-				<a id="home" >Home</a>
-			</li>
+		
+	<div id="header-container">
+		<header class="wrapper clearfix">
+			<h1 id="title">SensorAct<br /><br /><span style="font-size:25px;">Sense - Interact - Actuate</span></h1>
 			
-			<li>
-				<a id="logout">Logout</a>
-			</li>
-		</ul>
+			
+			<nav>	
+	
+			
+				<ul>
+					<li>
+						<a id="home" >Home</a>
+					</li>
+					
+					<li>
+						<a id="logout">Logout</a>
+					</li>
+				</ul>
+						
+			</nav>
+	
+		</header>
+	</div>
+		<div class="wrapper">
 		<div id="errorDiv" class="errorDiv"></div>
+		
 		<div>
+			<h1 class="newfont" style="text-align:center;">Visualization</h1>
+			<hr>
 			<label>Select Device</label>
 			<select id="IDDeviceSelect">
 				<option value="None">None</option>
 			</select>
+			
 			<div id="IDSensorsSelect"></div>
+			
 			Start Date :
+			
 			<input type="text" id ="start_date_time" readonly='true' />
-			End Date Time :
+			&nbsp&nbsp&nbsp&nbspEnd Date Time :
 			<input type="text" id ="end_date_time" readonly='true' />
 			<button id="IDSendQuery">
 				View Data
@@ -454,5 +486,14 @@
 		</input>
 		<input type="hidden" id =username value =${username}>
 		</input>
-	</body>
+	<hr>
+	</div>
+	<div style="clear:both;" id="footer-container">
+		<footer class="wrapper">
+			<h4 align="center">&copy2012 |MUC,IIIT-Delhi</h4>
+		</footer>
+	</div>
+
+</body>
+	
 </html>
