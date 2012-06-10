@@ -1,19 +1,26 @@
-<html>
+<!doctype html> <!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+	<!--<![endif]-->
 	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<title> SensorAct </title>
-		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/styles.css'}">
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/style.css'}">
+		<script src="@{'/public/js/libs/modernizr-2.0.6.min.js'}"></script>
 		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 		<script type="text/javascript">
 			$(document).ready(function() {
+
 				var sign_in_username;
 				var sign_in_password;
 				var sign_in_validation_state = false;
-
 				var sign_up_username;
 				var sign_up_password;
 				var sign_up_confirmation;
-
 				var sign_up_email;
 				var sign_up_validation_state = false;
 				var responseFromServer = {};
@@ -23,18 +30,13 @@
 					async : false
 				});
 				//Hide all forms
-				$(".forms").hide();
+				//$(".forms").hide();
 				$("#errorDiv").hide();
 
-				//Show relevant form
-				$("ul li a").click(function() {
-					var idToShow = $(this).attr("href");
-					$(idToShow).show().siblings(".forms").hide();
-					return false;
-				});
-				function alertError(errorMessage) {
-					$("#errorDiv").html(errorMessage);
-					$("#errorDiv").fadeIn('slow');
+				function alertError(spanid, errorMessage) {
+
+					$("#" + spanid).html(errorMessage);
+
 					return false;
 				}
 
@@ -44,32 +46,14 @@
 					return false;
 				}
 
-				function validateSignIn(username, password) {
-					var flag = true;
-					if(username.length < MIN_LENGTH_USERNAME) {
-						$("#span_sign_in_username").text("Must be atleast " + MIN_LENGTH_USERNAME + " characters");
-						$("#sign_in_username").addClass("error");
-						flag = false;
-					} else {
-						$("#span_sign_in_username").text("");
-
-						$("#sign_in_username").removeClass("error")
-					}
-					if(password.length < MIN_LENGTH_PASSWORD) {
-						$("#span_sign_in_password").text("Must be atleast " + MIN_LENGTH_PASSWORD + " characters");
-						$("#sign_in_password").addClass("error");
-						flag = false;
-					} else {
-						$("#span_sign_in_password").text("");
-						$("#sign_in_password").removeClass("error")
-					}
-					return flag;
-				}
-
 				function validateSignUp(username, password, confirm_password, email) {
 					var flag = true;
 					if(username.length < MIN_LENGTH_USERNAME) {
 						$("#span_sign_up_username").text("Must be atleast " + MIN_LENGTH_USERNAME + " characters");
+						$("#sign_up_username").addClass("error");
+						flag = false;
+					} else if(username.length > MAX_LENGTH_USERNAME) {
+						$("#span_sign_up_username").text("Must be atmost " + MAX_LENGTH_USERNAME + " characters");
 						$("#sign_up_username").addClass("error");
 						flag = false;
 					} else {
@@ -80,6 +64,10 @@
 					}
 					if(password.length < MIN_LENGTH_PASSWORD) {
 						$("#span_sign_up_password").text("Must be atleast " + MIN_LENGTH_PASSWORD + " characters");
+						$("#sign_up_password").addClass("error");
+						flag = false;
+					} else if(password.length > MAX_LENGTH_PASSWORD) {
+						$("#span_sign_up_password").text("Must be atmost " + MAX_LENGTH_PASSWORD + " characters");
 						$("#sign_up_password").addClass("error");
 						flag = false;
 					} else {
@@ -110,38 +98,52 @@
 
 				$("#sign_up_confirmation").keyup(function() {
 					if($(this).val() != $("#sign_up_password").val()) {
-						$(this).addClass("error").next().text("Passwords don't match.");
+						$('#span_sign_up_confirmation').text("Passwords don't match.");
 					} else {
-						$(this).removeClass("error").next().text("");
+						$('#span_sign_up_confirmation').text("");
 					}
+				});
+
+				$("#sign_in_username").keypress(function(e) {
+					if(e.keyCode == 13) {
+
+						$('#sign_in_submit').click();
+					}
+				});
+
+				$('#sign_in_password').keypress(function(e) {
+					if(e.keyCode == 13) {
+
+						$('#sign_in_submit').click();
+					}
+
 				});
 
 				$("#sign_in_submit").click(function() {
 					sign_in_username = $("#sign_in_username").val();
 					sign_in_password = $("#sign_in_password").val();
-					sign_in_validation_state = validateSignIn(sign_in_username, sign_in_password);
-					if(sign_in_validation_state) {
-						var sign_in = {};
-						sign_in[USERNAME] = sign_in_username;
-						sign_in[PASSWORD] = sign_in_password;
-						//Submit the login details
-						try {
+					//sign_in_validation_state = validateSignIn(sign_in_username, sign_in_password);
+					//if(sign_in_validation_state) {
+					var sign_in = {};
+					sign_in[USERNAME] = sign_in_username;
+					sign_in[PASSWORD] = sign_in_password;
+					//Submit the login details
+					try {
+						$.post(URL_LOGIN_USER, JSON.stringify(sign_in), function(data) {
+							responseFromServer = data;
 
-							$.post(URL_LOGIN_USER, JSON.stringify(sign_in), function(data) {
-								responseFromServer = data;
+						});
+						if((responseFromServer[RESPONSE_STATUS_CODE]) == 0) {
+							window.location = URL_HOME;
 
-							});
-							if((responseFromServer[RESPONSE_STATUS_CODE]) == 0) {
-								window.location = URL_HOME;
-
-							} else {
-								alertError("Following error occured " + responseFromServer[RESPONSE_MESSAGE]);
-							}
-
-						} catch(e) {
-							alertError(e);
+						} else {
+							alertError('sign_in_error', responseFromServer[RESPONSE_MESSAGE]);
 						}
+
+					} catch(e) {
+						alertError('sign_in_error', e);
 					}
+					//}
 
 				});
 				$("#sign_up_submit").click(function() {
@@ -155,7 +157,7 @@
 						sign_up[USERNAME] = sign_up_username;
 						sign_up[PASSWORD] = sign_up_password;
 						sign_up[EMAIL] = sign_up_email;
-						alert(JSON.stringify(sign_up));
+						//alert(JSON.stringify(sign_up));
 						//Submit the login details
 						try {
 
@@ -163,14 +165,13 @@
 								responseFromServer = data;
 
 							});
-							if((responseFromServer[RESPONSE_STATUS_CODE]!=0)) {
+							if((responseFromServer[RESPONSE_STATUS_CODE] != 0)) {
 								alertError("Following error occured " + responseFromServer[RESPONSE_MESSAGE])
 
 							} else {
 								removeError();
 								window.location = URL_HOME;
-								
-								
+
 							}
 
 						} catch(e) {
@@ -184,67 +185,87 @@
 		</script>
 	</head>
 	<body>
-		<img alt="full screen background image" src="@{'/public/images/bg.gif'}" id="full-screen-background-image">
-		<div><img src="@{'/public/images/logo_transparent.png'}" alt="Logo"/>
+		<div id="header-container">
+			<header class="wrapper clearfix">
+				<h1 id="title">SensorAct
+				<br />
+				<br />
+				<span style="font-size:25px;">Sense - Interact - Actuate</span></h1>
+				<nav>
+					<p class="pbox">
+						<label for="sign_in_username">Username</label>
+						<input type="text" size="10" name="sign_in_username" id="sign_in_username" />
+						<br />
+						<br />
+						<label for="sign_in_password">Password</label>
+						<input type="password" size="10" name="sign_in_password" id="sign_in_password" />
+						<br />
+						<br />
+						<span id="sign_in_error"></span>
+					</p>
+					<ul>
+						<li>
+							<a style="float:right;" name="sign_in_submit" href="#" id="sign_in_submit">Sign In</a>
+						</li>
+					</ul>
+				</nav>
+			</header>
 		</div>
-		<ul>
-			<li>
-				<a href="#sign_in">Sign In</a>
-			</li>
-			<li>
-				<a href="#sign_up">Sign Up</a>
-			</li>
-		</ul>
-		<div id="errorDiv" class="errorDiv"></div>
-		<div id="sign_in" class="forms">
-			<h2>Sign In</h2>
-			<p>
-				<label for="sign_in_username">Username</label>
-				<input type="text" name="sign_in_username" id="sign_in_username" />
-				<span id="span_sign_in_username"></span>
-			</p>
-			<p>
-				<label for="sign_in_password">Password</label>
-				<input type="password" name="sign_in_password" id="sign_in_password" />
-				<span id="span_sign_in_password"></span>
-			</p>
-			<p>
-				<button id="sign_in_submit">
-					Sign In
-				</button>
-			</p>
-		</div>
-		<div id="sign_up" class="forms">
-			<h2>Sign Up</h2>
-			<p>
-				<label for="sign_up_username">Username</label>
-				<input type="text" name="sign_up_username" id="sign_up_username" />
-				<span id="span_sign_up_username"></span>
-			</p>
-			<p>
-				<label for="sign_up_password">Password</label>
-				<input type="password" name="sign_up_password" id="sign_up_password" />
-				<span id="span_sign_up_password"></span>
-			</p>
-			<p>
-				<label for="sign_up_confirmation">Confirm Password</label>
-				<input type="password" name="sign_up_confirmation" id="sign_up_confirmation" />
-				<span id="span_sign_up_confirmation"></span>
-			</p>
-			<p>
-				<label for="sign_up_email">Email ID</label>
-				<input type="email" name="sign_up_email" id="sign_up_email" />
-				<span id="span_sign_up_email"></span>
-			</p>
-			<p>
-				<button id ="sign_up_submit">
-					Sign Up
-				</button>
-			</p>
-		</div>
-		<div id="article">
-			Intro video will be added at this location
-			CC Sensors/Actuators B/G image to be added
-		</div>
-	</body>
-</html>
+		<div id="main-container">
+			<div id="main" class="wrapper clearfix">
+				<article>
+					<header>
+						<h1 class="newfont">Introducing SensorAct Project</h1>
+						<hr>
+						<iframe width="420" height="315" src="http://www.youtube.com/embed/cFAV5jNvQwg" frameborder="0" allowfullscreen></iframe>
+					</header>
+				</article>
+				<br />
+				<aside>
+					<h2 class="newfont"><b>Register</b></h2>
+					<label for="sign_up_username">Username</label>
+					<input type="text" name="sign_up_username" size="15" id="sign_up_username" />
+					<label></label>
+					<span id="span_sign_up_username"></span>
+					<br />
+					<label for="sign_up_password">Password</label>
+					<input type="password" name="sign_up_password" size="15" id="sign_up_password" />
+					<label></label>
+					<span id="span_sign_up_password"></span>
+					<br />
+					<label for="sign_up_confirmation">Password</label>
+					<input type="password" name="sign_up_confirmation" size="15" id="sign_up_confirmation" />
+					<label></label>
+					<span id="span_sign_up_confirmation"></span>
+					<br />
+					<label for="sign_up_email">Email ID</label>
+					<input type="email" name="sign_up_email" size="15" id="sign_up_email" />
+					<label></label>
+					<span id="span_sign_up_email"></span>
+					<br />
+					<nav>
+						<p class="pbox">
+							<label name="sign_up_submit" id ="sign_up_submit" class="buttons"> Sign Up </label>
+						</p>
+					</nav>
+				</aside>
+				<article
+				<footer>
+				<p>Smart Rooms</p>
+				<p>A Novel approach to integrate the physical and the cyber world.</p>
+				<p>Sensors And Actuators</p>
+
+				</footer>
+				</article>
+				</div> <!-- #main -->
+				</div> <!-- #main-container -->
+
+				<div style="clear:both;" id="footer-container">
+				<footer class="wrapper">
+				<h4 align="center">&copy2012 |MUC,IIIT-Delhi</h4>
+				</footer>
+				</div>
+
+				</body>
+
+				</html>

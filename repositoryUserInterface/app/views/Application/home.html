@@ -1,10 +1,15 @@
-<html>
-	
-	<br/>
-	
+<!doctype html> <!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+	<!--<![endif]-->
 	<head>
-		<title>SensorAct</title>
-		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/styles.css'}">
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title> Welcome</title>
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/style.css'}">
+		<script src="@{'/public/js/libs/modernizr-2.0.6.min.js'}"></script>
 		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 		<script type="text/javascript">
@@ -12,30 +17,56 @@
 
 				$("#devices").attr('href', URL_DEVICES);
 				$("#visualization").attr('href', URL_VISUALIZATION);
-				$("#logout").attr('href', URL_LOGOUT_USER);
+				//$("#logout").attr('href', URL_LOGOUT_USER);
 				$("#repositoryInformation").attr('href', URL_REPOSITORY_INFO);
+				$("#logout").click(function() {
 
+					window.location = URL_LOGOUT_USER;
+				});
 			});
 
 		</script>
 	</head>
 	<body>
-		<ul>
-			<li>
-				<a id="devices" >Devices</a>
-			</li>
-			<li>
-				<a id="visualization">Visualization</a>
-			</li>
-			<li>
-				<a id="repositoryInformation">Repository Information</a>
-			</li>
-			<li>
-				<a id="logout">Logout</a>
-			</li>
-			<li>
-				Hi ${flash.username}
-			</li>
-		</ul>
+		<div id="header-container">
+			<header class="wrapper clearfix">
+				<h1 id="title">SensorAct
+				<br />
+				<br />
+				<span style="font-size:25px;">Sense - Interact - Actuate</span></h1>
+				<nav>
+					<p class="pbox">
+						Welcome ${flash.username} &nbsp&nbsp<span id="logout">Logout</span>
+					</p>
+				</nav>
+			</header>
+		</div>
+		<nav>
+			<ul>
+				<li>
+					<a id="devices" >Devices</a>
+				</li>
+				<li>
+					<a id="visualization">Visualization</a>
+				</li>
+				<li>
+					<a id="repositoryInformation">Repository Info</a>
+				</li>
+			</ul>
+		</nav>
+		<div id="homeDiv">
+			<img src="@{'/public/images/background_2.jpg'}" />
+		</div>
+		<hr>
+		<br />
+		Smart Rooms at IIIT-Delhi
+		<br />
+		By MUC Group
+		<hr>
+		<div style="clear:both;" id="footer-container">
+			<footer class="wrapper">
+				<h4 align="center">&copy2012 |MUC,IIIT-Delhi</h4>
+			</footer>
+		</div>
 	</body>
 </html>
