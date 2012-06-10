@@ -132,7 +132,7 @@ public class Const {
 	public static final String URL_REPOSITORY_GET_INFO = URL_REPOSITORY_SERVER
 			+ "repo/info";
 	public static final String URL_REPOSITORY_GENERATE_SECRET_KEY = URL_REPOSITORY_SERVER
-			+ "user/generate/secretkey";
+			+ "user/generate/repokey";
 
 	public static final String URL_BROKER_ADD_USER = URL_BROKER_SERVER
 			+ "registeruser";

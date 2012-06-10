@@ -1,16 +1,24 @@
-<html>
+<!doctype html> <!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+	<!--<![endif]-->
 	<head>
-		<title> SensorAct </title>
-		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/styles.css'}">
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title> Repository </title>
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/style.css'}">
 		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 		<script type="text/javascript">
 			$(document).ready(function() {
 
 				var repsonseFromServer;
-				
-					/*
-				 * Adding the link attribute to Logout,Home element
+
+				/*
+				 * Adding the link attribute to Logout,Home element	</body>
+				 </html>
 				 */
 				$("#logout").attr('href', URL_LOGOUT_USER);
 				$("#home").attr('href', URL_HOME);
@@ -21,11 +29,11 @@
 				//Hide all forms
 
 				$("#errorDiv").hide();
-				
+
 				$("#generateRepoKeyDiv").hide();
 				$("#generatedRepoKeyDiv").hide();
 
-			function alertError(errorMessage) {
+				function alertError(errorMessage) {
 					$("#errorDiv").html(errorMessage);
 					$("#errorDiv").fadeIn('slow');
 					return false;
@@ -36,7 +44,6 @@
 					$("#errorDiv").hide();
 					return false;
 				}
-
 
 				function validateSignIn(username, password) {
 					var flag = true;
@@ -59,12 +66,12 @@
 					}
 					return flag;
 				}
+
 				//Get the repository information
 				try {
 
 					$.get(URL_GET_REPOSITORY_INFO, function(data) {
 						responseFromServer = data;
-						alert(responseFromServer[REPOSITORY_NAME]);
 
 					});
 					if(responseFromServer.hasOwnProperty(RESPONSE_STATUS_CODE)) {
@@ -77,21 +84,15 @@
 				} catch(e) {
 					alertError(e);
 				}
-				
-				$("#generateRepoKey").click(function()
-				{
+
+				$("#generateRepoKey").click(function() {
 					$("#generateRepoKeyDiv").fadeIn('slow');
 				});
-				
-					$("#Done").click(function() {
-					sign_in_username = $("#sign_in_username").val();
-					sign_in_password = $("#sign_in_password").val();
-					sign_in_validation_state = validateSignIn(sign_in_username, sign_in_password);
-					if(sign_in_validation_state) {
+
+				$("#generateRepoKey").click(function() {
+					
 						var sign_in = {};
-						sign_in[USERNAME] = sign_in_username;
-						sign_in[PASSWORD] = sign_in_password;
-						sign_in[SECRET_KEY]=FAKE_SECRET_KEY;
+						sign_in[SECRET_KEY] = FAKE_SECRET_KEY;
 						//Submit the login details
 						try {
 
@@ -99,38 +100,48 @@
 								responseFromServer = data;
 
 							});
-							if(responseFromServer[RESPONSE_STATUS_CODE]!=0) {
-						alertError("Following error occured " + responseFromServer[RESPONSE_MESSAGE]);
-					} else {
-						$("#generatedKey").html(responseFromServer[RESPONSE_MESSAGE]);
-						$("#generatedRepoKeyDiv").show();
-					}
-							
+							if(responseFromServer[RESPONSE_STATUS_CODE] != 0) {
+								alertError("Following error occured " + responseFromServer[RESPONSE_MESSAGE]);
+							} else {
+								$("#generatedKey").html(responseFromServer[RESPONSE_MESSAGE]);
+								$("#generatedRepoKeyDiv").show();
+							}
 
 						} catch(e) {
 							alertError(e);
 						}
-					}
+					
 
 				});
-				
-
 				//If button is clicked generate a call to get the secret key from repo
-				
 
 			});
 
 		</script>
 	</head>
 	<body>
-		<ul>
-			<li>
-				<a id="home" >Home</a>
-			</li>
-			<li>
-				<a id="logout">Logout</a>
-			</li>
-		</ul>
+		<div id="header-container">
+			<header class="wrapper clearfix">
+				<h1 id="title">SensorAct
+				<br />
+				<br />
+				<span style="font-size:25px;">Sense - Interact - Actuate</span></h1>
+				<nav>
+					<ul>
+						<li>
+							<a id="home" >Home</a>
+						</li>
+	</body>
+	<li>
+		<a id="logout">Logout</a>
+	</li>
+	</ul>
+
+	</nav>
+	</header>
+	</div>
+	<div class="wrapper">
+		<h1 class="newfont" style="text-align:center;">Repository Information</h1>
 		<div id="errorDiv" class="errorDiv"></div>
 		<div id="repoInfo">
 			Please note down this information carefully for registering your repository account with the Broker
@@ -144,28 +155,18 @@
 			<button id ="generateRepoKey">
 				Generate Key to register repository to Broker
 			</button>
-			<div id="generateRepoKeyDiv">
-				<h2>Sign In with your Repository Credentials</h2>
-			<p>
-				<label for="sign_in_username">Username</label>
-				<input type="text" name="sign_in_username" id="sign_in_username" />
-				<span id="span_sign_in_username"></span>
-			</p>
-			<p>
-				<label for="sign_in_password">Password</label>
-				<input type="password" name="sign_in_password" id="sign_in_password" />
-				<span id="span_sign_in_password"></span>
-			</p>
-			<button id ="Done">
-				Done
-			</button>
-			</div>
+			
 			<div id="generatedRepoKeyDiv">
 				<label>Generated Key</label>
 				<span id="generatedKey"></span>
-				
-				
 			</div>
 		</div>
+		<hr>
+	</div>
+	<div style="clear:both;" id="footer-container">
+		<footer class="wrapper">
+			<h4 align="center">&copy2012 |MUC,IIIT-Delhi</h4>
+		</footer>
+	</div>
 	</body>
 </html>
