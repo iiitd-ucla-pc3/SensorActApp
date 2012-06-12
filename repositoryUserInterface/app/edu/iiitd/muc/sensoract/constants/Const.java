@@ -164,6 +164,9 @@ public class Const {
 	 * @author samy
 	 * 
 	 */
+	public static final String ERROR_MESSAGE_CONNECTION_FAILURE = "Connection Failed.Try again later";
+	public static final int ERROR_CONNECTION_FAILURE = 2;
+
 	public class Error {
 
 		public static final String E404 = "Not Found!";

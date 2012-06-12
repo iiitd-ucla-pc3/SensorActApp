@@ -27,7 +27,6 @@ public class Login extends SensorActAPI {
 					.toString())));
 		}
 		HttpResponse responseFromRepository = sendRequestToBroker(loginBody);
-		System.out.println(responseFromRepository.getString());
 		try {
 			APIResponse apiResponse = gson.fromJson(
 					responseFromRepository.getString(), APIResponse.class);
@@ -60,8 +59,9 @@ public class Login extends SensorActAPI {
 			response = WS.url(Const.URL_REPOSITORY_LOGIN_USER).body(body)
 					.mimeType("application/json").post();
 		} catch (Exception e) {
-			renderJSON(gson.toJson(new APIResponse(Const.API_LOGIN, 1, e
-					.toString())));
+			renderJSON(gson.toJson(new APIResponse(Const.API_LOGIN,
+					Const.ERROR_CONNECTION_FAILURE,
+					Const.ERROR_MESSAGE_CONNECTION_FAILURE)));
 
 		}
 		return response;

@@ -43,6 +43,10 @@ div.sensorDiv
     border-radius: 15px;
     border: 2px solid;
 }
+div.sensorDiv tr
+{
+	text-align: center;
+}
 div#newActuator
 {
 	background: rgb(70,136,71);

@@ -217,7 +217,7 @@
 
 										$('.newSensorAddChannel').unbind('click').click(function() {
 
-											($(this).siblings(".newSensorChannels")).append("<tr><td><label>Name</label></td><td><input class='labName'/></td><td><label>Unit</label></td><td><input class='labUnit'/><td><label>Type</label></td><td><input class='labType'/></td><td><label>SamplingPeriod</label></td><td><input class='labSampling'/><td><button class='removeChannel'>Remove Channel</button></td></tr>");
+											($(this).siblings(".newSensorChannels")).append("<tr style='text-align:center;'><td><label>Name</label></td><td><input class='labName'/></td><td><label>Unit</label></td><td><input class='labUnit'/><td><label>Type</label></td><td><input class='labType'/></td><td><label>Sampling<br/>Period</label></td><td><input class='labSampling'/><td><button class='removeChannel'>Remove Channel</button></td></tr>");
 											$(".removeChannel").click(function() {
 
 												$(this).parent().parent().remove();
