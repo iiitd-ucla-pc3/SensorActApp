@@ -1,46 +1,8 @@
 Listening for transport dt_socket at address: 8000
-12:19:13,693 INFO  ~ Starting /home/nipun/git/repositoryUI/repositoryUserInterface
-12:19:15,566 WARN  ~ You're running Play! in DEV mode
-12:19:16,197 INFO  ~ Listening for HTTP on port 9002 (Waiting a first request to start) ...
-12:19:31,741 INFO  ~ Application 'ui' is now started !
-12:19:49,433 INFO  ~ login: n
-12:19:49,546 INFO  ~ Number of application's worked threads is 4
-12:19:50,967 INFO  ~ Login Failure: n
-12:19:57,636 INFO  ~ login: nipun_batra
-12:19:57,661 INFO  ~ Login Successfull: nipun_batra
-14:16:51,115 INFO  ~ login: n
-14:16:51,116 INFO  ~ Number of application's worked threads is 4
-14:16:51,876 INFO  ~ Login Failure: n
-14:16:55,949 INFO  ~ login: n
-14:16:56,196 INFO  ~ Login Failure: n
-14:16:58,244 INFO  ~ login: n
-14:16:58,257 INFO  ~ Login Failure: n
-14:17:07,002 INFO  ~ login: nipun_batra
-14:17:07,124 INFO  ~ Login Successfull: nipun_batra
-14:40:57,243 ERROR ~ 
-
-@6ak2l56ho
-Internal Server Error (500) for request GET /device
-
-Compilation error (In /app/edu/iiitd/muc/sensoract/apis/DeleteDevice.java around line 37)
-The file /app/edu/iiitd/muc/sensoract/apis/DeleteDevice.java could not be compiled. Error raised is : The method getSecretKeyFromHashMap() is undefined for the type DeleteDevice
-
-play.exceptions.CompilationException: The method getSecretKeyFromHashMap() is undefined for the type DeleteDevice
-	at play.classloading.ApplicationCompiler$2.acceptResult(ApplicationCompiler.java:246)
-	at org.eclipse.jdt.internal.compiler.Compiler.handleInternalException(Compiler.java:676)
-	at org.eclipse.jdt.internal.compiler.Compiler.compile(Compiler.java:520)
-	at play.classloading.ApplicationCompiler.compile(ApplicationCompiler.java:282)
-	at play.classloading.ApplicationClasses$ApplicationClass.compile(ApplicationClasses.java:277)
-	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:322)
-	at play.Play.detectChanges(Play.java:614)
-	at play.Invoker$Invocation.init(Invoker.java:198)
-	at Invocation.HTTP Request(Play!)
-15:12:03,543 INFO  ~ login: n
-15:12:03,544 INFO  ~ Number of application's worked threads is 4
-15:12:04,146 INFO  ~ Login Failure: n
-15:12:11,096 INFO  ~ login: nipun_batra
-15:12:11,779 INFO  ~ Login Successfull: nipun_batra
-{"devicename":"alpha2_temp","secretkey":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}
-15:12:50,799 INFO  ~ adddevice: 21aeb8ebc4414323944606e8103ccc21 {"deviceprofile":{"actuators":[{"name":"nipun"},{"name":"gamma"},{"name":"jkkkkkkkk"}],"sensors":[{"name":"test","id":"1","channels":[{"name":"channel1","unit":"none","type":"double","samplingperiod":"1"}]}],"latitude":"1","longitude":"1","name":"alpha2_temp","location":"delhi","tags":"none","IP":"1.1.1.1"},"secretkey":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}
-15:12:50,799 INFO  ~ adddevice: {"deviceprofile":{"actuators":[{"name":"nipun"},{"name":"gamma"},{"name":"jkkkkkkkk"}],"sensors":[{"name":"test","id":"1","channels":[{"name":"channel1","unit":"none","type":"double","samplingperiod":"1"}]}],"latitude":"1","longitude":"1","name":"alpha2_temp","location":"delhi","tags":"none","IP":"1.1.1.1"},"secretkey":"21aeb8ebc4414323944606e8103ccc21"}
-15:18:43,908 INFO  ~ adddevicetemplate: {"deviceprofile":{"actuators":[{"name":"nipun"},{"name":"gamma"}],"sensors":[{"name":"test","id":"1","channels":[{"name":"channel1","unit":"none","type":"double","samplingperiod":"1"}]}],"latitude":"1","longitude":"1","name":"alpha2_temp","location":"delhi","tags":"none","IP":"1.1.1.1"},"secretkey":"21aeb8ebc4414323944606e8103ccc21"}
+18:29:30,640 INFO  ~ Starting /home/nipun/git/repositoryUI/repositoryUserInterface
+18:29:32,558 WARN  ~ You're running Play! in DEV mode
+18:29:33,040 INFO  ~ Listening for HTTP on port 9002 (Waiting a first request to start) ...
+18:29:37,722 INFO  ~ Application 'ui' is now started !
+18:30:07,283 INFO  ~ login: nipun_batra
+18:30:07,422 INFO  ~ Number of application's worked threads is 4
+18:30:07,663 INFO  ~ Login Successfull: nipun_batra

@@ -27,15 +27,21 @@ public class Application extends Controller {
 	/*
 	 * If a user has not logged in,he is redirected to the index page
 	 */
-	@Before(unless = { "login", "index", "registeruser" })
+	@Before(unless = { "login", "index" })
 	static void checkAuthentication() {
+		System.out.println("Session" + session.get(Const.USERNAME));
 		if (session.get(Const.USERNAME) == null)
 			index();
-		if (usernameToSecretKeyMap.get(session.get(Const.USERNAME)) == null)
+
+		if (usernameToSecretKeyMap.get(session.get(Const.USERNAME)) == null) {
 			index();
+
+		}
 	}
 
 	public static void index() {
+		if (usernameToSecretKeyMap.get(session.get(Const.USERNAME)) != null)
+			home();
 		render();
 	}
 
