@@ -26,6 +26,7 @@ public class Const {
 	public static final String API_GETDEVICE = "getdevice";
 	public static final String API_LISTALLDEVICES = "listalldevices";
 	public static final String API_QUERYDATA = "querydata";
+	public static final String API_ADDDEVICETEMPLATE = "adddevicetemplate";
 
 	/*
 	 * API parameters
@@ -166,6 +167,19 @@ public class Const {
 	 */
 	public static final String ERROR_MESSAGE_CONNECTION_FAILURE = "Connection Failed.Try again later";
 	public static final int ERROR_CONNECTION_FAILURE = 2;
+
+	/*
+	 * Logger info constants
+	 */
+	public static final String LOGGER_INFO_LOGIN_SUCCESSFULL = "Login Successful: ";
+	public static final String LOGGER_INFO_LOGIN_FAILURE = "Login Failure: ";
+	public static final String LOGGER_INFO_SESSION_EXPIRED = "Session Expired: ";
+
+	/*
+	 * Logger Error constants
+	 */
+	public static final String LOGGER_ERROR_JSON_PARSE = "JSON Parse error: ";
+	public static final String LOGGER_ERROR_CONNECTION_FAILURE = "Connection Failure: ";
 
 	public class Error {
 

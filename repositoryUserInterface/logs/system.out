@@ -1,6 +1,10 @@
 Listening for transport dt_socket at address: 8000
-10:02:04,794 INFO  ~ Starting /home/nipun/git/repositoryUI/repositoryUserInterface
-10:02:06,000 WARN  ~ You're running Play! in DEV mode
-10:02:06,188 INFO  ~ Listening for HTTP on port 9002 (Waiting a first request to start) ...
-10:02:14,960 INFO  ~ Application 'ui' is now started !
-10:02:21,144 INFO  ~ Number of application's worked threads is 4
+12:19:13,693 INFO  ~ Starting /home/nipun/git/repositoryUI/repositoryUserInterface
+12:19:15,566 WARN  ~ You're running Play! in DEV mode
+12:19:16,197 INFO  ~ Listening for HTTP on port 9002 (Waiting a first request to start) ...
+12:19:31,741 INFO  ~ Application 'ui' is now started !
+12:19:49,433 INFO  ~ login: n
+12:19:49,546 INFO  ~ Number of application's worked threads is 4
+12:19:50,967 INFO  ~ Login Failure: n
+12:19:57,636 INFO  ~ login: nipun_batra
+12:19:57,661 INFO  ~ Login Successfull: nipun_batra

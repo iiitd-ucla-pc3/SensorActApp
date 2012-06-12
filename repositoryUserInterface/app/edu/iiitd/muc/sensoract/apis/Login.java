@@ -21,6 +21,7 @@ public class Login extends SensorActAPI {
 		LoginUserRequest loginUserRequest = null;
 		try {
 			loginUserRequest = gson.fromJson(loginBody, LoginUserRequest.class);
+			logger.info(Const.API_LOGIN, loginUserRequest.username);
 
 		} catch (Exception e) {
 			renderJSON(gson.toJson(new APIResponse(Const.API_LOGIN, 1, e
@@ -31,6 +32,8 @@ public class Login extends SensorActAPI {
 			APIResponse apiResponse = gson.fromJson(
 					responseFromRepository.getString(), APIResponse.class);
 			if (apiResponse.statuscode == Const.SUCCESS) {
+				logger.info(Const.LOGGER_INFO_LOGIN_SUCCESSFULL
+						+ loginUserRequest.username);
 				session.put(Const.USERNAME, loginUserRequest.username);
 				usernameToSecretKeyMap.put(loginUserRequest.username,
 						apiResponse.message.toString());
@@ -38,9 +41,13 @@ public class Login extends SensorActAPI {
 
 			} else {
 
+				logger.info(Const.LOGGER_INFO_LOGIN_FAILURE
+						+ loginUserRequest.username);
 				renderJSON(responseFromRepository.getString());
 			}
 		} catch (Exception e) {
+			logger.error(Const.API_LOGIN, Const.LOGGER_ERROR_JSON_PARSE
+					+ responseFromRepository.getString());
 			renderJSON(gson.toJson(new APIResponse(Const.API_LOGIN, 1, e
 					.toString())));
 		}
@@ -59,6 +66,7 @@ public class Login extends SensorActAPI {
 			response = WS.url(Const.URL_REPOSITORY_LOGIN_USER).body(body)
 					.mimeType("application/json").post();
 		} catch (Exception e) {
+			logger.error(Const.LOGGER_ERROR_CONNECTION_FAILURE + body);
 			renderJSON(gson.toJson(new APIResponse(Const.API_LOGIN,
 					Const.ERROR_CONNECTION_FAILURE,
 					Const.ERROR_MESSAGE_CONNECTION_FAILURE)));

@@ -51,6 +51,7 @@ public class AddDevice extends SensorActAPI {
 
 		String deviceBodyWithSecretKey = deviceBody.replace(
 				Const.FAKE_SECRET_KEY, secretkey);
+		logger.info(Const.API_ADDDEVICE, secretkey + " " + deviceBody);
 
 		HttpResponse responseFromBroker = sendRequestToRepository(deviceBodyWithSecretKey);
 		renderJSON(responseFromBroker.getString());

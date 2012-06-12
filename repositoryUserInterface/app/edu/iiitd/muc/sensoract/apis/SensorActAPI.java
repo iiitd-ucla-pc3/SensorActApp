@@ -3,6 +3,7 @@ package edu.iiitd.muc.sensoract.apis;
 import com.google.gson.Gson;
 
 import controllers.Application;
+import edu.iiitd.muc.sensoract.utilities.SensorActLogger;
 
 public class SensorActAPI extends Application {
 
@@ -25,4 +26,5 @@ public class SensorActAPI extends Application {
 	public static FindDevice findDevice = new FindDevice();
 	public static FindDeviceTemplate findDeviceTemplate = new FindDeviceTemplate();
 
+	public static SensorActLogger logger = new SensorActLogger();
 }

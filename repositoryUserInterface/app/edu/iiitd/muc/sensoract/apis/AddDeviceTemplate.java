@@ -42,10 +42,13 @@ public class AddDeviceTemplate extends SensorActAPI {
 			/*
 			 * Get the secret key from the HashMap
 			 */
+
 			secretkey = usernameToSecretKeyMap.get(session.get(Const.USERNAME));
 		} catch (Exception e) {
+			logger.info(Const.API_ADDDEVICETEMPLATE,
+					Const.LOGGER_INFO_SESSION_EXPIRED);
 			renderJSON(gson.toJson(new APIResponse(Const.API_ADDDEVICE, 1,
-					"Session Expired.Login Again")));
+					Const.LOGGER_INFO_SESSION_EXPIRED)));
 
 		}
 
@@ -66,9 +69,12 @@ public class AddDeviceTemplate extends SensorActAPI {
 	private HttpResponse sendRequestToRepository(String deviceBody) {
 		HttpResponse response = null;
 		try {
+			logger.info(Const.API_ADDDEVICETEMPLATE, deviceBody);
 			response = WS.url(Const.URL_REPOSITORY_ADD_DEVICE_TEMPLATE)
 					.body(deviceBody).mimeType("application/json").post();
 		} catch (Exception e) {
+			logger.error(Const.API_ADDDEVICETEMPLATE,
+					Const.LOGGER_ERROR_CONNECTION_FAILURE);
 			renderJSON(gson.toJson(new APIResponse(Const.API_ADDDEVICE, 1, e
 					.toString())));
 
