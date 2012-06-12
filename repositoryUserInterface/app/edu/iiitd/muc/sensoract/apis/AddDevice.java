@@ -14,6 +14,7 @@ import play.libs.WS;
 import play.libs.WS.HttpResponse;
 import edu.iiitd.muc.sensoract.constants.Const;
 import edu.iiitd.muc.sensoract.format.APIResponse;
+import edu.iiitd.muc.sensoract.utilities.SecretKey;
 
 public class AddDevice extends SensorActAPI {
 	/**
@@ -37,17 +38,8 @@ public class AddDevice extends SensorActAPI {
 	 *            Device profile in Json
 	 */
 	public final void doProcess(String deviceBody) {
-		String secretkey = null;
-		try {
-			/*
-			 * Get the secret key from the HashMap
-			 */
-			secretkey = usernameToSecretKeyMap.get(session.get(Const.USERNAME));
-		} catch (Exception e) {
-			renderJSON(gson.toJson(new APIResponse(Const.API_ADDDEVICE, 1,
-					"Session Expired.Login Again")));
-
-		}
+		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
+				.get(Const.USERNAME));
 
 		String deviceBodyWithSecretKey = deviceBody.replace(
 				Const.FAKE_SECRET_KEY, secretkey);
@@ -67,11 +59,13 @@ public class AddDevice extends SensorActAPI {
 	private HttpResponse sendRequestToRepository(String deviceBody) {
 		HttpResponse response = null;
 		try {
+			logger.info(Const.API_ADDDEVICE, deviceBody);
+
 			response = WS.url(Const.URL_REPOSITORY_ADD_DEVICE).body(deviceBody)
 					.mimeType("application/json").post();
 		} catch (Exception e) {
-			renderJSON(gson.toJson(new APIResponse(Const.API_ADDDEVICE, 1, e
-					.toString())));
+			renderJSON(gson.toJson(new APIResponse(Const.API_ADDDEVICE, 1,
+					Const.ERROR_MESSAGE_CONNECTION_FAILURE)));
 
 		}
 		return response;

@@ -14,6 +14,7 @@ import play.libs.WS;
 import play.libs.WS.HttpResponse;
 import edu.iiitd.muc.sensoract.constants.Const;
 import edu.iiitd.muc.sensoract.format.APIResponse;
+import edu.iiitd.muc.sensoract.utilities.SecretKey;
 
 public class GenerateSecretKey extends SensorActAPI {
 	/**
@@ -37,22 +38,8 @@ public class GenerateSecretKey extends SensorActAPI {
 	 *            User credentials
 	 */
 	public final void doProcess(String body) {
-		String secretkey = null;
-		try {
-			/*
-			 * Get the secret key from the HashMap
-			 */
-			secretkey = usernameToSecretKeyMap.get(session.get(Const.USERNAME));
-			if (secretkey == null) {
-				renderJSON(gson.toJson(new APIResponse(Const.API_ADDDEVICE, 1,
-						"Session Expired.Login Again")));
-
-			}
-		} catch (Exception e) {
-			renderJSON(gson.toJson(new APIResponse(Const.API_ADDDEVICE, 1,
-					"Session Expired.Login Again")));
-
-		}
+		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
+				.get(Const.USERNAME));
 
 		String userCredentials = body.replace(Const.FAKE_SECRET_KEY, secretkey);
 

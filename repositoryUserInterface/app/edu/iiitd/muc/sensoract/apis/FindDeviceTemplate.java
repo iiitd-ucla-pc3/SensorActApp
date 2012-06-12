@@ -4,6 +4,7 @@ import play.libs.WS;
 import play.libs.WS.HttpResponse;
 import edu.iiitd.muc.sensoract.constants.Const;
 import edu.iiitd.muc.sensoract.format.APIResponse;
+import edu.iiitd.muc.sensoract.utilities.SecretKey;
 
 /**
  * Contains methods to delete a device
@@ -34,14 +35,8 @@ public class FindDeviceTemplate extends SensorActAPI {
 	private HttpResponse sendRequestToRepository(String findDeviceRequest) {
 
 		HttpResponse response = null;
-		String secretkey = null;
-		try {
-			secretkey = usernameToSecretKeyMap.get(session.get(Const.USERNAME));
-		} catch (Exception e) {
-			renderJSON(gson.toJson(new APIResponse(Const.API_DELETEDEVICE, 1,
-					"Session Expired.Login Again")));
-
-		}
+		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
+				.get(Const.USERNAME));
 		String findDeviceRequestWithSecretKey = findDeviceRequest.replace(
 				Const.FAKE_SECRET_KEY, secretkey);
 		try {

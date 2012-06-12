@@ -4,6 +4,7 @@ import play.libs.WS;
 import play.libs.WS.HttpResponse;
 import edu.iiitd.muc.sensoract.constants.Const;
 import edu.iiitd.muc.sensoract.format.APIResponse;
+import edu.iiitd.muc.sensoract.utilities.SecretKey;
 
 /**
  * Description:This API is invoked by the client UI to get a list of all the
@@ -28,14 +29,8 @@ public class ListAllDevices extends SensorActAPI {
 	 */
 	private HttpResponse sendRequestToBroker() {
 		HttpResponse response = null;
-		String secretkey = null;
-		try {
-			secretkey = usernameToSecretKeyMap.get(session.get(Const.USERNAME));
-		} catch (Exception e) {
-			renderJSON(gson.toJson(new APIResponse(Const.API_LISTALLDEVICES, 1,
-					"Session Expired.Login Again")));
-
-		}
+		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
+				.get(Const.USERNAME));
 		String reqStr = "{\"secretkey\":" + secretkey + "}";
 
 		try {

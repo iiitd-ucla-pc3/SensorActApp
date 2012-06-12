@@ -14,6 +14,7 @@ import play.libs.WS;
 import play.libs.WS.HttpResponse;
 import edu.iiitd.muc.sensoract.constants.Const;
 import edu.iiitd.muc.sensoract.format.APIResponse;
+import edu.iiitd.muc.sensoract.utilities.SecretKey;
 
 public class AddDeviceTemplate extends SensorActAPI {
 	/**
@@ -37,20 +38,8 @@ public class AddDeviceTemplate extends SensorActAPI {
 	 *            Device profile in Json
 	 */
 	public final void doProcess(String deviceBody) {
-		String secretkey = null;
-		try {
-			/*
-			 * Get the secret key from the HashMap
-			 */
-
-			secretkey = usernameToSecretKeyMap.get(session.get(Const.USERNAME));
-		} catch (Exception e) {
-			logger.info(Const.API_ADDDEVICETEMPLATE,
-					Const.LOGGER_INFO_SESSION_EXPIRED);
-			renderJSON(gson.toJson(new APIResponse(Const.API_ADDDEVICE, 1,
-					Const.LOGGER_INFO_SESSION_EXPIRED)));
-
-		}
+		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
+				.get(Const.USERNAME));
 
 		String deviceBodyWithSecretKey = deviceBody.replace(
 				Const.FAKE_SECRET_KEY, secretkey);
@@ -75,8 +64,8 @@ public class AddDeviceTemplate extends SensorActAPI {
 		} catch (Exception e) {
 			logger.error(Const.API_ADDDEVICETEMPLATE,
 					Const.LOGGER_ERROR_CONNECTION_FAILURE);
-			renderJSON(gson.toJson(new APIResponse(Const.API_ADDDEVICE, 1, e
-					.toString())));
+			renderJSON(gson.toJson(new APIResponse(Const.API_ADDDEVICETEMPLATE,
+					1, e.toString())));
 
 		}
 		return response;
