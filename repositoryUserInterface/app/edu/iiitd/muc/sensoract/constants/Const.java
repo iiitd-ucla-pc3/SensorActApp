@@ -27,6 +27,11 @@ public class Const {
 	public static final String API_LISTALLDEVICES = "listalldevices";
 	public static final String API_QUERYDATA = "querydata";
 	public static final String API_ADDDEVICETEMPLATE = "adddevicetemplate";
+	public static final String API_DELETEDEVICETEMPLATE = "deletedevicetemplate";
+	public static final String API_FINDDEVICE = "finddevice";
+	public static final String API_FINDDEVICETEMPLATE = "finddevicetemplate";
+	public static final String API_GENERATESECRETKEY = "generatesecretkey";
+	public static final String API_LISTALLDEVICETEMPLATES = "listalldevicetemplates";
 
 	/*
 	 * API parameters
@@ -180,6 +185,12 @@ public class Const {
 	 */
 	public static final String LOGGER_ERROR_JSON_PARSE = "JSON Parse error: ";
 	public static final String LOGGER_ERROR_CONNECTION_FAILURE = "Connection Failure: ";
+
+	/*
+	 * 
+	 * Mime types
+	 */
+	public static final String MIME_TYPE_JSON = "application/json";
 
 	public class Error {
 

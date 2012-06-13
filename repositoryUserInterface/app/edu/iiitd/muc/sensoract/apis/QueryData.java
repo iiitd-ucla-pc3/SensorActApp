@@ -1,10 +1,9 @@
 package edu.iiitd.muc.sensoract.apis;
 
-import play.libs.WS;
 import play.libs.WS.HttpResponse;
 import edu.iiitd.muc.sensoract.constants.Const;
-import edu.iiitd.muc.sensoract.format.APIResponse;
 import edu.iiitd.muc.sensoract.utilities.SecretKey;
+import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 
 public class QueryData extends SensorActAPI {
 
@@ -13,21 +12,11 @@ public class QueryData extends SensorActAPI {
 				.get(Const.USERNAME));
 		String queryBodyWithSecretKey = queryBody.replace(
 				Const.FAKE_SECRET_KEY, secretkey);
-
-		HttpResponse responseFromBroker = sendRequestToBroker(queryBodyWithSecretKey);
+		HttpResponse responseFromBroker = new SendHTTPRequest()
+				.sendPostRequest(Const.URL_REPOSITORY_QUERY_DATA,
+						Const.MIME_TYPE_JSON, Const.API_QUERYDATA,
+						queryBodyWithSecretKey);
 		renderJSON(responseFromBroker.getString());
-	}
 
-	private HttpResponse sendRequestToBroker(String queryBody) {
-		HttpResponse response = null;
-		try {
-			response = WS.url(Const.URL_REPOSITORY_QUERY_DATA).body(queryBody)
-					.mimeType("application/json").post();
-		} catch (Exception e) {
-			renderJSON(gson.toJson(new APIResponse(Const.API_QUERYDATA, 1, e
-					.toString())));
-		}
-		return response;
 	}
-
 }

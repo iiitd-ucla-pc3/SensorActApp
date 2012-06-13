@@ -1,10 +1,9 @@
 package edu.iiitd.muc.sensoract.apis;
 
-import play.libs.WS;
 import play.libs.WS.HttpResponse;
 import edu.iiitd.muc.sensoract.constants.Const;
-import edu.iiitd.muc.sensoract.format.APIResponse;
 import edu.iiitd.muc.sensoract.utilities.SecretKey;
+import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 
 /**
  * Contains methods to delete a device
@@ -21,34 +20,18 @@ public class FindDeviceTemplate extends SensorActAPI {
 	 * @param findDeviceRequest
 	 */
 	public final void doProcess(String findDeviceRequest) {
-		System.out.println(findDeviceRequest);
-		HttpResponse responseFromRepository = sendRequestToRepository(findDeviceRequest);
-		renderJSON(responseFromRepository.getString());
-	}
-
-	/**
-	 * Makes the delete request to the repository
-	 * 
-	 * @param findDeviceRequest
-	 * @return HttpResponse
-	 */
-	private HttpResponse sendRequestToRepository(String findDeviceRequest) {
-
-		HttpResponse response = null;
 		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
 				.get(Const.USERNAME));
 		String findDeviceRequestWithSecretKey = findDeviceRequest.replace(
 				Const.FAKE_SECRET_KEY, secretkey);
-		try {
-			response = WS.url(Const.URL_REPOSITORY_FIND_DEVICE_TEMPLATE)
-					.body(findDeviceRequestWithSecretKey)
-					.mimeType("application/json").post();
-		} catch (Exception e) {
-			renderJSON(gson.toJson(new APIResponse(Const.API_DELETEDEVICE, 1, e
-					.toString())));
+		logger.info(Const.API_FINDDEVICETEMPLATE, secretkey + " "
+				+ findDeviceRequestWithSecretKey);
 
-		}
-		return response;
+		HttpResponse responseFromBroker = new SendHTTPRequest()
+				.sendPostRequest(Const.URL_REPOSITORY_FIND_DEVICE_TEMPLATE,
+						Const.MIME_TYPE_JSON, Const.API_FINDDEVICETEMPLATE,
+						findDeviceRequestWithSecretKey);
+		renderJSON(responseFromBroker.getString());
 	}
 
 }

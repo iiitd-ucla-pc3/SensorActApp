@@ -148,6 +148,7 @@
 					try {
 						$.get(urlDevicesOrTemplatesList, function(data) {
 							deviceOrTemplateDataList[index] = data;
+							alert(JSON.stringify(data));
 							//alert(JSON.stringify(deviceOrTemplateDataList[index]));
 
 							//alert(JSON.stringify(receivedDeviceData ));
@@ -228,7 +229,7 @@
 											var messageToEditDevice = {}
 											messageToEditDevice["devicename"] = deviceToBeEdited;
 											messageToEditDevice[SECRET_KEY] = secretkey;
-											window.location = URL_EDIT_DEVICE +"/"+ deviceToBeEdited + "/" + isdevice + "/update";
+											window.location = URL_EDIT_DEVICE + "/" + deviceToBeEdited + "/" + isdevice + "/update";
 
 										});
 										$('#' + saveAsButton).click(function() {
@@ -239,7 +240,7 @@
 											var messageToEditDevice = {}
 											messageToEditDevice["devicename"] = deviceToBeEdited;
 											messageToEditDevice[SECRET_KEY] = secretkey;
-											window.location = URL_EDIT_DEVICE + "/"+ deviceToBeEdited + "/" + isdevice + "/create";
+											window.location = URL_EDIT_DEVICE + "/" + deviceToBeEdited + "/" + isdevice + "/create";
 
 										});
 										if(deviceOrTemplateDataList[index][DEVICE_ARRAY][i].hasOwnProperty(DEVICE_SENSORS)) {
@@ -292,6 +293,7 @@
 									}
 
 								} else {
+									
 									$("#getDeviceErrorDiv").html("No device registered");
 									$("#getDeviceErrorDiv").show();
 								}
@@ -334,7 +336,7 @@
 
 				$("#addNewDeviceOrTemplate").click(function() {
 
-					window.location = URL_EDIT_DEVICE + "/"+ FAKE_DEVICE_NAME + "/true/create";
+					window.location = URL_EDIT_DEVICE + "/" + FAKE_DEVICE_NAME + "/true/create";
 					return false;
 				});
 			});

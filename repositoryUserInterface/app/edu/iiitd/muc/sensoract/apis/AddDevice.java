@@ -10,11 +10,10 @@ package edu.iiitd.muc.sensoract.apis;
 /*
  * Standard play imports
  */
-import play.libs.WS;
 import play.libs.WS.HttpResponse;
 import edu.iiitd.muc.sensoract.constants.Const;
-import edu.iiitd.muc.sensoract.format.APIResponse;
 import edu.iiitd.muc.sensoract.utilities.SecretKey;
+import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 
 public class AddDevice extends SensorActAPI {
 	/**
@@ -44,31 +43,13 @@ public class AddDevice extends SensorActAPI {
 		String deviceBodyWithSecretKey = deviceBody.replace(
 				Const.FAKE_SECRET_KEY, secretkey);
 		logger.info(Const.API_ADDDEVICE, secretkey + " " + deviceBody);
+		// HttpResponse responseFromRepository=sendPostRe
 
-		HttpResponse responseFromBroker = sendRequestToRepository(deviceBodyWithSecretKey);
+		HttpResponse responseFromBroker = new SendHTTPRequest()
+				.sendPostRequest(Const.URL_REPOSITORY_ADD_DEVICE,
+						Const.MIME_TYPE_JSON, Const.API_ADDDEVICE,
+						deviceBodyWithSecretKey);
 		renderJSON(responseFromBroker.getString());
-	}
-
-	/**
-	 * Sends the request containing the deviceBody to the repository
-	 * 
-	 * @param deviceBody
-	 * @return HttpResponse
-	 */
-
-	private HttpResponse sendRequestToRepository(String deviceBody) {
-		HttpResponse response = null;
-		try {
-			logger.info(Const.API_ADDDEVICE, deviceBody);
-
-			response = WS.url(Const.URL_REPOSITORY_ADD_DEVICE).body(deviceBody)
-					.mimeType("application/json").post();
-		} catch (Exception e) {
-			renderJSON(gson.toJson(new APIResponse(Const.API_ADDDEVICE, 1,
-					Const.ERROR_MESSAGE_CONNECTION_FAILURE)));
-
-		}
-		return response;
 	}
 
 }

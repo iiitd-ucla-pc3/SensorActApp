@@ -10,11 +10,10 @@ package edu.iiitd.muc.sensoract.apis;
 /*
  * Standard play imports
  */
-import play.libs.WS;
 import play.libs.WS.HttpResponse;
 import edu.iiitd.muc.sensoract.constants.Const;
-import edu.iiitd.muc.sensoract.format.APIResponse;
 import edu.iiitd.muc.sensoract.utilities.SecretKey;
+import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 
 public class GenerateSecretKey extends SensorActAPI {
 	/**
@@ -40,31 +39,16 @@ public class GenerateSecretKey extends SensorActAPI {
 	public final void doProcess(String body) {
 		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
 				.get(Const.USERNAME));
+		String generateRequestWithSecretKey = body.replace(
+				Const.FAKE_SECRET_KEY, secretkey);
+		logger.info(Const.API_GENERATESECRETKEY, secretkey + " "
+				+ generateRequestWithSecretKey);
 
-		String userCredentials = body.replace(Const.FAKE_SECRET_KEY, secretkey);
-
-		HttpResponse responseFromRepository = sendRequestToRepository(userCredentials);
-		renderJSON(responseFromRepository.getString());
-	}
-
-	/**
-	 * Sends the request containing the deviceBody to the repository
-	 * 
-	 * @param deviceBody
-	 * @return HttpResponse
-	 */
-
-	private HttpResponse sendRequestToRepository(String body) {
-		HttpResponse response = null;
-		try {
-			response = WS.url(Const.URL_REPOSITORY_GENERATE_SECRET_KEY)
-					.body(body).mimeType("application/json").post();
-		} catch (Exception e) {
-			renderJSON(gson.toJson(new APIResponse(Const.API_ADDDEVICE, 1, e
-					.toString())));
-
-		}
-		return response;
+		HttpResponse responseFromBroker = new SendHTTPRequest()
+				.sendPostRequest(Const.URL_REPOSITORY_GENERATE_SECRET_KEY,
+						Const.MIME_TYPE_JSON, Const.API_GENERATESECRETKEY,
+						generateRequestWithSecretKey);
+		renderJSON(responseFromBroker.getString());
 	}
 
 }
