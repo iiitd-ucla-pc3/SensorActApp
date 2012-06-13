@@ -26,7 +26,7 @@ POST    /querydata                              Application.querydata
 GET     /repository							  Application.repository
 GET     /getrepositoryinfo							  Application.getrepositoryinfo
 POST     /generatesecretkey							  Application.generatesecretkey
-GET      /editdevice                                 Application.editdevice
+GET      /editdevice/{devicename}/{isdevice}/{mode}                                 Application.editdevice
 POST     /finddevice                                 Application.finddevice
 POST     /finddevicetemplate                                 Application.finddevicetemplate
 

@@ -63,6 +63,7 @@ public class Application extends Controller {
 
 	public static void editdevice(String devicename, String isdevice,
 			String mode) {
+		System.out.println("Device name" + devicename);
 		renderArgs.put("devicename", devicename);
 		renderArgs.put("isdevice", isdevice);
 		renderArgs.put("mode", mode);
