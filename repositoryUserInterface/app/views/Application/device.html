@@ -49,6 +49,16 @@
 				$("#logout").attr('href', URL_LOGOUT_USER);
 				$("#home").attr('href', URL_HOME);
 
+				//Adding Link to Navigation Bar
+
+				$("#devices").attr('href', URL_DEVICES);
+				$("#visualization").attr('href', URL_VISUALIZATION);
+				//$("#logout").attr('href', URL_LOGOUT_USER);
+				$("#repositoryInformation").attr('href', URL_REPOSITORY_INFO);
+				$("#logout").click(function() {
+
+					window.location = URL_LOGOUT_USER;
+				});
 				/*
 				 * Hiding Error Divs
 				 */
@@ -148,7 +158,6 @@
 					try {
 						$.get(urlDevicesOrTemplatesList, function(data) {
 							deviceOrTemplateDataList[index] = data;
-							alert(JSON.stringify(data));
 							//alert(JSON.stringify(deviceOrTemplateDataList[index]));
 
 							//alert(JSON.stringify(receivedDeviceData ));
@@ -158,7 +167,11 @@
 							if(deviceOrTemplateDataList[index].hasOwnProperty(RESPONSE_STATUS_CODE))//Means a failure has occured {
 							//The API call has failed
 							{
-								alertGetDeviceError("Following errors occured " + deviceOrTemplateDataList[index][RESPONSE_MESSAGE]);
+								//	alertGetDeviceError("Following errors occured " + deviceOrTemplateDataList[index][RESPONSE_MESSAGE]);
+								if(index == 0)
+									$("#device").prepend('No ');
+								else
+									$("#template").prepend('No ');
 							} else {
 
 								var numberOfDevices = deviceOrTemplateDataList[index][DEVICE_ARRAY].length;
@@ -170,7 +183,7 @@
 									for(var i = 0; i < numberOfDevices; i++) {
 										if(index == 0) {
 											var id = "device" + i.toString();
-											$("<h2><a href=\"#\">" + deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_NAME] + "  " + deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_LOCATION] + "</a></h2><div id=\"" + id + "\"></div>").appendTo("#accordion");
+											$("<h2><a href=\"#\">" + deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_NAME] + "  |  " + deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_LOCATION] + "<br/> </a></h2><div id=\"" + id + "\"></div>").appendTo("#accordion");
 										} else {
 											var id = "devicetemplate" + i.toString();
 											$("<h2><a href=\"#\">" + deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_NAME] + "  " + deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_LOCATION] + "</a></h2><div id=\"" + id + "\"></div>").appendTo("#accordion1");
@@ -196,12 +209,19 @@
 										var deviceIP = deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_IP];
 										var deviceTags = deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_TAGS];
 										//$('#accordion').append("<h3><a href=\"#\">"+deviceName+"</a></h3>")
+										var Tags = deviceTags.split(",");
 
-										//$(idSelector).append("<p><b>Device Name: " + deviceName + "</b> <br/> <b>Device Location: " + deviceLocation + "</b> <br/><b>Device IP: " + deviceIP + "</b> <br/><b>Device Tags: " + deviceTags + "</b> <br/></p>");
+										//$(idSelector).append("<p><b>Device Name: " +  deviceName + "</b> <br/> <b>Device Location: " + deviceLocation + "</b> <br/><b>Device IP: " + deviceIP + "</b> <br/><b>Device Tags: " + deviceTags + "</b> <br/></p>");
+										if(Tags != 'none') {//alert(Tags);
+											$(idSelector).append("<div class='divTags'></div><br />");
+											$.each(Tags, function(index, value) {
 
-										$(idSelector).append("<button id=" + removeDeviceButton + ">Remove</button>");
-										$(idSelector).append("<button id=" + editDeviceButton + ">Edit</button>");
-										$(idSelector).append("<button id=" + saveAsButton + ">Save As</button>");
+												$(idSelector).children(".divTags").append("<button class='google-button-red Tags'>" + value + "</button>");
+											});
+										}
+										$(idSelector).append("<button id=" + removeDeviceButton + " class='google-button google-button-blue'>Remove</button>");
+										$(idSelector).append("<button id=" + editDeviceButton + " class='google-button google-button-blue'>Edit</button>");
+										$(idSelector).append("<button id=" + saveAsButton + " class='google-button google-button-blue'>Save As</button>");
 
 										$('#' + removeDeviceButton).click(function() {
 
@@ -244,9 +264,9 @@
 
 										});
 										if(deviceOrTemplateDataList[index][DEVICE_ARRAY][i].hasOwnProperty(DEVICE_SENSORS)) {
-											$(idSelector).append("<div class=\"oldSensors\"></div>");
+											$(idSelector).append("<div class=\"oldSensors\" style=''></div>");
 
-											//$(idSelector).append("<p><b>Sensors</b></p>");
+											$(idSelector).children(".oldSensors").append("<p class='google-button' style='cursor:default;font-size:18px;'>Sensors</p>");
 											var sensor = deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_SENSORS];
 											var numberOfSensors = sensor.length;
 											for(var j = 0; j < numberOfSensors; j++) {
@@ -257,13 +277,13 @@
 
 												var sensorId = "sensor_" + i.toString() + "_" + j.toString();
 
-												$(idSelector).children(".oldSensors").append("<div class=oldSensor id =" + sensorId + "><label>SensorName<label><input value=" + sensorName + "></input><label>SensorID<label><input value=" + sensorID + "></input></div>");
+												$(idSelector).children(".oldSensors").append("<div class=oldSensor id =" + sensorId + "><label>SensorName<label><input value=" + sensorName + "></input><label>SensorID<label><input value=" + sensorID + "></input></div><hr>	");
 												var channel = sensor[j][DEVICE_SENSOR_CHANNELS];
 												var numberOfChannels = channel.length;
 
 												//$(idSelector).children("#oldSensor").append("<p>Channels</p>");
 												var channelTableId = sensorId + "channel";
-												$(idSelector).children(".oldSensors").children("#" + sensorId).append("<table id=" + channelTableId + "></table>");
+												$(idSelector).children(".oldSensors").children("#" + sensorId).append("<h4>Channels</h4><table id=" + channelTableId + "></table>");
 												for(var k = 0; k < numberOfChannels; k++) {
 													var channelName = channel[k][DEVICE_SENSOR_CHANNEL_NAME];
 													var channelType = channel[k][DEVICE_SENSOR_CHANNEL_TYPE];
@@ -278,14 +298,15 @@
 
 										if(deviceOrTemplateDataList[index][DEVICE_ARRAY][i].hasOwnProperty(DEVICE_ACTUATORS)) {
 
-											$(idSelector).append("<div class=\"oldActuators\"></div>");
-											$(idSelector).children(".oldActuators").append("<div id=ipDiv><label id=\"newDeviceIPLabel\">IP</label><input id=newDeviceIP value=" + deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_IP] + "></input></div>");
+											$(idSelector).append("<div class=\"oldActuators\" style=''></div>");
+											$(idSelector).children(".oldActuators").append("<p class='google-button' style='cursor:default;font-size:18px;'>Actuators</p>");
+											$(idSelector).children(".oldActuators").append("<div id='ipDiv' style='font-weight:bold;'><label id=\"newDeviceIPLabel\">IP</label><input id=newDeviceIP value=" + deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_IP] + "></input></div>");
 											var actuator = deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_ACTUATORS];
 											var numberOfActuators = actuator.length;
 											for(var j = 0; j < numberOfActuators; j++) {
 												var actuatorName = actuator[j][DEVICE_ACTUATOR_NAME];
 												//var sensorId = "actuator_" + i.toString() + "_" + j.toString();
-												$(idSelector).children(".oldActuators").append("<div id=\"oldActuator\"><label>Actuator<br/>Name</label><input value=\"" + actuatorName + "\"></input></div>");
+												$(idSelector).children(".oldActuators").append("<div id=\"oldActuator\"><label>Actuator<br/>Name</label><input value=\"" + actuatorName + "\"></input></div><hr>");
 											}
 
 										}
@@ -293,9 +314,14 @@
 									}
 
 								} else {
-									
-									$("#getDeviceErrorDiv").html("No device registered");
-									$("#getDeviceErrorDiv").show();
+									//$("#getDevziceErrorDiv").html("No device registered");
+									//$("#getDeviceErrorDiv").show();
+									//alert(index);
+									if(index == 0)
+										$("#device").prepend('No ');
+									else
+										$("#template").prepend('No ');
+
 								}
 
 							}
@@ -350,31 +376,55 @@
 				<br />
 				<br />
 				<span style="font-size:25px;">Sense - Interact - Actuate</span></h1>
+				<!--<nav>
+				<ul>
+				<li>
+				<a id="home" >Home</a>
+				</li>
+				<li>
+				<a id="logout">Logout</a>
+				</li>
+				</ul>
+				</nav>
+				-->
 				<nav>
 					<ul>
 						<li>
-							<a id="home" >Home</a>
+							<a id="devices" class="active">Devices</a>
 						</li>
 						<li>
-							<a id="logout">Logout</a>
+							<a id="visualization">Visualization</a>
 						</li>
+						<li>
+							<a id="repositoryInformation">Repository Info</a>
+						</li>
+						<!--<li>
+						<a id="logout">Logout</a>
+						</li>-->
 					</ul>
+				</nav>
+				<br />
+				<br />
+				<nav>
+					<p class="pbox" style="margin-bottom:-20px;">
+						Welcome ${username} &nbsp | &nbsp<span id="logout">Logout</span>
+					</p>
 				</nav>
 			</header>
 		</div>
 		<div class="wrapper" style="">
-			<div id="getDeviceErrorDiv" class ="errorDiv"></div>
-			<h1 class="newfont" style="text-align:center;">Registered devices</h1>
+			<!--<div id="getDeviceErrorDiv" class ="errorDiv"></div>-->
+			<h1 class="newfont" id="device" style="text-align:center;">Registered devices</h1>
 			<hr>
 			<div id="accordion"></div>
-			<h1 class="newfont" style="text-align:center;">Registered templates</h1>
+			<h1 class="newfont" style="text-align:center;" id="template">Registered templates</h1>
 			<div id="accordion1"></div>
 			<hr>
-			<div id="errorDiv" class="errorDiv"></div>
-			<button id="addNewDeviceOrTemplate">
+			<!--<div id="errorDiv" class="errorDiv"></div>-->
+			<button id="addNewDeviceOrTemplate" class="google-button-blue">
 				Create New Device/Template
 			</button>
-			<input type="hidden" id =username value =${username}>
+			<input type="hidden"  id =username value =${username}>
 			</input>
 		</div>
 		<div style="clear:both;" id="footer-container">

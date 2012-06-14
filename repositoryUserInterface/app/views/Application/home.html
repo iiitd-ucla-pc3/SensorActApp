@@ -35,34 +35,40 @@
 				<br />
 				<span style="font-size:25px;">Sense - Interact - Actuate</span></h1>
 				<nav>
-					<p class="pbox">
-						Welcome ${flash.username} &nbsp&nbsp<span id="logout">Logout</span>
+					<ul>
+						<li>
+							<a id="devices" >Devices</a>
+						</li>
+						<li>
+							<a id="visualization">Visualization</a>
+						</li>
+						<li>
+							<a id="repositoryInformation">Repository Info</a>
+						</li>
+						<!--<li>
+						<a id="logout">Logout</a>
+						</li>-->
+					</ul>
+				</nav>
+				<br />
+				<br />
+				<nav>
+					<p class="pbox" style="margin-bottom:-20px;">
+						Welcome ${username} &nbsp | &nbsp<span id="logout">Logout</span>
 					</p>
 				</nav>
 			</header>
 		</div>
-		<nav>
-			<ul>
-				<li>
-					<a id="devices" >Devices</a>
-				</li>
-				<li>
-					<a id="visualization">Visualization</a>
-				</li>
-				<li>
-					<a id="repositoryInformation">Repository Info</a>
-				</li>
-			</ul>
-		</nav>
-		<div id="homeDiv">
-			<img src="@{'/public/images/background_2.jpg'}" />
+		<div class="wrapper">
+			<img src="@{'/public/images/background_2.jpg'}" style="text-align:center" width="75%" height="350px"/>
+			<hr>
+			<p class='newfont' style="font-size:20px;">
+				Smart Rooms at IIIT-Delhi
+				<br />
+				By MUC Group
+			</p>
+			<hr>
 		</div>
-		<hr>
-		<br />
-		Smart Rooms at IIIT-Delhi
-		<br />
-		By MUC Group
-		<hr>
 		<div style="clear:both;" id="footer-container">
 			<footer class="wrapper">
 				<h4 align="center">&copy2012 |MUC,IIIT-Delhi</h4>

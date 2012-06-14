@@ -123,6 +123,12 @@
 
 				});
 
+				$('.sign_up').keypress(function(e) {
+					if(e.keyCode == 13) {
+						$('#sign_up_submit').click();
+					}
+				});
+
 				$("#sign_in_submit").click(function() {
 					sign_in_username = $("#sign_in_username").val();
 					sign_in_password = $("#sign_in_password").val();
@@ -197,11 +203,15 @@
 	<body>
 		<div id="header-container">
 			<header class="wrapper clearfix">
-				<h1 id="title">SensorAct
+				<h2 id="title">
+				<div style="margin-top:-15%;"><img src="@{'/public/images/logo.png'}" width="120px" height="100px" />&nbsp
+				<img src="@{'/public/images/uclaa.png'}" width="160px" height="70px" /></div><br />
+				SensorAct
 				<br />
 				<br />
-				<span style="font-size:25px;">Sense - Interact - Actuate</span></h1>
-				<nav>
+				<span style="font-size:25px;">Sense - Interact - Actuate</span><br />
+				</h2>
+				<nav><br />
 					<p class="pbox">
 						<label for="sign_in_username">Username</label>
 						<input type="text" size="10" name="sign_in_username" id="sign_in_username" />
@@ -227,29 +237,50 @@
 					<header>
 						<h1 class="newfont">Introducing SensorAct Project</h1>
 						<hr>
-						<iframe width="420" height="315" src="http://www.youtube.com/embed/cFAV5jNvQwg" frameborder="0" allowfullscreen></iframe>
+						<video controls="controls"autoplay="autoplay" loop="loop"  poster="http://sandbox.thewikies.com/vfe-generator/images/big-buck-bunny_poster.jpg" width="420" height="315">
+							<source src="http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4" type="video/mp4" />
+							<source src="http://clips.vorwaerts-gmbh.de/big_buck_bunny.webm" type="video/webm" />
+							<source src="http://clips.vorwaerts-gmbh.de/big_buck_bunny.ogv" type="video/ogg" />
+							<object type="application/x-shockwave-flash" data="http://releases.flowplayer.org/swf/flowplayer-3.2.1.swf" width="420" height="315">
+								<param name="movie" value="http://releases.flowplayer.org/swf/flowplayer-3.2.1.swf" />
+								<param name="allowFullScreen" value="true" />
+								<param name="wmode" value="transparent" />
+								<param name="flashVars" value="config={'playlist':['http%3A%2F%2Fsandbox.thewikies.com%2Fvfe-generator%2Fimages%2Fbig-buck-bunny_poster.jpg',{'url':'http%3A%2F%2Fclips.vorwaerts-gmbh.de%2Fbig_buck_bunny.mp4','autoPlay':false}]}" />
+								<img alt="Big Buck Bunny" src="http://sandbox.thewikies.com/vfe-generator/images/big-buck-bunny_poster.jpg" width="420" height="315" title="No video playback capabilities, please download the video below" />
+							</object>
+						</video>
+						<p>
+							<strong>Download video:</strong><a href="http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4">MP4 format</a> | <a href="http://clips.vorwaerts-gmbh.de/big_buck_bunny.ogv">Ogg format</a> | <a href="http://clips.vorwaerts-gmbh.de/big_buck_bunny.webm">WebM format</a>
+						</p>
+						<!--  video controls="controls"
+						class="video-stream"
+						x-webkit-airplay="allow"
+						data-youtube-id="cFAV5jNvQwg"
+						src="http://www.youtube.com/watch?v=cFAV5jNvQwg&feature=b-mv"></video>
+						-->
+						<!-- iframe width="420" height="315" src="http://www.youtube.com/embed/cFAV5jNvQwg" frameborder="0" allowfullscreen></iframe-->
 					</header>
 				</article>
 				<br />
 				<aside>
 					<h2 class="newfont"><b>Register</b></h2>
 					<label for="sign_up_username">Username</label>
-					<input type="text" name="sign_up_username" size="15" id="sign_up_username" />
+					<input type="text" name="sign_up_username" class="sign_up" size="15" id="sign_up_username" />
 					<label></label>
 					<span id="span_sign_up_username"></span>
 					<br />
 					<label for="sign_up_password">Password</label>
-					<input type="password" name="sign_up_password" size="15" id="sign_up_password" />
+					<input type="password" name="sign_up_password" class="sign_up" size="15" id="sign_up_password" />
 					<label></label>
 					<span id="span_sign_up_password"></span>
 					<br />
 					<label for="sign_up_confirmation">Password</label>
-					<input type="password" name="sign_up_confirmation" size="15" id="sign_up_confirmation" />
+					<input type="password" name="sign_up_confirmation" class="sign_up" size="15" id="sign_up_confirmation" />
 					<label></label>
 					<span id="span_sign_up_confirmation"></span>
 					<br />
 					<label for="sign_up_email">Email ID</label>
-					<input type="email" name="sign_up_email" size="15" id="sign_up_email" />
+					<input type="input" name="sign_up_email" size="15" class="sign_up" id="sign_up_email" />
 					<label></label>
 					<span id="span_sign_up_email"></span>
 					<br />

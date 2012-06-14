@@ -15,9 +15,12 @@
 		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery-ui-1.8.21.custom.css'}">
 		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery-ui-timepicker-addon.css'}">
 				<!--<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/styles_non_centered.css'}">-->
-
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery.noty.css'}">
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/noty_theme_twitter.css'}">
 		<script src="@{'/public/js/libs/modernizr-2.0.6.min.js'}"></script>
 		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/jquery.noty.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		
 		<script src="@{'/public/javascripts/jquery-ui-1.8.20.custom.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 		<script src="@{'/public/javascripts/highcharts.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 		<script src="@{'/public/javascripts/utilityFunctions.js'}" type="text/javascript" charset="${_response_encoding}"></script>
@@ -27,6 +30,9 @@
 		<script type="text/javascript">
 			$(document).ready(function() {
 
+				$(".errorVisual").hide();
+				$("#labelSensorSelect").hide();
+				//$("#container").hide();
 				//Setting up in async mode
 				jQuery.ajaxSetup({
 					async : false
@@ -114,6 +120,14 @@
 				$("#home").attr('href', URL_HOME);
 				$("#errorDiv").hide();
 
+				$("#devices").attr('href', URL_DEVICES);
+				$("#visualization").attr('href', URL_VISUALIZATION);
+				//$("#logout").attr('href', URL_LOGOUT_USER);
+				$("#repositoryInformation").attr('href', URL_REPOSITORY_INFO);
+				$("#logout").click(function() {
+
+					window.location = URL_LOGOUT_USER;
+				});
 				
 				function alertError(errorMessage)
 				{
@@ -196,6 +210,7 @@
 							if(!(receivedData.hasOwnProperty(RESPONSE_STATUS_CODE)))
 							//Means it contains data
 							{
+								//$("#container").show();
 								if(receivedData[WAVESEGMENT_ARRAY].length>0)
 								{
 								removeError();
@@ -203,7 +218,8 @@
 								}
 								else
 								{
-									alertError("No Data found");
+									//alertError("No Data found");
+									var r=showNoty("No Data found","center","off");
 								}
 							} else {
 								alertError("Following error " + receivedData[RESPONSE_MESSAGE])
@@ -227,29 +243,51 @@
 				 */
 
 				function validateVisualizationQuery(deviceName, selectedSensorArray, startTime, endTime) {
+					$(".errorVisual").hide("");
+					$("#IDDeviceSelect,#start_date_time,#end_date_time").removeClass("error");
 					errorState = false;
 					errorInformation = "";
 					if(deviceName == "None") {
 						errorState = true;
-						errorInformation += "Select a device ";
+						//errorInformation += "Select a device ";
+						$("#IDDeviceSelect").addClass("error");
+						$("#spanDevice").show('slow',function(){
+						});
+						
+						$("#spanDevice").html("Please Select a device");
+						$("#IDDeviceSelect").focus();
 					}
-					if(selectedSensorArray.length == 0) {
+					else if(selectedSensorArray.length == 0) {
 						errorState = true;
-						errorInformation += "Select a sensor";
+						//errorInformation += "Select a sensor";
+						$("#spanSensor").show('slow',function(){});
+						$("#spanSensor").html("Please Select a Sensor");
+						
 					}
-					if(startTime.length == 0) {
+					else if(startTime.length == 0) {
 						errorState = true;
-						errorInformation += " Please provide a valid start time";
+						//errorInformation += " Please provide a valid start time";
+						$("#start_date_time").addClass("error");
+						$("#spanStartTime").show('slow',function(){});
+						$("#spanStartTime").html("Please select Start Time");
+						
 					}
-					if(endTime.length == 0) {
+					else if(endTime.length == 0) {
 						errorState = true;
-						errorInformation += " Please provide a valid end time";
+						//errorInformation += " Please provide a valid end time";
+						$("#end_date_time").addClass("error");
+						$("#spanEndTime").show('slow',function(){});
+						$("#spanEndTime").html("Please select End Time");
+						//$("#end_date_time").focus();
 					}
-					if(startTime >= endTime) {
+					else if(startTime >= endTime) {
 						errorState = true;
-						errorInformation += " Start Time should be less than end time";
+						//errorInformation += " Start Time should be less than end time";
+						$("#spanEndTime").show('slow',function(){});
+						$("#spanEndTime").html("Start Time should be less than end time");
+						
 					}
-
+					
 					return [errorState, errorInformation];
 				}
 
@@ -315,6 +353,7 @@
 					else{
 						removeError();
 					}
+					//alert(JSON.stringify(selectedSensorArray));
 					//Now for each sensor in the selectedSensorList we would make a query and fetch the data and draw chart
 					makeRequestAndDisplayChart(selectedDeviceName, selectedSensorArray, startTime, endTime);
 
@@ -352,24 +391,42 @@
 						 *
 						 */
 						$("#IDDeviceSelect").change(function() {
+							$("#labelSensorSelect").hide();
 							$("#IDSensorsSelect").html("");
 							var deviceName = $(this).val();
 							//alert(JSON.stringify(receivedDeviceData));
 							for(var index in receivedDeviceData[DEVICE_ARRAY]) {
 								var name = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_NAME];
 								if(name == deviceName) {
+									if($("#IDDeviceSelect").is('.error'))
+										{
+											//alert("Removing");
+											$("#IDDeviceSelect").removeClass("error");
+											$("#spanDevice").hide();
+											$("#IDSendQuery").removeAttr("disabled","disabled");
+											
+										}
 									if(DEVICE_SENSORS in receivedDeviceData[DEVICE_ARRAY][index] )
 									{
 										removeError();
 									var sensorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS];
+									$("#labelSensorSelect").show();
+									
 									for(var sensor in sensorArray) {
-										$("#IDSensorsSelect").append("<input id=\"sensorID\" type=\"checkbox\"value=" + sensorArray[sensor][DEVICE_SENSOR_NAME] + ">" + sensorArray[sensor][DEVICE_SENSOR_NAME] + "<br /></input>");
+										$("#IDSensorsSelect").append("<input id=\"sensorID\" type=\"checkbox\"value=" + sensorArray[sensor][DEVICE_SENSOR_NAME] + ">" + sensorArray[sensor][DEVICE_SENSOR_NAME] + "&nbsp&nbsp</input>");
 									}
+										$("#IDSensorsSelect").append("<span class='errorVisual' id='spanSensor'></span>");
 									return false;
 								}
 								else
 								{
-									alertError("The selected device contains no sensors");
+									//alertError("The selected device contains no sensors");
+									$("#IDDeviceSelect").addClass("error");
+									$("#spanDevice").show('slow',function(){
+									});
+									$("#IDSendQuery").attr("disabled","disabled");
+									$("#spanDevice").html("The selected device contains no sensors");
+									$("#IDDeviceSelect").focus();
 								}
 								}
 							}
@@ -385,7 +442,7 @@
 				}
 
 				/*
-				 * Description:This function is used to append series to the chart
+				 * Description:This function$(#IDSensorsSelect").append("<span class='errorVisual' id='spanSensor'></span>"); is used to append series to the chart
 				 *
 				 * I/P:Response to the query to view data which is of the form of
 				 * SAMPLE_QUERY_DATA_QUERY_RESPONSE in constants.js
@@ -397,8 +454,7 @@
 					var numberOfSeries = receivedData[WAVESEGMENT_ARRAY][0][WAVESEGMENT_DATA][WAVESEGMENT_CHANNELS].length;
 					//alert(numberOfSeries);
 					var sensorName = receivedData[WAVESEGMENT_ARRAY][0][WAVESEGMENT_DATA][WAVESEGMENT_SENSOR_NAME];
-					var seriesLength = series.length;
-					//alert(seriesLength);
+					
 
 					for(var i = 0; i < numberOfSeries; i++) {
 						series[i] = {};
@@ -409,14 +465,15 @@
 					console.log(numberOfWavesegs);
 					for(var i = 0; i < numberOfWavesegs; i++) {
 						var timestamp = receivedData[WAVESEGMENT_ARRAY][i][WAVESEGMENT_DATA][WAVESEGMENT_TIMESTAMP];
-						console.log(timestamp);
+						//console.log(timestamp);
 						var samplingPeriod=1;
-						//var samplingPeriod = 1 / receivedData[WAVESEGMENT_ARRAY][i][WAVESEGMENT_DATA][WAVESEGMENT_SAMPLING_INTERVAL];
+						//var samplingPeriod = receivedData[WAVESEGMENT_ARRAY][i][WAVESEGMENT_DATA][WAVESEGMENT_SAMPLING_INTERVAL];
 						for(var j = 0; j < numberOfSeries; j++) {
 
 							var numberOfReadings = receivedData[WAVESEGMENT_ARRAY][i][WAVESEGMENT_DATA][WAVESEGMENT_CHANNELS][j][WAVESEGMENT_READINGS].length;
 							for(var k = 0; k < numberOfReadings; k++) {
 								series[j][CHART_SERIES_DATA].push([(timestamp + k * samplingPeriod * 1000), receivedData[WAVESEGMENT_ARRAY][i][WAVESEGMENT_DATA][WAVESEGMENT_CHANNELS][j][WAVESEGMENT_READINGS][k]]);
+								console.log(series[j][CHART_SERIES_DATA]);
 							}
 						}
 					}
@@ -426,9 +483,10 @@
 						chart.showLoading();
 						chart.addSeries(series[i]);
 						chart.hideLoading();
+					
 					}
 
-					console.log('Exiting make series');
+						//alert(JSON.stringify(series));
 					return series;
 				}
 
@@ -443,7 +501,7 @@
 			<h1 id="title">SensorAct<br /><br /><span style="font-size:25px;">Sense - Interact - Actuate</span></h1>
 			
 			
-			<nav>	
+			<!--<nav>	
 	
 			
 				<ul>
@@ -456,7 +514,33 @@
 					</li>
 				</ul>
 						
-			</nav>
+			</nav>-->
+			
+			<nav>
+			<ul>
+				<li>
+					<a id="devices" >Devices</a>
+				</li>
+				<li>
+					<a id="visualization" class="active">Visualization</a>
+				</li>
+				<li>
+					<a id="repositoryInformation">Repository Info</a>
+				</li>
+				<!--<li>
+						<a id="logout">Logout</a>
+				</li>-->
+				
+			</ul>
+		</nav>
+		<br />
+		<br />
+		<nav>
+					<p class="pbox" style="margin-bottom:-20px;">
+						Welcome ${username} &nbsp | &nbsp<span id="logout">Logout</span>
+					</p>
+		</nav>
+	
 	
 		</header>
 	</div>
@@ -466,23 +550,39 @@
 		<div>
 			<h1 class="newfont" style="text-align:center;">Visualization</h1>
 			<hr>
-			<label>Select Device</label>
-			<select id="IDDeviceSelect">
-				<option value="None">None</option>
-			</select>
-			
-			<div id="IDSensorsSelect"></div>
-			
-			Start Date :
-			
-			<input type="text" id ="start_date_time" readonly='true' />
-			&nbsp&nbsp&nbsp&nbspEnd Date Time :
-			<input type="text" id ="end_date_time" readonly='true' />
-			<button id="IDSendQuery">
+			<div id="visualBox" style="">
+				<div class="leftDiv">
+					<label>Select a Device</label>
+				</div>
+				<div class="rightDiv">
+					<select id="IDDeviceSelect">
+					<option value="None">None</option>
+					</select>
+				<span class="errorVisual" id="spanDevice"></span>
+				</div>			
+				<div id="labelSensorSelect" class="leftDiv"><label>Select Sensor</label></div>
+				
+				<div id="IDSensorsSelect" class="rightDiv" style=""></div>
+				
+				<div class="leftDiv">
+				<label>Start Date :</label>
+				</div>
+				<div class="rightDiv">
+				<input type="text" id="start_date_time" readonly='true' /><span class="errorVisual" id="spanStartTime"></span>
+				</div>
+				<div class="leftDiv">
+				<label>End Date Time :</label>
+				</div>
+				<div class="rightDiv">
+				<input type="text" id ="end_date_time" readonly='true' /><span class="errorVisual" id="spanEndTime"></span>
+				</div>
+				<br />
+				<button id="IDSendQuery">
 				View Data
-			</button>
+				</button>
+			</div>
 		</div>
-		<div id="container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+		<div id="container" style=""></div>
 		</input>
 		<input type="hidden" id =username value =${username}>
 		</input>

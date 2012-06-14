@@ -53,7 +53,3 @@ function showNoty(text, position, closeButton) {
 
 	return noty_id;
 }
-
-/*
- * Function to hide all noty from the page
- */
