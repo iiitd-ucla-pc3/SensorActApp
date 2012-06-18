@@ -67,164 +67,77 @@
 
 				$("#getDeviceErrorDiv").hide();
 
-				/**
-				 * @param :Error Information
-				 * This function appends the passed string to the AddDeviceErrorDiv and shows the relevant error container
-				 */
-				function alertAddDeviceError(errorInformation) {
-					$("#errorDiv").html(errorInformation);
-					$("#errorDiv").fadeIn('slow');
-					return false;
-				}
+				function createNewAccordion(accordionId)
+				 	{
+				 	$("#"+accordionId).accordion({
+					autoHeight : false,
+					active : -1,
+					collapsible : true,
+					icons : {
+						"header" : "ui-icon-plus",
+						"headerSelected" : "ui-icon-minus"
+							}
+						});
 
-				/**
-				 * @param :Error Information
-				 * This function appends the passed string to the GetDeviceErrorDiv and shows the relevant error container
-				 */
-				function alertGetDeviceError(errorInformation) {
-					$("#getDeviceErrorDiv").html(errorInformation);
-					$("#getDeviceErrorDiv").fadeIn('slow');
-					return false;
-				}
+				 	}
 
-				/**
-				 * @param:
-				 * 1.Object Reference(object)  :JQuery Object Reference to the object under test
-				 * 2.Minimum Length (int)   :Minimum Length of the attribute
-				 * 3.Maximum Length (int)   :Maximum Length of the attribute
-				 * 4.ErrorField    (string) :
-				 * The name of the attribute
-				 * 5.ErrorFieldAttribute1(string) :The name of the first relevant attribute
-				 * 6.ErrorFieldAttribute2(string) :The name of the second relevant attribute
-				 *
-				 * An example call would be like (this,2,20,"sensor","name",sensorCount=2)
-				 * If the validation fails it shall append "Enter name of 2th sensor within 2 and 20 characters"
-				 *
-				 * This function can also be called like
-				 * (this,2,20,"device","name","") for attributes like device where the last attribute may not be required
-				 * In case validation fails an error like "Enter name of device within 2 and 20 characters" shall be appended
-				 *
-				 * In either case the error is appended to the error div and the corresponding faulty elements are highlighted
-				 */
-				function validateFieldAndMakeErrorInformation(objectReference, minimumLength, maximumLength, errorField, errorFieldAttribute1, errorFieldAttribute2) {
-					if((($(objectReference).val().length) < minimumLength ) || (($(objectReference).val().length) > maximumLength )) {
-						$(objectReference).addClass("error");
-						errorState = true;
-						if(errorFieldAttribute2.length > 0) {
-							errorInformation = errorInformation + " Enter " + errorFieldAttribute1 + " of " + errorFieldAttribute2 + " th " + errorField + " within " + minimumLength + " and " + maximumLength + "characters";
-						} else {
-							errorInformation = errorInformation + " Enter " + errorFieldAttribute1 + " of " + errorField + " within " + minimumLength + " and " + maximumLength + " characters";
+				function createSensorRow(sensorName,sensorID,parent)
+					{
+						createCustomElement("label",parent,null,null,"SensorName");
+						createCustomElement("br",parent,null,null,"");
+						createCustomElement("input",parent,null,null,sensorName);
+						createCustomElement("br",parent,null,null,"");
+						createCustomElement("label",parent,null,null,"SensorID");
+						createCustomElement("br",parent,null,null,"");
+						createCustomElement("input",parent,null,null,sensorID);
+					}
 
+				function createCustomElement(elementType,parent,id,Class,content)
+					{
+						
+						var $_element=$(document.createElement(elementType));
+						
+
+						$_element.attr(
+						{
+							"class":Class,
+							"id":id
+						});
+						if(elementType=="input")
+						{
+							$_element.val(content);
 						}
-					} else {
-						$(objectReference).removeClass("error");
-					}
-				}
-
-				function validateNumericFieldValue(objectReference, minimumValue, maximumValue, errorField, errorFieldAttribute1, errorFieldAttribute2) {
-					var temp;
-					temp = parseInt($(objectReference).val());
-
-					if(isNaN(temp)) {
-
-						$(objectReference).addClass("error");
-						errorState = true;
-						errorInformation = errorInformation + " " + errorFieldAttribute1 + " of " + errorFieldAttribute2 + " th " + errorField + " must be an integer";
-					} else {
-						if(temp < minimumValue || temp > maximumValue) {
-							$(objectReference).addClass("error");
-							errorState = true;
-							errorInformation = errorInformation + " Enter " + errorFieldAttribute1 + " of " + errorFieldAttribute2 + " th " + errorField + "'s value within " + minimumValue + " and " + maximumValue;
-
-						} else {
-							$(objectReference).removeClass("error");
+						else
+						{
+							$_element.append(content);
 						}
+						
+						parent.append($_element);
+						return $_element;
+						
+
 					}
 
+				function createAccordionHeader(accordionId,deviceName,deviceLocation,deviceId)
+					{
+						$("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLocation + "<br/> </a></h2><div id=\"" + deviceId + "\"></div>");
+					}
+
+				function appendElementToParent(parentReference,childHTML)
+				{
+					parentReference.append(childHTML);
 				}
 
-				/*
-				 * Make a query to fetch all the devices associated with the user
-				 */
-				function displayDevicesOrTemplates(urlDevicesOrTemplatesList, urlDevicesOrTemplatesDelete, isDevice) {
+				function createModifyButtons(parentId,removeDeviceButton,saveAsButton,editDeviceButton,index,urlDevicesOrTemplatesDelete)
+					{
+						var isdevice=index==0?true:false;
 
-					var isdevice = isDevice.toString();
-					var index;
-					if(isDevice == "true") {
-						index = 0;
-					} else {
-						index = 1;
-					}
-					try {
-						$.get(urlDevicesOrTemplatesList, function(data) {
-							deviceOrTemplateDataList[index] = data;
-							//alert(JSON.stringify(deviceOrTemplateDataList[index]));
+						createCustomElement('button',parentId,removeDeviceButton,'google-button google-button-blue',"Remove");
+						createCustomElement('button',parentId,saveAsButton,'google-button google-button-blue',"Save as");
+						createCustomElement('button',parentId,editDeviceButton,'google-button google-button-blue',"Edit");
+						$('#' + removeDeviceButton).click(function() {
 
-							//alert(JSON.stringify(receivedDeviceData ));
-							//alert(JSON.stringify(deviceOrTemplateDataList[index]));
-
-							//Successfully received data
-							if(deviceOrTemplateDataList[index].hasOwnProperty(RESPONSE_STATUS_CODE))//Means a failure has occured {
-							//The API call has failed
-							{
-								//	alertGetDeviceError("Following errors occured " + deviceOrTemplateDataList[index][RESPONSE_MESSAGE]);
-								if(index == 0)
-									$("#device").prepend('No ');
-								else
-									$("#template").prepend('No ');
-							} else {
-
-								var numberOfDevices = deviceOrTemplateDataList[index][DEVICE_ARRAY].length;
-								//alert(numberOfDevices);
-								if(numberOfDevices > 0) {
-									$("#getDeviceErrorDiv").html("");
-									$("#getDeviceErrorDiv").hide();
-
-									for(var i = 0; i < numberOfDevices; i++) {
-										if(index == 0) {
-											var id = "device" + i.toString();
-											$("<h2><a href=\"#\">" + deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_NAME] + "  |  " + deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_LOCATION] + "<br/> </a></h2><div id=\"" + id + "\"></div>").appendTo("#accordion");
-										} else {
-											var id = "devicetemplate" + i.toString();
-											$("<h2><a href=\"#\">" + deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_NAME] + "  " + deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_LOCATION] + "</a></h2><div id=\"" + id + "\"></div>").appendTo("#accordion1");
-										}
-
-									}
-									for(var i = 0; i < numberOfDevices; i++) {
-										if(index == 0) {
-											var idSelector = "#device" + i.toString();
-											var removeDeviceButton = "removeDevice_" + i.toString();
-											var editDeviceButton = "editDevice_" + i.toString();
-											var saveAsButton = "saveAsDevice_" + i.toString();
-										} else {
-											var idSelector = "#devicetemplate" + i.toString();
-											var removeDeviceButton = "removeDeviceTemplate_" + i.toString();
-											var editDeviceButton = "editDeviceTemplate_" + i.toString();
-											var saveAsButton = "saveAsDeviceTemplate_" + i.toString();
-										}
-
-										//alert(removeDeviceButton);
-										var deviceName = deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_NAME];
-										var deviceLocation = deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_LOCATION];
-										var deviceIP = deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_IP];
-										var deviceTags = deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_TAGS];
-										//$('#accordion').append("<h3><a href=\"#\">"+deviceName+"</a></h3>")
-										var Tags = deviceTags.split(",");
-
-										//$(idSelector).append("<p><b>Device Name: " +  deviceName + "</b> <br/> <b>Device Location: " + deviceLocation + "</b> <br/><b>Device IP: " + deviceIP + "</b> <br/><b>Device Tags: " + deviceTags + "</b> <br/></p>");
-										if(Tags != 'none') {//alert(Tags);
-											$(idSelector).append("<div class='divTags'></div><br />");
-											$.each(Tags, function(index, value) {
-
-												$(idSelector).children(".divTags").append("<button class='google-button-red Tags'>" + value + "</button>");
-											});
-										}
-										$(idSelector).append("<button id=" + removeDeviceButton + " class='google-button google-button-blue'>Remove</button>");
-										$(idSelector).append("<button id=" + editDeviceButton + " class='google-button google-button-blue'>Edit</button>");
-										$(idSelector).append("<button id=" + saveAsButton + " class='google-button google-button-blue'>Save As</button>");
-
-										$('#' + removeDeviceButton).click(function() {
-
+											
 											var deviceIndex = this.id.toString();
 											deviceIndex = parseInt(deviceIndex.substr(deviceIndex.length - 1));
 											var deviceToBeRemoved = deviceOrTemplateDataList[index][DEVICE_ARRAY][deviceIndex][DEVICE_NAME];
@@ -232,6 +145,7 @@
 											messageToDeleteDevice["devicename"] = deviceToBeRemoved;
 											messageToDeleteDevice[SECRET_KEY] = secretkey;
 											$.post(urlDevicesOrTemplatesDelete, JSON.stringify(messageToDeleteDevice), function(data) {
+												
 
 												if(data[RESPONSE_STATUS_CODE] == SUCCESS) {
 													window.location.reload();
@@ -263,10 +177,90 @@
 											window.location = URL_EDIT_DEVICE + "/" + deviceToBeEdited + "/" + isdevice + "/create";
 
 										});
-										if(deviceOrTemplateDataList[index][DEVICE_ARRAY][i].hasOwnProperty(DEVICE_SENSORS)) {
-											$(idSelector).append("<div class=\"oldSensors\" style=''></div>");
+					}
+				
+				/*
+				 * Make a query to fetch all the devices associated with the user
+				 */
+				function displayDevicesOrTemplates(urlDevicesOrTemplatesList, urlDevicesOrTemplatesDelete, isDevice) {
 
-											$(idSelector).children(".oldSensors").append("<p class='google-button' style='cursor:default;font-size:18px;'>Sensors</p>");
+					var isdevice = isDevice.toString();
+					var index;
+					if(isDevice == "true") {
+						index = 0;
+					} else {
+						index = 1;
+					}
+					try {
+						$.get(urlDevicesOrTemplatesList, function(data) {
+							deviceOrTemplateDataList[index] = data;
+							//Successfully received data
+							if(deviceOrTemplateDataList[index].hasOwnProperty(RESPONSE_STATUS_CODE))//Means a failure has occured {
+							//The API call has failed
+							{
+								//	alertGetDeviceError("Following errors occured " + deviceOrTemplateDataList[index][RESPONSE_MESSAGE]);
+								if(index == 0)
+									$("#device").prepend('No ');
+								else
+									$("#template").prepend('No ');
+							} else {
+
+								var numberOfDevices = deviceOrTemplateDataList[index][DEVICE_ARRAY].length;
+								//alert(numberOfDevices);
+								if(numberOfDevices > 0) {
+									
+									for(var i = 0; i < numberOfDevices; i++) {
+										if(index == 0) {
+											var id = "device" + i.toString();
+											createAccordionHeader("accordion",deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_NAME],deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_LOCATION],id);
+											
+										} else {
+											var id = "devicetemplate" + i.toString();
+											createAccordionHeader("accordion1",deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_NAME],deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_LOCATION],id);
+											
+										}
+
+									}
+									for(var i = 0; i < numberOfDevices; i++) {
+										if(index == 0) {
+											var idSelector = "#device" + i.toString();
+											var removeDeviceButton = "removeDevice_" + i.toString();
+											var editDeviceButton = "editDevice_" + i.toString();
+											var saveAsButton = "saveAsDevice_" + i.toString();
+										} else {
+											var idSelector = "#devicetemplate" + i.toString();
+											var removeDeviceButton = "removeDeviceTemplate_" + i.toString();
+											var editDeviceButton = "editDeviceTemplate_" + i.toString();
+											var saveAsButton = "saveAsDeviceTemplate_" + i.toString();
+										}
+
+										
+										var deviceIP = deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_IP];
+										var deviceTags = deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_TAGS];
+										//$('#accordion').append("<h3><a href=\"#\">"+deviceName+"</a></h3>")
+										var Tags = deviceTags.split(",");
+
+										
+										if(Tags != 'none') {
+											createCustomElement('div',$(idSelector),null,'divTags',"");
+													
+											$.each(Tags, function(index, value) {
+
+												createCustomElement('button',$(idSelector).children(".divTags"),null,'google-button-red Tags',value);
+												
+											});
+										}
+
+										createModifyButtons($(idSelector),removeDeviceButton,saveAsButton,editDeviceButton,index,urlDevicesOrTemplatesDelete);
+										
+										if(deviceOrTemplateDataList[index][DEVICE_ARRAY][i].hasOwnProperty(DEVICE_SENSORS)) {
+											createCustomElement("div",$(idSelector),null,"oldSensors","");
+											
+											var temp=createCustomElement("p",$(idSelector).children(".oldSensors"),null,'google-button','Sensors');
+											
+											//temp.setStyle('font-size','25px');
+											temp.css('cursor','default');
+											temp.css('font-size','19px');
 											var sensor = deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_SENSORS];
 											var numberOfSensors = sensor.length;
 											for(var j = 0; j < numberOfSensors; j++) {
@@ -276,12 +270,13 @@
 												//var sensorName = sensor[j][DEVICE_SENSOR_ID];
 
 												var sensorId = "sensor_" + i.toString() + "_" + j.toString();
+												var temp=createCustomElement("div",$(idSelector).children(".oldSensors"),sensorId,"oldSensor",null);
+												createSensorRow(sensorName,sensorID,temp);
 
-												$(idSelector).children(".oldSensors").append("<div class=oldSensor id =" + sensorId + "><label>SensorName<label><input value=" + sensorName + "></input><label>SensorID<label><input value=" + sensorID + "></input></div><hr>	");
 												var channel = sensor[j][DEVICE_SENSOR_CHANNELS];
 												var numberOfChannels = channel.length;
 
-												//$(idSelector).children("#oldSensor").append("<p>Channels</p>");
+												
 												var channelTableId = sensorId + "channel";
 												$(idSelector).children(".oldSensors").children("#" + sensorId).append("<h4>Channels</h4><table id=" + channelTableId + "></table>");
 												for(var k = 0; k < numberOfChannels; k++) {
@@ -338,28 +333,12 @@
 				displayDevicesOrTemplates(URL_LIST_ALL_DEVICE_TEMPLATES, URL_DELETE_DEVICE_TEMPLATE, "false", "#accordion1");
 
 				/*
-				 * Description:This function is used to add a new sensor
+				 * Description:This function is used to create an accordion with a given id
 				 */
-
-				$("#accordion").accordion({
-					autoHeight : false,
-					active : -1,
-					collapsible : true,
-					icons : {
-						"header" : "ui-icon-plus",
-						"headerSelected" : "ui-icon-minus"
-					}
-				});
-				$("#accordion1").accordion({
-					autoHeight : false,
-					active : -1,
-					collapsible : true,
-					icons : {
-						"header" : "ui-icon-plus",
-						"headerSelected" : "ui-icon-minus"
-					}
-				});
-
+		
+				 createNewAccordion("accordion");
+				 createNewAccordion("accordion1");
+				
 				$("#addNewDeviceOrTemplate").click(function() {
 
 					window.location = URL_EDIT_DEVICE + "/" + FAKE_DEVICE_NAME + "/true/create";
@@ -376,17 +355,6 @@
 				<br />
 				<br />
 				<span style="font-size:25px;">Sense - Interact - Actuate</span></h1>
-				<!--<nav>
-				<ul>
-				<li>
-				<a id="home" >Home</a>
-				</li>
-				<li>
-				<a id="logout">Logout</a>
-				</li>
-				</ul>
-				</nav>
-				-->
 				<nav>
 					<ul>
 						<li>

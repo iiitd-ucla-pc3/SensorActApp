@@ -114,6 +114,11 @@ public class Application extends Controller {
 		api.queryData.doProcess(queryBody);
 	}
 
+	public static void querydata2() {
+		String queryBody = request.params.get(Const.REQUEST_BODY);
+		api.queryData2.doProcess(queryBody);
+	}
+
 	public static void listalldevices() {
 		api.listAllDevices.doProcess();
 	}

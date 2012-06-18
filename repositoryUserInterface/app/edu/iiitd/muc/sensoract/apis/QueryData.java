@@ -8,6 +8,7 @@ import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 public class QueryData extends SensorActAPI {
 
 	public final void doProcess(String queryBody) {
+		System.out.println(" Here");
 		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
 				.get(Const.USERNAME));
 		String queryBodyWithSecretKey = queryBody.replace(
@@ -16,6 +17,7 @@ public class QueryData extends SensorActAPI {
 				.sendPostRequest(Const.URL_REPOSITORY_QUERY_DATA,
 						Const.MIME_TYPE_JSON, Const.API_QUERYDATA,
 						queryBodyWithSecretKey);
+
 		renderJSON(responseFromBroker.getString());
 
 	}

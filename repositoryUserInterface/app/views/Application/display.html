@@ -1,291 +1,548 @@
-<html>
-<head>
-<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery-ui-1.7.2.custom.css'}">
-<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
-<script src="@{'/public/javascripts/jquery-ui-1.7.2.custom.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
-<script src="@{'/public/javascripts/highcharts.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+<!doctype html> <!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+	<!--<![endif]-->
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title> Display </title>
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/style.css'}">
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery-ui-1.8.21.custom.css'}">
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery-ui-timepicker-addon.css'}">
+		<!--<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/styles_non_centered.css'}">-->
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery.noty.css'}">
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/noty_theme_twitter.css'}">
+		<script src="@{'/public/js/libs/modernizr-2.0.6.min.js'}"></script>
+		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/jquery.noty.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/jquery-ui-1.8.20.custom.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/highcharts.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/utilityFunctions.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/exporting.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/jquery-ui-timepicker-addon.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
 
-<script src="@{'/public/javascripts/exporting.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+				$(".errorVisual").hide();
+				$("#labelSensorSelect").hide();
+				//$("#container").hide();
+				//Setting up in async mode
+				jQuery.ajaxSetup({
+					async : false
+				});
+				/*
+				* Global variables and settings
+				*/
 
+				//Setting the charting library to use local time
+				Highcharts.setOptions({
+					global : {
+						useUTC : false
+					}
+				});
 
-<script type="text/javascript">      
-$(document).ready(function() {
-	
-	//1.Get list of devices
-	
-	//2.Process it like in device.html
-	
-	//3.In dropdown show the devices
-	
-	//4.Put an event onChange on this dropdown(select)
-	
-	//5.On this event put the sensors in this device in the HTML with a checkbox
-	
-	//6.Put starttime,endtime jQuery Selectors
-	
-	//7.On click do validation that sensors have been selected ,start time is less than end time
-	
-	//8.For each sensor in the selected sensors list make a POST request to fetch the content
-	
-	//9.On the received data call appendToSeries
-	
-	//10.If possible update the graph here itself,to make it truly AJAX like
-	
-	//11.If not 10,then finally plot the graph
-	var series=new Array();
+				var chart = new Highcharts.Chart({
+					chart : {
+						renderTo : 'container',
+						type : 'line',
+						marginRight : 130,
+						marginBottom : 25,
+						useUTC : false,
+						zoomType : 'x',
 
-	var receivedData={
-    "wavesegmentArray": [
-        {
-            "data": {
-                "devicename": "new device",
-                "timestamp": 1234567890,
-                "sname": "new sensor",
-                "sinterval": 1,
-                "channels": [
-                    {
-                        "name": "channel1",
-                        "unit": "F",
-                        "readings": [
-                            1,
-                            2,
-                            3,
-                            4,
-                            5,
-                            6,
-                            7,
-                            8,
-                            9,
-                            10
-                        ]
-                    },
-                    {
-                        "name": "channel2",
-                        "units": "C",
-                        "readings": [
-                            10,
-                            11,
-                            12,
-                            13,
-                            14,
-                            15,
-                            16,
-                            17,
-                            18,
-                            19
-                      
-                        ]
-                    },
-                    {
-                        "name": "channel3",
-                        "units": "C",
-                        "readings": [
-                            20,
-                            21,
-                            2,
-                            0,
-                            4,
-                            7,
-                            8,
-                            2,
-                            5,
-                            0
-                        ]
-                    }
-                ]
-            }
-        },
-        {
-            "data": {
-                "devicename": "new device",
-                "timestamp": 1234567900,
-                "sname": "new sensor",
-                "sinterval": 1,
-                "channels": [
-                    {
-                        "name": "channel1",
-                        "unit": "F",
-                        "readings": [
-                            5,
-                            6,
-                            7,
-                            8,
-                            1,
-                            2,
-                            8,
-                            2,
-                            0,
-                            2
-                        ]
-                    },
-                    {
-                        "name": "channel2",
-                        "units": "C",
-                        "readings": [
-                            1,
-                            2,
-                            6,
-                            6,
-                            2,
-                            4,
-                            3,
-                            0,
-                            0,
-                            0
-                        ]
-                    },
-                    {
-                        "name": "channel3",
-                        "units": "C",
-                        "readings": [
-                            6,
-                            2,
-                            0,
-                            0,
-                           4,
-                            5,
-                            0,
-                            6,
-                            5,
-                            0
-                        ]
-                    }
-                ]
-            }
-        }
-    ]
-};
-
-	//var receivedData={"wavesegmentArray":[{"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345827641,"channels":[{"cname":"channel1","unit":"","readings":["2.8","2.6","3.3","4.6","2.5","2.1","2.4","3.3","3.4","4.6"]}]},"_id":{"_time":1334582769,"_machine":1152315922,"_inc":-2098903744,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345827691,"channels":[{"cname":"channel1","unit":"","readings":["1.1","2.5","3.4","3.9","3.4","3.2","2.3","3.2","2.9","2.0"]}]},"_id":{"_time":1334582774,"_machine":1152315922,"_inc":-2098903743,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345827741,"channels":[{"cname":"channel1","unit":"","readings":["2.2","1.9","2.3","1.9","2.3","1.9","2.7","1.7","3.3","3.4"]}]},"_id":{"_time":1334582779,"_machine":1152315922,"_inc":-2098903740,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345827791,"channels":[{"cname":"channel1","unit":"","readings":["2.9","2.0","2.2","1.1","2.2","2.2","3.2","2.8","3.0","1.9"]}]},"_id":{"_time":1334582784,"_machine":1152315922,"_inc":-2098903737,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345827841,"channels":[{"cname":"channel1","unit":"","readings":["2.2","4.1","2.7","2.9","2.3","3.0","2.3","3.1","2.5","3.2"]}]},"_id":{"_time":1334582789,"_machine":1152315922,"_inc":-2098903734,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345827891,"channels":[{"cname":"channel1","unit":"","readings":["2.1","3.1","1.4","2.5","2.4","3.8","2.5","3.3","2.5","3.3"]}]},"_id":{"_time":1334582794,"_machine":1152315922,"_inc":-2098903731,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345827941,"channels":[{"cname":"channel1","unit":"","readings":["3.1","3.8","2.6","2.0","1.6","1.3","1.5","1.4","3.0","2.3"]}]},"_id":{"_time":1334582799,"_machine":1152315922,"_inc":-2098903728,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345827991,"channels":[{"cname":"channel1","unit":"","readings":["3.1","3.7","1.7","2.0","2.6","3.8","2.3","3.9","2.6","3.1"]}]},"_id":{"_time":1334582804,"_machine":1152315922,"_inc":-2098903725,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345828041,"channels":[{"cname":"channel1","unit":"","readings":["2.0","2.2","3.6","4.1","3.1","2.9","2.2","2.7","2.3","3.3"]}]},"_id":{"_time":1334582809,"_machine":1152315922,"_inc":-2098903723,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345828091,"channels":[{"cname":"channel1","unit":"","readings":["2.3","2.8","3.5","4.5","3.4","3.9","2.5","2.0","2.4","3.2"]}]},"_id":{"_time":1334582814,"_machine":1152315922,"_inc":-2098903720,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345828141,"channels":[{"cname":"channel1","unit":"","readings":["1.1","1.1","2.3","3.7","3.3","4.2","2.4","2.0","3.3","3.8"]}]},"_id":{"_time":1334582819,"_machine":1152315922,"_inc":-2098903717,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345828191,"channels":[{"cname":"channel1","unit":"","readings":["2.2","3.1","3.3","3.5","3.3","3.2","3.3","3.0","3.3","2.9"]}]},"_id":{"_time":1334582824,"_machine":1152315922,"_inc":-2098903714,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345828241,"channels":[{"cname":"channel1","unit":"","readings":["1.3","1.7","2.0","1.6","2.8","2.8","1.6","1.0","1.4","2.3"]}]},"_id":{"_time":1334582829,"_machine":1152315922,"_inc":-2098903711,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345829641,"channels":[{"cname":"channel1","unit":"","readings":["2.0","3.0","2.6","2.7","2.6","4.0","3.2","4.2","1.9","2.9"]}]},"_id":{"_time":1334582969,"_machine":1152315922,"_inc":-2098903708,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345829741,"channels":[{"cname":"channel1","unit":"","readings":["1.1","1.0","2.9","3.2","3.1","2.0","2.4","2.0","3.4","3.9"]}]},"_id":{"_time":1334582979,"_machine":1152315922,"_inc":-2098903705,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345829791,"channels":[{"cname":"channel1","unit":"","readings":["2.0","1.8","2.3","1.9","2.3","1.9","2.3","2.0","2.2","3.2"]}]},"_id":{"_time":1334582984,"_machine":1152315922,"_inc":-2098903702,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345829841,"channels":[{"cname":"channel1","unit":"","readings":["1.1","1.2","3.3","3.9","3.3","2.1","2.3","1.1","3.2","2.8"]}]},"_id":{"_time":1334582989,"_machine":1152315922,"_inc":-2098903699,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345829891,"channels":[{"cname":"channel1","unit":"","readings":["1.3","1.8","2.8","2.8","2.6","2.9","2.5","2.9","1.6","1.3"]}]},"_id":{"_time":1334582994,"_machine":1152315922,"_inc":-2098903697,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345829941,"channels":[{"cname":"channel1","unit":"","readings":["1.8","3.1","1.4","2.5","1.4","1.3","1.4","1.3","1.4","2.5"]}]},"_id":{"_time":1334582999,"_machine":1152315922,"_inc":-2098903694,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345829991,"channels":[{"cname":"channel1","unit":"","readings":["3.1","3.7","2.5","3.3","2.2","2.6","2.5","3.3","2.5","3.6"]}]},"_id":{"_time":1334583004,"_machine":1152315922,"_inc":-2098903691,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345830091,"channels":[{"cname":"channel1","unit":"","readings":["2.0","1.1","1.6","2.2","2.2","2.2","1.9","3.5","2.2","2.3"]}]},"_id":{"_time":1334583014,"_machine":1152315922,"_inc":-2098903688,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345830141,"channels":[{"cname":"channel1","unit":"","readings":["1.6","2.4","3.0","2.0","2.4","2.0","2.6","3.3","3.4","3.9"]}]},"_id":{"_time":1334583019,"_machine":1152315922,"_inc":-2098903685,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345830191,"channels":[{"cname":"channel1","unit":"","readings":["2.0","1.8","3.9","3.8","3.3","3.9","3.4","3.9","3.3","3.9"]}]},"_id":{"_time":1334583024,"_machine":1152315922,"_inc":-2098903682,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345830241,"channels":[{"cname":"channel1","unit":"","readings":["1.3","1.2","2.2","2.9","3.4","3.4","2.3","2.8","3.3","3.0"]}]},"_id":{"_time":1334583029,"_machine":1152315922,"_inc":-2098903679,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345830291,"channels":[{"cname":"channel1","unit":"","readings":["1.2","3.0","2.0","0.9","1.7","2.2","1.6","2.2","2.5","2.9"]}]},"_id":{"_time":1334583034,"_machine":1152315922,"_inc":-2098903676,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345830341,"channels":[{"cname":"channel1","unit":"","readings":["1.7","2.0","1.3","2.3","1.3","1.2","1.3","1.8","1.9","1.3"]}]},"_id":{"_time":1334583039,"_machine":1152315922,"_inc":-2098903674,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345830391,"channels":[{"cname":"channel1","unit":"","readings":["2.3","1.8","1.4","2.5","1.5","1.3","1.4","1.3","2.5","3.3"]}]},"_id":{"_time":1334583044,"_machine":1152315922,"_inc":-2098903671,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345830441,"channels":[{"cname":"channel1","unit":"","readings":["3.1","4.3","1.6","2.7","2.6","3.4","2.6","3.7","2.6","3.2"]}]},"_id":{"_time":1334583049,"_machine":1152315922,"_inc":-2098903668,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345830491,"channels":[{"cname":"channel1","unit":"","readings":["2.1","2.5","2.6","3.0","1.8","2.3","1.9","2.8","2.0","2.2"]}]},"_id":{"_time":1334583054,"_machine":1152315922,"_inc":-2098903666,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345830541,"channels":[{"cname":"channel1","unit":"","readings":["1.5","0.9","2.3","2.0","3.4","3.9","2.8","2.1","2.4","2.6"]}]},"_id":{"_time":1334583059,"_machine":1152315922,"_inc":-2098903664,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345830591,"channels":[{"cname":"channel1","unit":"","readings":["1.0","1.0","2.4","3.2","3.4","3.9","3.4","2.8","2.3","2.0"]}]},"_id":{"_time":1334583064,"_machine":1152315922,"_inc":-2098903661,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345830641,"channels":[{"cname":"channel1","unit":"","readings":["1.1","1.7","3.3","3.9","2.4","1.9","3.3","2.3","2.3","2.7"]}]},"_id":{"_time":1334583069,"_machine":1152315922,"_inc":-2098903658,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345830691,"channels":[{"cname":"channel1","unit":"","readings":["2.2","3.8","2.3","2.8","3.2","1.6","3.1","2.7","1.8","0.9"]}]},"_id":{"_time":1334583074,"_machine":1152315922,"_inc":-2098903655,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345830741,"channels":[{"cname":"channel1","unit":"","readings":["1.3","2.0","2.5","2.9","1.4","1.1","2.4","3.0","2.3","1.8"]}]},"_id":{"_time":1334583079,"_machine":1152315922,"_inc":-2098903652,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345830791,"channels":[{"cname":"channel1","unit":"","readings":["3.0","3.1","2.3","2.0","1.4","1.2","1.4","1.3","2.5","3.3","2.6","2.6","3.2","2.5","3.4","1.6","1.4","1.5","1.6","1.6","3.1","2.6","2.8","1.7","3.5","2.9","4.5","2.0","2.3","2.2","3.4","3.3","4.0","3.6","4.0","2.5","2.0","2.4","3.2","2.4","2.0","2.9","3.2","3.4","3.9","2.4","2.0","2.3","2.0]}]},"_id":{"_time":1334583104,"_machine":1152315922,"_inc":-2098903649,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345831041,"channels":[{"cname":"channel1","unit":"","readings":["1.1","1.8","3.3","3.9","3.3","3.8","3.3","2.8","3.3","3.2"]}]},"_id":{"_time":1334583109,"_machine":1152315922,"_inc":-2098903647,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345831091,"channels":[{"cname":"channel1","unit":"","readings":["2.2","3.4","3.2","2.9","3.2","2.8","2.9","2.8","3.2","1.6"]}]},"_id":{"_time":1334583114,"_machine":1152315922,"_inc":-2098903644,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345831141,"channels":[{"cname":"channel1","unit":"","readings":["2.5","4.0","2.4","3.0","1.3","1.1","1.2","2.5","1.3","2.5"]}]},"_id":{"_time":1334583119,"_machine":1152315922,"_inc":-2098903641,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345831191,"channels":[{"cname":"channel1","unit":"","readings":["3.2","3.7","1.5","2.6","2.5","2.0","1.5","1.3","1.4","2.5"]}]},"_id":{"_time":1334583124,"_machine":1152315922,"_inc":-2098903638,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345831241,"channels":[{"cname":"channel1","unit":"","readings":["2.1","3.1","2.5","2.2","3.2","3.3","2.6","3.5","1.7","1.8"]}]},"_id":{"_time":1334583129,"_machine":1152315922,"_inc":-2098903635,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345831291,"channels":[{"cname":"channel1","unit":"","readings":["2.0","2.8","2.6","2.7","2.6","4.1","2.6","4.2","2.9","4.5"]}]},"_id":{"_time":1334583134,"_machine":1152315922,"_inc":-2098903633,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345831351,"channels":[{"cname":"channel1","unit":"","readings":["2.9","2.6","2.3","2.1","2.4","2.1","3.5","4.5","2.5","2.1"]}]},"_id":{"_time":1334583139,"_machine":1152315922,"_inc":-2098903630,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345831401,"channels":[{"cname":"channel1","unit":"","readings":["1.0","1.0","2.4","3.2","3.4","3.9","2.5","2.6","3.4","3.9"]}]},"_id":{"_time":1334583144,"_machine":1152315922,"_inc":-2098903628,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345831451,"channels":[{"cname":"channel1","unit":"","readings":["2.0","1.9","2.3","3.2","3.3","3.7","3.3","3.8","3.3","3.1"]}]},"_id":{"_time":1334583149,"_machine":1152315922,"_inc":-2098903626,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345831501,"channels":[{"cname":"channel1","unit":"","readings":["1.6","1.6","3.3","2.8","3.0","2.7","2.9","3.2","2.7","2.8"]}]},"_id":{"_time":1334583154,"_machine":1152315922,"_inc":-2098903623,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345831551,"channels":[{"cname":"channel1","unit":"","readings":["2.4","3.9","2.4","1.7","2.3","3.0","1.7","1.1","1.4","2.4"]}]},"_id":{"_time":1334583159,"_machine":1152315922,"_inc":-2098903620,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345831651,"channels":[{"cname":"channel1","unit":"","readings":["3.1","3.7","2.5","2.0","1.6","1.4","2.9","2.3","2.5","2.5"]}]},"_id":{"_time":1334583169,"_machine":1152315922,"_inc":-2098903617,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345831701,"channels":[{"cname":"channel1","unit":"","readings":["2.0","1.5","2.6","2.8","2.3","2.2","1.7","2.3","3.0","3.0"]}]},"_id":{"_time":1334583174,"_machine":1152315922,"_inc":-2098903614,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345831751,"channels":[{"cname":"channel1","unit":"","readings":["1.9","2.1","3.1","2.9","2.3","2.2","2.3","3.4","3.4","4.0"]}]},"_id":{"_time":1334583179,"_machine":1152315922,"_inc":-2098903611,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345831801,"channels":[{"cname":"channel1","unit":"","readings":["2.1","2.9","3.9","3.9","2.5","2.0","2.4","3.2","3.0","2.0"]}]},"_id":{"_time":1334583184,"_machine":1152315922,"_inc":-2098903608,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345831851,"channels":[{"cname":"channel1","unit":"","readings":["1.1","2.4","3.3","3.9","2.4","2.0","2.3","1.9","2.3","2.8"]}]},"_id":{"_time":1334583189,"_machine":1152315922,"_inc":-2098903605,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345831901,"channels":[{"cname":"channel1","unit":"","readings":["2.2","3.2","3.3","3.0","3.2","1.8","2.2","0.8","1.8","0.9"]}]},"_id":{"_time":1334583194,"_machine":1152315922,"_inc":-2098903602,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345831951,"channels":[{"cname":"channel1","unit":"","readings":["1.1","2.0","1.6","0.9","1.3","1.0","2.3","3.0","1.9","1.1"]}]},"_id":{"_time":1334583199,"_machine":1152315922,"_inc":-2098903599,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345832001,"channels":[{"cname":"channel1","unit":"","readings":["2.0","3.7","2.3","2.0","2.4","3.2","2.4","3.2","2.4","2.0"]}]},"_id":{"_time":1334583204,"_machine":1152315922,"_inc":-2098903596,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345832051,"channels":[{"cname":"channel1","unit":"","readings":["2.0","1.8","1.4","2.6","2.5","3.3","1.6","2.6","2.6","2.0"]}]},"_id":{"_time":1334583209,"_machine":1152315922,"_inc":-2098903593,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345832281,"channels":[{"cname":"channel1","unit":"","readings":["1.2","2.5","2.3","2.0","2.3","2.4","3.3","3.4","3.5","3.1"]}]},"_id":{"_time":1334583232,"_machine":1152306798,"_inc":715634517,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345832331,"channels":[{"cname":"channel1","unit":"","readings":["2.8","2.3","2.2","2.2","2.7","2.1","1.9","1.5","1.6","2.2"]}]},"_id":{"_time":1334583237,"_machine":1152306798,"_inc":715634520,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345832381,"channels":[{"cname":"channel1","unit":"","readings":["2.5","4.0","2.4","3.4","2.3","3.7","2.3","3.1","2.4","3.2"]}]},"_id":{"_time":1334583242,"_machine":1152306798,"_inc":715634522,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345832431,"channels":[{"cname":"channel1","unit":"","readings":["3.5","3.7","1.5","2.6","2.6","3.7","2.5","3.3","2.5","3.3"]}]},"_id":{"_time":1334583247,"_machine":1152306798,"_inc":715634524,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345832481,"channels":[{"cname":"channel1","unit":"","readings":["2.5","1.8","1.5","2.6","2.9","3.3","2.5","3.6","2.6","2.5"]}]},"_id":{"_time":1334583252,"_machine":1152306798,"_inc":715634527,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345832531,"channels":[{"cname":"channel1","unit":"","readings":["3.2","3.3","1.6","3.8","2.6","4.1","3.3","4.2","2.8","4.2"]}]},"_id":{"_time":1334583257,"_machine":1152306798,"_inc":715634530,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345832581,"channels":[{"cname":"channel1","unit":"","readings":["3.1","2.7","2.1","2.2","2.3","2.1","3.0","3.4","2.5","3.4"]}]},"_id":{"_time":1334583262,"_machine":1152306798,"_inc":715634533,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345832631,"channels":[{"cname":"channel1","unit":"","readings":["2.0","1.7","3.5","3.8","3.6","3.9","3.4","2.7","2.4","3.2"]}]},"_id":{"_time":1334583267,"_machine":1152306798,"_inc":715634536,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345832681,"channels":[{"cname":"channel1","unit":"","readings":["1.2","2.5","3.3","3.8","3.4","2.7","2.3","2.2","3.3","3.8"]}]},"_id":{"_time":1334583272,"_machine":1152306798,"_inc":715634539,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345832731,"channels":[{"cname":"channel1","unit":"","readings":["2.2","3.3","3.3","3.0","2.2","1.0","3.1","2.7","2.8","2.8"]}]},"_id":{"_time":1334583277,"_machine":1152306798,"_inc":715634542,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345832781,"channels":[{"cname":"channel1","unit":"","readings":["2.3","4.0","1.6","1.0","2.6","3.0","2.9","3.0","2.3","3.1"]}]},"_id":{"_time":1334583282,"_machine":1152306798,"_inc":715634544,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345832831,"channels":[{"cname":"channel1","unit":"","readings":["3.0","2.5","1.4","2.5","2.5","2.0","2.5","3.3","2.5","3.3"]}]},"_id":{"_time":1334583287,"_machine":1152306798,"_inc":715634547,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345832881,"channels":[{"cname":"channel1","unit":"","readings":["3.1","4.2","1.6","2.7","2.5","3.3","2.5","3.5","2.5","2.4"]}]},"_id":{"_time":1334583292,"_machine":1152306798,"_inc":715634549,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345832931,"channels":[{"cname":"channel1","unit":"","readings":["2.0","1.5","1.6","2.0","2.2","2.1","2.7","3.2","2.0","2.3"]}]},"_id":{"_time":1334583297,"_machine":1152306798,"_inc":715634552,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345832981,"channels":[{"cname":"channel1","unit":"","readings":["2.4","0.8","3.3","4.6","3.4","2.8","2.9","2.5","2.4","2.0"]}]},"_id":{"_time":1334583302,"_machine":1152306798,"_inc":715634555,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345833031,"channels":[{"cname":"channel1","unit":"","readings":["1.6","2.4","3.4","3.9","3.4","3.9","2.4","3.3","3.3","4.3"]}]},"_id":{"_time":1334583307,"_machine":1152306798,"_inc":715634556,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345833081,"channels":[{"cname":"channel1","unit":"","readings":["2.2","1.9","2.5","3.2","2.3","1.8","2.3","1.5","2.2","2.6"]}]},"_id":{"_time":1334583312,"_machine":1152306798,"_inc":715634558,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345833131,"channels":[{"cname":"channel1","unit":"","readings":["1.2","2.8","2.3","2.3","2.0","2.1","2.9","1.6","2.2","2.2"]}]},"_id":{"_time":1334583317,"_machine":1152306798,"_inc":715634561,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345833181,"channels":[{"cname":"channel1","unit":"","readings":["2.9","3.9","2.7","3.6","2.4","1.8","2.8","1.8","1.3","2.4"]}]},"_id":{"_time":1334583322,"_machine":1152306798,"_inc":715634564,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345833231,"channels":[{"cname":"channel1","unit":"","readings":["2.0","1.8","1.3","2.5","2.4","3.2","2.8","3.8","1.5","2.6"]}]},"_id":{"_time":1334583327,"_machine":1152306798,"_inc":715634567,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345833281,"channels":[{"cname":"channel1","unit":"","readings":["3.1","3.7","2.5","2.0","1.5","1.4","2.6","3.3","2.9","3.6"]}]},"_id":{"_time":1334583332,"_machine":1152306798,"_inc":715634569,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345833331,"channels":[{"cname":"channel1","unit":"","readings":["3.1","3.9","1.7","2.0","1.6","2.1","1.6","2.3","2.9","4.3"]}]},"_id":{"_time":1334583337,"_machine":1152306798,"_inc":715634571,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345833381,"channels":[{"cname":"channel1","unit":"","readings":["2.9","1.4","2.2","3.6","2.4","2.1","2.4","3.3","3.4","4.0"]}]},"_id":{"_time":1334583342,"_machine":1152306798,"_inc":715634574,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345833431,"channels":[{"cname":"channel1","unit":"","readings":["1.0","1.1","2.3","2.0","2.4","1.9","2.3","3.2","2.4","2.0"]}]},"_id":{"_time":1334583347,"_machine":1152306798,"_inc":715634576,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345833481,"channels":[{"cname":"channel1","unit":"","readings":["2.7","1.8","3.3","3.9","3.3","2.7","2.3","1.9","2.2","2.7"]}]},"_id":{"_time":1334583352,"_machine":1152306798,"_inc":715634579,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345833531,"channels":[{"cname":"channel1","unit":"","readings":["1.1","1.4","3.2","3.0","3.3","1.7","2.0","1.3","1.7","2.1"]}]},"_id":{"_time":1334583357,"_machine":1152306798,"_inc":715634582,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345833581,"channels":[{"cname":"channel1","unit":"","readings":["1.4","2.0","2.4","1.7","1.3","2.4","2.5","3.1","2.3","1.9"]}]},"_id":{"_time":1334583362,"_machine":1152306798,"_inc":715634584,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345833631,"channels":[{"cname":"channel1","unit":"","readings":["2.0","3.1","2.4","2.0","1.8","1.3","1.6","1.3","2.5","3.3"]}]},"_id":{"_time":1334583367,"_machine":1152306798,"_inc":715634586,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345833681,"channels":[{"cname":"channel1","unit":"","readings":["3.1","4.3","2.5","2.0","1.5","1.9","1.5","1.7","1.5","2.8"]}]},"_id":{"_time":1334583372,"_machine":1152306798,"_inc":715634589,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345833731,"channels":[{"cname":"channel1","unit":"","readings":["3.1","3.6","2.6","2.6","1.6","2.2","2.6","4.1","3.4","4.2"]}]},"_id":{"_time":1334583377,"_machine":1152306798,"_inc":715634592,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345833781,"channels":[{"cname":"channel1","unit":"","readings":["3.0","2.7","3.1","2.9","3.2","2.9","3.3","4.0","3.7","4.0"]}]},"_id":{"_time":1334583382,"_machine":1152306798,"_inc":715634595,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345833831,"channels":[{"cname":"channel1","unit":"","readings":["2.0","1.7","2.4","3.6","2.4","2.0","3.4","2.8","3.4","3.9"]}]},"_id":{"_time":1334583387,"_machine":1152306798,"_inc":715634598,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345833881,"channels":[{"cname":"channel1","unit":"","readings":["1.6","1.9","2.2","3.1","3.3","3.9","3.3","3.9","3.3","3.7"]}]},"_id":{"_time":1334583392,"_machine":1152306798,"_inc":715634600,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345833931,"channels":[{"cname":"channel1","unit":"","readings":["2.2","3.1","2.3","2.5","3.4","3.0","2.2","0.9","1.9","1.0"]}]},"_id":{"_time":1334583397,"_machine":1152306798,"_inc":715634603,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345833981,"channels":[{"cname":"channel1","unit":"","readings":["1.1","1.9","2.2","0.9","2.5","1.7","1.3","1.1","1.6","2.4"]}]},"_id":{"_time":1334583402,"_machine":1152306798,"_inc":715634606,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345834031,"channels":[{"cname":"channel1","unit":"","readings":["2.0","3.2","2.3","2.5","1.4","1.2","1.3","1.3","1.5","2.5"]}]},"_id":{"_time":1334583407,"_machine":1152306798,"_inc":715634609,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345834081,"channels":[{"cname":"channel1","unit":"","readings":["3.1","4.2","2.5","2.0","1.5","1.4","2.5","3.3","2.6","2.0"]}]},"_id":{"_time":1334583412,"_machine":1152306798,"_inc":715634612,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345834131,"channels":[{"cname":"channel1","unit":"","readings":["3.0","2.5","1.6","1.7","2.1","1.8","2.5","4.5","2.6","3.0"]}]},"_id":{"_time":1334583417,"_machine":1152306798,"_inc":715634614,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345834181,"channels":[{"cname":"channel1","unit":"","readings":["2.0","1.4","2.5","3.4","2.1","2.3","2.7","2.0","2.3","2.0"]}]},"_id":{"_time":1334583422,"_machine":1152306798,"_inc":715634616,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345834231,"channels":[{"cname":"channel1","unit":"","readings":["1.1","1.6","2.3","2.0","2.4","2.0","3.4","2.7","3.4","3.9"]}]},"_id":{"_time":1334583427,"_machine":1152306798,"_inc":715634619,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345834281,"channels":[{"cname":"channel1","unit":"","readings":["2.1","3.0","2.5","3.2","3.3","3.9","3.9","3.8","3.2","3.5"]}]},"_id":{"_time":1334583432,"_machine":1152306798,"_inc":715634622,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345834331,"channels":[{"cname":"channel1","unit":"","readings":["2.2","3.2","3.8","3.2","3.8","1.8","2.2","0.9","1.9","0.8"]}]},"_id":{"_time":1334583437,"_machine":1152306798,"_inc":715634625,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345834381,"channels":[{"cname":"channel1","unit":"","readings":["2.2","3.9","1.7","1.0","1.5","1.0","3.0","1.7","2.3","1.8"]}]},"_id":{"_time":1334583442,"_machine":1152306798,"_inc":715634628,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345834431,"channels":[{"cname":"channel1","unit":"","readings":["2.9","2.6","1.4","3.0","1.4","1.4","1.4","1.3","1.4","2.5"]}]},"_id":{"_time":1334583447,"_machine":1152306798,"_inc":715634631,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345834481,"channels":[{"cname":"channel1","unit":"","readings":["2.0","1.8","1.5","2.6","2.5","3.9","2.6","3.7","3.2","2.2"]}]},"_id":{"_time":1334583452,"_machine":1152306798,"_inc":715634634,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345834531,"channels":[{"cname":"channel1","unit":"","readings":["2.0","3.4","1.7","1.9","1.6","2.1","1.6","4.0","2.7","4.2"]}]},"_id":{"_time":1334583457,"_machine":1152306798,"_inc":715634637,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345834581,"channels":[{"cname":"channel1","unit":"","readings":["3.0","1.5","3.0","4.6","2.2","2.2","2.3","2.1","2.3","2.0"]}]},"_id":{"_time":1334583462,"_machine":1152306798,"_inc":715634640,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345834631,"channels":[{"cname":"channel1","unit":"","readings":["2.1","2.9","3.5","3.8","3.7","2.7","3.4","3.9","3.3","3.9"]}]},"_id":{"_time":1334583467,"_machine":1152306798,"_inc":715634643,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345834681,"channels":[{"cname":"channel1","unit":"","readings":["1.1","1.1","3.3","3.8","3.3","3.9","2.4","2.0","2.3","3.0"]}]},"_id":{"_time":1334583472,"_machine":1152306798,"_inc":715634646,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345834731,"channels":[{"cname":"channel1","unit":"","readings":["1.2","2.5","2.3","2.6","3.2","1.8","3.3","2.9","2.5","2.6"]}]},"_id":{"_time":1334583477,"_machine":1152306798,"_inc":715634649,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345834781,"channels":[{"cname":"channel1","unit":"","readings":["2.2","3.9","2.2","1.0","1.5","1.5","2.5","2.9","2.4","3.0"]}]},"_id":{"_time":1334583482,"_machine":1152306798,"_inc":715634652,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345834881,"channels":[{"cname":"channel1","unit":"","readings":["3.1","3.7","3.1","3.2","1.5","1.4","2.6","3.3","2.6","2.0"]}]},"_id":{"_time":1334583492,"_machine":1152306798,"_inc":715634655,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345834931,"channels":[{"cname":"channel1","unit":"","readings":["2.0","3.0","2.7","3.6","2.3","1.9","1.6","3.2","1.6","3.4"]}]},"_id":{"_time":1334583497,"_machine":1152306798,"_inc":715634658,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345834981,"channels":[{"cname":"channel1","unit":"","readings":["3.0","1.8","1.7","3.5","3.6","4.1","3.1","4.1","3.3","4.0"]}]},"_id":{"_time":1334583502,"_machine":1152306798,"_inc":715634660,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345835031,"channels":[{"cname":"channel1","unit":"","readings":["1.4","1.0","3.4","3.9","3.4","3.9","3.4","3.9","3.4","3.9"]}]},"_id":{"_time":1334583507,"_machine":1152306798,"_inc":715634663,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345835081,"channels":[{"cname":"channel1","unit":"","readings":["2.0","1.8","2.3","2.0","2.3","1.9","3.3","3.8","3.3","3.8"]}]},"_id":{"_time":1334583512,"_machine":1152306798,"_inc":715634666,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345835181,"channels":[{"cname":"channel1","unit":"","readings":["1.1","1.7","1.9","1.5","1.7","2.1","2.5","2.9","1.5","2.4"]}]},"_id":{"_time":1334583522,"_machine":1152306798,"_inc":715634669,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345835231,"channels":[{"cname":"channel1","unit":"","readings":["3.3","3.9","2.3","1.9","1.9","2.5","2.4","3.2","1.5","2.7"]}]},"_id":{"_time":1334583527,"_machine":1152306798,"_inc":715634672,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345835281,"channels":[{"cname":"channel1","unit":"","readings":["3.1","3.7","2.2","1.4","1.5","1.3","1.5","1.3","1.5","2.6"]}]},"_id":{"_time":1334583532,"_machine":1152306798,"_inc":715634674,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345835331,"channels":[{"cname":"channel1","unit":"","readings":["3.0","3.0","1.6","1.5","2.5","3.6","2.6","3.9","2.6","3.4"]}]},"_id":{"_time":1334583537,"_machine":1152306798,"_inc":715634677,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345835381,"channels":[{"cname":"channel1","unit":"","readings":["2.0","2.4","1.8","3.5","2.9","3.0","2.0","2.2","3.3","4.0"]}]},"_id":{"_time":1334583542,"_machine":1152306798,"_inc":715634680,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345835431,"channels":[{"cname":"channel1","unit":"","readings":["2.3","2.8","2.5","3.3","2.4","2.0","3.4","2.7","2.4","3.8"]}]},"_id":{"_time":1334583547,"_machine":1152306798,"_inc":715634682,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345835481,"channels":[{"cname":"channel1","unit":"","readings":["2.2","1.8","3.3","3.9","2.3","2.0","2.3","2.0","2.3","3.1"]}]},"_id":{"_time":1334583552,"_machine":1152306798,"_inc":715634685,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345835531,"channels":[{"cname":"channel1","unit":"","readings":["2.2","3.0","2.9","3.2","2.2","1.3","2.2","1.2","3.8","3.4"]}]},"_id":{"_time":1334583557,"_machine":1152306798,"_inc":715634687,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345835581,"channels":[{"cname":"channel1","unit":"","readings":["2.2","3.7","2.1","1.0","2.8","1.6","2.7","1.6","1.5","2.7"]}]},"_id":{"_time":1334583562,"_machine":1152306798,"_inc":715634689,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345835631,"channels":[{"cname":"channel1","unit":"","readings":["2.7","2.7","1.5","2.5","1.3","1.2","1.3","1.2","1.8","1.1"]}]},"_id":{"_time":1334583567,"_machine":1152306798,"_inc":715634691,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345835731,"channels":[{"cname":"channel1","unit":"","readings":["2.0","3.0","1.6","1.5","1.5","1.9","1.6","1.8","2.1","2.0"]}]},"_id":{"_time":1334583577,"_machine":1152306798,"_inc":715634693,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345835781,"channels":[{"cname":"channel1","unit":"","readings":["3.1","3.1","2.8","4.1","2.7","4.2","2.9","3.0","2.0","2.3"]}]},"_id":{"_time":1334583582,"_machine":1152306798,"_inc":715634696,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345835831,"channels":[{"cname":"channel1","unit":"","readings":["1.6","0.9","3.3","4.0","3.4","2.8","2.5","2.0","2.4","3.2"]}]},"_id":{"_time":1334583587,"_machine":1152306798,"_inc":715634698,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345835881,"channels":[{"cname":"channel1","unit":"","readings":["2.0","3.0","3.4","3.9","3.4","2.7","2.4","2.0","2.3","1.9"]}]},"_id":{"_time":1334583592,"_machine":1152306798,"_inc":715634701,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345835931,"channels":[{"cname":"channel1","unit":"","readings":["2.2","1.9","3.3","3.8","3.3","2.5","2.3","1.7","2.8","1.4"]}]},"_id":{"_time":1334583597,"_machine":1152306798,"_inc":715634703,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345835981,"channels":[{"cname":"channel1","unit":"","readings":["1.7","1.3","2.1","1.1","3.2","1.7","2.0","2.1","1.9","0.9"]}]},"_id":{"_time":1334583602,"_machine":1152306798,"_inc":715634706,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345836031,"channels":[{"cname":"channel1","unit":"","readings":["1.3","2.2","1.4","2.3","2.4","1.7","1.3","1.1","1.2","1.1"]}]},"_id":{"_time":1334583607,"_machine":1152306798,"_inc":715634709,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345836081,"channels":[{"cname":"channel1","unit":"","readings":["3.0","2.5","2.4","2.0","1.4","1.4","2.5","3.3","2.5","3.3"]}]},"_id":{"_time":1334583612,"_machine":1152306798,"_inc":715634712,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345836131,"channels":[{"cname":"channel1","unit":"","readings":["3.1","3.7","2.5","2.0","2.5","2.8","2.6","3.3","2.6","2.3"]}]},"_id":{"_time":1334583617,"_machine":1152306798,"_inc":715634714,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345836181,"channels":[{"cname":"channel1","unit":"","readings":["3.1","3.5","2.6","2.5","1.6","2.0","1.7","2.0","2.3","4.1"]}]},"_id":{"_time":1334583622,"_machine":1152306798,"_inc":715634716,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345836231,"channels":[{"cname":"channel1","unit":"","readings":["3.0","1.6","2.0","2.2","2.1","2.6","2.2","2.1","3.4","4.0"]}]},"_id":{"_time":1334583627,"_machine":1152306798,"_inc":715634718,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345836281,"channels":[{"cname":"channel1","unit":"","readings":["2.5","2.9","2.4","3.3","2.4","2.0","2.7","1.9","2.3","02.002.3","3.7",null]}]},"_id":{"_time":1334583633,"_machine":1152306798,"_inc":715634721,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345836341,"channels":[{"cname":"channel1","unit":"","readings":["2.0","1.8","2.3","3.3","3.3","3.9","3.8","2.6","2.3","3.1"]}]},"_id":{"_time":1334583638,"_machine":1152306798,"_inc":715634724,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345836391,"channels":[{"cname":"channel1","unit":"","readings":["1.2","2.8","3.3","3.3","3.3","2.0","2.2","1.0","2.1","0.9"]}]},"_id":{"_time":1334583643,"_machine":1152306798,"_inc":715634727,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345836441,"channels":[{"cname":"channel1","unit":"","readings":["2.2","2.8","1.7","2.3","2.5","1.7","2.4","3.0","2.0","1.1"]}]},"_id":{"_time":1334583648,"_machine":1152306798,"_inc":715634729,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345836491,"channels":[{"cname":"channel1","unit":"","readings":["1.9","1.8","1.3","2.5","1.4","1.8","1.4","1.2","1.9","1.3"]}]},"_id":{"_time":1334583653,"_machine":1152306798,"_inc":715634731,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345836541,"channels":[{"cname":"channel1","unit":"","readings":["3.1","3.7","2.5","3.5","2.5","3.3","2.5","3.3","2.5","2.0"]}]},"_id":{"_time":1334583658,"_machine":1152306798,"_inc":715634733,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345836591,"channels":[{"cname":"channel1","unit":"","readings":["2.0","3.1","2.6","2.5","1.6","1.9","2.0","3.2","2.6","2.8"]}]},"_id":{"_time":1334583663,"_machine":1152306798,"_inc":715634736,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345836641,"channels":[{"cname":"channel1","unit":"","readings":["2.0","2.4","2.8","4.2","3.0","4.1","3.2","4.1","3.3","4.0"]}]},"_id":{"_time":1334583668,"_machine":1152306798,"_inc":715634739,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345836691,"channels":[{"cname":"channel1","unit":"","readings":["2.2","2.9","3.9","3.9","2.5","2.0","3.4","2.7","3.4","3.8"]}]},"_id":{"_time":1334583673,"_machine":1152306798,"_inc":715634742,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345837241,"channels":[{"cname":"channel1","unit":"","readings":["2.2","3.5","3.2","2.9","3.0","2.7","2.9","2.8","3.3","2.8"]}]},"_id":{"_time":1334583728,"_machine":1152306798,"_inc":715634744,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345837291,"channels":[{"cname":"channel1","unit":"","readings":["2.5","3.9","2.4","1.7","1.3","2.5","2.3","3.4","2.9","3.2"]}]},"_id":{"_time":1334583733,"_machine":1152306798,"_inc":715634746,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345837341,"channels":[{"cname":"channel1","unit":"","readings":["3.1","3.7","2.5","3.8","2.5","2.0","1.5","1.3","1.5","2.6"]}]},"_id":{"_time":1334583738,"_machine":1152306798,"_inc":715634749,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345837391,"channels":[{"cname":"channel1","unit":"","readings":["2.0","1.8","1.6","1.3","1.6","1.4","1.5","1.5","3.0","2.4"]}]},"_id":{"_time":1334583743,"_machine":1152306798,"_inc":715634752,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345837441,"channels":[{"cname":"channel1","unit":"","readings":["2.0","2.8","2.5","2.7","2.7","4.3","2.8","4.2","3.3","4.1"]}]},"_id":{"_time":1334583748,"_machine":1152306798,"_inc":715634755,"_new":false}}]}
-	receivedData={"wavesegmentArray":[{"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345853461,"sinterval":"2","channels":[{"cname":"channel1","unit":"","readings":["1.3","2.0","1.6","2.2","2.5","1.7","1.3","1.1","1.4","2.4"]}]},"_id":{"_time":1334585350,"_machine":1152297075,"_inc":764559274,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345853511,"sinterval":"2","channels":[{"cname":"channel1","unit":"","readings":["3.0","3.8","2.4","3.2","2.9","3.2","3.0","3.3","1.5","2.7"]}]},"_id":{"_time":1334585355,"_machine":1152297075,"_inc":764559277,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345853561,"sinterval":"2","channels":[{"cname":"channel1","unit":"","readings":["3.1","3.6","2.5","2.1","1.6","1.4","3.2","3.3","2.6","2.3"]}]},"_id":{"_time":1334585360,"_machine":1152297075,"_inc":764559280,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345853611,"sinterval":"2","channels":[{"cname":"channel1","unit":"","readings":["2.0","3.0","2.6","2.5","1.9","1.9","1.6","2.0","1.6","3.8","4.2","3.4","4.1","3.0","4.1","3.1","2.9","2.2","3.4","3.3","4.0","3.4","3.9"]}]},"_id":{"_time":1334585372,"_machine":1152297075,"_inc":764559283,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345853731,"sinterval":"2","channels":[{"cname":"channel1","unit":"","readings":["1.3","1.7","3.4","4.1","3.4","2.7","2.4","3.2","2.4","3.3"]}]},"_id":{"_time":1334585377,"_machine":1152297075,"_inc":764559286,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345853781,"sinterval":"2","channels":[{"cname":"channel1","unit":"","readings":["1.1","1.2","3.3","4.0","2.4","2.0","2.3","2.5","2.2","3.7"]}]},"_id":{"_time":1334585382,"_machine":1152297075,"_inc":764559288,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345853831,"sinterval":"2","channels":[{"cname":"channel1","unit":"","readings":["1.2","2.5","2.3","2.9","3.2","2.4","3.3","3.2","2.3","2.4"]}]},"_id":{"_time":1334585387,"_machine":1152297075,"_inc":764559291,"_new":false}}, {"secretkey":"feddce389dece00bf84cbd0f58e4d456f4b67bbd","data":{"loc":"Facultyroom","dname":"PhDLab","sname":"temperature","sid":"1","timestamp":13345853881,"sinterval":"2","channels":[{"cname":"channel1","unit":"","readings":["1.2","3.0","3.2","1.6","1.9","2.1","3.1","2.8","2.5","2.9"]}]},"_id":{"_time":1334585392,"_machine":1152297075,"_inc":764559294,"_new":false}}]};
-	function appendElementsToSeries(series,receivedData)
-		{
-    var numberOfSeries=receivedData["wavesegmentArray"][0]["data"]["channels"].length;
-    //alert(numberOfSeries);
-    var sensorName=receivedData["wavesegmentArray"][0]["data"]["sname"];
-    var seriesLength=series.length;
-    //alert(seriesLength);
-    
-    for(var i=0;i<numberOfSeries;i++)
-    	{
-    		series[seriesLength+i]={};
-    		series[seriesLength+i]["data"]=new Array();
-    		series[seriesLength+i]["name"]=receivedData["wavesegmentArray"][0]["data"]["channels"][i]["cname"]+sensorName;
-    	}
-    var numberOfWavesegs=receivedData["wavesegmentArray"].length;
-    console.log(numberOfWavesegs);
-    for(var i=0;i<numberOfWavesegs;i++)
-    	{
-    		var timestamp=receivedData["wavesegmentArray"][i]["data"]["timestamp"]*100;
-    		console.log(timestamp);
-    		var samplingPeriod=1/receivedData["wavesegmentArray"][i]["data"]["sinterval"];
-    		for(var j=0;j<numberOfSeries;j++)
-    			{
-    				
-    				var numberOfReadings=receivedData["wavesegmentArray"][i]["data"]["channels"][j]["readings"].length;
-    				for(var k=0;k<numberOfReadings;k++)
-    					{
-    						series[seriesLength+j]["data"].push([(timestamp+k*samplingPeriod*1000),parseInt((receivedData["wavesegmentArray"][i]["data"]["channels"][j]["readings"][k]))]);
-    					}
-    				//series[j]["data"].append(receivedData["wavesegmentArray"][i]["data"]["channels"][j]["readings"]);
-    			}
-    	}
-    
-  	alert(JSON.stringify(series[0]));
-  	console.log('Exiting make series');
-  	return series;
-  }
-   series=appendElementsToSeries(series,receivedData);
-   //console.log(series[0]);
-  
-   console.log(series);
-   //receivedData["wavesegmentArray"][0]["data"]["channels"][0]["name"]="ch";
-   //series=appendElementsToSeries(series,receivedData);
-   
-   
-	
-	 chart = new Highcharts.Chart({
-            chart: {
-                renderTo: 'container',
-                type: 'line',
-                marginRight: 130,
-                marginBottom: 25,
-                useUTC: false,
-                zoomType: 'x',
-				
-            },
-            title: {
-                text: 'Data',
-                x: -20 //center
-            },
-            subtitle: {
-                text: '',
-                x: -20
-            },
-            xAxis: {
-               type:'datetime',
-               
-                
-            },
-            plotOptions: {
-			line: {
-				marker: {
-					enabled: false
-				}
-				}
-			},
-            yAxis: {
-                title: {
-                    text: 'Readings'
-                },
-                plotLines: [{
-                    value: 0,
-                    width: 1,
-                    color: '#808080',
-                    line:{
-                    	marker: {
-						enabled: true
+						events : {
+							redraw : function() {
+								//alert ('The chart was just redrawn');
+							}
 						}
+					},
+					title : {
+						text : 'Data',
+						x : -20 //center
+					},
+					subtitle : {
+						text : '',
+						x : -20
+					},
+					xAxis : {
+						type : 'datetime',
+
+					},
+					plotOptions : {
+						line : {
+							marker : {
+								enabled : false
+							}
+						}
+					},
+					yAxis : {
+						title : {
+							text : 'Readings'
+						},
+						plotLines : [{
+							value : 0,
+							width : 1,
+							color : '#808080',
+							line : {
+								marker : {
+									enabled : true
+								}
+							}
+						}]
+					},
+					tooltip : {
+						formatter : function() {
+							return '<b>' + this.series.name + '</b><br/>' + Highcharts.dateFormat('%e%b', this.x) + ': ' + this.y;
+						}
+					},
+					credits : {
+						enabled : false
+					},
+					legend : {
+						layout : 'vertical',
+						align : 'right',
+						verticalAlign : 'top',
+						x : -10,
+						y : 100,
+						borderWidth : 0
+					},
+					series : series
+				});
+
+				$("#logout").attr('href', URL_LOGOUT_USER);
+				$("#home").attr('href', URL_HOME);
+				$("#errorDiv").hide();
+
+				$("#devices").attr('href', URL_DEVICES);
+				$("#visualization").attr('href', URL_VISUALIZATION);
+				//$("#logout").attr('href', URL_LOGOUT_USER);
+				$("#repositoryInformation").attr('href', URL_REPOSITORY_INFO);
+				$("#logout").click(function() {
+
+					window.location = URL_LOGOUT_USER;
+				});
+				function alertError(errorMessage) {
+					$("#errorDiv").html(errorMessage);
+					$("#errorDiv").fadeIn('slow');
+					return false;
 				}
-                }]
-            },
-            tooltip: {
-                formatter: function() {
-                        return '<b>'+ this.series.name +'</b><br/>'+
-                        Highcharts.dateFormat('%y %e%b', this.x)+': '+ this.y;
-                }
-            },
-            credits : {
-  				enabled : false
-				},
-            legend: {
-                layout: 'vertical',
-                align: 'right',
-                verticalAlign: 'top',
-                x: -10,
-                y: 100,
-                borderWidth: 0
-            },
-            series: series
-        });
-        console.log('plotted series');
-        //chart.series[0].remove(true);
-        
-        //alert("hfidf");
-        
-        //chart.addSeries(series[0]);
-    });
-	</script>
-</head>
 
-<body>
-	<div>
-		<
-	</div>
-    <div id="container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
-    <input type="hidden" id =secretkey />
-	
-</body>
+				function removeError() {
+					$("#errorDiv").html("");
+					$("#errorDiv").hide();
+					return false;
+				}
 
+				//series=appendElementsToSeries(series,SAMPLE_QUERY_DATA_QUERY_RESPONSE);
 
+				//Setting the correct datetime format to start and end time dialog
+				$(ID_START_DATE_TIME_DISPLAY).datetimepicker({
+					changeMonth : true,
+					changeYear : true,
+					dateFormat : "yy-mm-dd",
+					separator : "-"
+				});
+
+				$(ID_END_DATE_TIME_DISPLAY).datetimepicker({
+					changeMonth : true,
+					changeYear : true,
+					dateFormat : "yy-mm-dd",
+					separator : "-"
+				});
+
+				var startTime;
+				var endTime;
+				var receivedData;
+				var errorState;
+				var errorInformation;
+				var query;
+				var username = $("#username").val();
+				var secretkey = FAKE_SECRET_KEY;
+				var series = new Array();
+				var receivedDeviceData = {};
+
+				/*
+				 * Description:This function takes the device name,selected set of sensors and start
+				 * and end time and for each sensor makes a request to the Server to fetch the data
+				 * It also calls the function appendElementToSeries which for each Sensor adds it to
+				 * the charting library
+				 *
+				 * I/P:
+				 * 1.Name of device
+				 * 2.Array Of Selected Sensors
+				 * 3.Start Time					//$.get("http://www.google.com" + "?secretkey=" + secretkey, function(data){
+
+				 * 4.End Time
+				 *
+				 * O/P:
+				 * 1.AJAX POST to UI Server+Adding the new series to the chart
+				 */
+
+				function makeRequestAndDisplayChart(selectedDeviceName, selectedSensorArray, startTime, endTime) {
+					for(var i = 0; i < selectedSensorArray.length; i++) {
+						var query = {};
+						query[QUERY_CONDITIONS] = {};
+						query[QUERY_CONDITIONS][QUERY_CONDITIONS_FROM_TIME] = startTime;
+						query[QUERY_CONDITIONS][QUERY_CONDITIONS_TO_TIME] = endTime;
+						query[QUERY_DEVICE_NAME] = selectedDeviceName;
+						query[QUERY_SENSOR_NAME] = selectedSensorArray[i];
+						query[QUERY_USER_NAME] = username;
+						//alert(JSON.stringify(query));
+
+						//receivedData = SAMPLE_QUERY_DATA_QUERY_RESPONSE;
+						try {
+
+							$.post(URL_QUERY_DATA, JSON.stringify(query), function(data) {
+								receivedData = data;
+								//alert(JSON.stringify(receivedData));
+
+							});
+							if(!(receivedData.hasOwnProperty(RESPONSE_STATUS_CODE)))
+							//Means it contains data
+							{
+								//$("#container").show();
+
+								series = appendElementsToSeries(series, receivedData);
+
+							} else {
+
+								var r = showNoty("Error occured in fetching data/Data does not exist for " + selectedSensorArray[i], "center", "off");
+							}
+
+						} catch(e) {
+							alertError(e.toString());
+						}
+
+					}
+				}
+
+				/*
+				 * Validate the parameters to query for visualization
+				 * I/p:
+				 * Device name,SelectedSensors,startTime,endTime
+				 * O/p:
+				 * An array of 2 objects:
+				 * 1.The error state:true/false
+				 * 2.Error Information associated
+				 */
+
+				function validateVisualizationQuery(deviceName, selectedSensorArray, startTime, endTime) {
+					$(".errorVisual").hide("");
+					$("#IDDeviceSelect,#start_date_time,#end_date_time").removeClass("error");
+					errorState = false;
+					errorInformation = "";
+					if(deviceName == "None") {
+						errorState = true;
+						//errorInformation += "Select a device ";
+						$("#IDDeviceSelect").addClass("error");
+						$("#spanDevice").show('slow', function() {
+						});
+
+						$("#spanDevice").html("Please Select a device");
+						$("#IDDeviceSelect").focus();
+					} else if(selectedSensorArray.length == 0) {
+						errorState = true;
+						//errorInformation += "Select a sensor";
+						$("#spanSensor").show('slow', function() {
+						});
+						$("#spanSensor").html("Please Select a Sensor");
+
+					} else if(startTime.length == 0) {
+						errorState = true;
+						//errorInformation += " Please provide a valid start time";
+						$("#start_date_time").addClass("error");
+						$("#spanStartTime").show('slow', function() {
+						});
+						$("#spanStartTime").html("Please select Start Time");
+
+					} else if(endTime.length == 0) {
+						errorState = true;
+						//errorInformation += " Please provide a valid end time";
+						$("#end_date_time").addClass("error");
+						$("#spanEndTime").show('slow', function() {
+						});
+						$("#spanEndTime").html("Please select End Time");
+						//$("#end_date_time").focus();
+					} else if(startTime >= endTime) {
+						errorState = true;
+						//errorInformation += " Start Time should be less than end time";
+						$("#spanEndTime").show('slow', function() {
+						});
+						$("#spanEndTime").html("Start Time should be less than end time");
+
+					}
+
+					return [errorState, errorInformation];
+				}
+
+				/*
+				 * Method to send the query
+				 * I/P
+				 * 1.Device Name
+				 * 2.Sensors under the device
+				 * 3.Start time and end time
+				 *
+				 * Validations
+				 * This method does validation on the all the specified fields
+				 * 1.Device must be selected(By default a None option is provided)
+				 * 2.Atleast one sensor must be selected
+				 * 3.Starttime should be less than the end time
+				 *
+				 * O/P
+				 * For each sensor in the selected list of sensors this function call would
+				 * make a call to the repository and fetch the daQUERY_CONDITIONSom it and append it to
+				 * the "series" variable which is passed as an argument to the charting library
+				 * If any of the validity tests fail then the corresponding information is alerted
+				 * to the user.In case all the validations pass a per sensor query of the format
+				 * defined in Constants.js is sent to the server component of the UI
+				 */
+				$("#IDSendQuery").click(function() {
+
+					var query = {};
+
+					//Empty the previous entries
+					while(chart.series.length > 0) {
+
+						chart.series[0].remove();
+					}//CLearing data from previous calls
+					var selectedSensorArray = new Array();
+
+					var selectedSensorArrayLength = 0;
+
+					var selectedDeviceName = $("#IDDeviceSelect").val();
+
+					$("#IDSensorsSelect").find("input").each(function() {
+						selectedSensorArrayLength = selectedSensorArray.length;
+						if($(this).prop("checked")) {
+							selectedSensorArray[selectedSensorArrayLength] = $(this).val();
+							selectedSensorArrayLength++;
+						}
+
+					});
+					if($(ID_START_DATE_TIME_DISPLAY).val().length > 0) {
+						startTime = datetimeToEpoch($(ID_START_DATE_TIME_DISPLAY).val());
+					} else {
+						startTime = $(ID_START_DATE_TIME_DISPLAY).val();
+					}
+					if($(ID_END_DATE_TIME_DISPLAY).val().length > 0) {
+						endTime = datetimeToEpoch($(ID_END_DATE_TIME_DISPLAY).val());
+					} else {
+						endTime = $(ID_END_DATE_TIME_DISPLAY).val();
+					}
+					var errorStatus = validateVisualizationQuery(selectedDeviceName, selectedSensorArray, startTime, endTime);
+					if(errorStatus[0]) {
+						alertError(errorStatus[1]);
+						return false;
+					} else {
+						removeError();
+					}
+					//alert(JSON.stringify(selectedSensorArray));
+					//Now for each sensor in the selectedSensorList we would make a query and fetch the data and draw chart
+					makeRequestAndDisplayChart(selectedDeviceName, selectedSensorArray, startTime, endTime);
+
+				});
+				try {
+					$.get(URL_LIST_ALL_DEVICES, function(data) {
+						//alert(data);
+						receivedDeviceData = data;
+						//alert(receivedDeviceData);
+
+					});
+				} catch(e) {
+					alertError(e.toString());
+				}
+				//Make a get request to get all the devices available
+				if(!(receivedDeviceData.hasOwnProperty(RESPONSE_STATUS_CODE)))//Success
+				{
+
+					if(receivedDeviceData[DEVICE_ARRAY].length > 0) {
+
+						for(var index in receivedDeviceData[DEVICE_ARRAY]) {
+							var name = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_NAME];
+
+							$("#IDDeviceSelect").append("<option value=\"" + name + "\">" + name + "</option>");
+						}
+
+						/*
+						 * Description:This function is used to change the HTML contents corresponding to a selected device
+						 * It basically adds relevant HTMl in accordance with the device selected
+						 *
+						 * Nature:Anonmyous function
+						 *
+						 * Called:Called every time a change occurs in the dropdown menu
+						 *
+						 */
+						$("#IDDeviceSelect").change(function() {
+							$("#labelSensorSelect").hide();
+							$("#IDSensorsSelect").html("");
+							var deviceName = $(this).val();
+							//alert(JSON.stringify(receivedDeviceData));
+							for(var index in receivedDeviceData[DEVICE_ARRAY]) {
+								var name = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_NAME];
+								if(name == deviceName) {
+									if($("#IDDeviceSelect").is('.error')) {
+										//alert("Removing");
+										$("#IDDeviceSelect").removeClass("error");
+										$("#spanDevice").hide();
+										$("#IDSendQuery").removeAttr("disabled", "disabled");
+
+									}
+									if( DEVICE_SENSORS in receivedDeviceData[DEVICE_ARRAY][index]) {
+										removeError();
+										var sensorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS];
+										$("#labelSensorSelect").show();
+
+										for(var sensor in sensorArray) {
+											$("#IDSensorsSelect").append("<input id=\"sensorID\" type=\"checkbox\"value=" + sensorArray[sensor][DEVICE_SENSOR_NAME] + ">" + sensorArray[sensor][DEVICE_SENSOR_NAME] + "&nbsp&nbsp</input>");
+										}
+										$("#IDSensorsSelect").append("<span class='errorVisual' id='spanSensor'></span>");
+										return false;
+									} else {
+										//alertError("The selected device contains no sensors");
+										$("#IDDeviceSelect").addClass("error");
+										$("#spanDevice").show('slow', function() {
+										});
+										$("#IDSendQuery").attr("disabled", "disabled");
+										$("#spanDevice").html("The selected device contains no sensors");
+										$("#IDDeviceSelect").focus();
+									}
+								}
+							}
+
+							return false;
+						});
+					} else {
+						alertError("No devices found");
+					}
+				} else {
+					alertError("The following error occured " + receivedDeviceData[RESPONSE_MESSAGE]);
+				}
+
+				/*
+				 * Description:This function$(#IDSensorsSelect").append("<span class='errorVisual' id='spanSensor'></span>"); is used to append series to the chart
+				 *
+				 * I/P:Response to the query to view data which is of the form of
+				 * SAMPLE_QUERY_DATA_QUERY_RESPONSE in constants.js
+				 *
+				 *
+				 */
+				function appendElementsToSeries(series, receivedData) {
+					//alert(JSON.stringify(receivedData));
+					var numberOfSeries = receivedData["chartSeries"].length;
+
+					for(var i = 0; i < numberOfSeries; i++) {
+
+						//Adding series to the Chart Object
+						chart.showLoading();
+						chart.addSeries(receivedData["chartSeries"][i]);
+						chart.hideLoading();
+
+					}
+
+					return series;
+				}
+
+			});
+
+		</script>
+	</head>
+	<body>
+		<div id="header-container">
+			<header class="wrapper clearfix">
+				<h1 id="title">SensorAct
+				<br />
+				<br />
+				<span style="font-size:25px;">Sense - Interact - Actuate</span></h1>
+				<!--<nav>
+
+				<ul>
+				<li>
+				<a id="home" >Home</a>
+				</li>
+
+				<li>
+				<a id="logout">Logout</a>
+				</li>
+				</ul>
+
+				</nav>-->
+				<nav>
+					<ul>
+						<li>
+							<a id="devices" >Devices</a>
+						</li>
+						<li>
+							<a id="visualization" class="active">Visualization</a>
+						</li>
+						<li>
+							<a id="repositoryInformation">Repository Info</a>
+						</li>
+						<!--<li>
+						<a id="logout">Logout</a>
+						</li>-->
+					</ul>
+				</nav>
+				<br />
+				<br />
+				<nav>
+					<p class="pbox" style="margin-bottom:-20px;">
+						Welcome ${username} &nbsp | &nbsp<span id="logout">Logout</span>
+					</p>
+				</nav>
+			</header>
+		</div>
+		<div class="wrapper">
+			<div id="errorDiv" class="errorDiv"></div>
+			<div>
+				<h1 class="newfont" style="text-align:center;">Visualization</h1>
+				<hr>
+				<div id="visualBox" style="">
+					<div class="leftDiv">
+						<label>Select a Device</label>
+					</div>
+					<div class="rightDiv">
+						<select id="IDDeviceSelect">
+							<option value="None">None</option>
+						</select>
+						<span class="errorVisual" id="spanDevice"></span>
+					</div>
+					<div id="labelSensorSelect" class="leftDiv">
+						<label>Select Sensor</label>
+					</div>
+					<div id="IDSensorsSelect" class="rightDiv" style=""></div>
+					<div class="leftDiv">
+						<label>Start Date :</label>
+					</div>
+					<div class="rightDiv">
+						<input type="text" id="start_date_time" readonly='true' />
+						<span class="errorVisual" id="spanStartTime"></span>
+					</div>
+					<div class="leftDiv">
+						<label>End Date Time :</label>
+					</div>
+					<div class="rightDiv">
+						<input type="text" id ="end_date_time" readonly='true' />
+						<span class="errorVisual" id="spanEndTime"></span>
+					</div>
+					<br />
+					<button id="IDSendQuery">
+						View Data
+					</button>
+				</div>
+			</div>
+			<div id="container" style=""></div>
+			</input>
+			<input type="hidden" id =username value =${username}>
+			</input>
+			<hr>
+		</div>
+		<div style="clear:both;" id="footer-container">
+			<footer class="wrapper">
+				<h4 align="center">&copy2012 |MUC,IIIT-Delhi</h4>
+			</footer>
+		</div>
+	</body>
 </html>
