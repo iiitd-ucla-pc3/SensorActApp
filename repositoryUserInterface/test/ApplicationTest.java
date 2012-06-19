@@ -7,7 +7,7 @@ import play.libs.WS.HttpResponse;
 import play.mvc.*;
 import play.mvc.Http.Request;
 import play.mvc.Http.*;
-import models.*;
+
 
 public class ApplicationTest extends FunctionalTest {
 
