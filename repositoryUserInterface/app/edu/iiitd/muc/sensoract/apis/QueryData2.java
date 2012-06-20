@@ -9,6 +9,9 @@ import edu.iiitd.muc.sensoract.format.WaveSegmentArray;
 import edu.iiitd.muc.sensoract.utilities.SecretKey;
 import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 
+/*
+ * Server side processing for query data
+ */
 public class QueryData2 extends SensorActAPI {
 
 	public final void doProcess(String queryBody) {
