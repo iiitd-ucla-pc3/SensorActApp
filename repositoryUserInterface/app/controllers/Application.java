@@ -172,4 +172,10 @@ public class Application extends Controller {
 
 	}
 
+	public static void soundinput(String userID) {
+
+		api.soundInput.doProcess(userID);
+
+	}
+
 }

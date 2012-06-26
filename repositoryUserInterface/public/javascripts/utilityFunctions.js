@@ -21,6 +21,22 @@ function datetimeToEpoch(datetime) {
 	return datetime_epoch;
 }
 
+ 
+
+/*
+ *  To generate a 10 character long unique string for filenames
+ */
+function uniqueRandomString()
+{
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < 10; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
+
 /*
  * Function to show noty
  * parameters:

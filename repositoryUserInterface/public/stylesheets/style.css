@@ -523,3 +523,26 @@ clear:both;
 .error{
 border: 3px solid #f00;
 }
+
+#input_message
+{background:  #F8F8F8;
+	color: #707070;
+	padding:8px;
+	-moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    border-radius: 15px;
+    border: 2px solid;
+    min-height:50px;
+}
+
+#output_message
+{
+	background: #F8F8F8;
+	color: #707070;
+	padding:8px;
+	-moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    border-radius: 15px;
+    border: 2px solid;
+    min-height:50px;
+}

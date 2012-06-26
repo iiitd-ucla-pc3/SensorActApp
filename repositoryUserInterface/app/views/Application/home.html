@@ -12,9 +12,32 @@
 		<script src="@{'/public/js/libs/modernizr-2.0.6.min.js'}"></script>
 		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script type="text/javascript"	src="@{'public/javascripts/swfobject.js'}"></script>
+		<script type="text/javascript" src="@{'/public/javascripts/recorder.js'}"></script>
+		<script type="text/javascript" src="@{'/public/javascripts/utilityFunctions.js'}"></script>
 		<script type="text/javascript">
 			$(document).ready(function() {
 
+				var mp3ID=1;
+				var USER_KEY;
+				setup();
+				
+				$("#pressed").hide();
+				$("#message").html("");
+				
+				//var mp3ID = "1";
+				$("#normal").click(function(){
+					$("#normal").hide();
+					
+					
+					$("#pressed").show();
+					record();
+				})
+				$("#pressed").click(function(){
+					stop();
+					$("#pressed").hide();
+					$("#normal").show();
+				});
 				$("#devices").attr('href', URL_DEVICES);
 				$("#visualization").attr('href', URL_VISUALIZATION);
 				//$("#logout").attr('href', URL_LOGOUT_USER);
@@ -24,10 +47,59 @@
 					window.location = URL_LOGOUT_USER;
 				});
 			});
+			</script>
+			
+			<script>
+			//	var USER_KEY;
+			
+			var a;
+			
+			function setup() {
+				Wami.setup("wami");
+			}
+			
+			
 
+			function record() {
+				USER_KEY = uniqueRandomString();
+				//status("Recording...");
+				
+				Wami.startRecording(URL_SOUNDINPUT_CONTROLLER + "/" + USER_KEY.toString());
+				
+			}
+
+			function play() {
+				Wami.startPlaying(" ");
+			}
+
+			function stop() {
+				
+				Wami.stopRecording();
+				Wami.stopPlaying();
+				
+			}
+
+			function status(msg) {
+				document.getElementById('status').innerHTML = msg;
+			}
+			
+
+			function serverReturn(data)
+			        {
+			      
+			        var json = jQuery.parseJSON(data.toString());
+			   
+			        $("#input_message").html(json.inputcommand);
+			        $("#output_message").html(json.outputtext);
+			        
+			        
+			        }
+
+			
+		
 		</script>
 	</head>
-	<body>
+	<body onload="setup()">
 		<div id="header-container">
 			<header class="wrapper clearfix">
 				<h1 id="title">SensorAct
@@ -59,9 +131,22 @@
 				</nav>
 			</header>
 		</div>
-		<div class="wrapper">
-			<img src="@{'/public/images/background_2.jpg'}" style="text-align:center" width="75%" height="350px"/>
+		<div class="wrapper" style="text-align:center;">
+			<p class="space"></p>
+			<img id="normal" src="@{'/public/images/mic_normal.jpg'}" style="text-align:center" width="19.5%" height="19.5%"/>
+			<img id="pressed" src="@{'/public/images/mic_pressed.jpg'}" style="text-align:center" width="19.5%" height="19.5%"/>
+			<div id="status"></div>
+	<div id="wami"></div>
+	<hr/>
+
+	<p class="space"></p>
+			<div id="input_div"><label for="input_message">Input</label>
+						<p name="input_message" id="input_message"></p></div>
+			<hr/>
+			<div id="output_div"><label for="output_message">Output</label>
+						<p name="output_message" id="output_message" ></p></div>
 			<hr>
+			
 			<p class='newfont' style="font-size:20px;">
 				Smart Rooms at IIIT-Delhi
 				<br />

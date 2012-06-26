@@ -24,4 +24,19 @@ public class SendHTTPRequest extends SensorActAPI {
 
 	}
 
+	public HttpResponse sendGetRequest(String url) {
+		HttpResponse response = null;
+		try {
+			// logger.info(invokingApiname, content);
+
+			response = WS.url(url).get();
+		} catch (Exception e) {
+			// renderJSON(gson.toJson(new APIResponse(invokingApiname, 1,
+			// Const.ERROR_MESSAGE_CONNECTION_FAILURE)));
+
+		}
+		return response;
+
+	}
+
 }
