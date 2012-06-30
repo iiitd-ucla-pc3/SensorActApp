@@ -31,7 +31,7 @@ POST     /generatesecretkey							  Application.generatesecretkey
 GET      /editdevice/{devicename}/{isdevice}/{mode}                                 Application.editdevice
 POST     /finddevice                                 Application.finddevice
 POST     /finddevicetemplate                                 Application.finddevicetemplate
-
+POST	/soundinput/{userID}					Application.soundinput
 
 
 # Ignore favicon requests

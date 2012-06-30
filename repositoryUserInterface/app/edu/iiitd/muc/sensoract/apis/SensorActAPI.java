@@ -29,4 +29,5 @@ public class SensorActAPI extends Application {
 	public static FindDeviceTemplate findDeviceTemplate = new FindDeviceTemplate();
 
 	public static SensorActLogger logger = new SensorActLogger();
+	public static SoundInput soundInput = new SoundInput();
 }
