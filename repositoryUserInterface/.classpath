@@ -5,10 +5,11 @@
 	
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/opt/play-1.2.4/framework/play-1.2.4.jar" sourcepath="/opt/play-1.2.4/framework/src" />
+	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/slf4j-log4j12-1.6.0.jar"/>
 	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/jsapi-1.0-base.jar"/>
+	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/sphinx4.jar"/>
 	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar"/>
 	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/tags.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/sphinx4.jar"/>
 	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/js.jar"/>
 	<classpathentry kind="lib" path="/opt/play-1.2.4/framework/lib/commons-collections-3.2.1.jar"/>
 	<classpathentry kind="lib" path="/opt/play-1.2.4/framework/lib/commons-logging-1.1.1.jar"/>

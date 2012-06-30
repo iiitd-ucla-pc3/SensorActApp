@@ -5,9 +5,6 @@ import edu.iiitd.muc.sensoract.constants.Const;
 import edu.iiitd.muc.sensoract.format.APIResponse;
 
 public class SecretKey extends SensorActAPI {
-	/*
-	 * Gen
-	 */
 	public String getSecretKeyFromHashMap(String username) {
 		String key = null;
 

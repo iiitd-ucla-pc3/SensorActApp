@@ -25,7 +25,9 @@ lang="en">
 		type="text/javascript" charset="${_response_encoding}"></script>
 		<script src="@{'/public/javascripts/constants.js'}"
 		type="text/javascript" charset="${_response_encoding}"></script>
+		<script type="text/javascript" src="@{'/public/javascripts/utilityFunctions.js'}"></script>
 		<script type="text/javascript">
+
 			$(document).ready(function() {
 
 				/**
@@ -40,15 +42,13 @@ lang="en">
 					/*
 				 * Adding the link attribute to Logout,Home element
 				 */
-				$("#logout").attr('href', URL_LOGOUT_USER);
-				$("#home").attr('href', URL_HOME);
+			/********************* --------------- Changes made here --------------- ***************/
+				setNavURL("#devices" ,'href', URL_DEVICES);
+				setNavURL("#visualization",'href', URL_VISUALIZATION);
+				setNavURL("#repositoryInformation",'href',URL_REPOSITORY_INFO);
+				setNavURL("#home",'href',URL_HOME);
+				setNavURL("#logout",'href',URL_LOGOUT_USER);
 
-				//Adding Link to Navigation Bar
-				
-				$("#devices").attr('href', URL_DEVICES);
-				$("#visualization").attr('href', URL_VISUALIZATION);
-				//$("#logout").attr('href', URL_LOGOUT_USER);
-				$("#repositoryInformation").attr('href', URL_REPOSITORY_INFO);
 				//alert(isDevice);
 				var deleteDeviceOrTemplate;
 				var findDeviceOrTemplate;
@@ -87,14 +87,155 @@ lang="en">
 				/*
 				 * Adding the link attribute to Logout,Home element
 				 */
-				$("#logout").attr('href', URL_LOGOUT_USER);
-				$("#home").attr('href', URL_HOME);
+				//$("#logout").attr('href', URL_LOGOUT_USER);
+				//$("#home").attr('href', URL_HOME);
 				//alert("here i am - - begin");
 				/*
 				 * Hiding Error Divs
 				 */
 				$("#errorDiv").hide();
 				$("#getDeviceErrorDiv").hide();
+
+
+function createCustomElement(elementType,parent,id,Class,content,style)
+					{
+						
+						var $_element=$(document.createElement(elementType));
+						
+
+						$_element.attr(
+						{
+							"class":Class,
+							"id":id
+						});
+						
+						$_element.css(
+							style	
+						);
+
+						if(elementType=="input")
+						{
+							$_element.val(content);
+						}
+						else
+						{
+							$_element.append(content);
+						}
+						
+						parent.append($_element);
+						return $_element;
+						
+
+					}
+
+
+					function makeErrorTr(parent)
+					{
+													var err = createCustomElement("tr",parent,null,"errortr","",null);
+													createCustomElement("td",err,null,null,"",null);
+
+													createCustomElement("td",err,null,"labName","","{'font-size':'12px','width':'120px'}");
+													createCustomElement("td",err,null,null,"",null);
+													createCustomElement("td",err,null,"labUnit","","{'font-size':'12px','width':'120px'}");
+													createCustomElement("td",err,null,null,"",null);
+													createCustomElement("td",err,null,"labType","","{'font-size':'12px','width':'120px'}");
+													createCustomElement("td",err,null,null,"",null);
+													createCustomElement("td",err,null,"labSampling","","{'font-size':'12px','width':'120px'}");
+													}
+
+					function makeDataTr(parent,name,unit,type,samplingperiod)
+													{
+														//param = content;
+													var p = createCustomElement("tr",parent,null,"datatr","",{'text-align':'center'});
+													//alert("bye");
+													var q = createCustomElement("td",p,null,null,"",{'width':'12px'});
+													createCustomElement("label",q,null,null,"Name",null);
+													var q = createCustomElement("td",p,null,null,"",null);			
+													createCustomElement("input",q,null,"labName",name,null);
+													var q = createCustomElement("td",p,null,null,"",null);
+													createCustomElement("label",q,null,null,"Unit",null);
+													var q = createCustomElement("td",p,null,null,"",null);			
+													createCustomElement("input",q,null,"labUnit",unit,null);
+													var q = createCustomElement("td",p,null,null,"",null);
+													createCustomElement("label",q,null,null,"Type",null);
+													var q = createCustomElement("td",p,null,null,"",null);			
+													createCustomElement("input",q,null,"labType",type,null);
+													var q = createCustomElement("td",p,null,null,"",null);
+													createCustomElement("label",q,null,null,"Sampling Period",{'width':'145px'});
+													var q = createCustomElement("td",p,null,null,"",null);			
+													createCustomElement("input",q,null,"labSampling",samplingperiod,null);
+													document.createTextNode('\u00a0');
+														//alert("hello");
+													document.createTextNode('\u00a0');
+													var q = createCustomElement("td",p,null,null,"",null);
+													createCustomElement("span",q,null,null,"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",null);			
+													createCustomElement("button",q,null,"google-button-blue removeChannel","Remove",null);
+
+												}
+
+
+				function makeIPDiv(parent,deviceIP){
+									
+									var p = createCustomElement("div",parent,"ipDiv",null,"",null);
+									var q = createCustomElement("label",p,null,null,"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Device IP",{'width':'130px'});
+									createCustomElement("input",p,"newDeviceIP",null,deviceIP,null);
+									createCustomElement("span",p,null,null,"",null);
+				}		
+
+
+				function makeActDiv(parent,actName){
+
+					var p = createCustomElement("div",parent,"newActuator",null,"",null);
+									createCustomElement("p",p,null,"actuatorDivPara","Actuator Details",null);
+									createCustomElement("hr",p,null,null,"",null);
+									//alert("between");
+
+									var q = createCustomElement("label",p,null,null,"Actuator Name ",{'width':'110px'});
+									createCustomElement("input",p,null,"labActName",actName,null);
+									createCustomElement("span",p,null,null,"",null);
+									createCustomElement("br",p,null,null,"",null);
+																		createCustomElement("br",p,null,null,"",null);
+
+									createCustomElement("button",p,null,"google-button-blue removeActuator","Remove Actuator",null);
+									createCustomElement("hr",p,null,null,"",null);
+				}	
+
+
+
+						function makeSensorDiv(parent,sensorName,sensorID){
+									createCustomElement("p",parent,null,"space","",null);
+									var p = createCustomElement("div",parent,null,"sensorDiv","",null);
+									createCustomElement("p",p,null,"sensorDivPara","Sensor Details",null);
+									createCustomElement("hr",p,null,null,"",null);
+									//alert("between");
+
+									var q = createCustomElement("label",p,null,null,"Sensor Name",{'width':'110px'});
+									createCustomElement("input",p,"newSensorName","newSensor",sensorName,null);
+									createCustomElement("span",p,null,null,"",null);
+
+									createCustomElement("br",p,null,null,"",null);
+																		
+
+
+
+									
+									
+									var q = createCustomElement("label",p,null,null,"Sensor ID",{'width':'110px'});
+									createCustomElement("input",p,"newSensorID","newSensorID",sensorID,null);
+									createCustomElement("span",p,null,null,"",null);
+
+									createCustomElement("br",p,null,null,"",null);
+									createCustomElement("br",p,null,null,"",null);
+
+									createCustomElement("button",p,null,"google-button-blue newSensorAddChannel","Add channels",null);
+
+									createCustomElement("span",p,null,null,"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",null);
+									createCustomElement("button",p,null,"google-button-blue newSensorRemove","Delete Sensor",null);
+									createCustomElement("p",p,null,"space","",null);
+									createCustomElement("div",p,null,"newSensorChannels","",null);
+
+									createCustomElement("hr",p,null,null,"",null);		
+}
 
 				/**
 				 * @param :Error Information
@@ -118,7 +259,15 @@ lang="en">
 					$("#getDeviceErrorDiv").fadeIn('slow');
 					return false;
 				}
-
+/**************************--------------------Changes Made Here---------------------*************************/
+				/**
+				*	@Param:Object Reference:  JQuery Object Reference to the object under test
+				*	This function will set the error td with the particular parameter
+				*/
+				function classReferenceError(objectReference,classReference){
+										$(objectReference).parent().parent().next().children('td.'+classReference.substring(0,classReference.indexOf(" ",0))).text(errorInformation);
+				}
+/*************************---------------------Changes Made Here----------------------***********************/
 				/**
 				 * @param:
 				 * 1.Object Reference(object)  :JQuery Object Reference to the object under test
@@ -143,15 +292,32 @@ lang="en">
 					//alert(errorFieldAttribute2);
 					if((($(objectReference).val().length) < minimumLength ) || (($(objectReference).val().length) > maximumLength )) {
 
+						//$(objectReference).addClass("error");
+						//value++;
+
+						//assigning the count attribute value to all possible error fields for focus
+						//$(objectReference).attr('count', value);
+						//errorState = true;
+						/*changed here*/
+
+						//errorInformation = "";
+						/********************* --------------- Changes made here --------------- ***************/
+
 						$(objectReference).addClass("error");
 						value++;
 
 						//assigning the count attribute value to all possible error fields for focus
 						$(objectReference).attr('count', value);
 						errorState = true;
-						/*changed here*/
+						
 
 						errorInformation = "";
+
+						
+
+
+						/********************* --------------- Changes made here --------------- ***************/
+
 
 						if(errorFieldAttribute2.length > 0) {
 							errorInformation = errorInformation + " Enter " + errorFieldAttribute1 + " of " + errorFieldAttribute2 + " th " + errorField + " within " + minimumLength + " and " + maximumLength + "characters";
@@ -165,6 +331,12 @@ lang="en">
 							} else {
 								classReference = $(objectReference).attr('class');
 								//if this works, then would have to add all three .
+
+								/*---------------------Changes Made here----------------------------*/
+								
+								
+								classReferenceError(objectReference,classReference);
+								/*
 								if(classReference == "labName error") {
 									$('input[class="labName error"]').parent().parent().next().children('td.labName').text(errorInformation);
 								}
@@ -174,9 +346,12 @@ lang="en">
 								if(classReference == "labType error") {
 									$('input[class="labType error"]').parent().parent().next().children('td.labType').text(errorInformation);
 								}
+								*/
+								/*---------------------Changes Made here----------------------------*/
 							}
 						} else {
 							//errorInformation = errorInformation + " Enter " + errorFieldAttribute1 + " of " + errorField + " within " + minimumLength + " and " + maximumLength + " characters";
+							alert("in validate else block");
 							errorInformation = errorInformation + " Enter within " + minimumLength + " and " + maximumLength + " characters ";
 							if(!($(objectReference).parent().parent().parent().attr('class') == "newSensorChannels")) {
 								$(objectReference).next().text(errorInformation);
@@ -184,6 +359,11 @@ lang="en">
 							} else {
 								classReference = $(objectReference).attr('class');
 
+
+		/**************----------------------Changes Made Here---------------------****************/
+								classReferenceError(objectReference,classReference);
+								/*
+
 								if(classReference == "labName error") {
 									$('input[class="labName error"]').parent().parent().next().children('td.labName').text(errorInformation);
 								}
@@ -193,7 +373,8 @@ lang="en">
 								if(classReference == "labType error") {
 									$('input[class="labType error"]').parent().parent().next().children('td.labType').text(errorInformation);
 								}
-
+								*/
+		/**************----------------------Changes Made Here---------------------****************/
 							}
 						}
 					} else {
@@ -207,11 +388,29 @@ lang="en">
 
 					if(isNaN(temp)) {
 
+						//$(objectReference).addClass("error");
+						//errorState = true;
+						//value++;
+						//$(objectReference).attr('count', value);
+						//errorInformation = "";
+
+						/********************* --------------- Changes made here --------------- ***************/
+
 						$(objectReference).addClass("error");
-						errorState = true;
 						value++;
+
+						//assigning the count attribute value to all possible error fields for focus
 						$(objectReference).attr('count', value);
+						errorState = true;
+						
+
 						errorInformation = "";
+
+						
+
+
+						/********************* --------------- Changes made here --------------- ***************/
+
 						//errorInformation = errorInformation + " " + errorFieldAttribute1 + " of " + errorFieldAttribute2 + " th " + errorField + " must be an integer";
 						errorInformation = errorInformation + " " + errorFieldAttribute1 + " of " + errorField + " must be an integer";
 						//differentiating between channel fields errors and others
@@ -222,17 +421,37 @@ lang="en">
 							classReference = $(objectReference).attr('class');
 							if(classReference == "labSampling error") {
 								errorInformation = "It must be an integer";
-								$('input[class="labSampling error"]').parent().parent().next().children('td.labSampling').text(errorInformation);
+					/**************----------------------Changes Made Here---------------------****************/
+								//$('input[class="labSampling error"]').parent().parent().next().children('td.labSampling').text(errorInformation);
+								classReferenceError(objectReference,classReference);
+					/**************----------------------Changes Made Here---------------------****************/
 							}
 
 						}
 					} else {
 						if(temp < minimumValue || temp > maximumValue) {
-							$(objectReference).addClass("error");
-							errorState = true;
-							value++;
-							$(objectReference).attr('count', value);
-							errorInformation = "";
+							//$(objectReference).addClass("error");
+							//errorState = true;
+							//value++;
+							//$(objectReference).attr('count', value);
+							//errorInformation = "";
+							/********************* --------------- Changes made here --------------- ***************/
+
+						$(objectReference).addClass("error");
+						value++;
+
+						//assigning the count attribute value to all possible error fields for focus
+						$(objectReference).attr('count', value);
+						errorState = true;
+						
+
+						errorInformation = "";
+
+						
+
+
+						/********************* --------------- Changes made here --------------- ***************/
+
 							errorInformation = errorInformation + " Enter " + errorFieldAttribute1 + " of " + errorFieldAttribute2 + " th " + errorField + "'s value within " + minimumValue + " and " + maximumValue;
 							//differentiating between channel fields errors and others
 							if(!($(objectReference).parent().parent().parent().attr('class') == "newSensorChannels")) {
@@ -243,7 +462,13 @@ lang="en">
 
 								if(classReference == "labSampling error") {
 									errorInformation = " Enter within " + minimumValue + " and " + maximumValue + " characters ";
-									$('input[class="labSampling error"]').parent().parent().next().children('td.labSampling').text(errorInformation);
+			/**************----------------------Changes Made Here---------------------****************/
+									
+							classReferenceError(objectReference,classReference);
+
+									//$('input[class="labSampling error"]').parent().parent().next().children('td.labSampling').text(errorInformation);
+
+
 								}
 
 							}
@@ -283,10 +508,29 @@ lang="en">
 
 								//Add actuators
 								if(receivedData.hasOwnProperty(DEVICE_ACTUATORS)) {
-									$("#newActuatorsDiv").append("<div id=ipDiv><label style='width:130px;' id=\"newDeviceIPLabel\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Device IP</label><input id=newDeviceIP value=" + receivedData[DEVICE_IP] + "></input><span></span></div>");
+									var parent = $('#newActuatorsDiv');
+									//alert("1");
+									/*$("#newActuatorsDiv").append("<div id=ipDiv><label style='width:130px;' id=\"newDeviceIPLabel\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Device IP</label><input id=newDeviceIP value=" + receivedData[DEVICE_IP] + "></input><span></span></div>");
+*/									var deviceIP = receivedData[DEVICE_IP];
+									//alert("2");
+									makeIPDiv(parent,deviceIP);
+									//alert("3");
+									
+									/*$("#newActuatorsDiv").append("<div id=ipDiv><label style='width:130px;' id=\"newDeviceIPLabel\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Device IP</label><input id=newDeviceIP value=" + receivedData[DEVICE_IP] + "></input><span></span></div>");
+									*/
 									var actuatorsArray = receivedData[DEVICE_ACTUATORS];
 									for(var i = 0; i < actuatorsArray.length; i++) {
-										$("#newActuatorsDiv").append("<div id='newActuator'><p class='actuatorDivPara'>Actuator Details</p><hr/><label style='width:110px;'>Actuator Name </label><input class=labActName value=" + actuatorsArray[i][DEVICE_ACTUATOR_NAME] + "></input><span></span><br/><br/><button class='google-button-blue removeActuator'>Remove Actuator</button><hr/></div>");
+										
+										var parent = $('#newActuatorsDiv');
+											//alert(parent);
+									/*$("#newActuatorsDiv").append("<div id=ipDiv><label style='width:130px;' id=\"newDeviceIPLabel\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Device IP</label><input id=newDeviceIP value=" + receivedData[DEVICE_IP] + "></input><span></span></div>");
+*/									var actName = actuatorsArray[i][DEVICE_ACTUATOR_NAME];
+									//alert(JSON.stringify(actName));
+									
+										makeActDiv(parent,actName);
+																		//alert("between234");
+									
+
 										newNumberOfActuators++;
 										$(".removeActuator").unbind('click').click(function() {
 
@@ -302,8 +546,17 @@ lang="en">
 									var sensorsArray = receivedData[DEVICE_SENSORS];
 									//alert(JSON.stringify(sensorsArray));
 									for(var i = 0; i < sensorsArray.length; i++) {
+										var parent  = $("#newSensorsDiv");														
+										
+									
+									var sensorName = sensorsArray[i][DEVICE_SENSOR_NAME];
+									var sensorID = sensorsArray[i][DEVICE_SENSOR_ID];
+
+									makeSensorDiv(parent,sensorName,sensorID);
+
 										//alert(sensorsArray[i]["name"]);
-										$("#newSensorsDiv").append("<p class='space'></p><div class='sensorDiv'><p class='sensorDivPara'>Sensor Details</p><hr/><label style='width:110px;'>Sensor Name</label><input id='newSensorName' class='newSensor' value=" + sensorsArray[i][DEVICE_SENSOR_NAME] + "></input><span></span><br/><label style='width:110px;'>Sensor ID</label><input id='newSensorID' class='newSensorID' value=" + sensorsArray[i][DEVICE_SENSOR_ID] + "></input><span></span><br/><br/>" + "<button class='google-button-blue newSensorAddChannel'>Add channels</button>" + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class='google-button-blue newSensorRemove'>Delete Sensor</button>" + "<p class='space'></p><div class='newSensorChannels'></div><hr/></div>");
+										/*
+										$("#newSensorsDiv").append("<p class='space'></p><div class='sensorDiv'><p class='sensorDivPara'>Sensor Details</p><hr/><label style='width:110px;'>Sensor Name</label><input id='newSensorName' class='newSensor' value=" + sensorsArray[i][DEVICE_SENSOR_NAME] + "></input><span></span><br/><label style='width:110px;'>Sensor ID</label><input id='newSensorID' class='newSensorID' value=" + sensorsArray[i][DEVICE_SENSOR_ID] + "></input><span></span><br/><br/>" + "<button class='google-button-blue newSensorAddChannel'>Add channels</button>" + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class='google-button-blue newSensorRemove'>Delete Sensor</button>" + "<p class='space'></p><div class='newSensorChannels'></div><hr/></div>");*/
 
 										$(".newSensorRemove").click(function() {
 
@@ -317,7 +570,21 @@ lang="en">
 										$("#newSensorsDiv").find(".sensorDiv").each(function() {
 											if(ctr == i) {
 												for(var j = 0; j < channelsArray.length; j++) {
+													var parent = $(this).children(".newSensorChannels");
+													alert("previous ");
+													var name = channelsArray[j]["name"];
+													var unit = channelsArray[j]["unit"];
+													var type = channelsArray[j]["type"];
+													var samplingperiod = channelsArray[j]["samplingperiod"];
+													makeDataTr(parent,name,unit,type,samplingperiod);
+
+												
+													makeErrorTr(parent);
+													
+
+													/*
 													($(this).children(".newSensorChannels")).append("<tr style='text-align:center;' class='datatr'><td width='12px'><label>Name</label></td><td><input class='labName' value=" + channelsArray[j]["name"] + "></input></td><td><label>Unit</label></td><td><input class='labUnit' value=" + channelsArray[j]["unit"] + "></input><td><label>Type</label></td><td><input class='labType' value=" + channelsArray[j]["type"] + "></input></td><td><label style='width:145px'>Sampling Period</label></td><td><input class='labSampling'value=" + channelsArray[j]["samplingperiod"] + "></input>&nbsp;&nbsp;<td><button class='google-button-blue removeChannel'>Remove</button></td></tr><tr class='errortr'><td></td><td class='labName' style='font-size:12px;width:10px'></td><td></td><td class='labUnit' style='font-size:12px;width:120px'></td><td></td><td class='labType' style='font-size:12px;width:120px'></td><td></td><td class='labSampling' style='font-size:12px;width:120px'></td></tr>");
+													*/
 													$(".removeChannel").click(function() {
 														$(this).parent().parent().next().remove();
 														$(this).parent().parent().remove();
@@ -329,8 +596,18 @@ lang="en">
 										});
 
 										$('.newSensorAddChannel').unbind('click').click(function() {
+										
+										//($(this).siblings(".newSensorChannels")).children('#noSensorChannelsError').text("");
+																				($(this).siblings(".newSensorChannels")).children().remove();
 
+										var parent = $(this).siblings(".newSensorChannels");
+											alert("click");
+										
+											makeDataTr(parent,"","","","");
+												makeErrorTr(parent);
+										/*
 											($(this).siblings(".newSensorChannels")).append("<tr class='datatr' ><td><label>Name</label></td><td><input class='labName'/></td><td><label>Unit</label></td><td><input class='labUnit'/><td><label>Type</label></td><td><input class='labType'/></td><td><label style='width:145px'>Sampling Period</label></td><td><input class='labSampling'/>&nbsp;&nbsp;<td><button class='google-button-blue removeChannel'>Remove</button></td></tr><tr class='errortr'><td></td><td class='labName' style='font-size:12px;width:120px'></td><td></td><td class='labUnit' style='font-size:12px;width:120px'></td><td></td><td class='labType' style='font-size:12px;width:120px'></td><td></td><td class='labSampling' style='font-size:12px;width:120px'></td></tr>");
+											*/
 											$(".removeChannel").click(function() {
 												$(this).parent().parent().next().remove();
 												$(this).parent().parent().remove();
@@ -357,7 +634,12 @@ lang="en">
 				 */
 
 				$("#addNewSensor").click(function() {
+									$("#noSensorNoActuator").html("");
+					var parent  = $("#newSensorsDiv");
+					makeSensorDiv(parent,"","");
+					/*
 					$("#newSensorsDiv").append("<p class='space'></p><div class='sensorDiv'><p class='sensorDivPara'>Sensor Details</p><hr/><label style='width:110px;'>Sensor Name</label><input id='newSensorName' class='newSensor'></input><span></span><br/><label style='width:110px;'>Sensor ID</label><input id='newSensorID' class='newSensorID'></input><span></span><br/><br/>" + "<button class='google-button-blue newSensorAddChannel'>Add channels</button>" + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class='google-button-blue newSensorRemove'>Delete Sensor</button>" + "<p class='space'></p><div class='newSensorChannels'></div><hr/></div>");
+					*/
 					$(".newSensorRemove").click(function() {
 
 						$(this).parent().remove();
@@ -366,7 +648,14 @@ lang="en">
 					});
 					$('.newSensorAddChannel').unbind('click').click(function() {
 
-						($(this).siblings(".newSensorChannels")).append("<tr class='datatr'><td><label>Name</label></td><td><input class='labName'/></td><td><label>Unit</label></td><td><input class='labUnit'/><td><label>Type</label></td><td><input class='labType'/></td><td><label style='width:145px'>Sampling Period</label></td><td><input class='labSampling'/><td>&nbsp;&nbsp;<button class='google-button-blue removeChannel'>Remove</button></td></tr><tr class='errortr'><td></td><td class='labName' style='font-size:12px;width:120px'></td><td></td><td class='labUnit' style='font-size:12px;width:120px'></td><td></td><td class='labType' style='font-size:12px;width:120px'></td><td></td><td class='labSampling' style='font-size:12px;width:120px'></td></tr>");
+												($(this).siblings(".newSensorChannels")).children('#noSensorChannelsError').text("");
+						
+						var parent = $(this).siblings(".newSensorChannels");
+						makeDataTr(parent);
+						makeErrorTr(parent,"","","","");
+						alert("creating");
+						/*($(this).siblings(".newSensorChannels")).append("<tr class='datatr'><td><label>Name</label></td><td><input class='labName'/></td><td><label>Unit</label></td><td><input class='labUnit'/><td><label>Type</label></td><td><input class='labType'/></td><td><label style='width:145px'>Sampling Period</label></td><td><input class='labSampling'/><td>&nbsp;&nbsp;<button class='google-button-blue removeChannel'>Remove</button></td></tr><tr class='errortr'><td></td><td class='labName' style='font-size:12px;width:120px'></td><td></td><td class='labUnit' style='font-size:12px;width:120px'></td><td></td><td class='labType' style='font-size:12px;width:120px'></td><td></td><td class='labSampling' style='font-size:12px;width:120px'></td></tr>");
+						*/
 						$(".removeChannel").click(function() {
 							$(this).parent().parent().next().remove();
 							$(this).parent().parent().remove();
@@ -385,18 +674,25 @@ lang="en">
 				 */
 
 				$("#addNewActuator").unbind('click').click(function() {
+				
 					newNumberOfActuators++;
+					$("#noSensorNoActuator").html("");
 
 					if(newNumberOfActuators == 1) {
-						$("#newActuatorsDiv").append("<div id=ipDiv><label style='width:130px;' id=\"newDeviceIPLabel\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Device IP</label><input type=\"text\" id=\"newDeviceIP\"></input><span></span></div>");
-						$("#newActuatorsDiv").addClass("border");
+						/*
+						$("#newActuatorsDiv").append("<div id=ipDiv><label style='width:130px;' id=\"newDeviceIPLabel\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Device IP</label><input type=\"text\" id=\"newDeviceIP\"></input><span></span></div>");*/
+						//$("#newActuatorsDiv").addClass("border");
+						var parent = $("#newActuatorsDiv");
+						makeIPDiv(parent,"");
 						//$("#newActuatorsDiv").css('border':'2px solid');
 					}
 					/*if(newNumberOfActuators == 0) {
 					 $("#newActuatorsDiv").css('border':'0px');
 					 }*/
+					 var parent = $('#newActuatorsDiv');
+					 makeActDiv(parent,"");
+					/*$("#newActuatorsDiv").append("<div id='newActuator'><p class='actuatorDivPara'>Actuator Details</p><hr/><label style='width:110px;'>Actuator Name </label><input class=labActName></input><span></span><br/><br/><button class='google-button-blue removeActuator'>Remove Actuator</button><hr/></div>");*/
 
-					$("#newActuatorsDiv").append("<div id='newActuator'><p class='actuatorDivPara'>Actuator Details</p><hr/><label style='width:110px;'>Actuator Name </label><input class=labActName></input><span></span><br/><br/><button class='google-button-blue removeActuator'>Remove Actuator</button><hr/></div>");
 					$(".removeActuator").unbind('click').click(function() {
 						$(this).parent().remove();
 						newNumberOfActuators--;
@@ -422,11 +718,16 @@ lang="en">
 					var actuatorCount = 0;
 					var sensorCount = 0;
 					value = 0;
+					
 
 					//for errors removal
 					$('input[count="0"]').next().text("");
+					
 					$('tr[class="errortr"]').children('td').text("");
-
+				
+					$('#noSensorNoActuator').html("");
+					$('#noSensorChannelsError').html("");
+			
 					deviceObject[DEVICE_NAME] = $("#newDeviceName").val();
 					validateFieldAndMakeErrorInformation($("#newDeviceName"), MIN_LENGTH_DEVICE_NAME, MAX_LENGTH_DEVICE_NAME, "device", "name", "");
 					deviceObject[DEVICE_LOCATION] = $("#newDeviceLocation").val();
@@ -434,7 +735,7 @@ lang="en">
 
 					deviceObject[DEVICE_TAGS] = $("#newDeviceTags").val();
 					validateFieldAndMakeErrorInformation($("#newDeviceTags"), MIN_LENGTH_DEVICE_TAGS, MAX_LENGTH_DEVICE_TAGS, "device", "tags", "");
-
+			
 					//Adding sensors
 					$("#newSensorsDiv").find("input.newSensor").each(function() {
 
@@ -447,7 +748,7 @@ lang="en">
 							//validateFieldAndMakeErrorInformation($(this).siblings(".newSensorID"), MIN_LENGTH_SENSOR_ID, MAX_LENGTH_SENSOR_ID, "sensor", "id", sensorCount);
 							validateNumericFieldValue($(this).siblings(".newSensorID"), MIN_VALUE_SENSOR_ID, MAX_VALUE_SENSOR_ID, "sensor", "ID", sensorCount);
 						}
-
+						
 						deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_CHANNELS] = new Array();
 						//Now attaching it's channels to it
 						var newChannelCount = 0;
@@ -459,41 +760,53 @@ lang="en">
 									if(($(this).attr("class")).toString().indexOf(CLASS_DEVICE_SENSOR_CHANNEL_TYPE) >= 0) {
 										deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_CHANNELS][newChannelCount][DEVICE_SENSOR_CHANNEL_TYPE] = $(this).val();
 										validateFieldAndMakeErrorInformation(this, MIN_LENGTH_CHANNEL_TYPE, MAX_LENGTH_CHANNEL_TYPE, "sensor's " + newChannelCount.toString() + " th channel", "type", sensorCount);
+										
 
 									}
-
+						
 									if(($(this).attr("class")).toString().indexOf(CLASS_DEVICE_SENSOR_CHANNEL_SAMPLING_PERIOD) >= 0) {
 										deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_CHANNELS][newChannelCount][DEVICE_SENSOR_CHANNEL_SAMPLING_PERIOD] = $(this).val();
 										//validateFieldAndMakeErrorInformation(this, MIN_LENGTH_CHANNEL_SAMPLING_PERIOD, MAX_LENGTH_CHANNEL_SAMPLING_PERIOD, "sensor's " + newChannelCount.toString() + " th channel", "sampling period", sensorCount);
+										alert("before validate");
 										validateNumericFieldValue(this, MIN_VALUE_CHANNEL_SAMPLING_PERIOD, MAX_VALUE_CHANNEL_SAMPLING_PERIOD, "sensor's " + newChannelCount.toString() + " th channel", "sampling period", sensorCount);
+									alert("after validate");
 
 									}
-
+								
 									if(($(this).attr("class")).toString().indexOf(CLASS_DEVICE_SENSOR_CHANNEL_UNIT) >= 0) {
 										deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_CHANNELS][newChannelCount][DEVICE_SENSOR_CHANNEL_UNIT] = $(this).val();
 										validateFieldAndMakeErrorInformation(this, MIN_LENGTH_CHANNEL_UNIT, MAX_LENGTH_CHANNEL_UNIT, "sensor's " + newChannelCount.toString() + " th channel", "unit", sensorCount);
+										
 									}
 
 									if(($(this).attr("class")).toString().indexOf(CLASS_DEVICE_SENSOR_CHANNEL_NAME) >= 0) {
 
 										deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_CHANNELS][newChannelCount][DEVICE_SENSOR_CHANNEL_NAME] = $(this).val();
 										validateFieldAndMakeErrorInformation(this, MIN_LENGTH_CHANNEL_NAME, MAX_LENGTH_CHANNEL_NAME, "sensor's " + newChannelCount.toString() + " th channel", "name", sensorCount);
+							
 
 									}
 								});
 							});
 							newChannelCount++;
+						
 
 						});
 						if(newChannelCount == 0)//Did not add any channel for this sensor
 						{
+						
 							errorState = true;
-							errorInformation = errorInformation + " Enter channel for " + sensorCount.toString() + "sensor";
+							errorInformation = " Enter channel for sensor";
 							channel = true;
+				/***********************--------------------Changes Made Here-----------------------********************/
+						$(this).parent().children('.newSensorChannels').html("<span id='noSensorChannelsError' style='color:red'>" + errorInformation + "</span>");
+				/***********************--------------------Changes Made Here-----------------------********************/
+							
 						}
 						sensorCount++;
 
 					});
+
 					//Adding Actuators
 					$("#newActuatorsDiv").find("input.labActName").each(function() {
 
@@ -509,7 +822,9 @@ lang="en">
 
 					if((sensorCount == 0) && (actuatorCount == 0)) {
 						errorState = true;
-						errorInformation += " Please add either a sensor or an actuator to the device";
+						errorInformation = " Please add either a sensor or an actuator to the device";
+						$('#newSensorsDiv').html("<span id='noSensorNoActuator' style='color:red'>" + errorInformation + "</span>");
+						
 
 					}
 					if(actuatorCount == 0) {
@@ -542,6 +857,7 @@ lang="en">
 						//Hide error div
 					}
 
+
 					//Now the actual object to be sent to the broker is created,after all validation  has been done
 					var deviceRequestToSend = {};
 					deviceRequestToSend[DEVICE_PROFILE] = deviceObject;
@@ -552,11 +868,30 @@ lang="en">
 					} else {
 						addDeviceOrTemplateURL = URL_ADD_DEVICE_TEMPLATE;
 					}
+			/**************----------------------Changes Made Here---------------------****************/	
+				function postToDeleteDevice(){
+					try {
+									$.post(addDeviceOrTemplateURL, JSON.stringify(deviceRequestToSend), function(data) {
+										if(data[RESPONSE_STATUS_CODE] == 0) {
+											window.location = URL_DEVICES;
+										} else {
+											alertAddDeviceError("Following error occured: " + data[RESPONSE_MESSAGE]);
+										}
+
+									});
+								} catch(e) {
+									alertAddDeviceError(e);
+								}
+				}
+			/**************----------------------Changes Made Here---------------------****************/
+
 					if(deviceToEdit != FAKE_DEVICE_NAME) {
 
 						var messageToDeleteDevice = {};
 						messageToDeleteDevice["devicename"] = deviceToEdit;
 						messageToDeleteDevice[SECRET_KEY] = secretkey;
+
+
 
 						//Delete older device
 						if(mode == "update") {
@@ -576,21 +911,15 @@ lang="en">
 								alertAddDeviceError(e);
 							}
 							if(isDeleteSuccessful) {
-								try {
-									$.post(addDeviceOrTemplateURL, JSON.stringify(deviceRequestToSend), function(data) {
-										if(data[RESPONSE_STATUS_CODE] == 0) {
-											window.location = URL_DEVICES;
-										} else {
-											alertAddDeviceError("Following error occured: " + data[RESPONSE_MESSAGE]);
-										}
 
-									});
-								} catch(e) {
-									alertAddDeviceError(e);
-								}
+/**************----------------------Changes Made Here---------------------****************/
+								postToDeleteDevice();
+/**************----------------------Changes Made Here---------------------****************/								
 							}
 						} else {
-							try {
+						/**************----------------------Changes Made Here---------------------****************/
+							postToDeleteDevice();
+							/*try {
 								$.post(addDeviceOrTemplateURL, JSON.stringify(deviceRequestToSend), function(data) {
 									if(data[RESPONSE_STATUS_CODE] == 0) {
 										window.location = URL_DEVICES;
@@ -601,13 +930,15 @@ lang="en">
 								});
 							} catch(e) {
 								alertAddDeviceError(e);
-							}
-
+							}*/
+						/**************----------------------Changes Made Here---------------------****************/
 						}
 					}//
 					else {
 						//Device/Template was added from scratch
-						try {
+						/**************----------------------Changes Made Here---------------------****************/
+						postToDeleteDevice();
+						/*try {
 							$.post(addDeviceOrTemplateURL, JSON.stringify(deviceRequestToSend), function(data) {
 								if(data[RESPONSE_STATUS_CODE] == 0) {
 									window.location = URL_DEVICES;
@@ -618,7 +949,8 @@ lang="en">
 							});
 						} catch(e) {
 							alertAddDeviceError(e);
-						}
+						}*/
+						/**************----------------------Changes Made Here---------------------****************/
 					}//End else
 
 					return false;

@@ -51,6 +51,9 @@ var CHART_SERIES_NAME="name";
 var CHART_SERIES_DATA="data";
 
 
+var  oneSECOND=1000;
+
+
 //Class Types associated with various HTML/Object elements
 // NB :These elements are hardcoded into the HTML styling and are presented 
 //here for simplicity

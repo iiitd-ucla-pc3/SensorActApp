@@ -15,6 +15,7 @@
 		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 		<script src="@{'/public/javascripts/jquery-ui-1.8.20.custom.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+			<script type="text/javascript" src="@{'/public/javascripts/utilityFunctions.js'}"></script>
 		<script type="text/javascript">
 			$(document).ready(function() {
 
@@ -43,18 +44,13 @@
 					async : false
 				});
 
-				/*
-				 * Adding the link attribute to Logout,Home element
-				 */
-				$("#logout").attr('href', URL_LOGOUT_USER);
-				$("#home").attr('href', URL_HOME);
+			/********************* --------------- Changes made here --------------- ***************/
+				setNavURL("#devices" ,'href', URL_DEVICES);
+				setNavURL("#visualization",'href', URL_VISUALIZATION);
+				setNavURL("#repositoryInformation",'href',URL_REPOSITORY_INFO);
+				setNavURL("#home",'href',URL_HOME);
+				setNavURL("#logout",'href',URL_LOGOUT_USER);	
 
-				//Adding Link to Navigation Bar
-
-				$("#devices").attr('href', URL_DEVICES);
-				$("#visualization").attr('href', URL_VISUALIZATION);
-				//$("#logout").attr('href', URL_LOGOUT_USER);
-				$("#repositoryInformation").attr('href', URL_REPOSITORY_INFO);
 				$("#logout").click(function() {
 
 					window.location = URL_LOGOUT_USER;
@@ -132,12 +128,14 @@
 					{
 						var isdevice=index==0?true:false;
 
-						createCustomElement('button',parentId,removeDeviceButton,'google-button google-button-blue',"Remove");
+						var removeButton=createCustomElement('button',parentId,removeDeviceButton,'google-button google-button-blue',"Remove");
+						//removeButton.click(function(){confirm("Do you want to remove button?");});
 						createCustomElement('button',parentId,saveAsButton,'google-button google-button-blue',"Save as");
 						createCustomElement('button',parentId,editDeviceButton,'google-button google-button-blue',"Edit");
 						$('#' + removeDeviceButton).click(function() {
 
-											
+											if(!confirm("Do you want to Remove the Device?"))
+												return false;
 											var deviceIndex = this.id.toString();
 											deviceIndex = parseInt(deviceIndex.substr(deviceIndex.length - 1));
 											var deviceToBeRemoved = deviceOrTemplateDataList[index][DEVICE_ARRAY][deviceIndex][DEVICE_NAME];

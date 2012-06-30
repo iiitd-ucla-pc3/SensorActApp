@@ -20,8 +20,19 @@
 				 * Adding the link attribute to Logout,Home element	</body>
 				 </html>
 				 */
+
 				$("#logout").attr('href', URL_LOGOUT_USER);
 				$("#home").attr('href', URL_HOME);
+				$("#errorDiv").hide();
+
+				$("#devices").attr('href', URL_DEVICES);
+				$("#visualization").attr('href', URL_VISUALIZATION);
+				//$("#logout").attr('href', URL_LOGOUT_USER);
+				$("#repositoryInformation").attr('href', URL_REPOSITORY_INFO);
+				$("#logout").click(function() {
+
+					window.location = URL_LOGOUT_USER;
+				});
 				//Setting up in async mode
 				jQuery.ajaxSetup({
 					async : false
@@ -127,17 +138,29 @@
 				<br />
 				<span style="font-size:25px;">Sense - Interact - Actuate</span></h1>
 				<nav>
-					<ul>
-						<li>
-							<a id="home" >Home</a>
-						</li>
-	</body>
-	<li>
-		<a id="logout">Logout</a>
-	</li>
-	</ul>
-
-	</nav>
+			<ul>
+				<li>
+					<a id="devices" >Devices</a>
+				</li>
+				<li>
+					<a id="visualization" >Visualization</a>
+				</li>
+				<li>
+					<a id="repositoryInformation" class="active">Repository Info</a>
+				</li>
+				<!--<li>
+						<a id="logout">Logout</a>
+				</li>-->
+				
+			</ul>
+		</nav>
+		<br />
+		<br />
+		<nav>
+					<p class="pbox" style="margin-bottom:-20px;">
+						Welcome ${username} &nbsp | &nbsp<span id="logout">Logout</span>
+					</p>
+		</nav>
 	</header>
 	</div>
 	<div class="wrapper">

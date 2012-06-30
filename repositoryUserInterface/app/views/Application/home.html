@@ -15,6 +15,8 @@
 		<script type="text/javascript"	src="@{'public/javascripts/swfobject.js'}"></script>
 		<script type="text/javascript" src="@{'/public/javascripts/recorder.js'}"></script>
 		<script type="text/javascript" src="@{'/public/javascripts/utilityFunctions.js'}"></script>
+		<script type="text/javascript" src="@{'/public/javascripts/speakClient.js'}"></script>
+		
 		<script type="text/javascript">
 			$(document).ready(function() {
 
@@ -88,7 +90,7 @@
 			        {
 			      
 			        var json = jQuery.parseJSON(data.toString());
-			   
+			        speak(json.outputtext);			   
 			        $("#input_message").html(json.inputcommand);
 			        $("#output_message").html(json.outputtext);
 			        
@@ -146,6 +148,11 @@
 			<div id="output_div"><label for="output_message">Output</label>
 						<p name="output_message" id="output_message" ></p></div>
 			<hr>
+			
+			<div id="audio">
+			 	
+  				
+			 </div>
 			
 			<p class='newfont' style="font-size:20px;">
 				Smart Rooms at IIIT-Delhi

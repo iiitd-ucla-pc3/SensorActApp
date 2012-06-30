@@ -37,6 +37,28 @@ function uniqueRandomString()
     return text;
 }
 
+
+/*
+*	To add navigation links to elements like devices,visualisation,logout,etc
+*	Eg : setNavURL("#devices",'href',URL_DEVICES)
+*/
+function setNavURL(selector ,attr , attrValue)
+{
+			$(selector).attr(attr , attrValue);
+}
+
+function errorInitialSettings(objectReference,value,errorState)
+{
+						$(objectReference).addClass("error");
+						errorState = true;
+						value++;
+						$(objectReference).attr('count', value);
+						errorInformation = "";
+
+}
+
+
+
 /*
  * Function to show noty
  * parameters:
@@ -68,4 +90,9 @@ function showNoty(text, position, closeButton) {
 	});
 
 	return noty_id;
+}
+
+function removeSpace(text){
+	text=text.replace(/\s/g, "");
+return text;
 }
