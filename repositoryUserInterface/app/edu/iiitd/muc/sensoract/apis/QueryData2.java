@@ -1,5 +1,7 @@
 package edu.iiitd.muc.sensoract.apis;
 
+import java.io.File;
+
 import play.libs.WS.HttpResponse;
 import edu.iiitd.muc.sensoract.constants.Const;
 import edu.iiitd.muc.sensoract.format.APIResponse;
@@ -13,6 +15,9 @@ import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 public class QueryData2 extends SensorActAPI {
 
 	public final void doProcess(String queryBody) {
+
+		File exportDirectory = new File("/home/nipun/Desktop/image");
+
 		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
 				.get(Const.USERNAME));
 		String queryBodyWithSecretKey = queryBody.replace(
@@ -58,10 +63,10 @@ public class QueryData2 extends SensorActAPI {
 							.get(j).readings.get(0);
 					Double avg = 0.0;
 
+					double[] d = new double[2];
 					for (int k = 0; k < numberOfReadings; k++) {
 
-						Double[] d = new Double[2];
-						d[0] = (double) (timestamp + k * samplingPeriod * 1000);
+						d[0] = timestamp + k * samplingPeriod * 1000;
 						d[1] = wa.wavesegmentArray.get(i).data.channels.get(j).readings
 								.get(k);
 						ca.chartSeries.get(j).data.add(d);

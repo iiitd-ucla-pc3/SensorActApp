@@ -63,10 +63,10 @@ public class QueryData extends SensorActAPI {
 							.get(j).readings.get(0);
 					Double avg = 0.0;
 
+					double[] d = new double[2];
 					for (int k = 0; k < numberOfReadings; k++) {
 
-						Double[] d = new Double[2];
-						d[0] = (double) (timestamp + k * samplingPeriod * 1000);
+						d[0] = timestamp + k * samplingPeriod * 1000;
 						d[1] = wa.wavesegmentArray.get(i).data.channels.get(j).readings
 								.get(k);
 						ca.chartSeries.get(j).data.add(d);

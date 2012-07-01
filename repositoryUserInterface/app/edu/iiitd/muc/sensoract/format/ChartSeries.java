@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 public class ChartSeries {
 	public String name = null;
-	public ArrayList<Double[]> data = new ArrayList<Double[]>();
+	public ArrayList<double[]> data = new ArrayList<double[]>();
 
-	public ChartSeries(String name, ArrayList<Double[]> readings) {
+	public ChartSeries(String name, ArrayList<double[]> readings) {
 
 		this.name = name;
 		this.data.addAll(readings);

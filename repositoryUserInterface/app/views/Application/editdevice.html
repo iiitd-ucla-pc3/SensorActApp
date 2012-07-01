@@ -85,12 +85,6 @@ lang="en">
 				});
 
 				/*
-				 * Adding the link attribute to Logout,Home element
-				 */
-				//$("#logout").attr('href', URL_LOGOUT_USER);
-				//$("#home").attr('href', URL_HOME);
-				//alert("here i am - - begin");
-				/*
 				 * Hiding Error Divs
 				 */
 				$("#errorDiv").hide();
@@ -147,7 +141,6 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 													{
 														//param = content;
 													var p = createCustomElement("tr",parent,null,"datatr","",{'text-align':'center'});
-													//alert("bye");
 													var q = createCustomElement("td",p,null,null,"",{'width':'12px'});
 													createCustomElement("label",q,null,null,"Name",null);
 													var q = createCustomElement("td",p,null,null,"",null);			
@@ -165,7 +158,6 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 													var q = createCustomElement("td",p,null,null,"",null);			
 													createCustomElement("input",q,null,"labSampling",samplingperiod,null);
 													document.createTextNode('\u00a0');
-														//alert("hello");
 													document.createTextNode('\u00a0');
 													var q = createCustomElement("td",p,null,null,"",null);
 													createCustomElement("span",q,null,null,"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",null);			
@@ -188,8 +180,7 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 					var p = createCustomElement("div",parent,"newActuator",null,"",null);
 									createCustomElement("p",p,null,"actuatorDivPara","Actuator Details",null);
 									createCustomElement("hr",p,null,null,"",null);
-									//alert("between");
-
+									
 									var q = createCustomElement("label",p,null,null,"Actuator Name ",{'width':'110px'});
 									createCustomElement("input",p,null,"labActName",actName,null);
 									createCustomElement("span",p,null,null,"",null);
@@ -207,7 +198,7 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 									var p = createCustomElement("div",parent,null,"sensorDiv","",null);
 									createCustomElement("p",p,null,"sensorDivPara","Sensor Details",null);
 									createCustomElement("hr",p,null,null,"",null);
-									//alert("between");
+									
 
 									var q = createCustomElement("label",p,null,null,"Sensor Name",{'width':'110px'});
 									createCustomElement("input",p,"newSensorName","newSensor",sensorName,null);
@@ -351,7 +342,7 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 							}
 						} else {
 							//errorInformation = errorInformation + " Enter " + errorFieldAttribute1 + " of " + errorField + " within " + minimumLength + " and " + maximumLength + " characters";
-							alert("in validate else block");
+							
 							errorInformation = errorInformation + " Enter within " + minimumLength + " and " + maximumLength + " characters ";
 							if(!($(objectReference).parent().parent().parent().attr('class') == "newSensorChannels")) {
 								$(objectReference).next().text(errorInformation);
@@ -571,7 +562,7 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 											if(ctr == i) {
 												for(var j = 0; j < channelsArray.length; j++) {
 													var parent = $(this).children(".newSensorChannels");
-													alert("previous ");
+													//alert("previous ");
 													var name = channelsArray[j]["name"];
 													var unit = channelsArray[j]["unit"];
 													var type = channelsArray[j]["type"];
@@ -601,7 +592,7 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 																				($(this).siblings(".newSensorChannels")).children().remove();
 
 										var parent = $(this).siblings(".newSensorChannels");
-											alert("click");
+											//alert("click");
 										
 											makeDataTr(parent,"","","","");
 												makeErrorTr(parent);
@@ -653,7 +644,7 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 						var parent = $(this).siblings(".newSensorChannels");
 						makeDataTr(parent);
 						makeErrorTr(parent,"","","","");
-						alert("creating");
+						//alert("creating");
 						/*($(this).siblings(".newSensorChannels")).append("<tr class='datatr'><td><label>Name</label></td><td><input class='labName'/></td><td><label>Unit</label></td><td><input class='labUnit'/><td><label>Type</label></td><td><input class='labType'/></td><td><label style='width:145px'>Sampling Period</label></td><td><input class='labSampling'/><td>&nbsp;&nbsp;<button class='google-button-blue removeChannel'>Remove</button></td></tr><tr class='errortr'><td></td><td class='labName' style='font-size:12px;width:120px'></td><td></td><td class='labUnit' style='font-size:12px;width:120px'></td><td></td><td class='labType' style='font-size:12px;width:120px'></td><td></td><td class='labSampling' style='font-size:12px;width:120px'></td></tr>");
 						*/
 						$(".removeChannel").click(function() {
@@ -767,9 +758,9 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 									if(($(this).attr("class")).toString().indexOf(CLASS_DEVICE_SENSOR_CHANNEL_SAMPLING_PERIOD) >= 0) {
 										deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_CHANNELS][newChannelCount][DEVICE_SENSOR_CHANNEL_SAMPLING_PERIOD] = $(this).val();
 										//validateFieldAndMakeErrorInformation(this, MIN_LENGTH_CHANNEL_SAMPLING_PERIOD, MAX_LENGTH_CHANNEL_SAMPLING_PERIOD, "sensor's " + newChannelCount.toString() + " th channel", "sampling period", sensorCount);
-										alert("before validate");
+										//alert("before validate");
 										validateNumericFieldValue(this, MIN_VALUE_CHANNEL_SAMPLING_PERIOD, MAX_VALUE_CHANNEL_SAMPLING_PERIOD, "sensor's " + newChannelCount.toString() + " th channel", "sampling period", sensorCount);
-									alert("after validate");
+									//alert("after validate");
 
 									}
 								
