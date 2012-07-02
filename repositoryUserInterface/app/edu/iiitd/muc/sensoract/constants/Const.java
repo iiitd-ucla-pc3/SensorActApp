@@ -197,6 +197,7 @@ public class Const {
 	 */
 	public static final String BASE_WAVEFILE_URL = "/home/nipun/git/SensorActApp/repositoryUserInterface/app/edu/cmu/sphinx/demo/transcriber/";
 	public static final String BASE_OUTPUTWAVEFILE_URL = "/home/nipun/git/SensorActApp/repositoryUserInterface/public/javascripts/";
+	public static final String BASE_IMAGE_URL = "/home/nipun/git/SensorActApp/repositoryUserInterface/public/";
 
 	public class Error {
 

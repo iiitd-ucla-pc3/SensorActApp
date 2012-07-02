@@ -212,6 +212,7 @@
 				var overlays = [];
 				var downloadData = new Array();
 				var statsData = "";
+				var interactive;
 
 				$("#motionStop").click(function() {
 
@@ -332,7 +333,7 @@
 					query[QUERY_CONDITIONS][QUERY_CONDITIONS_FROM_TIME] = startTime;
 					query[QUERY_CONDITIONS][QUERY_CONDITIONS_TO_TIME] = endTime;
 					query[QUERY_USER_NAME] = username;
-					query[QUERY_IS_INTERACTIVE] = "false";
+					query[QUERY_IS_INTERACTIVE] = interactive;
 					query[QUERY_DEVICE_ARRAY] = new Array();
 					var i = 0;
 					for (device in allSelectedItems) {
@@ -364,15 +365,15 @@
 						if (!(receivedData.hasOwnProperty(RESPONSE_STATUS_CODE)))
 						//Means it contains data
 						{
-							alert(JSON.stringify(receivedData["filename"]));	
+							//alert(JSON.stringify(receivedData["filename"]));	
 							/************** -------------- Changes ---------------- ****************/
 							if (receivedData.hasOwnProperty("filename")) {
 								$("#container").hide();
 								var s=receivedData["filename"];
 								$("#staticImage").attr("src","../public/"+s);
 							} else {
-								alert("not here");
-								alert(JSON.stringify(receivedData["filename"]));
+								//alert("not here");
+								//alert(JSON.stringify(receivedData["filename"]));
 								/************** -------------- Changes ---------------- ****************/
 
 								$("#box").show();
@@ -588,7 +589,7 @@
 
 											//alert(sensorName);
 											if (sensorName == prop.val()) {
-												alert("Match");
+												//alert("Match");
 												if ( DEVICE_CHANNELS in sensorArray[indexSensors]) {
 													var channelArray = sensorArray[indexSensors][DEVICE_CHANNELS];
 													//alert(JSON.stringify(channelArray));
@@ -598,7 +599,7 @@
 														var samplingperiod = sensorArray[indexSensors][DEVICE_CHANNELS][indexChannels]["samplingperiod"];
 														var type = 64;
 														prod += (1 / samplingperiod) * type;
-														alert(prod);
+														//alert(prod);
 
 													}
 
@@ -640,7 +641,7 @@
 					//makeRequestAndDisplayChart(selectedDeviceName, selectedSensorArray, startTime, endTime);
 					var pointThreshold = 20000;
 					threshold = prod * (endTime - startTime);
-					var interactive=threshold<1000?"true":"false";
+					interactive=threshold<1843200?"true":"false";
 					//threshold = prod*(endTime - startTime);
 					/*if(threshold < pointThreshold)*/
 					/*{makeRequestAndDisplayChart(allSelectedItems,startTime,endTime);

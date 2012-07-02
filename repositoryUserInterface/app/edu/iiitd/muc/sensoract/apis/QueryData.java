@@ -65,9 +65,6 @@ public class QueryData extends SensorActAPI {
 
 		}
 
-		System.out.println(queryRequest.interactive);
-		System.out.println(queryRequest.equals("true"));
-
 		if (queryRequest.interactive.equals("false")) {
 
 			processNonInteractive(arrayOfResponses);
@@ -152,7 +149,7 @@ public class QueryData extends SensorActAPI {
 			seriesOffset += numberOfSeries;
 
 		}
-		System.out.println(gson.toJson(ca));
+		// System.out.println(gson.toJson(ca));
 		renderJSON(gson.toJson(ca));
 
 	}
@@ -164,9 +161,8 @@ public class QueryData extends SensorActAPI {
 
 		try {
 			System.out.println("Creating image");
-			ChartUtilities.saveChartAsPNG(new File(
-					"/home/nipun/git/SensorActApp/repositoryUserInterface/public/"
-							+ uuid + ".png"), chart, 800, 800);
+			ChartUtilities.saveChartAsPNG(new File(Const.BASE_IMAGE_URL + uuid
+					+ ".png"), chart, 800, 800);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
