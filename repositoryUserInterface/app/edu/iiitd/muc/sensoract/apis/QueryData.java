@@ -80,7 +80,8 @@ public class QueryData extends SensorActAPI {
 	public void processNonInteractive(
 			ArrayList<WaveSegmentArray> arrayOfResponses) {
 		String a = createChart(arrayOfResponses);
-		renderText(a);
+		String re = "{\"filename\":\"" + a + ".png\"}";
+		renderJSON(re);
 
 	}
 
@@ -176,7 +177,7 @@ public class QueryData extends SensorActAPI {
 	}
 
 	public JFreeChart createJFreeChart(XYDataset dataset) {
-		JFreeChart chart = ChartFactory.createTimeSeriesChart("Visulization", // title
+		JFreeChart chart = ChartFactory.createTimeSeriesChart("Visualization", // title
 				"Date-Time", // x-axis label
 				"Readings", // y-axis label
 				dataset, // data

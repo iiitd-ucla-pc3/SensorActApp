@@ -13,6 +13,7 @@ var DEVICE_PROFILE="deviceprofile";
 var DEVICE_NAME="name";
 var DEVICE_LOCATION="location";
 var DEVICE_SENSORS="sensors";
+var DEVICE_CHANNELS = "channels";
 var DEVICE_ACTUATORS="actuators";
 var DEVICE_SENSOR_CHANNELS="channels";
 var DEVICE_SENSOR_NAME="name";
@@ -45,10 +46,16 @@ var QUERY_CONDITIONS_TO_TIME="totime";
 var QUERY_DEVICE_NAME="devicename";
 var QUERY_SENSOR_NAME="sensorname";
 var QUERY_USER_NAME="username";
+var QUERY_IS_INTERACTIVE="interactive";
 
 //Dictionary constants associated with Chart Series
 var CHART_SERIES_NAME="name";
 var CHART_SERIES_DATA="data";
+
+var QUERY_DEVICE_ARRAY = "devicesArray";
+var QUERY_SENSOR_ARRAY = "sensorsArray";
+var QUERY_DEVICE = "device";
+var QUERY_SENSOR = "sensor";
 
 
 var  oneSECOND=1000;

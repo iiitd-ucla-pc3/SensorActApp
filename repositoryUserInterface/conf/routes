@@ -23,7 +23,7 @@ GET     /listalldevices							Application.listalldevices
 GET     /listalldevicetemplates							Application.listalldevicetemplates
 
 POST    /querydata                              Application.querydata
-POST    /querydata2                              Application.querydata2
+POST    /querydata2                              Application.querydata
 
 GET     /repository							  Application.repository
 GET     /getrepositoryinfo							  Application.getrepositoryinfo
