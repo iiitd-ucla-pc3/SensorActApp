@@ -5,38 +5,20 @@
 	
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/opt/play-1.2.4/framework/play-1.2.4.jar" sourcepath="/opt/play-1.2.4/framework/src" />
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/slf4j-api-1.6.0.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/batik-extension.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/slf4j-log4j12-1.6.0.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/batik-script.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/batik-squiggle.jar"/>
+	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/jcommon-1.0.17.jar"/>
+	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/jfreechart-1.0.14.jar"/>
+	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/jfreechart-1.0.14-experimental.jar"/>
+	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/servlet.jar"/>
 	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/jsapi-1.0-base.jar"/>
 	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/sphinx4.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/batik-xml.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/batik-codec.jar"/>
+	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/jfreechart-1.0.14-swt.jar"/>
 	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar"/>
 	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/tags.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/batik-util.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/batik.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/xml-apis-ext.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/batik-awt-util.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/batik-parser.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/batik-svg-dom.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/batik-dom.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/commons-io-1.4.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/rhino-1.7R2.jar"/>
+	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/junit.jar"/>
 	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/js.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/batik-anim.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/batik-bridge.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/batik-transcoder.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/batik-gvt.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/batik-svgpp.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/batik-rasterizer.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/batik-ext.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/batik-svggen.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/batik-gui-util.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/batik-css.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/log4j-1.2.15.jar"/>
+	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/gnujaxp.jar"/>
+	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/swtgraphics2d.jar"/>
+	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/iText-2.1.5.jar"/>
 	<classpathentry kind="lib" path="/opt/play-1.2.4/framework/lib/commons-collections-3.2.1.jar"/>
 	<classpathentry kind="lib" path="/opt/play-1.2.4/framework/lib/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="lib" path="/opt/play-1.2.4/framework/lib/javax.inject-1.0.jar"/>

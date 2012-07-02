@@ -1,7 +1,5 @@
 package edu.iiitd.muc.sensoract.apis;
 
-import java.io.File;
-
 import play.libs.WS.HttpResponse;
 import edu.iiitd.muc.sensoract.constants.Const;
 import edu.iiitd.muc.sensoract.format.APIResponse;
@@ -15,8 +13,6 @@ import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 public class QueryData2 extends SensorActAPI {
 
 	public final void doProcess(String queryBody) {
-
-		File exportDirectory = new File("/home/nipun/Desktop/image");
 
 		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
 				.get(Const.USERNAME));
