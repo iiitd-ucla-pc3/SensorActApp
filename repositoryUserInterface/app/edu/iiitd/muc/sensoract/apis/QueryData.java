@@ -57,6 +57,7 @@ public class QueryData extends SensorActAPI {
 						.sendPostRequest(Const.URL_REPOSITORY_QUERY_DATA,
 								Const.MIME_TYPE_JSON, Const.API_QUERYDATA,
 								queryBodyWithSecretKey);
+				System.out.println(responseFromBroker.getString());
 				WaveSegmentArray wa = gson.fromJson(
 						responseFromBroker.getString(), WaveSegmentArray.class);
 				arrayOfResponses.add(wa);
@@ -87,6 +88,7 @@ public class QueryData extends SensorActAPI {
 		int seriesOffset = 0;
 		ChartSeriesArray ca = new ChartSeriesArray();
 		for (int a = 0; a < size; a++) {
+			System.out.println("For waveseg " + Integer.toString(a) + " ");
 			WaveSegmentArray wa = arrayOfResponses.get(a);
 
 			int numberOfWavesegs = wa.wavesegmentArray.size();
@@ -109,6 +111,7 @@ public class QueryData extends SensorActAPI {
 			for (int i = 0; i < numberOfWavesegs; i++) {
 				long timestamp = wa.wavesegmentArray.get(i).data.timestamp;
 				int samplingPeriod = 1;
+				System.out.println(timestamp);
 
 				for (int j = 0; j < numberOfSeries; j++) {
 
@@ -121,12 +124,12 @@ public class QueryData extends SensorActAPI {
 							.get(j).readings.get(0);
 					Double avg = 0.0;
 
-					double[] d = new double[2];
 					for (int k = 0; k < numberOfReadings; k++) {
-
+						double[] d = new double[2];
 						d[0] = timestamp + k * samplingPeriod * 1000;
 						d[1] = wa.wavesegmentArray.get(i).data.channels.get(j).readings
 								.get(k);
+
 						ca.chartSeries.get(j + seriesOffset).data.add(d);
 						// Min Value
 						if (min > d[1])

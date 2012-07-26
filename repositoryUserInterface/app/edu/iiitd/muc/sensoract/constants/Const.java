@@ -6,10 +6,8 @@ package edu.iiitd.muc.sensoract.constants;
 /**
  * Defines all constants for SensorAct
  * 
- * https://github.com/bsautner/com.nimbits/blob/master/nimbits-model/src/com/
- * nimbits/client/model/Const.java
  * 
- * @author samy
+ * @author Nipun
  * 
  */
 
