@@ -11,6 +11,8 @@
 		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/style.css'}">
 		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+				<script src="@{'/public/javascripts/utilityFunctions.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+
 		<script type="text/javascript">
 			$(document).ready(function() {
 
@@ -21,14 +23,12 @@
 				 </html>
 				 */
 
-				$("#logout").attr('href', URL_LOGOUT_USER);
-				$("#home").attr('href', URL_HOME);
-				$("#errorDiv").hide();
-
-				$("#devices").attr('href', URL_DEVICES);
-				$("#visualization").attr('href', URL_VISUALIZATION);
-				//$("#logout").attr('href', URL_LOGOUT_USER);
-				$("#repositoryInformation").attr('href', URL_REPOSITORY_INFO);
+				setNavURL("#devices" ,'href', URL_DEVICES);
+				setNavURL("#visualization",'href', URL_VISUALIZATION);
+				setNavURL("#repositoryInformation",'href',URL_REPOSITORY_INFO);
+				setNavURL("#home",'href',URL_HOME);
+				setNavURL("#logout",'href',URL_LOGOUT_USER);
+				setNavURL("#speak",'href',URL_SPEAK_INPUT);
 				$("#logout").click(function() {
 
 					window.location = URL_LOGOUT_USER;
@@ -140,14 +140,20 @@
 				<nav>
 			<ul>
 				<li>
-					<a id="devices" >Devices</a>
-				</li>
-				<li>
-					<a id="visualization" >Visualization</a>
-				</li>
-				<li>
-					<a id="repositoryInformation" class="active">Repository Info</a>
-				</li>
+							<a id="home">Home</a>
+						</li>
+						<li>
+							<a id="devices"  >Devices</a>
+						</li>
+						<li>
+							<a id="visualization" >Visualization</a>
+						</li>
+						<li>
+							<a id="repositoryInformation" class="active">Repository</a>
+						</li>
+						<li>
+							<a id="speak" >Speak</a>
+						</li>
 				<!--<li>
 						<a id="logout">Logout</a>
 				</li>-->

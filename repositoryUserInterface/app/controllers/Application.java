@@ -45,6 +45,10 @@ public class Application extends Controller {
 		render();
 	}
 
+	public static void speak()
+	{
+		render();
+	}
 	public static void logout() {
 		usernameToSecretKeyMap.remove(session.get(Const.USERNAME));
 		session.clear();

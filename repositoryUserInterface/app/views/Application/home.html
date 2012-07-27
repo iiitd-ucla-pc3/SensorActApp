@@ -40,10 +40,13 @@
 					$("#pressed").hide();
 					$("#normal").show();
 				});
-				$("#devices").attr('href', URL_DEVICES);
-				$("#visualization").attr('href', URL_VISUALIZATION);
-				//$("#logout").attr('href', URL_LOGOUT_USER);
-				$("#repositoryInformation").attr('href', URL_REPOSITORY_INFO);
+				
+				setNavURL("#devices" ,'href', URL_DEVICES);
+				setNavURL("#visualization",'href', URL_VISUALIZATION);
+				setNavURL("#repositoryInformation",'href',URL_REPOSITORY_INFO);
+				setNavURL("#home",'href',URL_HOME);
+				setNavURL("#logout",'href',URL_LOGOUT_USER);
+				setNavURL("#speak",'href',URL_SPEAK_INPUT);
 				$("#logout").click(function() {
 
 					window.location = URL_LOGOUT_USER;
@@ -111,17 +114,21 @@
 				<nav>
 					<ul>
 						<li>
+							<a id="home" class="active">Home</a>
+						</li>
+						<li>
 							<a id="devices" >Devices</a>
 						</li>
 						<li>
 							<a id="visualization">Visualization</a>
 						</li>
 						<li>
-							<a id="repositoryInformation">Repository Info</a>
+							<a id="repositoryInformation">Repository</a>
 						</li>
-						<!--<li>
-						<a id="logout">Logout</a>
-						</li>-->
+						<li>
+							<a id="speak" >Speak</a>
+						</li>
+						
 					</ul>
 				</nav>
 				<br />
@@ -135,14 +142,13 @@
 		</div>
 		<div class="wrapper" style="text-align:center;">
 			<p class="space"></p>
-			<img id="normal" src="@{'/public/images/mic_normal.jpg'}" style="text-align:center" width="19.5%" height="19.5%"/>
-			<img id="pressed" src="@{'/public/images/mic_pressed.jpg'}" style="text-align:center" width="19.5%" height="19.5%"/>
+			<img src="@{'/public/images/background_2.jpg'}" style="text-align:center" width="75%" height="350px"/>
 			<div id="status"></div>
 	<div id="wami"></div>
 	<hr/>
 
 	<p class="space"></p>
-			<div id="input_div"><label for="input_message">Input</label>
+			<!--div id="input_div"><label for="input_message">Input</label>
 						<p name="input_message" id="input_message"></p></div>
 			<hr/>
 			<div id="output_div"><label for="output_message">Output</label>
@@ -152,7 +158,7 @@
 			<div id="audio">
 			 	
   				
-			 </div>
+			 </div-->
 			
 			<p class='newfont' style="font-size:20px;">
 				Smart Rooms at IIIT-Delhi

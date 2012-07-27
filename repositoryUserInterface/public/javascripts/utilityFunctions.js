@@ -96,3 +96,14 @@ function removeSpace(text){
 	text=text.replace(/\s/g, "");
 return text;
 }
+
+function createDateTimePicker(selector){
+
+	$(selector).datetimepicker({
+					changeMonth : true,
+					changeYear : true,
+					dateFormat : "yy-mm-dd",
+					separator : "-"
+				});
+					
+}

@@ -35,21 +35,9 @@ lang="en">
 				 *
 				 */
 				var deviceToEdit = $("#devicename").val();
-				//alert(deviceToEdit);
 				var isDevice = $("#isdevice").val();
 				var mode = $("#mode").val();
 				
-					/*
-				 * Adding the link attribute to Logout,Home element
-				 */
-			/********************* --------------- Changes made here --------------- ***************/
-				setNavURL("#devices" ,'href', URL_DEVICES);
-				setNavURL("#visualization",'href', URL_VISUALIZATION);
-				setNavURL("#repositoryInformation",'href',URL_REPOSITORY_INFO);
-				setNavURL("#home",'href',URL_HOME);
-				setNavURL("#logout",'href',URL_LOGOUT_USER);
-
-				//alert(isDevice);
 				var deleteDeviceOrTemplate;
 				var findDeviceOrTemplate;
 				if(isDevice == "true") {
@@ -71,27 +59,50 @@ lang="en">
 				var deviceObject = {};
 				var newNumberOfSensors = 0;
 				var newNumberOfActuators = 0;
-
-				var value = 0;
+				
 				/*counter for dynamic attribute allocation focus*/
-
+				var value = 0;
+				
 				var classReference = "";
-				/*  */
-				/*
-				 * Setting the AJAX to work in sycnhronous fashion
+				
+				 /**
+				 * Adding the link attribute to Logout,Home element
 				 */
-				jQuery.ajaxSetup({
-					async : false
-				});
+					setNavURL("#devices" ,'href', URL_DEVICES);
+					setNavURL("#visualization",'href', URL_VISUALIZATION);
+					setNavURL("#repositoryInformation",'href',URL_REPOSITORY_INFO);
+					setNavURL("#home",'href',URL_HOME);
+					setNavURL("#logout",'href',URL_LOGOUT_USER);
+						$("#logout").click(function() {
 
+					window.location = URL_LOGOUT_USER;
+				});
+					/*
+					 * Setting the AJAX to work in sycnhronous fashion
+					 */
+					 	
+					jQuery.ajaxSetup({
+						async : false
+					});
+
+				
 				/*
 				 * Hiding Error Divs
 				 */
 				$("#errorDiv").hide();
 				$("#getDeviceErrorDiv").hide();
 
-
-function createCustomElement(elementType,parent,id,Class,content,style)
+				/**
+				 * Global function used during the lifecycle of the page to create any HTML
+				 * element with parameters : 
+				 * @params:
+				 * elementType(String): the HTML element to be created
+				 * parent(Selector): the parent HTML element of the custom element to be created
+				 * id,class(String): the id or hte class to be assigned to the HTML element being created
+				 * content(String): the content to be put in the HTML element
+				 * style(JSON object)
+				 */
+					function createCustomElement(elementType,parent,id,Class,content,style)
 					{
 						
 						var $_element=$(document.createElement(elementType));
@@ -122,50 +133,120 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 
 					}
 
-
+					/*
+					*	function for making error row for displaying channels
+					*	@params
+					*	parent : the parent HTML element
+				    */
 					function makeErrorTr(parent)
 					{
-													var err = createCustomElement("tr",parent,null,"errortr","",null);
+													/*var err = createCustomElement("tr",parent,null,"errortr","",null);
 													createCustomElement("td",err,null,null,"",null);
+													*/
+													var p=parent;
+													var q = createCustomElement("div",p,null,"divCol errortr","",null);
+													var r=createCustomElement("div",q,null,"divLeft","",null);
+													createCustomElement("label",r,null,null,"",null);
+													var q = createCustomElement("div",q,null,"divRight","",null);			
+													createCustomElement("label",q,null,"labName","","{'font-size':'12px','width':'120px'}");
 
-													createCustomElement("td",err,null,"labName","","{'font-size':'12px','width':'120px'}");
+													
+													var q = createCustomElement("div",p,null,"divCol errortr","",null);
+													var r=createCustomElement("div",q,null,"divLeft","",null);
+													createCustomElement("label",r,null,null,"",null);
+													var q = createCustomElement("div",q,null,"divRight","",null);			
+													createCustomElement("label",q,null,"labUnit","","{'font-size':'12px','width':'120px'}");
+													
+													var q = createCustomElement("div",p,null,"divCol errortr","",null);
+													var r=createCustomElement("div",q,null,"divLeft","",null);
+													createCustomElement("label",r,null,null,"",null);
+													var q = createCustomElement("div",q,null,"divRight","",null);			
+													createCustomElement("label",q,null,"labType","","{'font-size':'12px','width':'120px'}");
+													
+													var q = createCustomElement("div",p,null,"divCol errortr","",null);
+													var r=createCustomElement("div",q,null,"divLeft","",null);
+													createCustomElement("label",r,null,null,"",null);
+													var q = createCustomElement("div",q,null,"divRight","",null);			
+													createCustomElement("label",q,null,"labSampling","","{'font-size':'12px','width':'120px'}");
+													createCustomElement("p",p,null,"clear","",null);
+
+													/*
+
+
+
 													createCustomElement("td",err,null,null,"",null);
 													createCustomElement("td",err,null,"labUnit","","{'font-size':'12px','width':'120px'}");
 													createCustomElement("td",err,null,null,"",null);
 													createCustomElement("td",err,null,"labType","","{'font-size':'12px','width':'120px'}");
 													createCustomElement("td",err,null,null,"",null);
-													createCustomElement("td",err,null,"labSampling","","{'font-size':'12px','width':'120px'}");
+													createCustomElement("td",err,null,"labSampling","","{'font-size':'12px','width':'120px'}");*/
+													
 													}
-
+					/*
+					*	function for making error row for displaying channels
+					*	@params
+					*	parent : the parent HTML element
+					*	name,unit,type and samplingperiod : the four parameters of a channel 
+					*	 
+				    */
 					function makeDataTr(parent,name,unit,type,samplingperiod)
 													{
 														//param = content;
-													var p = createCustomElement("tr",parent,null,"datatr","",{'text-align':'center'});
-													var q = createCustomElement("td",p,null,null,"",{'width':'12px'});
-													createCustomElement("label",q,null,null,"Name",null);
-													var q = createCustomElement("td",p,null,null,"",null);			
-													createCustomElement("input",q,null,"labName",name,null);
-													var q = createCustomElement("td",p,null,null,"",null);
-													createCustomElement("label",q,null,null,"Unit",null);
-													var q = createCustomElement("td",p,null,null,"",null);			
-													createCustomElement("input",q,null,"labUnit",unit,null);
-													var q = createCustomElement("td",p,null,null,"",null);
-													createCustomElement("label",q,null,null,"Type",null);
-													var q = createCustomElement("td",p,null,null,"",null);			
-													createCustomElement("input",q,null,"labType",type,null);
-													var q = createCustomElement("td",p,null,null,"",null);
-													createCustomElement("label",q,null,null,"Sampling Period",{'width':'145px'});
-													var q = createCustomElement("td",p,null,null,"",null);			
-													createCustomElement("input",q,null,"labSampling",samplingperiod,null);
+															var x=parent;
+													var p = createCustomElement("div",parent,null,"divRow","",null);
+												
+													var q = createCustomElement("div",p,null,"divCol","",null);
+													var r=createCustomElement("div",q,null,"divLeft","",null);
+													createCustomElement("label",r,null,null,"Name",null);
+													var s = createCustomElement("div",q,null,"divRight","",null);			
+													createCustomElement("input",s,null,"labName",name,null);
+													createCustomElement("label",q,null,"labName errortr","","{'font-size':'12px','width':'120px'}");
+
+
+													var q = createCustomElement("div",p,null,"divCol","",null);
+													var r=createCustomElement("div",q,null,"divLeft","",null);
+													createCustomElement("label",r,null,null,"Unit",null);								
+													var s = createCustomElement("div",q,null,"divRight","",null);		
+													createCustomElement("input",s,null,"labUnit",unit,null);
+													createCustomElement("label",q,null,"labUnit errortr","","{'font-size':'12px','width':'120px'}");
+
+
+													
+													var q = createCustomElement("div",p,null,"divCol","",null);
+													var r=createCustomElement("div",q,null,"divLeft","",null);
+													createCustomElement("label",r,null,null,"Type",null);									
+													var s = createCustomElement("div",q,null,"divRight","",null);
+													createCustomElement("input",s,null,"labType",type,null);
+													createCustomElement("label",q,null,"labType errortr","","{'font-size':'12px','width':'120px'}");
+
+
+													var q = createCustomElement("div",p,null,"divCol","",null);
+													var r=createCustomElement("div",q,null,"divLeft","",null);
+													createCustomElement("label",r,null,null,"Sampling Period",{'width':'145px'});
+													var s = createCustomElement("div",q,null,"divRight","",null);
+													createCustomElement("input",s,null,"labSampling",samplingperiod,null);
+													createCustomElement("label",q,null,"labSampling errortr","","{'font-size':'12px','width':'120px'}");
+
+
 													document.createTextNode('\u00a0');
 													document.createTextNode('\u00a0');
-													var q = createCustomElement("td",p,null,null,"",null);
-													createCustomElement("span",q,null,null,"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",null);			
+
+													var q = createCustomElement("div",p,null,"divCol","",null);
+													var r=createCustomElement("div",q,null,"divLeft","",null);
+													createCustomElement("span",r,null,null,"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",null);	
+													var q = createCustomElement("div",q,null,"divRight","",null);
 													createCustomElement("button",q,null,"google-button-blue removeChannel","Remove",null);
+													createCustomElement("p",p,null,"clear","",null);
+
+													createCustomElement("br",p,null,null,"",null);
 
 												}
 
-
+				/*  Function to create a division for the device IP in case there exists an actuator
+				*	@params
+				*	parent	: the parent HTML element 
+				*	deviceIP : the IP value to be displayed 
+				*/
 				function makeIPDiv(parent,deviceIP){
 									
 									var p = createCustomElement("div",parent,"ipDiv",null,"",null);
@@ -174,7 +255,12 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 									createCustomElement("span",p,null,null,"",null);
 				}		
 
-
+				/*  Function to create a division for the actuator details in case there exists an actuator
+				*	@params
+				*	parent	: the parent HTML element 
+				*	actName : the name of the actuator
+				*	
+				*/
 				function makeActDiv(parent,actName){
 
 					var p = createCustomElement("div",parent,"newActuator",null,"",null);
@@ -189,10 +275,17 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 
 									createCustomElement("button",p,null,"google-button-blue removeActuator","Remove Actuator",null);
 									createCustomElement("hr",p,null,null,"",null);
+
 				}	
 
 
-
+						/* 
+						*	Function to make a division to display a sensor in case it exists for a device
+						*	@params:
+						*	parent: the parent of the sensor division
+						*	sensorName : the name of the sensor
+						*	sensorID : the ID of the sensor
+						*/
 						function makeSensorDiv(parent,sensorName,sensorID){
 									createCustomElement("p",parent,null,"space","",null);
 									var p = createCustomElement("div",parent,null,"sensorDiv","",null);
@@ -205,6 +298,7 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 									createCustomElement("span",p,null,null,"",null);
 
 									createCustomElement("br",p,null,null,"",null);
+
 																		
 
 
@@ -224,7 +318,7 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 									createCustomElement("button",p,null,"google-button-blue newSensorRemove","Delete Sensor",null);
 									createCustomElement("p",p,null,"space","",null);
 									createCustomElement("div",p,null,"newSensorChannels","",null);
-
+									createCustomElement("p",p,null,"clear","",null);
 									createCustomElement("hr",p,null,null,"",null);		
 }
 
@@ -256,7 +350,9 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 				*	This function will set the error td with the particular parameter
 				*/
 				function classReferenceError(objectReference,classReference){
-										$(objectReference).parent().parent().next().children('td.'+classReference.substring(0,classReference.indexOf(" ",0))).text(errorInformation);
+										//$(objectReference).parent().parent().parent().parent().find('label.'+classReference.substring(0,classReference.indexOf(" ",0))).text(errorInformation);
+							
+										$(objectReference).parent().next().text(errorInformation);
 				}
 /*************************---------------------Changes Made Here----------------------***********************/
 				/**
@@ -280,19 +376,10 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 				 */
 
 				function validateFieldAndMakeErrorInformation(objectReference, minimumLength, maximumLength, errorField, errorFieldAttribute1, errorFieldAttribute2) {
-					//alert(errorFieldAttribute2);
+					
 					if((($(objectReference).val().length) < minimumLength ) || (($(objectReference).val().length) > maximumLength )) {
 
-						//$(objectReference).addClass("error");
-						//value++;
-
-						//assigning the count attribute value to all possible error fields for focus
-						//$(objectReference).attr('count', value);
-						//errorState = true;
-						/*changed here*/
-
-						//errorInformation = "";
-						/********************* --------------- Changes made here --------------- ***************/
+						
 
 						$(objectReference).addClass("error");
 						value++;
@@ -307,65 +394,36 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 						
 
 
-						/********************* --------------- Changes made here --------------- ***************/
+						
 
 
 						if(errorFieldAttribute2.length > 0) {
 							errorInformation = errorInformation + " Enter " + errorFieldAttribute1 + " of " + errorFieldAttribute2 + " th " + errorField + " within " + minimumLength + " and " + maximumLength + "characters";
 
-							//alert(errorFieldAttribute2.length.toString() + "length of sensorCount");
+							
 
-							// checking if errors related to channel fields or not and accordingly displaying them in span or td.
-							if(!($(objectReference).parent().parent().parent().attr('class') == "newSensorChannels")) {
-								//alert('not channel');
+							/*  checking if errors related to channel fields or not and accordingly displaying them in span or td. */
+							if(!($(objectReference).parent().parent().parent().parent().attr('class') == "newSensorChannels")) {
 								$(objectReference).next().text(errorInformation);
 							} else {
 								classReference = $(objectReference).attr('class');
-								//if this works, then would have to add all three .
-
-								/*---------------------Changes Made here----------------------------*/
-								
+								//if this works, then would have to add all three .								
 								
 								classReferenceError(objectReference,classReference);
-								/*
-								if(classReference == "labName error") {
-									$('input[class="labName error"]').parent().parent().next().children('td.labName').text(errorInformation);
-								}
-								if(classReference == "labUnit error") {
-									$('input[class="labUnit error"]').parent().parent().next().children('td.labUnit').text(errorInformation);
-								}
-								if(classReference == "labType error") {
-									$('input[class="labType error"]').parent().parent().next().children('td.labType').text(errorInformation);
-								}
-								*/
-								/*---------------------Changes Made here----------------------------*/
+								
 							}
 						} else {
-							//errorInformation = errorInformation + " Enter " + errorFieldAttribute1 + " of " + errorField + " within " + minimumLength + " and " + maximumLength + " characters";
 							
 							errorInformation = errorInformation + " Enter within " + minimumLength + " and " + maximumLength + " characters ";
-							if(!($(objectReference).parent().parent().parent().attr('class') == "newSensorChannels")) {
+							if(!($(objectReference).parent().parent().parent().parent().attr('class') == "newSensorChannels")) {
 								$(objectReference).next().text(errorInformation);
 
 							} else {
 								classReference = $(objectReference).attr('class');
 
 
-		/**************----------------------Changes Made Here---------------------****************/
 								classReferenceError(objectReference,classReference);
-								/*
-
-								if(classReference == "labName error") {
-									$('input[class="labName error"]').parent().parent().next().children('td.labName').text(errorInformation);
-								}
-								if(classReference == "labUnit error") {
-									$('input[class="labUnit error"]').parent().parent().next().children('td.labUnit').text(errorInformation);
-								}
-								if(classReference == "labType error") {
-									$('input[class="labType error"]').parent().parent().next().children('td.labType').text(errorInformation);
-								}
-								*/
-		/**************----------------------Changes Made Here---------------------****************/
+								
 							}
 						}
 					} else {
@@ -379,18 +437,12 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 
 					if(isNaN(temp)) {
 
-						//$(objectReference).addClass("error");
-						//errorState = true;
-						//value++;
-						//$(objectReference).attr('count', value);
-						//errorInformation = "";
-
-						/********************* --------------- Changes made here --------------- ***************/
+						
 
 						$(objectReference).addClass("error");
 						value++;
 
-						//assigning the count attribute value to all possible error fields for focus
+						/* assigning the count attribute value to all possible error fields for focus */
 						$(objectReference).attr('count', value);
 						errorState = true;
 						
@@ -400,34 +452,25 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 						
 
 
-						/********************* --------------- Changes made here --------------- ***************/
-
-						//errorInformation = errorInformation + " " + errorFieldAttribute1 + " of " + errorFieldAttribute2 + " th " + errorField + " must be an integer";
+	
 						errorInformation = errorInformation + " " + errorFieldAttribute1 + " of " + errorField + " must be an integer";
 						//differentiating between channel fields errors and others
-						if(!($(objectReference).parent().parent().parent().attr('class') == "newSensorChannels")) {
+						if(!($(objectReference).parent().parent().parent().parent().attr('class') == "newSensorChannels")) {
 
 							$(objectReference).next().text(errorInformation);
 						} else {
 							classReference = $(objectReference).attr('class');
 							if(classReference == "labSampling error") {
 								errorInformation = "It must be an integer";
-					/**************----------------------Changes Made Here---------------------****************/
-								//$('input[class="labSampling error"]').parent().parent().next().children('td.labSampling').text(errorInformation);
+					
 								classReferenceError(objectReference,classReference);
-					/**************----------------------Changes Made Here---------------------****************/
+					
 							}
 
 						}
 					} else {
 						if(temp < minimumValue || temp > maximumValue) {
-							//$(objectReference).addClass("error");
-							//errorState = true;
-							//value++;
-							//$(objectReference).attr('count', value);
-							//errorInformation = "";
-							/********************* --------------- Changes made here --------------- ***************/
-
+							
 						$(objectReference).addClass("error");
 						value++;
 
@@ -441,11 +484,10 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 						
 
 
-						/********************* --------------- Changes made here --------------- ***************/
-
+						
 							errorInformation = errorInformation + " Enter " + errorFieldAttribute1 + " of " + errorFieldAttribute2 + " th " + errorField + "'s value within " + minimumValue + " and " + maximumValue;
 							//differentiating between channel fields errors and others
-							if(!($(objectReference).parent().parent().parent().attr('class') == "newSensorChannels")) {
+							if(!($(objectReference).parent().parent().parent().parent().attr('class') == "newSensorChannels")) {
 
 								$(objectReference).next().text(errorInformation);
 							} else {
@@ -453,11 +495,11 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 
 								if(classReference == "labSampling error") {
 									errorInformation = " Enter within " + minimumValue + " and " + maximumValue + " characters ";
-			/**************----------------------Changes Made Here---------------------****************/
+			
 									
 							classReferenceError(objectReference,classReference);
 
-									//$('input[class="labSampling error"]').parent().parent().next().children('td.labSampling').text(errorInformation);
+									
 
 
 								}
@@ -474,13 +516,13 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 				editDevice["devicename"] = deviceToEdit;
 				editDevice[SECRET_KEY] = secretkey;
 
-				/*
+				/**
 				 * Make a query to fetch the device
 				 */
 				if(deviceToEdit != FAKE_DEVICE_NAME) {
 
 					try {
-						//alert("here i am meee");
+					
 						$.post(findDeviceOrTemplate, JSON.stringify(editDevice), function(data) {
 							receivedData = data;
 							//alert(JSON.stringify(receivedData));
@@ -500,26 +542,23 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 								//Add actuators
 								if(receivedData.hasOwnProperty(DEVICE_ACTUATORS)) {
 									var parent = $('#newActuatorsDiv');
-									//alert("1");
-									/*$("#newActuatorsDiv").append("<div id=ipDiv><label style='width:130px;' id=\"newDeviceIPLabel\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Device IP</label><input id=newDeviceIP value=" + receivedData[DEVICE_IP] + "></input><span></span></div>");
-*/									var deviceIP = receivedData[DEVICE_IP];
-									//alert("2");
-									makeIPDiv(parent,deviceIP);
-									//alert("3");
 									
-									/*$("#newActuatorsDiv").append("<div id=ipDiv><label style='width:130px;' id=\"newDeviceIPLabel\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Device IP</label><input id=newDeviceIP value=" + receivedData[DEVICE_IP] + "></input><span></span></div>");
-									*/
+									var deviceIP = receivedData[DEVICE_IP];
+									
+									makeIPDiv(parent,deviceIP);
+									
+									
+									
 									var actuatorsArray = receivedData[DEVICE_ACTUATORS];
 									for(var i = 0; i < actuatorsArray.length; i++) {
 										
 										var parent = $('#newActuatorsDiv');
-											//alert(parent);
-									/*$("#newActuatorsDiv").append("<div id=ipDiv><label style='width:130px;' id=\"newDeviceIPLabel\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Device IP</label><input id=newDeviceIP value=" + receivedData[DEVICE_IP] + "></input><span></span></div>");
-*/									var actName = actuatorsArray[i][DEVICE_ACTUATOR_NAME];
+											
+									var actName = actuatorsArray[i][DEVICE_ACTUATOR_NAME];
 									//alert(JSON.stringify(actName));
 									
 										makeActDiv(parent,actName);
-																		//alert("between234");
+																	
 									
 
 										newNumberOfActuators++;
@@ -546,8 +585,7 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 									makeSensorDiv(parent,sensorName,sensorID);
 
 										//alert(sensorsArray[i]["name"]);
-										/*
-										$("#newSensorsDiv").append("<p class='space'></p><div class='sensorDiv'><p class='sensorDivPara'>Sensor Details</p><hr/><label style='width:110px;'>Sensor Name</label><input id='newSensorName' class='newSensor' value=" + sensorsArray[i][DEVICE_SENSOR_NAME] + "></input><span></span><br/><label style='width:110px;'>Sensor ID</label><input id='newSensorID' class='newSensorID' value=" + sensorsArray[i][DEVICE_SENSOR_ID] + "></input><span></span><br/><br/>" + "<button class='google-button-blue newSensorAddChannel'>Add channels</button>" + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class='google-button-blue newSensorRemove'>Delete Sensor</button>" + "<p class='space'></p><div class='newSensorChannels'></div><hr/></div>");*/
+										
 
 										$(".newSensorRemove").click(function() {
 
@@ -562,7 +600,7 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 											if(ctr == i) {
 												for(var j = 0; j < channelsArray.length; j++) {
 													var parent = $(this).children(".newSensorChannels");
-													//alert("previous ");
+													
 													var name = channelsArray[j]["name"];
 													var unit = channelsArray[j]["unit"];
 													var type = channelsArray[j]["type"];
@@ -570,15 +608,14 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 													makeDataTr(parent,name,unit,type,samplingperiod);
 
 												
-													makeErrorTr(parent);
+													//makeErrorTr(parent);
 													
 
-													/*
-													($(this).children(".newSensorChannels")).append("<tr style='text-align:center;' class='datatr'><td width='12px'><label>Name</label></td><td><input class='labName' value=" + channelsArray[j]["name"] + "></input></td><td><label>Unit</label></td><td><input class='labUnit' value=" + channelsArray[j]["unit"] + "></input><td><label>Type</label></td><td><input class='labType' value=" + channelsArray[j]["type"] + "></input></td><td><label style='width:145px'>Sampling Period</label></td><td><input class='labSampling'value=" + channelsArray[j]["samplingperiod"] + "></input>&nbsp;&nbsp;<td><button class='google-button-blue removeChannel'>Remove</button></td></tr><tr class='errortr'><td></td><td class='labName' style='font-size:12px;width:10px'></td><td></td><td class='labUnit' style='font-size:12px;width:120px'></td><td></td><td class='labType' style='font-size:12px;width:120px'></td><td></td><td class='labSampling' style='font-size:12px;width:120px'></td></tr>");
-													*/
+													
 													$(".removeChannel").click(function() {
-														$(this).parent().parent().next().remove();
-														$(this).parent().parent().remove();
+
+															$(this).parent().parent().parent().remove(); 
+														
 
 													});
 												}
@@ -588,21 +625,28 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 
 										$('.newSensorAddChannel').unbind('click').click(function() {
 										
-										//($(this).siblings(".newSensorChannels")).children('#noSensorChannelsError').text("");
-																				($(this).siblings(".newSensorChannels")).children().remove();
+										
+																				// ($(this).siblings(".newSensorChannels")).children().remove();
+																				($(this).siblings(".newSensorChannels")).children('#noSensorChannelsError').text("");
 
 										var parent = $(this).siblings(".newSensorChannels");
-											//alert("click");
+											
 										
 											makeDataTr(parent,"","","","");
-												makeErrorTr(parent);
-										/*
-											($(this).siblings(".newSensorChannels")).append("<tr class='datatr' ><td><label>Name</label></td><td><input class='labName'/></td><td><label>Unit</label></td><td><input class='labUnit'/><td><label>Type</label></td><td><input class='labType'/></td><td><label style='width:145px'>Sampling Period</label></td><td><input class='labSampling'/>&nbsp;&nbsp;<td><button class='google-button-blue removeChannel'>Remove</button></td></tr><tr class='errortr'><td></td><td class='labName' style='font-size:12px;width:120px'></td><td></td><td class='labUnit' style='font-size:12px;width:120px'></td><td></td><td class='labType' style='font-size:12px;width:120px'></td><td></td><td class='labSampling' style='font-size:12px;width:120px'></td></tr>");
-											*/
+												//makeErrorTr(parent);
+										
 											$(".removeChannel").click(function() {
+												/*$(this).parent().parent().next().remove();
 												$(this).parent().parent().next().remove();
-												$(this).parent().parent().remove();
-
+												$(this).parent().parent().next().remove();
+												$(this).parent().parent().next().remove();
+												$(this).parent().parent().prev().remove();
+												$(this).parent().parent().prev().remove();
+												$(this).parent().parent().prev().remove();
+												$(this).parent().parent().prev().remove();
+												$(this).parent().parent().remove();*/
+												$(this).parent().parent().parent().remove(); 
+												
 											});
 											return false;
 										});
@@ -615,12 +659,12 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 
 						});
 					} catch(e) {
-						//alert("here i am");
+					
 						alertGetDeviceError(e);
 					}
 				}
 
-				/*
+				/**
 				 * Description:This function is used to add a new sensor
 				 */
 
@@ -628,9 +672,7 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 									$("#noSensorNoActuator").html("");
 					var parent  = $("#newSensorsDiv");
 					makeSensorDiv(parent,"","");
-					/*
-					$("#newSensorsDiv").append("<p class='space'></p><div class='sensorDiv'><p class='sensorDivPara'>Sensor Details</p><hr/><label style='width:110px;'>Sensor Name</label><input id='newSensorName' class='newSensor'></input><span></span><br/><label style='width:110px;'>Sensor ID</label><input id='newSensorID' class='newSensorID'></input><span></span><br/><br/>" + "<button class='google-button-blue newSensorAddChannel'>Add channels</button>" + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class='google-button-blue newSensorRemove'>Delete Sensor</button>" + "<p class='space'></p><div class='newSensorChannels'></div><hr/></div>");
-					*/
+					
 					$(".newSensorRemove").click(function() {
 
 						$(this).parent().remove();
@@ -643,21 +685,27 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 						
 						var parent = $(this).siblings(".newSensorChannels");
 						makeDataTr(parent);
-						makeErrorTr(parent,"","","","");
-						//alert("creating");
-						/*($(this).siblings(".newSensorChannels")).append("<tr class='datatr'><td><label>Name</label></td><td><input class='labName'/></td><td><label>Unit</label></td><td><input class='labUnit'/><td><label>Type</label></td><td><input class='labType'/></td><td><label style='width:145px'>Sampling Period</label></td><td><input class='labSampling'/><td>&nbsp;&nbsp;<button class='google-button-blue removeChannel'>Remove</button></td></tr><tr class='errortr'><td></td><td class='labName' style='font-size:12px;width:120px'></td><td></td><td class='labUnit' style='font-size:12px;width:120px'></td><td></td><td class='labType' style='font-size:12px;width:120px'></td><td></td><td class='labSampling' style='font-size:12px;width:120px'></td></tr>");
-						*/
+						//makeErrorTr(parent,"","","","");
+						
 						$(".removeChannel").click(function() {
-							$(this).parent().parent().next().remove();
-							$(this).parent().parent().remove();
-
+												/*$(this).parent().parent().next().remove();
+												$(this).parent().parent().next().remove();
+												$(this).parent().parent().next().remove();
+												$(this).parent().parent().next().remove();
+												$(this).parent().parent().prev().remove();
+												$(this).parent().parent().prev().remove();
+												$(this).parent().parent().prev().remove();
+												$(this).parent().parent().prev().remove();
+												$(this).parent().parent().remove();*/
+												$(this).parent().parent().parent().remove(); 
+												
 						});
 						return false;
 					});
 					newNumberOfSensors++;
 					return false;
 				});
-				/*
+				/**
 				 * Description:Function to add a new Actuator
 				 * This function is called when the button corresponding to add new actuator is clicked
 				 * It would create new DIV and place in it the new Actuator within a HTML label
@@ -670,20 +718,15 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 					$("#noSensorNoActuator").html("");
 
 					if(newNumberOfActuators == 1) {
-						/*
-						$("#newActuatorsDiv").append("<div id=ipDiv><label style='width:130px;' id=\"newDeviceIPLabel\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Device IP</label><input type=\"text\" id=\"newDeviceIP\"></input><span></span></div>");*/
-						//$("#newActuatorsDiv").addClass("border");
+					
 						var parent = $("#newActuatorsDiv");
 						makeIPDiv(parent,"");
-						//$("#newActuatorsDiv").css('border':'2px solid');
+						
 					}
-					/*if(newNumberOfActuators == 0) {
-					 $("#newActuatorsDiv").css('border':'0px');
-					 }*/
+					
 					 var parent = $('#newActuatorsDiv');
 					 makeActDiv(parent,"");
-					/*$("#newActuatorsDiv").append("<div id='newActuator'><p class='actuatorDivPara'>Actuator Details</p><hr/><label style='width:110px;'>Actuator Name </label><input class=labActName></input><span></span><br/><br/><button class='google-button-blue removeActuator'>Remove Actuator</button><hr/></div>");*/
-
+					
 					$(".removeActuator").unbind('click').click(function() {
 						$(this).parent().remove();
 						newNumberOfActuators--;
@@ -695,7 +738,7 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 					});
 					return false;
 				});
-				/*
+				/**
 				 * This function is invoked when Done Device is clicked.
 				 * It does a validation for all the fields present in the device
 				 */
@@ -713,9 +756,9 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 
 					//for errors removal
 					$('input[count="0"]').next().text("");
-					
-					$('tr[class="errortr"]').children('td').text("");
-				
+	
+					$('.divCol .divRight').next().text("");
+			
 					$('#noSensorNoActuator').html("");
 					$('#noSensorChannelsError').html("");
 			
@@ -736,16 +779,16 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 
 							validateFieldAndMakeErrorInformation(this, MIN_LENGTH_SENSOR_NAME, MAX_LENGTH_SENSOR_NAME, "sensor", "name", sensorCount);
 							deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_ID] = $(this).siblings(".newSensorID").val();
-							//validateFieldAndMakeErrorInformation($(this).siblings(".newSensorID"), MIN_LENGTH_SENSOR_ID, MAX_LENGTH_SENSOR_ID, "sensor", "id", sensorCount);
+							
 							validateNumericFieldValue($(this).siblings(".newSensorID"), MIN_VALUE_SENSOR_ID, MAX_VALUE_SENSOR_ID, "sensor", "ID", sensorCount);
 						}
 						
 						deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_CHANNELS] = new Array();
 						//Now attaching it's channels to it
 						var newChannelCount = 0;
-						$(this).parent().children(".newSensorChannels").find("tr.datatr").each(function() {
+						$(this).parent().children(".newSensorChannels").find(".divRow").each(function() {
 							deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_CHANNELS][newChannelCount] = {};
-							$(this).find('td').each(function() {
+							$(this).find('.divRight').each(function() {
 								$(this).find('input').each(function() {
 
 									if(($(this).attr("class")).toString().indexOf(CLASS_DEVICE_SENSOR_CHANNEL_TYPE) >= 0) {
@@ -757,11 +800,8 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 						
 									if(($(this).attr("class")).toString().indexOf(CLASS_DEVICE_SENSOR_CHANNEL_SAMPLING_PERIOD) >= 0) {
 										deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_CHANNELS][newChannelCount][DEVICE_SENSOR_CHANNEL_SAMPLING_PERIOD] = $(this).val();
-										//validateFieldAndMakeErrorInformation(this, MIN_LENGTH_CHANNEL_SAMPLING_PERIOD, MAX_LENGTH_CHANNEL_SAMPLING_PERIOD, "sensor's " + newChannelCount.toString() + " th channel", "sampling period", sensorCount);
-										//alert("before validate");
 										validateNumericFieldValue(this, MIN_VALUE_CHANNEL_SAMPLING_PERIOD, MAX_VALUE_CHANNEL_SAMPLING_PERIOD, "sensor's " + newChannelCount.toString() + " th channel", "sampling period", sensorCount);
-									//alert("after validate");
-
+									
 									}
 								
 									if(($(this).attr("class")).toString().indexOf(CLASS_DEVICE_SENSOR_CHANNEL_UNIT) >= 0) {
@@ -789,9 +829,9 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 							errorState = true;
 							errorInformation = " Enter channel for sensor";
 							channel = true;
-				/***********************--------------------Changes Made Here-----------------------********************/
+				
 						$(this).parent().children('.newSensorChannels').html("<span id='noSensorChannelsError' style='color:red'>" + errorInformation + "</span>");
-				/***********************--------------------Changes Made Here-----------------------********************/
+				
 							
 						}
 						sensorCount++;
@@ -834,11 +874,7 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 						$('input[count="1"]').focus();
 
 						//for channel errors
-						/*if(channel == true)
-						 {
-						 alertAddDeviceErrorChannel(errorInformation);
-						 }
-						 */
+						
 						return false;
 					} else {
 						$("#errorDiv").html("");
@@ -859,8 +895,8 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 					} else {
 						addDeviceOrTemplateURL = URL_ADD_DEVICE_TEMPLATE;
 					}
-			/**************----------------------Changes Made Here---------------------****************/	
-				function postToDeleteDevice(){
+				
+					function postToDeleteDevice(){
 					try {
 									$.post(addDeviceOrTemplateURL, JSON.stringify(deviceRequestToSend), function(data) {
 										if(data[RESPONSE_STATUS_CODE] == 0) {
@@ -910,37 +946,15 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 						} else {
 						/**************----------------------Changes Made Here---------------------****************/
 							postToDeleteDevice();
-							/*try {
-								$.post(addDeviceOrTemplateURL, JSON.stringify(deviceRequestToSend), function(data) {
-									if(data[RESPONSE_STATUS_CODE] == 0) {
-										window.location = URL_DEVICES;
-									} else {
-										alertAddDeviceError("Following error occured: " + data[RESPONSE_MESSAGE]);
-									}
-
-								});
-							} catch(e) {
-								alertAddDeviceError(e);
-							}*/
+							
 						/**************----------------------Changes Made Here---------------------****************/
 						}
-					}//
+					}
 					else {
 						//Device/Template was added from scratch
 						/**************----------------------Changes Made Here---------------------****************/
 						postToDeleteDevice();
-						/*try {
-							$.post(addDeviceOrTemplateURL, JSON.stringify(deviceRequestToSend), function(data) {
-								if(data[RESPONSE_STATUS_CODE] == 0) {
-									window.location = URL_DEVICES;
-								} else {
-									alertAddDeviceError("Following error occured: " + data[RESPONSE_MESSAGE]);
-								}
-
-							});
-						} catch(e) {
-							alertAddDeviceError(e);
-						}*/
+						
 						/**************----------------------Changes Made Here---------------------****************/
 					}//End else
 
@@ -970,13 +984,19 @@ function createCustomElement(elementType,parent,id,Class,content,style)
 				<nav>
 					<ul>
 						<li>
+							<a id="home">Home</a>
+						</li>
+						<li>
 							<a id="devices" class="active">Devices</a>
 						</li>
 						<li>
 							<a id="visualization">Visualization</a>
 						</li>
 						<li>
-							<a id="repositoryInformation">Repository Info</a>
+							<a id="repositoryInformation">Repository</a>
+						</li>
+						<li>
+							<a id="speak">Speak</a>
 						</li>
 						<!--<li>
 						<a id="logout">Logout</a>

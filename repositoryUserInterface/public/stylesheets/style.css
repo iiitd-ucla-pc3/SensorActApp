@@ -39,7 +39,7 @@ sup { top: -0.5em; }
 sub { bottom: -0.25em; }
 ul, ol { margin: 1em 0; padding: 0 0 0 40px; }
 dd { margin: 0 0 0 40px; }
-nav ul, nav ol { list-style: none; list-style-image: none; margin: 0; padding: 0; }
+nav ul, nav ol { list-style: none; list-style-image: none; margin: 0; padding-left: 16px; }
 img { border: 0; -ms-interpolation-mode: bicubic; vertical-align: middle; }
 svg:not(:root) { overflow: hidden; }
 figure { margin: 0; }
@@ -111,7 +111,7 @@ clear: both;
 nav a,.pbox{
 	display:block;
 	margin-bottom:10px;
-	padding:15px 0;
+	padding:1x 0;
 
 	background:#e44d26;
 	color:white;
@@ -121,6 +121,9 @@ nav a,.pbox{
 	font-weight:bold;
 }
 
+nav .pbox{
+margin-left:2px;
+}
 nav a:hover, nav a:visited{
 	color:white;
 }
@@ -180,9 +183,9 @@ nav a:hover{
 	
 	nav a{
 		float:left;
-		width:27%;
-		margin:0 1.7%;
-		padding:25px 2%;
+		width:17%;
+		margin:0 0.3%;
+		padding:25px 1%;
 		margin-bottom:0;
 		cursor:pointer;
 	}
@@ -225,7 +228,14 @@ nav a:hover{
 
 	nav{
 		float:right;
-		width:45%;
+		width:65%;
+		
+	}
+
+	nav .pbox{
+	width:60%;
+	position:relative;
+	left:20%;
 	}
 
 /* ============
@@ -568,4 +578,40 @@ width:7px;
 .sensor{
 	margin-top:7px;
 	margin-left:15px;
+}
+
+
+.divCol{
+	
+	float:left;
+
+
+}
+.divLeft{
+
+
+
+}
+.divRight{
+
+}
+.clear{
+	clear:both;
+}
+.divRight input{
+	width:190px;
+}
+.space
+{
+	padding : 8px 0px 0px 0px;
+	margin:0px;
+	
+}
+.newSensorChannels .divCol .divRight input{
+	width:250px;
+}
+label.errortr{
+width:250px;
+font-size:12px;
+
 }

@@ -50,7 +50,7 @@
 				setNavURL("#repositoryInformation",'href',URL_REPOSITORY_INFO);
 				setNavURL("#home",'href',URL_HOME);
 				setNavURL("#logout",'href',URL_LOGOUT_USER);	
-
+				setNavURL("#speak",'href',URL_SPEAK_INPUT);
 				$("#logout").click(function() {
 
 					window.location = URL_LOGOUT_USER;
@@ -116,7 +116,9 @@
 
 				function createAccordionHeader(accordionId,deviceName,deviceLocation,deviceId)
 					{
-						$("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLocation + "<br/> </a></h2><div id=\"" + deviceId + "\"></div>");
+						
+alert(deviceName);
+$("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLocation + "<br/> </a></h2><div id=\"" + deviceId + "\"></div>");
 					}
 
 				function appendElementToParent(parentReference,childHTML)
@@ -191,6 +193,7 @@
 					}
 					try {
 						$.get(urlDevicesOrTemplatesList, function(data) {
+							alert(JSON.stringify(data));
 							deviceOrTemplateDataList[index] = data;
 							//Successfully received data
 							if(deviceOrTemplateDataList[index].hasOwnProperty(RESPONSE_STATUS_CODE))//Means a failure has occured {
@@ -276,13 +279,13 @@
 
 												
 												var channelTableId = sensorId + "channel";
-												$(idSelector).children(".oldSensors").children("#" + sensorId).append("<h4>Channels</h4><table id=" + channelTableId + "></table>");
+												$(idSelector).children(".oldSensors").children("#" + sensorId).append("<h4>Channels</h4><div id=" + channelTableId + "></div><p class='clear'></p><p class='space'></p><hr>");
 												for(var k = 0; k < numberOfChannels; k++) {
 													var channelName = channel[k][DEVICE_SENSOR_CHANNEL_NAME];
 													var channelType = channel[k][DEVICE_SENSOR_CHANNEL_TYPE];
 													var channelUnit = channel[k][DEVICE_SENSOR_CHANNEL_UNIT];
 													var channelSamplingPeriod = channel[k][DEVICE_SENSOR_CHANNEL_SAMPLING_PERIOD];
-													$("#" + channelTableId).append("<tr><td><label>Name</label><input value=" + channelName + "></input></td><td><label>Type</label><input value=" + channelType + "></input></td><td><label>Unit</label><input value=" + channelUnit + "></input></td><td><label>SamplingPeriod</label><input value=" + channelSamplingPeriod + "></input></td></tr>");
+													$("#" + channelTableId).append("<div class='divCol'><div class='divLeft'><label>Name</label></div><div class='divRight'><input value=" + channelName + "></input></div></div><div class='divCol'><div class='divLeft'><label>Type</label></div><div class='divRight'><input value=" + channelType + "></input></div></div><div class='divCol'><div class='divLeft'><label>Unit</label></div><div class='divRight'><input value=" + channelUnit + "></input></div></div><div class='divCol'><div class='divLeft'><label>SamplingPeriod</label></div><div class='divRight'><input value=" + channelSamplingPeriod + "></input></div></div><br/>");
 
 												}
 
@@ -356,13 +359,19 @@
 				<nav>
 					<ul>
 						<li>
-							<a id="devices" class="active">Devices</a>
+							<a id="home">Home</a>
+						</li>
+						<li>
+							<a id="devices" class="active" >Devices</a>
 						</li>
 						<li>
 							<a id="visualization">Visualization</a>
 						</li>
 						<li>
-							<a id="repositoryInformation">Repository Info</a>
+							<a id="repositoryInformation">Repository</a>
+						</li>
+						<li>
+							<a id="speak" >Speak</a>
 						</li>
 						<!--<li>
 						<a id="logout">Logout</a>

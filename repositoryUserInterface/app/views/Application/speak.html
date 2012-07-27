@@ -1,0 +1,177 @@
+<!doctype html> <!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+	<!--<![endif]-->
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title> Welcome</title>
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/style.css'}">
+		<script src="@{'/public/js/libs/modernizr-2.0.6.min.js'}"></script>
+		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script type="text/javascript"	src="@{'public/javascripts/swfobject.js'}"></script>
+		<script type="text/javascript" src="@{'/public/javascripts/recorder.js'}"></script>
+		<script type="text/javascript" src="@{'/public/javascripts/utilityFunctions.js'}"></script>
+		<script type="text/javascript" src="@{'/public/javascripts/speakClient.js'}"></script>
+		
+		<script type="text/javascript">
+			$(document).ready(function() {
+
+				var mp3ID=1;
+				var USER_KEY;
+				setup();
+				
+				$("#pressed").hide();
+				$("#message").html("");
+				
+				//var mp3ID = "1";
+				$("#normal").click(function(){
+					$("#normal").hide();
+					
+					
+					$("#pressed").show();
+					record();
+				})
+				$("#pressed").click(function(){
+					stop();
+					$("#pressed").hide();
+					$("#normal").show();
+				});
+				
+				setNavURL("#devices" ,'href', URL_DEVICES);
+				setNavURL("#visualization",'href', URL_VISUALIZATION);
+				setNavURL("#repositoryInformation",'href',URL_REPOSITORY_INFO);
+				setNavURL("#home",'href',URL_HOME);
+				setNavURL("#logout",'href',URL_LOGOUT_USER);
+				setNavURL("#speak",'href',URL_SPEAK_INPUT);
+				$("#logout").click(function() {
+
+					window.location = URL_LOGOUT_USER;
+				});
+			});
+			</script>
+			
+			<script>
+			//	var USER_KEY;
+			
+			var a;
+			
+			function setup() {
+				Wami.setup("wami");
+			}
+			
+			
+
+			function record() {
+				USER_KEY = uniqueRandomString();
+				//status("Recording...");
+				
+				Wami.startRecording(URL_SOUNDINPUT_CONTROLLER + "/" + USER_KEY.toString());
+				
+			}
+
+			function play() {
+				Wami.startPlaying(" ");
+			}
+
+			function stop() {
+				
+				Wami.stopRecording();
+				Wami.stopPlaying();
+				
+			}
+
+			function status(msg) {
+				document.getElementById('status').innerHTML = msg;
+			}
+			
+
+			function serverReturn(data)
+			        {
+			      
+			        var json = jQuery.parseJSON(data.toString());
+			        speak(json.outputtext);			   
+			        $("#input_message").html(json.inputcommand);
+			        $("#output_message").html(json.outputtext);
+			        
+			        
+			        }
+
+			
+		
+		</script>
+	</head>
+	<body onload="setup()">
+		<div id="header-container">
+			<header class="wrapper clearfix">
+				<h1 id="title">SensorAct
+				<br />
+				<br />
+				<span style="font-size:25px;">Sense - Interact - Actuate</span></h1>
+				<nav>
+					<ul>
+						<li>
+							<a id="home" >Home</a>
+						</li>
+						<li>
+							<a id="devices" >Devices</a>
+						</li>
+						<li>
+							<a id="visualization">Visualization</a>
+						</li>
+						<li>
+							<a id="repositoryInformation">Repository</a>
+						</li>
+						<li>
+							<a id="speak" class="active">Speak</a>
+						</li>
+						
+					</ul>
+				</nav>
+				<br />
+				<br />
+				<nav>
+					<p class="pbox" style="margin-bottom:-20px;">
+						Welcome ${username} &nbsp | &nbsp<span id="logout">Logout</span>
+					</p>
+				</nav>
+			</header>
+		</div>
+		<div class="wrapper" style="text-align:center;">
+			<p class="space"></p>
+			<img id="normal" src="@{'/public/images/mic_normal.jpg'}" style="text-align:center" width="19.5%" height="19.5%"/>
+			<img id="pressed" src="@{'/public/images/mic_pressed.jpg'}" style="text-align:center" width="19.5%" height="19.5%"/>
+			<div id="status"></div>
+	<div id="wami"></div>
+	<hr/>
+
+	<p class="space"></p>
+			<div id="input_div"><label for="input_message">Input</label>
+						<p name="input_message" id="input_message"></p></div>
+			<hr/>
+			<div id="output_div"><label for="output_message">Output</label>
+						<p name="output_message" id="output_message" ></p></div>
+			<hr>
+			
+			<div id="audio">
+			 	
+  				
+			 </div>
+			
+			<p class='newfont' style="font-size:20px;">
+				Smart Rooms at IIIT-Delhi
+				<br />
+				By MUC Group
+			</p>
+			<hr>
+		</div>
+		<div style="clear:both;" id="footer-container">
+			<footer class="wrapper">
+				<h4 align="center">&copy2012 |MUC,IIIT-Delhi</h4>
+			</footer>
+		</div>
+	</body>
+</html>

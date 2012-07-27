@@ -29,19 +29,28 @@
 
 		<!--Google API-->
 		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDDZ2cfkjgRuqcVocQt_xt4esmqpNQT3KM&sensor=false"></script>
+		<!--Google API-->
+
 		<script type="text/javascript">
 			$(document).ready(function() {
 
 				$(".errorVisual").hide();
 				$("#labelSensorSelect").hide();
-				//$("#container").hide();
-				$("#containerTools").hide();
-				if (!$("#selectLibrary").value == "highcharts" && $("#motionType").is(":checked"))
+		
+				$("#resizer").hide();
+				$("#imageDiv").hide();
+				$("#tools").hide();
 
+				/***When Selected library is not Highcharts**/
+				if (!$("#selectLibrary").value == "highcharts" && $("#motionType").is(":checked"))
 					$("#divWindowSize").hide();
 
-				//$("#container").hide();
-				//Setting up in async mode
+				/****When MotionDisplay is OFF***/
+				if(!$("#motionType").is(":checked")) 
+				{
+					$("#speed").attr('disabled', 'disabled');//Disable Speed
+					$("#divWindowSize").hide();	//Disable WindowSize
+				}
 				jQuery.ajaxSetup({
 					async : false
 				});
@@ -56,6 +65,7 @@
 					}
 				});
 
+	
 				var container = $('#container')[0];
 				$('#resizer').resizable({
 					// On resize, set the chart size to that of the
@@ -66,7 +76,9 @@
 						chart.setSize(this.offsetWidth - 20, this.offsetHeight - 20, false);
 					}
 				});
+			
 
+		//*****************************************Chart*****************************************************/
 				var chart;
 
 				function createChart() {
@@ -80,10 +92,7 @@
 							zoomType : 'xy',
 
 							events : {
-								selection : function(event) {
-
-									//$("#motionStop").click();
-								}
+								
 							}
 						},
 						title : {
@@ -140,38 +149,31 @@
 						},
 						series : series
 					});
-
+		
 				}
+	//*****************************************Chart*****************************************************/
 
+				setNavURL("#devices" ,'href', URL_DEVICES);
+				setNavURL("#visualization",'href', URL_VISUALIZATION);
+				setNavURL("#repositoryInformation",'href',URL_REPOSITORY_INFO);
+				setNavURL("#home",'href',URL_HOME);
+				setNavURL("#logout",'href',URL_LOGOUT_USER);
+				setNavURL("#speak",'href',URL_SPEAK_INPUT);
+			
+				
 
-				$("#logout").attr('href', URL_LOGOUT_USER);
-				$("#home").attr('href', URL_HOME);
-				$("#errorDiv").hide();
-
-				$("#devices").attr('href', URL_DEVICES);
-				$("#visualization").attr('href', URL_VISUALIZATION);
-				//$("#logout").attr('href', URL_LOGOUT_USER);
-				$("#repositoryInformation").attr('href', URL_REPOSITORY_INFO);
+				
+				
 				$("#logout").click(function() {
 
 					window.location = URL_LOGOUT_USER;
 				});
-				function alertError(errorMessage) {
-					$("#errorDiv").html(errorMessage);
-					$("#errorDiv").fadeIn('slow');
-					return false;
-				}
-
-				function removeError() {
-					$("#errorDiv").html("");
-					$("#errorDiv").hide();
-					return false;
-				}
-
-				//series=appendElementsToSeries(series,SAMPLE_QUERY_DATA_QUERY_RESPONSE);
 
 				//Setting the correct datetime format to start and end time dialog
-				$(ID_START_DATE_TIME_DISPLAY).datetimepicker({
+				
+				createDateTimePicker(ID_START_DATE_TIME_DISPLAY);
+				createDateTimePicker(ID_END_DATE_TIME_DISPLAY);
+				/*$(ID_START_DATE_TIME_DISPLAY).datetimepicker({
 					changeMonth : true,
 					changeYear : true,
 					dateFormat : "yy-mm-dd",
@@ -183,7 +185,7 @@
 					changeYear : true,
 					dateFormat : "yy-mm-dd",
 					separator : "-"
-				});
+				});*/
 
 				var startTime;
 				var endTime;
@@ -194,51 +196,58 @@
 				var username = $("#username").val();
 				var secretkey = FAKE_SECRET_KEY;
 				var series = new Array();
-				var receivedDeviceData = {};
-				var motionCounter;
-				var motionInterval;
+				var receivedDeviceData = {}; //ListofDevices Received
+				var motionCounter; //Total Count of the Motion
+				var motionInterval;//To SetTimeInterval
 				var motionStatus = true;
-				var SPEED = 1;
-				var minTimeStamp = -1;
-				var maxTimeStamp = -1;
+				var SPEED = 1;//Speed if Motion Display in ON
+				var minTimeStamp = -1;// To calculate the min & max timestamp
+				var maxTimeStamp = -1; //to set Window Size when Motion Display
 				var WINDOW_SIZE = $("#windowSize").val();
 				var motionType = $("#motionType").is(':checked');
-				var library = $("#selectLibrary").val();
+				var library = $("#selectLibrary").val(); 
 				var map;
 				var line;
-				var newPath = new Array();
-				var tempPath = new Array();
-				var motionMarker;
-				var overlays = [];
-				var downloadData = new Array();
-				var statsData = "";
-				var interactive;
-
+				var newPath = new Array(); //For Google Maps Polyline Path
+				var tempPath = new Array();//Temporary variable to store path
+				var motionMarker; // Markers to be placed on GMaps
+				var overlays = []; // All overlays items to be stored in it
+				var downloadData = new Array(); // Received Data is stored
+				var statsData = ""; //Statistics Data
+				var interactive; 
+				
+				/*
+				*	It is used to PLAY / PAUSE /RESET the Motion Chart when Motion Display is ON 
+				*
+				*/
 				$("#motionStop").click(function() {
 
-					//clearInterval(motionInterval);
+					
 					if (motionStatus) {
+						//Pausing the Motion Chart
 						motionStatus = false;
 						$(this).html("Start");
-						$(this).removeClass("pause");
-						$(this).addClass("play");
+						$(this).removeClass("pause");//Removing Pause Image
+						$(this).addClass("play");	//Setting the play Image
 						clearTimeout(motionInterval);
 
+						//Resetting
 						if ((library == "highcharts" && motionCounter == (maxTimeStamp - (WINDOW_SIZE - 2) * oneSECOND)) || (library == "google" && motionCounter == newPath.length)) {
+							if(library=="google")
 							line.setMap(null);
 
 							motionStatus = true;
 							$(this).html("Stop");
-							$(this).removeClass("play");
-							$(this).addClass("pause");
+							$(this).removeClass("play");//Removing Play Image
+							$(this).addClass("pause");//Setting Pause Image
 							$("#IDSendQuery").click();
 						}
 					} else {
-
+						//Playing Again the Motion Chart
 						motionStatus = true;
 						$(this).html("Stop");
-						$(this).removeClass("play");
-						$(this).addClass("pause");
+						$(this).removeClass("play");//Removing Play Image
+						$(this).addClass("pause");	//Setting Play Image
 						if (library == "highcharts")
 							motionRepeat();
 						else if (library == "google")
@@ -247,24 +256,27 @@
 					}
 
 				});
-
+				
+				/** When Motion Display in ON , To change Speed dynamically**/
 				$("#speed").change(function() {
 
 					SPEED = (this).value;
 
 				});
 
+				/**Motion Display Change Event **/
 				$("#motionType").change(function() {
 
 					motionType = $(this).is(':checked');
-					if (!$(this).is(':checked')) {
-
+					if (!$(this).is(':checked')) { 
+							//If MotionDisplay is Off
 						$("#speed").attr('disabled', 'disabled');
 						$("#containerTools").hide();
 						$("#divWindowSize").hide();
+
 					} else {
+							//If Motion Display is ON
 						$("#speed").removeAttr('disabled');
-						//$("#containerTools").show();
 
 						if ($("#selectLibrary").val() == "highcharts")
 							$("#divWindowSize").show();
@@ -272,6 +284,7 @@
 
 				});
 
+				/*Library change Event*/
 				$("#selectLibrary").change(function() {
 					library = (this).value;
 
@@ -281,11 +294,17 @@
 						$("#divWindowSize").hide();
 
 				});
+
+				/*When Motion Display is ON, It changes window Size Dynamically*/
 				$("#windowSize").change(function() {
 
 					WINDOW_SIZE = (this).value;
 
 				});
+
+				/*
+				*	To Calculate Minimum & Maximum TimeStamp
+				*/
 				function calcTimeStamp() {
 					//Minimum TimeStamp
 					if (minTimeStamp == -1)
@@ -335,7 +354,7 @@
 					query[QUERY_USER_NAME] = username;
 					query[QUERY_IS_INTERACTIVE] = interactive;
 					var mode=interactive=="true"?"interactive":"non interactive"+" mode";
-					var r=  showNoty("Chart Loading in "+mode , "center", "off");
+					var r =showNoty("Chart Loading in "+mode , "center", "off",500);
 					query[QUERY_DEVICE_ARRAY] = new Array();
 					var i = 0;
 					for (device in allSelectedItems) {
@@ -357,48 +376,72 @@
 
 						$.post(URL_QUERY_DATA, JSON.stringify(query), function(data) {
 							receivedData = data;
-							
-							//alert(JSON.stringify(receivedData));
-
-							//downloadData.push(receivedData);
-							//
+						
 
 						});
 						if (!(receivedData.hasOwnProperty(RESPONSE_STATUS_CODE)))
 						//Means it contains data
 						{
-							//alert(JSON.stringify(receivedData["filename"]));	
+
+						
 							/************** -------------- Changes ---------------- ****************/
 							if (receivedData.hasOwnProperty("filename")) {
-								$("#container").hide();
+								
+								$("#resizer").hide();
+								$("#imageDiv").show();
+								$("#tools").hide();
 								var s=receivedData["filename"];
 								$("#staticImage").attr("src","../public/"+s);
-							} else {
-								//alert("not here");
-								//alert(JSON.stringify(receivedData["filename"]));
-								/************** -------------- Changes ---------------- ****************/
+								downloadData.push("The data cannot be downloaded. Please reduce the time");
+								$("#speed").attr("disabled","disabled");
+							} 
+							else if(receivedData=="No Data Found")
+							{	
+								$.noty.closeAll()
+								showNoty("No Data Found", "center", "off",2000);
+								$("#resizer").hide();
+								$("#imageDiv").hide();
+								$("#tools").hide();
+					
 
-								$("#box").show();
-								$("#container").show();
+							}
+							else {
+							
+								if($("#motionType").is(":checked")){
+									$("#speed").removeAttr("disabled");
+								}
+								else
+								{
+									$("#speed").attr("disabled","disabled");
+								}
+								$("#resizer").show();
+								$("#tools").show();
+								/************** -------------- Changes ---------------- ****************/
+								downloadData.push(receivedData);
+					
+								
+
+
+
 
 								series = appendElementsToSeries(series, receivedData);
 							}
+						
 
 						} else {
 
-							var r = showNoty("Error occured in fetching data/Data does not exist for " + "center", "off");
+							var r = showNoty("Error occured in fetching data/Data does not exist for " + "center", "off",5000);
 						}
 
 					} catch(e) {
 					alert(e);
 					}
-					/*}
-					 }*/
+					
+					
 					var textDownload = 'data:text/html;charset=utf-8,%3C%21DOCTYPE%20' + 'html%3E%0D%0A%3Chtml%20lang%3D%22en%22%3E%0D%0A%3Chead%' + '3E%3Ctitle%3EEmbedded%20Window%3C%2Ftitle%3E%3C%2Fhead%' + '3E%0D%0A%3Cbody%3E%3Ch5%3E' + JSON.stringify(downloadData) + '%3C%2Fh5%3E%3C%2Fbody%3E%0A' + '%3C%2Fhtml%3E%0A%0D%0A';
 					$("#downloadData").show();
 					$("#dialog").html(statsData);
 
-					//$("#downloadDataAnchorTag").attr("onclick","
 					$("#downloadDataAnchorTag").attr("onclick", "window.open('" + textDownload + "','_blank','height=300,width=400');return false;");
 					clearTimeout(motionInterval);
 
@@ -439,9 +482,7 @@
 					});
 					return false;
 				});
-				//.mouseout(function() {
-				//dlg.dialog("close");
-				//});
+				
 				/*
 				 * Validate the parameters to query for visualization
 				 * I/p:
@@ -471,7 +512,7 @@
 
 					if (deviceName.length == 0) {
 						errorState = true;
-						//errorInformation += "Select a device ";
+					
 						$("#IDDeviceSelect").addClass("error");
 						$("#spanDevice").show('slow', function() {
 						});
@@ -480,14 +521,11 @@
 						$("#IDDeviceSelect").focus();
 					} else if (sensorError) {
 						errorState = true;
-						//errorInformation += "Select a sensor";
-						//$("#spanSensor").show('slow', function() {
-						//});
-						//$("#spanSensor").html("Please Select a Sensor");
+				
 
 					} else if (startTime.length == 0) {
 						errorState = true;
-						//errorInformation += " Please provide a valid start time";
+			
 						$("#start_date_time").addClass("error");
 						$("#spanStartTime").show('slow', function() {
 						});
@@ -495,15 +533,15 @@
 
 					} else if (endTime.length == 0) {
 						errorState = true;
-						//errorInformation += " Please provide a valid end time";
+						
 						$("#end_date_time").addClass("error");
 						$("#spanEndTime").show('slow', function() {
 						});
 						$("#spanEndTime").html("Please select End Time");
-						//$("#end_date_time").focus();
+					
 					} else if (startTime >= endTime) {
 						errorState = true;
-						//errorInformation += " Start Time should be less than end time";
+						
 						$("#spanEndTime").show('slow', function() {
 						});
 						$("#spanEndTime").html("Start Time should be less than end time");
@@ -537,29 +575,8 @@
 				$("#IDSendQuery").click(function() {
 					motionStatus = true;
 					var prod = 0;
-					$("#motionStop").removeClass("play");
-					$("#motionStop").addClass("pause");
 
-					if (library == "highcharts") {
-
-						createChart();
-						//Empty the previous entries
-						while (chart.series.length > 0) {
-
-							chart.series[0].remove();
-						}//CLearing data from previous calls
-
-					} else if (library == "google") {
-
-						// if (overlays) {
-						//    for (i in overlays) {
-
-						//
-						//    }
-						//    overlays.length = 0;
-						//}
-
-					}
+					
 					var query = {};
 					var threshold = 0;
 
@@ -573,35 +590,33 @@
 					for (var i = 0; i < selectedDeviceName.length; i++) {
 						allSelectedItems[selectedDeviceName[i]] = [];
 						$("#div" + removeSpace(selectedDeviceName[i])).children('.sensor').find("input").each(function() {
-							//selectedSensorArrayLength = selectedSensorArray.length;
+					
 							if ($(this).prop("checked")) {
 
 								var prop = $(this);
 								for (var index in receivedDeviceData[DEVICE_ARRAY]) {
-									//alert("inside 2nd");
+								
 									if ( DEVICE_SENSORS in receivedDeviceData[DEVICE_ARRAY][index]) {
-										//removeError();
+									
 										var sensorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS];
-										//alert("check: inside DEVICE_SENSORS");
-										//alert(JSON.stringify(sensorArray));
+										
 
-										for (var indexSensors in receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS]) {//alert("index:"+indexSensors);
+										for (var indexSensors in receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS]) {
 
 											var sensorName = sensorArray[indexSensors]["name"];
 
-											//alert(sensorName);
+									
 											if (sensorName == prop.val()) {
-												//alert("Match");
+										
 												if ( DEVICE_CHANNELS in sensorArray[indexSensors]) {
 													var channelArray = sensorArray[indexSensors][DEVICE_CHANNELS];
-													//alert(JSON.stringify(channelArray));
-													//alert(typeof channelArray);
+											
 													for (var indexChannels in sensorArray[indexSensors][DEVICE_CHANNELS]) {
-														//alert("inside channels");
+													
 														var samplingperiod = sensorArray[indexSensors][DEVICE_CHANNELS][indexChannels]["samplingperiod"];
 														var type = 64;
 														prod += (1 / samplingperiod) * type;
-														//alert(prod);
+													
 
 													}
 
@@ -610,8 +625,7 @@
 										}
 									}
 								}
-								//selectedSensorArray[selectedSensorArrayLength] = $(this).val();
-								//selectedSensorArrayLength++;
+							
 
 								allSelectedItems[selectedDeviceName[i]].push(($(this).val()));
 
@@ -632,32 +646,70 @@
 					}
 
 					var errorStatus = validateVisualizationQuery(allSelectedItems, startTime, endTime);
+				
 					if (errorStatus[0]) {
 
 						return false;
 					} else {
-						removeError();
+						
+						
 					}
+
+					$("#motionStop").removeClass("play");	
+					$("#motionStop").addClass("pause");			//Setting the Pause button
+
+					$("#tools").hide();
+					if($("#motionType").is(":checked"))
+					{
+						
+						$("#containerTools").show();
+						$("#divWindowSize").show();
+					}
+					else
+					{
+						$("#containerTools").hide();
+						$("#divWindowSize").hide();
+						$("#speed").attr("disabled","disabled");
+						
+					}
+					if (library == "highcharts") {
+						
+						$("#resizer").show();
+						$("#container").show();
+					
+						$("#imageDiv").hide();
+					
+						createChart();
+						//Empty the previous entries
+						while (chart.series.length > 0) {
+
+							chart.series[0].remove();
+						}//CLearing data from previous calls
+
+					} else if (library == "google") {
+
+						$("#divWindowSize").hide();
+						$("#resizer").hide();
+						$("#imageDiv").hide();
+					}
+
+
 					//
 					//Now for each sensor in the selectedSensorList we would make a query and fetch the data and draw chart
 					//makeRequestAndDisplayChart(selectedDeviceName, selectedSensorArray, startTime, endTime);
 					var pointThreshold = 20000;
 					threshold = prod * (endTime - startTime);
 					interactive=threshold<1843200?"true":"false";
-					//threshold = prod*(endTime - startTime);
-					/*if(threshold < pointThreshold)*/
-					/*{makeRequestAndDisplayChart(allSelectedItems,startTime,endTime);
-					 }*/
+				
 					makeRequestAndDisplayChart(allSelectedItems, startTime, endTime);
 				});
 
 				//Getting Device List
 				try {
 					$.get(URL_LIST_ALL_DEVICES, function(data) {
-						//
+					
 						receivedDeviceData = data;
-						//
-
+					
 					});
 				} catch(e) {
 
@@ -695,13 +747,13 @@
 
 								deviceName.push(this.value);
 
-								//
+								
 								for (var index in receivedDeviceData[DEVICE_ARRAY]) {
 									var name = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_NAME];
-									//if(deviceName.indexOf(name)!=-1) {
+							
 									if (name == this.value) {
 										if ($("#IDDeviceSelect").is('.error')) {
-											// 			//
+											
 											$("#IDDeviceSelect").removeClass("error");
 											$("#spanDevice").hide();
 											$("#IDSendQuery").removeAttr("disabled", "disabled");
@@ -709,8 +761,9 @@
 										}
 
 										if ( DEVICE_SENSORS in receivedDeviceData[DEVICE_ARRAY][index]) {
-											removeError();
+										
 											var sensorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS];
+											
 											$("#labelSensorSelect").show();
 
 											$("#div" + removeSpace(name)).append("<div class=\"sensor\">");
@@ -721,22 +774,19 @@
 
 											error = 0;
 										}
-										//else {
-										// 			//
-										// 			$("#IDDeviceSelect").addClass("error");
-										// 			$("#spanDevice").show('slow', function() {
-										// 			});
-										// 			$("#IDSendQuery").attr("disabled", "disabled");
-										// 			$("#spanDevice").html("Please select a device which contains sensors!!");
-										// 			$("#IDDeviceSelect").focus();
-										// 		}
+										else {
+											$(this).attr("checked",false);
+
+											alert("Please select a device which contains sensors!!");
+								
+												}
 									}
 								}
 							} else {
 								$("#div" + removeSpace(this.value)).children('.sensor').remove();
 								deviceName.splice(deviceName.indexOf(this.value), 1);
 							}
-							//return false;
+							
 						});
 					} else {
 
@@ -754,9 +804,8 @@
 				 *
 				 */
 				function appendElementsToSeries(series, receivedData) {
-					//
-					$("container").show();
-					$("#containerTools").show();
+					
+					
 					var numberOfSeries = receivedData["chartSeries"].length;
 					var numberofData = receivedData["chartSeries"][0]["data"].length;
 
@@ -772,6 +821,7 @@
 						for (var i = 0; i < numberOfSeries; i++) {
 							chart.addSeries(receivedData["chartSeries"][i]);
 						}
+						
 					} else if (library == "google") {
 
 						var myLatlng = new Array();
@@ -819,15 +869,7 @@
 							});
 							line.setMap(map);
 							overlays.push(line);
-							//
-							//var line = new google.maps.Polyline({
-							// path: newPath,
-							// strokeColor: '#ff0000',
-							// strokeOpacity: 1.0,
-							//strokeWeight: 3
-							//	});
-							// line.setMap(map);
-							// overlays.push(line);
+							
 
 							//Mid Marker
 							var midMarker = new google.maps.Marker({
@@ -870,13 +912,12 @@
 				function motionRepeat() {
 
 					if (motionStatus) {
-						if (motionCounter < maxTimeStamp - (WINDOW_SIZE - 2) * 1000) {
+						if (motionCounter < (maxTimeStamp - (WINDOW_SIZE - 2) * 1000)) {
 							chart.xAxis[0].setExtremes(motionCounter, motionCounter + WINDOW_SIZE * oneSECOND);
 							motionCounter += 1000;
 							motionInterval = setTimeout(motionRepeat, oneSECOND / SPEED);
 
 						} else {
-							//$("#motionStop").html("RESTART");
 							$("#motionStop").removeClass("pause");
 							$("#motionStop").addClass("play");
 						}
@@ -885,30 +926,20 @@
 
 				function mapRepeat() {
 
-					//
-
+				
 					if (motionStatus) {
 
 						if (motionCounter < newPath.length) {
 
-							//tempPath.push(newPath[motionCounter]);
-
-							//overlays.push(line);
+							
 							poly = line.getPath();
 							poly.push(newPath[motionCounter]);
-							//
+							
 							motionMarker.setPosition(newPath[motionCounter]);
 
 							motionCounter++;
 							setTimeout(mapRepeat, oneSECOND / SPEED);
-							//Mid Marker
-							//var midMarker = new google.maps.Marker({
-							//position: newPath[Math.round((newPath.length-1)/2)],
-							//map: map,
-							//title: 'Mid Point'
-							//});
-
-							//End Point Marker
+						
 
 						} else {
 							$("#motionStop").removeClass("pause");
@@ -930,35 +961,25 @@
 				<br />
 				<span style="font-size:25px;">Sense - Interact - Actuate</span></h1>
 
-				<!--<nav>
-
-				<ul>
-				<li>
-				<a id="home" >Home</a>
-				</li>
-
-				<li>
-				<a id="logout">Logout</a>
-				</li>
-				</ul>
-
-				</nav>-->
 
 				<nav>
 					<ul>
 						<li>
-							<a id="devices" >Devices</a>
+							<a id="home">Home</a>
+						</li>
+						<li>
+							<a id="devices"  >Devices</a>
 						</li>
 						<li>
 							<a id="visualization" class="active">Visualization</a>
 						</li>
 						<li>
-							<a id="repositoryInformation">Repository Info</a>
+							<a id="repositoryInformation">Repository</a>
 						</li>
-						<!--<li>
-						<a id="logout">Logout</a>
-						</li>-->
-
+						<li>
+							<a id="speak" >Speak</a>
+						</li>
+						
 					</ul>
 				</nav>
 				<br />
@@ -972,12 +993,13 @@
 			</header>
 		</div>
 		<div class="wrapper">
-			<div id="errorDiv" class="errorDiv"></div>
+			
 
 			<div>
 				<h1 class="newfont" style="text-align:center;">Visualization</h1>
 				<hr>
 			</div>
+			<!-- Left Pane starts here-->
 			<div id="visualBox" style="">
 				<div class="leftDiv">
 					<label>Select Devices</label>
@@ -988,10 +1010,7 @@
 					</div>
 					<span class="errorVisual" id="spanDevice"></span>
 				</div>
-				<!--<div id="labelSensorSelect" class="leftDiv"><label>Select Sensor</label></div>
-
-				<div id="IDSensorsSelect" class="rightDiv" style=""></div>
-				-->
+			
 				<div class="leftDiv">
 					<label>Start Date :</label>
 				</div>
@@ -1020,8 +1039,10 @@
 					</select>
 				</div>
 				<br />
-
 			</div>
+			<!-- Left pane ends here -->
+
+			<!--Right Pane starts here-->
 			<div id="visualFunctions" style="float:right;">
 				<div class="leftDiv">
 					Choose a Library
@@ -1038,7 +1059,7 @@
 					<label>Motion Display</label>
 				</div>
 				<div class="rightDiv">
-					<input type="checkbox" name="motionType" id="motionType" checked="true" />
+					<input type="checkbox" name="motionType" id="motionType" />
 				</div>
 				<div id="divWindowSize">
 					<div class="leftDiv">
@@ -1052,7 +1073,7 @@
 					</div>
 				</div>
 			</div>
-
+			<!-- Right Pane ends here-->
 			<div style="clear:both;text-align:center;">
 				<button class="google-button" id="IDSendQuery" >
 					View Data
@@ -1064,18 +1085,18 @@
 			<div id="resizer">
 				<div id="inner-resizer">
 					<div id="container" style="height: 400px;clear:both;"></div>
+					<div id="containerTools" style="text-align:center;">
+						<button id="motionStop" class="pause">
+						Stop
+						</button>
+					</div>
 				</div>
 			</div>
-			<div id="containerTools" style="text-align:center;">
-				<button id="motionStop" class="pause">
-					Stop
-				</button>
+			
+			<div id="imageDiv" style="text-align:center;">
+				<img id="staticImage"></img>
 			</div>
-			<div id="imageDiv">
-				<img id="staticImage">
-			</img>
-		</div>
-			<center>
+			<div id="tools" style="text-align:center;">
 				<div id="dialog" style="font-family:arial,font-size:-1;color:orange;"></div>
 				<div id="downloadData" style="display:none;">
 					<button class="google-button-blue" id="downloadDataAnchorTag">
@@ -1086,11 +1107,11 @@
 						Statistics
 					</button>
 				</div>
-			</center>
+			</div>
 
-			</input>
-			<input type="hidden" id =username value =${username}>
-			</input>
+	
+			<input type="hidden" id ="username" value =${username} />
+
 
 		</div>
 
