@@ -5,20 +5,20 @@
 	
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/opt/play-1.2.4/framework/play-1.2.4.jar" sourcepath="/opt/play-1.2.4/framework/src" />
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/jcommon-1.0.17.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/jfreechart-1.0.14.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/jfreechart-1.0.14-experimental.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/servlet.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/jsapi-1.0-base.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/sphinx4.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/jfreechart-1.0.14-swt.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/tags.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/junit.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/js.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/gnujaxp.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/swtgraphics2d.jar"/>
-	<classpathentry kind="lib" path="/home/nipun/git/SensorActApp/repositoryUserInterface/lib/iText-2.1.5.jar"/>
+	<classpathentry kind="lib" path="/home/nipun/workspace/SensorActApp/repositoryUserInterface/lib/js.jar"/>
+	<classpathentry kind="lib" path="/home/nipun/workspace/SensorActApp/repositoryUserInterface/lib/tags.jar"/>
+	<classpathentry kind="lib" path="/home/nipun/workspace/SensorActApp/repositoryUserInterface/lib/servlet.jar"/>
+	<classpathentry kind="lib" path="/home/nipun/workspace/SensorActApp/repositoryUserInterface/lib/swtgraphics2d.jar"/>
+	<classpathentry kind="lib" path="/home/nipun/workspace/SensorActApp/repositoryUserInterface/lib/jfreechart-1.0.14-swt.jar"/>
+	<classpathentry kind="lib" path="/home/nipun/workspace/SensorActApp/repositoryUserInterface/lib/iText-2.1.5.jar"/>
+	<classpathentry kind="lib" path="/home/nipun/workspace/SensorActApp/repositoryUserInterface/lib/junit.jar"/>
+	<classpathentry kind="lib" path="/home/nipun/workspace/SensorActApp/repositoryUserInterface/lib/jfreechart-1.0.14-experimental.jar"/>
+	<classpathentry kind="lib" path="/home/nipun/workspace/SensorActApp/repositoryUserInterface/lib/gnujaxp.jar"/>
+	<classpathentry kind="lib" path="/home/nipun/workspace/SensorActApp/repositoryUserInterface/lib/sphinx4.jar"/>
+	<classpathentry kind="lib" path="/home/nipun/workspace/SensorActApp/repositoryUserInterface/lib/jfreechart-1.0.14.jar"/>
+	<classpathentry kind="lib" path="/home/nipun/workspace/SensorActApp/repositoryUserInterface/lib/jcommon-1.0.17.jar"/>
+	<classpathentry kind="lib" path="/home/nipun/workspace/SensorActApp/repositoryUserInterface/lib/jsapi-1.0-base.jar"/>
+	<classpathentry kind="lib" path="/home/nipun/workspace/SensorActApp/repositoryUserInterface/lib/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar"/>
 	<classpathentry kind="lib" path="/opt/play-1.2.4/framework/lib/commons-collections-3.2.1.jar"/>
 	<classpathentry kind="lib" path="/opt/play-1.2.4/framework/lib/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="lib" path="/opt/play-1.2.4/framework/lib/javax.inject-1.0.jar"/>

@@ -66,6 +66,9 @@ public class QueryData extends SensorActAPI {
 
 		}
 
+		/*
+		 * @TODO : Automatically do mode checking based on size of data
+		 */
 		if (queryRequest.interactive.equals("false")) {
 
 			processNonInteractive(arrayOfResponses);
