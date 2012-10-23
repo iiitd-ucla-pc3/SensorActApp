@@ -60,7 +60,14 @@ public class QueryData extends SensorActAPI {
 				System.out.println(responseFromBroker.getString());
 				WaveSegmentArray wa = gson.fromJson(
 						responseFromBroker.getString(), WaveSegmentArray.class);
-				arrayOfResponses.add(wa);
+				/*
+				 * If the size of WaveSegmentArray is 0, that is no data is found, then in that 
+				 * case, it is not to be added to arrayOfResponses
+				 */
+				if (wa.wavesegmentArray.size()>0)
+				{
+					arrayOfResponses.add(wa);
+				}
 
 			}
 
@@ -161,6 +168,7 @@ public class QueryData extends SensorActAPI {
 	}
 
 	public String createChart(ArrayList<WaveSegmentArray> arrayOfResponses) {
+		System.out.println("Array of Responese"+arrayOfResponses);	
 		XYDataset dataset = createDataset(arrayOfResponses);
 		JFreeChart chart = createJFreeChart(dataset);
 		String uuid = UUID.randomUUID().toString();
@@ -169,6 +177,7 @@ public class QueryData extends SensorActAPI {
 			System.out.println("Creating image");
 			ChartUtilities.saveChartAsPNG(new File(Const.BASE_IMAGE_URL + uuid
 					+ ".png"), chart, 800, 800);
+			System.out.println("Image created");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -179,6 +188,7 @@ public class QueryData extends SensorActAPI {
 	}
 
 	public JFreeChart createJFreeChart(XYDataset dataset) {
+		System.out.println(dataset);
 		JFreeChart chart = ChartFactory.createTimeSeriesChart("Visualization", // title
 				"Date-Time", // x-axis label
 				"Readings", // y-axis label
@@ -213,6 +223,7 @@ public class QueryData extends SensorActAPI {
 	public XYDataset createDataset(ArrayList<WaveSegmentArray> arrayOfResponses) {
 		TimeSeriesCollection dataset = new TimeSeriesCollection();
 		int numberOfResponses = arrayOfResponses.size();
+		if (numberOfResponses>0)
 		for (int i = 0; i < numberOfResponses; i++) {
 			WaveSegmentArray wa = arrayOfResponses.get(i);
 			int numberOfSeries = wa.wavesegmentArray.get(0).data.channels
@@ -248,6 +259,7 @@ public class QueryData extends SensorActAPI {
 								.get(j).readings.get(k);
 
 						s1[j].addOrUpdate(x, y);
+						
 
 					}
 

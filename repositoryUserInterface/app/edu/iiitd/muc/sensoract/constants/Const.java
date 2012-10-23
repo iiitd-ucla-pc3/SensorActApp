@@ -105,8 +105,8 @@ public class Const {
 	 * URL's
 	 */
 	public static final String URL_UI_SERVER = "http://localhost:9002/";
-	public static final String URL_BROKER_SERVER = "http://muc.iiitd.com:9001/";
-	public static final String URL_REPOSITORY_SERVER = "http://localhost:9000/";
+	public static final String URL_BROKER_SERVER = "http://10.0.0.5:9001/";
+	public static final String URL_REPOSITORY_SERVER = "http://10.0.0.5:9001/";
 	public static final String URL_REPOSITORY_REGISTER_USER = URL_REPOSITORY_SERVER
 			+ "user/register";
 	public static final String URL_REPOSITORY_LOGIN_USER = URL_REPOSITORY_SERVER
@@ -195,7 +195,7 @@ public class Const {
 	 */
 	public static final String BASE_WAVEFILE_URL = "/home/nipun/git/SensorActApp/repositoryUserInterface/app/edu/cmu/sphinx/demo/transcriber/";
 	public static final String BASE_OUTPUTWAVEFILE_URL = "/home/nipun/git/SensorActApp/repositoryUserInterface/public/javascripts/";
-	public static final String BASE_IMAGE_URL = "/home/nipun/git/SensorActApp/repositoryUserInterface/public/";
+	public static final String BASE_IMAGE_URL = "/home/nipun/workspace/SensorActApp/repositoryUserInterface/public/";
 
 	public class Error {
 
