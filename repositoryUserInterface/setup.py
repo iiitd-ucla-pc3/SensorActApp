@@ -9,6 +9,14 @@ url_var = raw_input('Please enter the url where you wish to host this web applic
 
 port_var = raw_input('Please enter the port number if any(Enter 1 in case of no port) : ');
 
+repository_var = raw_input('Please enter the repository url (Don\'t put a slash at the end eg:http://localhost) : ');
+
+repository_port_var = raw_input('Please enter the repository port number : ');
+
+
+
+
+
 
 ########## ------------- Const.java -------------##############
 
@@ -26,10 +34,24 @@ for line in source:
 		if(sub):    		
 			print sub,"replacement BASE_WAVEFILE_URL successful"		
 			destination.write( sub )	
+			
+	elif re.search('BASE_IMAGE_URL',line):
+		sub = re.sub('public static final String BASE_IMAGE_URL = \"[a-zA-Z/0-9]*/SensorActApp/repositoryUserInterface/repositoryUserInterface/public/\";','public static final String BASE_IMAGE_URL = "'+abs_url_name+'/SensorActApp/repositoryUserInterface/public/";',line,count=1);
+		print "BASE_IMAGE_URL match occured";
+		if(sub):    		
+			print sub,"replacement BASE_IMAGE_URL successful"		
+			destination.write( sub )
 ########################## --------------------- url_formation ==> URL_UI_SERVER ------------------------ ##########
 	elif re.search('String URL_UI_SERVER',line):
 		if(port_var!="1"):		
 			sub = re.sub('public static final String URL_UI_SERVER = \"[a-zA-Z/.\:0-9]*\";','public static final String URL_UI_SERVER = "'+url_var+':'+port_var+'/";',line,count=1);
+			print "URL_UI_SERVER match occured";
+		if(sub):    		
+			print sub,"replacement successful"		
+			destination.write( sub )
+	elif re.search('String URL_REPOSITORY_SERVER',line):
+		if(port_var!="1"):		
+			sub = re.sub('public static final String URL_REPOSITORY_SERVER = \"[a-zA-Z/.\:0-9]*\";','public static final String URL_REPOSITORY_SERVER = "'+repository_var+':'+repository_port_var+'/";',line,count=1);
 			print "URL_UI_SERVER match occured";
 		if(sub):    		
 			print sub,"replacement successful"		
