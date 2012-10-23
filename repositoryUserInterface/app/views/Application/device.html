@@ -117,7 +117,7 @@
 				function createAccordionHeader(accordionId,deviceName,deviceLocation,deviceId)
 					{
 						
-alert(deviceName);
+//alert(deviceName);
 $("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLocation + "<br/> </a></h2><div id=\"" + deviceId + "\"></div>");
 					}
 
@@ -193,7 +193,7 @@ $("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLoc
 					}
 					try {
 						$.get(urlDevicesOrTemplatesList, function(data) {
-							alert(JSON.stringify(data));
+							//alert(JSON.stringify(data));
 							deviceOrTemplateDataList[index] = data;
 							//Successfully received data
 							if(deviceOrTemplateDataList[index].hasOwnProperty(RESPONSE_STATUS_CODE))//Means a failure has occured {
