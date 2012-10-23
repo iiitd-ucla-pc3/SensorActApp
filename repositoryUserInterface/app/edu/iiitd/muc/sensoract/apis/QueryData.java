@@ -72,6 +72,11 @@ public class QueryData extends SensorActAPI {
 			}
 
 		}
+		
+		if (arrayOfResponses.size()==0)
+		{
+			renderText("No Data Found");
+		}
 
 		/*
 		 * @TODO : Automatically do mode checking based on size of data

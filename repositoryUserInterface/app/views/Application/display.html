@@ -387,6 +387,8 @@
 							/************** -------------- Changes ---------------- ****************/
 							if (receivedData.hasOwnProperty("filename")) {
 								
+								$.noty.closeAll();
+								
 								$("#resizer").hide();
 								$("#imageDiv").show();
 								$("#tools").hide();
@@ -397,16 +399,19 @@
 							} 
 							else if(receivedData=="No Data Found")
 							{	
-								$.noty.closeAll()
+								$.noty.closeAll();
 								showNoty("No Data Found", "center", "off",2000);
 								$("#resizer").hide();
 								$("#imageDiv").hide();
 								$("#tools").hide();
+								$.noty.closeAll();
+								
 					
 
 							}
 							else {
 							
+								$.noty.closeAll();
 								if($("#motionType").is(":checked")){
 									$("#speed").removeAttr("disabled");
 								}
