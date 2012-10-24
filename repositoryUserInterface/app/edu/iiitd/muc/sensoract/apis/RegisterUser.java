@@ -23,6 +23,7 @@ public class RegisterUser extends SensorActAPI {
 	 */
 
 	public final void doProcess(String body) {
+		System.out.println(body+"Body");
 		RegisterUserRequest registerUserRequest = null;
 		try {
 			registerUserRequest = gson

@@ -27,7 +27,7 @@ public class Application extends Controller {
 	/*
 	 * If a user has not logged in,he is redirected to the index page
 	 */
-	@Before(unless = { "login", "index" })
+	@Before(unless = { "login", "index","registeruser" })
 	static void checkAuthentication() {
 		System.out.println("Session" + session.get(Const.USERNAME));
 		if (session.get(Const.USERNAME) == null)
