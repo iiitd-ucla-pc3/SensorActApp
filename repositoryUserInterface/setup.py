@@ -1,9 +1,10 @@
 import os
 import re
 
+abs_url_name=os.path.dirname(os.path.dirname(os.getcwd()))
 ############# -------------- Input ---------------############
 
-abs_url_name = raw_input('Please enter the absolute path of the directory where you wish to save the SensorActApp project:(Don\'t put a slash at the end eg:/home/directoryName/iiitd) : ');
+#abs_url_name = raw_input('Please enter the absolute path of the directory where you wish to save the SensorActApp project:(Don\'t put a slash at the end eg:/home/directoryName/iiitd) : ');
 
 url_var = raw_input('Please enter the url where you wish to host this web application (Don\'t put a slash at the end eg:http://localhost) : ');
 
