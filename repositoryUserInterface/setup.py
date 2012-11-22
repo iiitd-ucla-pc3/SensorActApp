@@ -1,9 +1,10 @@
 import os
 import re
 
+abs_url_name=os.path.dirname(os.path.dirname(os.getcwd()))
 ############# -------------- Input ---------------############
 
-abs_url_name = raw_input('Please enter the absolute path of the directory where you wish to save the SensorActApp project:(Don\'t put a slash at the end eg:/home/directoryName/iiitd) : ');
+#abs_url_name = raw_input('Please enter the absolute path of the directory where you wish to save the SensorActApp project:(Don\'t put a slash at the end eg:/home/directoryName/iiitd) : ');
 
 url_var = raw_input('Please enter the url where you wish to host this web application (Don\'t put a slash at the end eg:http://localhost) : ');
 
@@ -36,7 +37,7 @@ for line in source:
 			destination.write( sub )	
 			
 	elif re.search('BASE_IMAGE_URL',line):
-		sub = re.sub('public static final String BASE_IMAGE_URL = \"[a-zA-Z/0-9]*/SensorActApp/repositoryUserInterface/repositoryUserInterface/public/\";','public static final String BASE_IMAGE_URL = "'+abs_url_name+'/SensorActApp/repositoryUserInterface/public/";',line,count=1);
+		sub = re.sub('public static final String BASE_IMAGE_URL = \"[a-zA-Z/0-9]*/SensorActApp/repositoryUserInterface/public/\";','public static final String BASE_IMAGE_URL = "'+abs_url_name+'/SensorActApp/repositoryUserInterface/public/";',line,count=1);
 		print "BASE_IMAGE_URL match occured";
 		if(sub):    		
 			print sub,"replacement BASE_IMAGE_URL successful"		
