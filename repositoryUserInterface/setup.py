@@ -6,13 +6,13 @@ abs_url_name=os.path.dirname(os.path.dirname(os.getcwd()))
 
 #abs_url_name = raw_input('Please enter the absolute path of the directory where you wish to save the SensorActApp project:(Don\'t put a slash at the end eg:/home/directoryName/iiitd) : ');
 
-url_var = raw_input('Please enter the url where you wish to host this web application (Don\'t put a slash at the end eg:http://localhost) : ');
+url_var = raw_input('Please enter the url where you wish to host this web application (Don\'t put a slash at the end eg:http://192.168.1.3) : ');
 
-port_var = raw_input('Please enter the port number if any(Enter 1 in case of no port) : ');
+port_var = raw_input('Please enter the port number for Application eg. 9003 : ');
 
-repository_var = raw_input('Please enter the repository url (Don\'t put a slash at the end eg:http://localhost) : ');
+repository_var = raw_input('Please enter the repository url (Don\'t put a slash at the end eg:http://192.168.1.2) : ');
 
-repository_port_var = raw_input('Please enter the repository port number : ');
+repository_port_var = raw_input('Please enter the repository port number eg. 9001: ');
 
 
 
