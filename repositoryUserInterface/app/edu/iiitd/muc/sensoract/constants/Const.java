@@ -104,9 +104,9 @@ public class Const {
 	/*
 	 * URL's
 	 */
-	public static final String URL_UI_SERVER = "http://localhost:9002/";
+	public static final String URL_UI_SERVER = "http://localhost:9003/";
 	public static final String URL_BROKER_SERVER = "http://10.0.0.5:9001/";
-	public static final String URL_REPOSITORY_SERVER = "http://10.0.0.5:9001/";
+	public static final String URL_REPOSITORY_SERVER = "http://localhost:9000/";
 	public static final String URL_REPOSITORY_REGISTER_USER = URL_REPOSITORY_SERVER
 			+ "user/register";
 	public static final String URL_REPOSITORY_LOGIN_USER = URL_REPOSITORY_SERVER

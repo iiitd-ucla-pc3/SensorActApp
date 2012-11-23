@@ -9,15 +9,18 @@ var PASSWORD="password";
 var EMAIL="email";
 //Dictionary constants associated with device profile
 var DEVICE_ARRAY="devicelist";
+var DEVICE_TEMPLATE_ARRAY="templatelist";
+
 var DEVICE_PROFILE="deviceprofile";
-var DEVICE_NAME="name";
+var DEVICE_NAME="devicename";
+var DEVICE_TEMPLATE_NAME="templatename";
 var DEVICE_LOCATION="location";
 var DEVICE_SENSORS="sensors";
 var DEVICE_CHANNELS = "channels";
 var DEVICE_ACTUATORS="actuators";
 var DEVICE_SENSOR_CHANNELS="channels";
 var DEVICE_SENSOR_NAME="name";
-var DEVICE_SENSOR_ID="id";
+var DEVICE_SENSOR_ID="sid";
 var DEVICE_SENSOR_CHANNEL_NAME="name";
 var DEVICE_SENSOR_CHANNEL_TYPE="type";
 var DEVICE_SENSOR_CHANNEL_UNIT="unit";
@@ -121,7 +124,7 @@ var REPOSITORY_URL="URL"
 //URL's ------------------------------------------------------------------------
 //Note that this needs to be modified when on LAN etc to http://192.168.1.122:9000
 //############# DEVICE  ###################################
-var URL_UI_SERVER="http://localhost:9002/";
+var URL_UI_SERVER="http://localhost:9003/";
 
 var URL_LOGIN_USER=URL_UI_SERVER+"login";
 var URL_REGISTER_USER=URL_UI_SERVER+"register";

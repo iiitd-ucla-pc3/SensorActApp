@@ -44,9 +44,11 @@ lang="en">
 					deleteDeviceOrTemplate = URL_DELETE_DEVICE;
 					findDeviceOrTemplate = URL_FIND_DEVICE;
 					console.log(findDeviceOrTemplate);
+					var DEVICE_OR_TEMPLATE_NAME=DEVICE_NAME;
 				} else {
 					deleteDeviceOrTemplate = URL_DELETE_DEVICE_TEMPLATE;
 					findDeviceOrTemplate = URL_FIND_DEVICE_TEMPLATE;
+					var DEVICE_OR_TEMPLATE_NAME=DEVICE_TEMPLATE_NAME;
 
 				}
 
@@ -513,7 +515,7 @@ lang="en">
 				}
 
 				var editDevice = {};
-				editDevice["devicename"] = deviceToEdit;
+				editDevice[DEVICE_OR_TEMPLATE_NAME] = deviceToEdit;
 				editDevice[SECRET_KEY] = secretkey;
 
 				/**
@@ -535,7 +537,7 @@ lang="en">
 							} else {
 								//Got the device profile
 								//Add highest level information
-								$("#newDeviceName").val(receivedData[DEVICE_NAME]);
+								$("#newDeviceName").val(receivedData[DEVICE_OR_TEMPLATE_NAME]);
 								$("#newDeviceLocation").val(receivedData[DEVICE_LOCATION]);
 								$("#newDeviceTags").val(receivedData[DEVICE_TAGS]);
 
@@ -762,7 +764,7 @@ lang="en">
 					$('#noSensorNoActuator').html("");
 					$('#noSensorChannelsError').html("");
 			
-					deviceObject[DEVICE_NAME] = $("#newDeviceName").val();
+					
 					validateFieldAndMakeErrorInformation($("#newDeviceName"), MIN_LENGTH_DEVICE_NAME, MAX_LENGTH_DEVICE_NAME, "device", "name", "");
 					deviceObject[DEVICE_LOCATION] = $("#newDeviceLocation").val();
 					validateFieldAndMakeErrorInformation($("#newDeviceLocation"), MIN_LENGTH_DEVICE_LOCATION, MAX_LENGTH_DEVICE_LOCATION, "device", "location", "");
@@ -892,8 +894,10 @@ lang="en">
 					var addDeviceOrTemplateURL;
 					if($("#deviceOrTemplateSelect").find(":selected").text() == "Device") {
 						addDeviceOrTemplateURL = URL_ADD_DEVICE;
+						deviceObject[DEVICE_NAME] = $("#newDeviceName").val();
 					} else {
 						addDeviceOrTemplateURL = URL_ADD_DEVICE_TEMPLATE;
+						deviceObject[DEVICE_TEMPLATE_NAME] = $("#newDeviceName").val();
 					}
 				
 					function postToDeleteDevice(){
@@ -915,7 +919,7 @@ lang="en">
 					if(deviceToEdit != FAKE_DEVICE_NAME) {
 
 						var messageToDeleteDevice = {};
-						messageToDeleteDevice["devicename"] = deviceToEdit;
+						messageToDeleteDevice[DEVICE_OR_TEMPLATE_NAME] = deviceToEdit;
 						messageToDeleteDevice[SECRET_KEY] = secretkey;
 
 

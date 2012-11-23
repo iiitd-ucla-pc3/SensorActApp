@@ -128,7 +128,18 @@ $("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLoc
 
 				function createModifyButtons(parentId,removeDeviceButton,saveAsButton,editDeviceButton,index,urlDevicesOrTemplatesDelete)
 					{
+						alert(urlDevicesOrTemplatesDelete);
 						var isdevice=index==0?true:false;
+						if (index==0)
+						{
+							var DEVICE_OR_TEMPLATE_ARRAY=DEVICE_ARRAY;
+							var DEVICE_OR_TEMPLATE_NAME=DEVICE_NAME;
+						}
+						else
+						{
+							var DEVICE_OR_TEMPLATE_ARRAY=DEVICE_TEMPLATE_ARRAY;
+							var DEVICE_OR_TEMPLATE_NAME=DEVICE_TEMPLATE_NAME;
+						}
 
 						var removeButton=createCustomElement('button',parentId,removeDeviceButton,'google-button google-button-blue',"Remove");
 						//removeButton.click(function(){confirm("Do you want to remove button?");});
@@ -140,7 +151,7 @@ $("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLoc
 												return false;
 											var deviceIndex = this.id.toString();
 											deviceIndex = parseInt(deviceIndex.substr(deviceIndex.length - 1));
-											var deviceToBeRemoved = deviceOrTemplateDataList[index][DEVICE_ARRAY][deviceIndex][DEVICE_NAME];
+											var deviceToBeRemoved = deviceOrTemplateDataList[index][DEVICE_OR_TEMPLATE_ARRAY][deviceIndex][DEVICE_OR_TEMPLATE_NAME];
 											var messageToDeleteDevice = {}
 											messageToDeleteDevice["devicename"] = deviceToBeRemoved;
 											messageToDeleteDevice[SECRET_KEY] = secretkey;
@@ -159,7 +170,7 @@ $("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLoc
 
 											var deviceIndex = this.id.toString();
 											deviceIndex = parseInt(deviceIndex.substr(deviceIndex.length - 1));
-											var deviceToBeEdited = deviceOrTemplateDataList[index][DEVICE_ARRAY][deviceIndex][DEVICE_NAME];
+											var deviceToBeEdited = deviceOrTemplateDataList[index][DEVICE_OR_TEMPLATE_ARRAY][deviceIndex][DEVICE_OR_TEMPLATE_NAME];
 											var messageToEditDevice = {}
 											messageToEditDevice["devicename"] = deviceToBeEdited;
 											messageToEditDevice[SECRET_KEY] = secretkey;
@@ -170,7 +181,7 @@ $("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLoc
 
 											var deviceIndex = this.id.toString();
 											deviceIndex = parseInt(deviceIndex.substr(deviceIndex.length - 1));
-											var deviceToBeEdited = deviceOrTemplateDataList[index][DEVICE_ARRAY][deviceIndex][DEVICE_NAME];
+											var deviceToBeEdited = deviceOrTemplateDataList[index][DEVICE_OR_TEMPLATE_ARRAY][deviceIndex][DEVICE_OR_TEMPLATE_NAME];
 											var messageToEditDevice = {}
 											messageToEditDevice["devicename"] = deviceToBeEdited;
 											messageToEditDevice[SECRET_KEY] = secretkey;
@@ -188,8 +199,12 @@ $("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLoc
 					var index;
 					if(isDevice == "true") {
 						index = 0;
+						var DEVICE_OR_TEMPLATE_ARRAY=DEVICE_ARRAY;
+						var DEVICE_OR_TEMPLATE_NAME=DEVICE_NAME;
 					} else {
 						index = 1;
+						var DEVICE_OR_TEMPLATE_ARRAY=DEVICE_TEMPLATE_ARRAY;
+						var DEVICE_OR_TEMPLATE_NAME=DEVICE_TEMPLATE_NAME;
 					}
 					try {
 						$.get(urlDevicesOrTemplatesList, function(data) {
@@ -206,18 +221,18 @@ $("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLoc
 									$("#template").prepend('No ');
 							} else {
 
-								var numberOfDevices = deviceOrTemplateDataList[index][DEVICE_ARRAY].length;
+								var numberOfDevices = deviceOrTemplateDataList[index][DEVICE_OR_TEMPLATE_ARRAY].length;
 								//alert(numberOfDevices);
 								if(numberOfDevices > 0) {
 									
 									for(var i = 0; i < numberOfDevices; i++) {
 										if(index == 0) {
 											var id = "device" + i.toString();
-											createAccordionHeader("accordion",deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_NAME],deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_LOCATION],id);
+											createAccordionHeader("accordion",deviceOrTemplateDataList[index][DEVICE_OR_TEMPLATE_ARRAY][i][DEVICE_OR_TEMPLATE_NAME],deviceOrTemplateDataList[index][DEVICE_OR_TEMPLATE_ARRAY][i][DEVICE_LOCATION],id);
 											
 										} else {
 											var id = "devicetemplate" + i.toString();
-											createAccordionHeader("accordion1",deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_NAME],deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_LOCATION],id);
+											createAccordionHeader("accordion1",deviceOrTemplateDataList[index][DEVICE_OR_TEMPLATE_ARRAY][i][DEVICE_OR_TEMPLATE_NAME],deviceOrTemplateDataList[index][DEVICE_OR_TEMPLATE_ARRAY][i][DEVICE_LOCATION],id);
 											
 										}
 
@@ -236,8 +251,8 @@ $("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLoc
 										}
 
 										
-										var deviceIP = deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_IP];
-										var deviceTags = deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_TAGS];
+										var deviceIP = deviceOrTemplateDataList[index][DEVICE_OR_TEMPLATE_ARRAY][i][DEVICE_IP];
+										var deviceTags = deviceOrTemplateDataList[index][DEVICE_OR_TEMPLATE_ARRAY][i][DEVICE_TAGS];
 										//$('#accordion').append("<h3><a href=\"#\">"+deviceName+"</a></h3>")
 										var Tags = deviceTags.split(",");
 
@@ -254,7 +269,7 @@ $("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLoc
 
 										createModifyButtons($(idSelector),removeDeviceButton,saveAsButton,editDeviceButton,index,urlDevicesOrTemplatesDelete);
 										
-										if(deviceOrTemplateDataList[index][DEVICE_ARRAY][i].hasOwnProperty(DEVICE_SENSORS)) {
+										if(deviceOrTemplateDataList[index][DEVICE_OR_TEMPLATE_ARRAY][i].hasOwnProperty(DEVICE_SENSORS)) {
 											createCustomElement("div",$(idSelector),null,"oldSensors","");
 											
 											var temp=createCustomElement("p",$(idSelector).children(".oldSensors"),null,'google-button','Sensors');
@@ -262,7 +277,7 @@ $("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLoc
 											//temp.setStyle('font-size','25px');
 											temp.css('cursor','default');
 											temp.css('font-size','19px');
-											var sensor = deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_SENSORS];
+											var sensor = deviceOrTemplateDataList[index][DEVICE_OR_TEMPLATE_ARRAY][i][DEVICE_SENSORS];
 											var numberOfSensors = sensor.length;
 											for(var j = 0; j < numberOfSensors; j++) {
 												//alert(numberOfSensors);
@@ -292,12 +307,12 @@ $("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLoc
 											}
 										}
 
-										if(deviceOrTemplateDataList[index][DEVICE_ARRAY][i].hasOwnProperty(DEVICE_ACTUATORS)) {
+										if(deviceOrTemplateDataList[index][DEVICE_OR_TEMPLATE_ARRAY][i].hasOwnProperty(DEVICE_ACTUATORS)) {
 
 											$(idSelector).append("<div class=\"oldActuators\" style=''></div>");
 											$(idSelector).children(".oldActuators").append("<p class='google-button' style='cursor:default;font-size:18px;'>Actuators</p>");
-											$(idSelector).children(".oldActuators").append("<div id='ipDiv' style='font-weight:bold;'><label id=\"newDeviceIPLabel\">IP</label><input id=newDeviceIP value=" + deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_IP] + "></input></div>");
-											var actuator = deviceOrTemplateDataList[index][DEVICE_ARRAY][i][DEVICE_ACTUATORS];
+											$(idSelector).children(".oldActuators").append("<div id='ipDiv' style='font-weight:bold;'><label id=\"newDeviceIPLabel\">IP</label><input id=newDeviceIP value=" + deviceOrTemplateDataList[index][DEVICE_OR_TEMPLATE_ARRAY][i][DEVICE_IP] + "></input></div>");
+											var actuator = deviceOrTemplateDataList[index][DEVICE_OR_TEMPLATE_ARRAY][i][DEVICE_ACTUATORS];
 											var numberOfActuators = actuator.length;
 											for(var j = 0; j < numberOfActuators; j++) {
 												var actuatorName = actuator[j][DEVICE_ACTUATOR_NAME];
