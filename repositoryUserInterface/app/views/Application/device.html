@@ -153,7 +153,7 @@ $("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLoc
 											deviceIndex = parseInt(deviceIndex.substr(deviceIndex.length - 1));
 											var deviceToBeRemoved = deviceOrTemplateDataList[index][DEVICE_OR_TEMPLATE_ARRAY][deviceIndex][DEVICE_OR_TEMPLATE_NAME];
 											var messageToDeleteDevice = {}
-											messageToDeleteDevice["devicename"] = deviceToBeRemoved;
+											messageToDeleteDevice[DEVICE_OR_TEMPLATE_NAME] = deviceToBeRemoved;
 											messageToDeleteDevice[SECRET_KEY] = secretkey;
 											$.post(urlDevicesOrTemplatesDelete, JSON.stringify(messageToDeleteDevice), function(data) {
 												
@@ -172,7 +172,7 @@ $("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLoc
 											deviceIndex = parseInt(deviceIndex.substr(deviceIndex.length - 1));
 											var deviceToBeEdited = deviceOrTemplateDataList[index][DEVICE_OR_TEMPLATE_ARRAY][deviceIndex][DEVICE_OR_TEMPLATE_NAME];
 											var messageToEditDevice = {}
-											messageToEditDevice["devicename"] = deviceToBeEdited;
+											messageToEditDevice[DEVICE_OR_TEMPLATE_NAME] = deviceToBeEdited;
 											messageToEditDevice[SECRET_KEY] = secretkey;
 											window.location = URL_EDIT_DEVICE + "/" + deviceToBeEdited + "/" + isdevice + "/update";
 
@@ -183,7 +183,7 @@ $("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLoc
 											deviceIndex = parseInt(deviceIndex.substr(deviceIndex.length - 1));
 											var deviceToBeEdited = deviceOrTemplateDataList[index][DEVICE_OR_TEMPLATE_ARRAY][deviceIndex][DEVICE_OR_TEMPLATE_NAME];
 											var messageToEditDevice = {}
-											messageToEditDevice["devicename"] = deviceToBeEdited;
+											messageToEditDevice[DEVICE_OR_TEMPLATE_NAME] = deviceToBeEdited;
 											messageToEditDevice[SECRET_KEY] = secretkey;
 											window.location = URL_EDIT_DEVICE + "/" + deviceToBeEdited + "/" + isdevice + "/create";
 
