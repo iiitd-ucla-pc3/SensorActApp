@@ -203,7 +203,7 @@
 						//receivedData = SAMPLE_QUERY_DATA_QUERY_RESPONSE;
 						try {
 
-							$.post(URL_QUERY_DATA, JSON.stringify(query), function(data) {
+							$.post(document.location.hostname+URL_QUERY_DATA, JSON.stringify(query), function(data) {
 								receivedData = data;
 
 							});

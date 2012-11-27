@@ -22,13 +22,14 @@
 				 * Adding the link attribute to Logout,Home element	</body>
 				 </html>
 				 */
+ 				var temp="http://"+document.location.hostname+":"+document.location.port+"/";
 
-				setNavURL("#devices" ,'href', URL_DEVICES);
-				setNavURL("#visualization",'href', URL_VISUALIZATION);
-				setNavURL("#repositoryInformation",'href',URL_REPOSITORY_INFO);
-				setNavURL("#home",'href',URL_HOME);
-				setNavURL("#logout",'href',URL_LOGOUT_USER);
-				setNavURL("#speak",'href',URL_SPEAK_INPUT);
+				setNavURL("#devices" ,'href',temp+ URL_DEVICES);
+				setNavURL("#visualization",'href', temp+URL_VISUALIZATION);
+				setNavURL("#repositoryInformation",'href',temp+URL_REPOSITORY_INFO);
+				setNavURL("#home",'href',temp+URL_HOME);
+				setNavURL("#logout",'href',temp+URL_LOGOUT_USER);
+				setNavURL("#speak",'href',temp+URL_SPEAK_INPUT);
 				$("#logout").click(function() {
 
 					window.location = URL_LOGOUT_USER;

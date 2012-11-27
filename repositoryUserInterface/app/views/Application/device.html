@@ -36,6 +36,8 @@
 				var deviceOrTemplateDataList = {};
 				deviceOrTemplateDataList[0] = {};
 				deviceOrTemplateDataList[1] = {};
+				var temp="http://"+document.location.hostname+":"+document.location.port+"/";
+
 
 				/*
 				 * Setting the AJAX to work in sycnhronous fashion
@@ -45,12 +47,12 @@
 				});
 
 			/********************* --------------- Changes made here --------------- ***************/
-				setNavURL("#devices" ,'href', URL_DEVICES);
-				setNavURL("#visualization",'href', URL_VISUALIZATION);
-				setNavURL("#repositoryInformation",'href',URL_REPOSITORY_INFO);
-				setNavURL("#home",'href',URL_HOME);
-				setNavURL("#logout",'href',URL_LOGOUT_USER);	
-				setNavURL("#speak",'href',URL_SPEAK_INPUT);
+				setNavURL("#devices" ,'href', temp+URL_DEVICES);
+				setNavURL("#visualization",'href', temp+URL_VISUALIZATION);
+				setNavURL("#repositoryInformation",'href',temp+URL_REPOSITORY_INFO);
+				setNavURL("#home",'href',temp+URL_HOME);
+				setNavURL("#logout",'href',temp+URL_LOGOUT_USER);	
+				setNavURL("#speak",'href',temp+URL_SPEAK_INPUT);
 				$("#logout").click(function() {
 
 					window.location = URL_LOGOUT_USER;
@@ -195,6 +197,8 @@ $("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLoc
 				 */
 				function displayDevicesOrTemplates(urlDevicesOrTemplatesList, urlDevicesOrTemplatesDelete, isDevice) {
 
+
+					//alert(urlDevicesOrTemplatesList);
 					var isdevice = isDevice.toString();
 					var index;
 					if(isDevice == "true") {
@@ -208,7 +212,7 @@ $("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLoc
 					}
 					try {
 						$.get(urlDevicesOrTemplatesList, function(data) {
-							//alert(JSON.stringify(data));
+
 							deviceOrTemplateDataList[index] = data;
 							//Successfully received data
 							if(deviceOrTemplateDataList[index].hasOwnProperty(RESPONSE_STATUS_CODE))//Means a failure has occured {
@@ -345,9 +349,9 @@ $("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLoc
 					return deviceOrTemplateDataList[index];
 				}
 
-				displayDevicesOrTemplates(URL_LIST_ALL_DEVICES, URL_DELETE_DEVICE, "true", "#accordion");
-				displayDevicesOrTemplates(URL_LIST_ALL_DEVICE_TEMPLATES, URL_DELETE_DEVICE_TEMPLATE, "false", "#accordion1");
-
+				var temp="http://"+document.location.hostname+":"+document.location.port+"/";
+				displayDevicesOrTemplates(temp+URL_LIST_ALL_DEVICES, temp+URL_DELETE_DEVICE, "true", "#accordion");
+				displayDevicesOrTemplates(temp+URL_LIST_ALL_DEVICE_TEMPLATES, temp+URL_DELETE_DEVICE_TEMPLATE, "false", "#accordion1");
 				/*
 				 * Description:This function is used to create an accordion with a given id
 				 */

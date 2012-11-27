@@ -126,32 +126,32 @@ var REPOSITORY_URL="URL"
 //############# DEVICE  ###################################
 var URL_UI_SERVER="http://localhost:9003/";
 
-var URL_LOGIN_USER=URL_UI_SERVER+"login";
-var URL_REGISTER_USER=URL_UI_SERVER+"register";
-var URL_ADD_DEVICE=URL_UI_SERVER+"adddevice";
-var URL_DELETE_DEVICE=URL_UI_SERVER+"deletedevice";
-var URL_EDIT_DEVICE=URL_UI_SERVER+"editdevice";
-var URL_FIND_DEVICE=URL_UI_SERVER+"finddevice";
-var URL_ADD_DEVICE_TEMPLATE=URL_UI_SERVER+"adddevicetemplate";
-var URL_DELETE_DEVICE_TEMPLATE=URL_UI_SERVER+"deletedevicetemplate";
-var URL_FIND_DEVICE_TEMPLATE=URL_UI_SERVER+"finddevicetemplate";
+var URL_LOGIN_USER="login";
+var URL_REGISTER_USER="register";
+var URL_ADD_DEVICE="adddevice";
+var URL_DELETE_DEVICE="deletedevice";
+var URL_EDIT_DEVICE="editdevice";
+var URL_FIND_DEVICE="finddevice";
+var URL_ADD_DEVICE_TEMPLATE="adddevicetemplate";
+var URL_DELETE_DEVICE_TEMPLATE="deletedevicetemplate";
+var URL_FIND_DEVICE_TEMPLATE="finddevicetemplate";
 
 
 
 var URL_REGISTER_USER=URL_UI_SERVER+"register";
-var URL_QUERY_DATA=URL_UI_SERVER+"querydata2";
-var URL_LIST_ALL_DEVICES=URL_UI_SERVER+"listalldevices";
-var URL_LIST_ALL_DEVICE_TEMPLATES=URL_UI_SERVER+"listalldevicetemplates";
+var URL_QUERY_DATA="querydata2";
+var URL_LIST_ALL_DEVICES="listalldevices";
+var URL_LIST_ALL_DEVICE_TEMPLATES="listalldevicetemplates";
 
-var URL_HOME=URL_UI_SERVER+"home";
-var URL_DEVICES=URL_UI_SERVER+"device"
-var URL_LOGOUT_USER=URL_UI_SERVER+"logout";
-var URL_VISUALIZATION=URL_UI_SERVER+"display";
-var URL_REPOSITORY_INFO=URL_UI_SERVER+"repository";
-var URL_GET_REPOSITORY_INFO=URL_UI_SERVER+"getrepositoryinfo";
-var URL_GENERATE_SECRET_KEY=URL_UI_SERVER+"generatesecretkey";
-var URL_SOUNDINPUT_CONTROLLER=URL_UI_SERVER+"soundinput";
-var URL_SPEAK_INPUT = URL_UI_SERVER+"speak";
+var URL_HOME="home";
+var URL_DEVICES="device"
+var URL_LOGOUT_USER="logout";
+var URL_VISUALIZATION="display";
+var URL_REPOSITORY_INFO="repository";
+var URL_GET_REPOSITORY_INFO="getrepositoryinfo";
+var URL_GENERATE_SECRET_KEY="generatesecretkey";
+var URL_SOUNDINPUT_CONTROLLER="soundinput";
+var URL_SPEAK_INPUT = "speak";
 
 
 

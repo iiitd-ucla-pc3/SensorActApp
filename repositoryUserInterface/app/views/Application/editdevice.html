@@ -40,14 +40,15 @@ lang="en">
 				
 				var deleteDeviceOrTemplate;
 				var findDeviceOrTemplate;
+				var temp="http://"+document.location.hostname+":"+document.location.port+"/";
+				alert(temp);
 				if(isDevice == "true") {
-					deleteDeviceOrTemplate = URL_DELETE_DEVICE;
-					findDeviceOrTemplate = URL_FIND_DEVICE;
-					console.log(findDeviceOrTemplate);
+					deleteDeviceOrTemplate = temp+URL_DELETE_DEVICE;
+					findDeviceOrTemplate = temp+URL_FIND_DEVICE;
 					var DEVICE_OR_TEMPLATE_NAME=DEVICE_NAME;
 				} else {
-					deleteDeviceOrTemplate = URL_DELETE_DEVICE_TEMPLATE;
-					findDeviceOrTemplate = URL_FIND_DEVICE_TEMPLATE;
+					deleteDeviceOrTemplate = temp+URL_DELETE_DEVICE_TEMPLATE;
+					findDeviceOrTemplate = temp+URL_FIND_DEVICE_TEMPLATE;
 					var DEVICE_OR_TEMPLATE_NAME=DEVICE_TEMPLATE_NAME;
 
 				}
@@ -70,11 +71,11 @@ lang="en">
 				 /**
 				 * Adding the link attribute to Logout,Home element
 				 */
-					setNavURL("#devices" ,'href', URL_DEVICES);
-					setNavURL("#visualization",'href', URL_VISUALIZATION);
-					setNavURL("#repositoryInformation",'href',URL_REPOSITORY_INFO);
-					setNavURL("#home",'href',URL_HOME);
-					setNavURL("#logout",'href',URL_LOGOUT_USER);
+					setNavURL("#devices" ,'href', temp+URL_DEVICES);
+					setNavURL("#visualization",'href', temp+URL_VISUALIZATION);
+					setNavURL("#repositoryInformation",'href',temp+URL_REPOSITORY_INFO);
+					setNavURL("#home",'href',temp+URL_HOME);
+					setNavURL("#logout",'href',temp+URL_LOGOUT_USER);
 						$("#logout").click(function() {
 
 					window.location = URL_LOGOUT_USER;
@@ -892,11 +893,13 @@ lang="en">
 					deviceRequestToSend[DEVICE_PROFILE] = deviceObject;
 					deviceRequestToSend[SECRET_KEY] = secretkey;
 					var addDeviceOrTemplateURL;
+					var temp="http://"+document.location.hostname+":"+document.location.port+"/";
+
 					if($("#deviceOrTemplateSelect").find(":selected").text() == "Device") {
-						addDeviceOrTemplateURL = URL_ADD_DEVICE;
+						addDeviceOrTemplateURL = temp+URL_ADD_DEVICE;
 						deviceObject[DEVICE_NAME] = $("#newDeviceName").val();
 					} else {
-						addDeviceOrTemplateURL = URL_ADD_DEVICE_TEMPLATE;
+						addDeviceOrTemplateURL = temp+URL_ADD_DEVICE_TEMPLATE;
 						deviceObject[DEVICE_TEMPLATE_NAME] = $("#newDeviceName").val();
 					}
 				
@@ -904,7 +907,7 @@ lang="en">
 					try {
 									$.post(addDeviceOrTemplateURL, JSON.stringify(deviceRequestToSend), function(data) {
 										if(data[RESPONSE_STATUS_CODE] == 0) {
-											window.location = URL_DEVICES;
+											window.location = temp+"device";
 										} else {
 											alertAddDeviceError("Following error occured: " + data[RESPONSE_MESSAGE]);
 										}
@@ -929,6 +932,7 @@ lang="en">
 							var isDeleteSuccessful = false;
 
 							try {
+
 								$.post(deleteDeviceOrTemplate, JSON.stringify(messageToDeleteDevice), function(data) {
 
 									if(data[RESPONSE_STATUS_CODE] == SUCCESS) {

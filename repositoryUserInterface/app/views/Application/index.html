@@ -143,7 +143,7 @@
 					showNoty("Loading...", "topCenter", false);
 
 					try {
-						$.post(URL_LOGIN_USER, JSON.stringify(sign_in), function(data) {
+						$.post("login", JSON.stringify(sign_in), function(data) {
 							responseFromServer = data;
 
 						});
@@ -177,7 +177,7 @@
 						//Submit the login details
 						try {
 
-							$.post(URL_REGISTER_USER, JSON.stringify(sign_up), function(data) {
+							$.post("register", JSON.stringify(sign_up), function(data) {
 								responseFromServer = data;
 
 							});
@@ -186,7 +186,7 @@
 
 							} else {
 								removeError();
-								window.location = URL_HOME;
+								window.location = window.location.href+"home";
 
 							}
 

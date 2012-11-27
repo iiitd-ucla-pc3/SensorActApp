@@ -191,11 +191,11 @@ public class Const {
 	public static final String MIME_TYPE_JSON = "application/json";
 
 	/*
-	 * Sphinx URL's
+	 * Sphinx and Static Image URL's
 	 */
-	public static final String BASE_WAVEFILE_URL = "/home/muc/workspace/SensorActApp/repositoryUserInterface/app/edu/cmu/sphinx/demo/transcriber/";
-	public static final String BASE_OUTPUTWAVEFILE_URL = "/home/nipun/git/SensorActApp/repositoryUserInterface/public/javascripts/";
-	public static final String BASE_IMAGE_URL = "/home/muc/workspace/SensorActApp/repositoryUserInterface/public/";
+	public static final String BASE_WAVEFILE_URL = "../../../../../app/edu/cmu/sphinx/demo/transcriber/";
+	public static final String BASE_OUTPUTWAVEFILE_URL = "../../../../../../public/javascripts";
+	public static final String BASE_IMAGE_URL = "../../../../../../public/";
 
 	public class Error {
 

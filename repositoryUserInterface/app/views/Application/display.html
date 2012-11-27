@@ -152,13 +152,14 @@
 		
 				}
 	//*****************************************Chart*****************************************************/
+				var temp="http://"+document.location.hostname+":"+document.location.port+"/";
 
-				setNavURL("#devices" ,'href', URL_DEVICES);
-				setNavURL("#visualization",'href', URL_VISUALIZATION);
-				setNavURL("#repositoryInformation",'href',URL_REPOSITORY_INFO);
-				setNavURL("#home",'href',URL_HOME);
-				setNavURL("#logout",'href',URL_LOGOUT_USER);
-				setNavURL("#speak",'href',URL_SPEAK_INPUT);
+				setNavURL("#devices" ,'href', temp+URL_DEVICES);
+				setNavURL("#visualization",'href', temp+URL_VISUALIZATION);
+				setNavURL("#repositoryInformation",'href',temp+URL_REPOSITORY_INFO);
+				setNavURL("#home",'href',temp+URL_HOME);
+				setNavURL("#logout",'href',temp+URL_LOGOUT_USER);
+				setNavURL("#speak",'href',temp+URL_SPEAK_INPUT);
 			
 				
 
@@ -374,7 +375,8 @@
 					
 					try {
 
-						$.post(URL_QUERY_DATA, JSON.stringify(query), function(data) {
+					var temp="http://"+document.location.hostname+":"+document.location.port+"/";
+					$.post(temp+URL_QUERY_DATA, JSON.stringify(query), function(data) {
 							receivedData = data;
 						
 
@@ -400,11 +402,11 @@
 							else if(receivedData=="No Data Found")
 							{	
 								$.noty.closeAll();
-								showNoty("No Data Found", "center", "off",2000);
+								showNoty("No Data Found", "center", "off",5000);
 								$("#resizer").hide();
 								$("#imageDiv").hide();
 								$("#tools").hide();
-								$.noty.closeAll();
+								//$.noty.closeAll();
 								
 					
 
@@ -711,7 +713,9 @@
 
 				//Getting Device List
 				try {
-					$.get(URL_LIST_ALL_DEVICES, function(data) {
+					var temp="http://"+document.location.hostname+":"+document.location.port+"/";
+
+					$.get(temp+URL_LIST_ALL_DEVICES, function(data) {
 					
 						receivedDeviceData = data;
 					
