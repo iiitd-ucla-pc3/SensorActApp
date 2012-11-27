@@ -63,6 +63,7 @@ public class Application extends Controller {
 	}
 
 	public static void device() {
+		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
 		render();
 	}
 
@@ -89,6 +90,7 @@ public class Application extends Controller {
 	}
 
 	public static void device2() {
+		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
 		render();
 	}
 

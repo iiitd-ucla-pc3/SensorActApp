@@ -179,9 +179,15 @@ public class QueryData extends SensorActAPI {
 		String uuid = UUID.randomUUID().toString();
 
 		try {
+			System.out.println("Here"+new File(Const.BASE_IMAGE_URL + uuid
+					+ ".png").getCanonicalFile());
+
+			System.out.println("Here also"+new File(Const.BASE_IMAGE_URL + uuid
+					+ ".png").getAbsolutePath());
+
 			System.out.println("Creating image");
 			ChartUtilities.saveChartAsPNG(new File(Const.BASE_IMAGE_URL + uuid
-					+ ".png"), chart, 800, 800);
+					+ ".png").getCanonicalFile(), chart, 800, 800);
 			System.out.println("Image created");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

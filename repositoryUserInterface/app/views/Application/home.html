@@ -12,34 +12,13 @@
 		<script src="@{'/public/js/libs/modernizr-2.0.6.min.js'}"></script>
 		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
-		<script type="text/javascript"	src="@{'public/javascripts/swfobject.js'}"></script>
-		<script type="text/javascript" src="@{'/public/javascripts/recorder.js'}"></script>
 		<script type="text/javascript" src="@{'/public/javascripts/utilityFunctions.js'}"></script>
 		<script type="text/javascript" src="@{'/public/javascripts/speakClient.js'}"></script>
 		
 		<script type="text/javascript">
 			$(document).ready(function() {
 
-				var mp3ID=1;
-				var USER_KEY;
-				setup();
-				
-				$("#pressed").hide();
-				$("#message").html("");
-				
-				//var mp3ID = "1";
-				$("#normal").click(function(){
-					$("#normal").hide();
-					
-					
-					$("#pressed").show();
-					record();
-				})
-				$("#pressed").click(function(){
-					stop();
-					$("#pressed").hide();
-					$("#normal").show();
-				});
+							
 				var temp="http://"+document.location.hostname+":"+document.location.port+"/";
 				setNavURL("#devices" ,'href',temp+URL_DEVICES);
 				setNavURL("#visualization",'href',temp+URL_VISUALIZATION);
@@ -54,57 +33,10 @@
 			});
 			</script>
 			
-			<script>
-			//	var USER_KEY;
 			
-			var a;
-			
-			function setup() {
-				Wami.setup("wami");
-			}
-			
-			
-
-			function record() {
-				USER_KEY = uniqueRandomString();
-				//status("Recording...");
-				
-				Wami.startRecording(URL_SOUNDINPUT_CONTROLLER + "/" + USER_KEY.toString());
-				
-			}
-
-			function play() {
-				Wami.startPlaying(" ");
-			}
-
-			function stop() {
-				
-				Wami.stopRecording();
-				Wami.stopPlaying();
-				
-			}
-
-			function status(msg) {
-				document.getElementById('status').innerHTML = msg;
-			}
-			
-
-			function serverReturn(data)
-			        {
-			      
-			        var json = jQuery.parseJSON(data.toString());
-			        speak(json.outputtext);			   
-			        $("#input_message").html(json.inputcommand);
-			        $("#output_message").html(json.outputtext);
-			        
-			        
-			        }
-
-			
-		
-		</script>
 	</head>
-	<body onload="setup()">
+	<!--<body onload="setup()">-->
+		<body>
 		<div id="header-container">
 			<header class="wrapper clearfix">
 				<h1 id="title">SensorAct

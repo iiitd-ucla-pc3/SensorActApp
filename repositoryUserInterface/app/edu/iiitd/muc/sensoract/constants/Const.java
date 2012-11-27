@@ -195,7 +195,7 @@ public class Const {
 	 */
 	public static final String BASE_WAVEFILE_URL = "../../../../../app/edu/cmu/sphinx/demo/transcriber/";
 	public static final String BASE_OUTPUTWAVEFILE_URL = "../../../../../../public/javascripts";
-	public static final String BASE_IMAGE_URL = "../../../../../../public/";
+	public static final String BASE_IMAGE_URL = "public/";
 
 	public class Error {
 
