@@ -193,9 +193,9 @@ public class Const {
 	/*
 	 * Sphinx URL's
 	 */
-	public static final String BASE_WAVEFILE_URL = "/home/nipun/workspace/SensorActApp/repositoryUserInterface/app/edu/cmu/sphinx/demo/transcriber/";
+	public static final String BASE_WAVEFILE_URL = "/home/muc/workspace/SensorActApp/repositoryUserInterface/app/edu/cmu/sphinx/demo/transcriber/";
 	public static final String BASE_OUTPUTWAVEFILE_URL = "/home/nipun/git/SensorActApp/repositoryUserInterface/public/javascripts/";
-	public static final String BASE_IMAGE_URL = "/home/nipun/workspace/SensorActApp/repositoryUserInterface/public/";
+	public static final String BASE_IMAGE_URL = "/home/muc/workspace/SensorActApp/repositoryUserInterface/public/";
 
 	public class Error {
 
