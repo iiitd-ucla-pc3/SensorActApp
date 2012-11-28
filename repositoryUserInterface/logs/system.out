@@ -1,14 +1,306 @@
-Listening for transport dt_socket at address: 39108
-09:06:14,631 INFO  ~ Starting /home/nipun/git/SensorActApp/repositoryUserInterface
-09:06:16,794 WARN  ~ You're running Play! in DEV mode
-09:06:17,047 INFO  ~ Listening for HTTP on port 9002 (Waiting a first request to start) ...
-09:06:37,552 INFO  ~ Application 'ui' is now started !
-09:07:55,459 INFO  ~ login: nipun_batra
-09:07:55,605 INFO  ~ Number of application's worked threads is 4
-09:07:56,032 INFO  ~ Login Failure: nipun_batra
-Sessionnull
-09:08:49,349 INFO  ~ login: nipun_batra
-09:08:49,378 INFO  ~ Login Failure: nipun_batra
-09:09:38,848 INFO  ~ Number of application's worked threads is 4
-09:09:39,037 INFO  ~ login: nipun_batra
-09:09:39,104 INFO  ~ Login Successful: nipun_batra
+Listening for transport dt_socket at address: 8001
+20:00:21,523 INFO  ~ Starting /home/nipun/workspace/SensorActApp/repositoryUserInterface
+20:00:22,556 WARN  ~ You're running Play! in DEV mode
+20:00:22,848 INFO  ~ Listening for HTTP on port 9003 (Waiting a first request to start) ...
+20:00:26,848 INFO  ~ Application 'ui' is now started !
+20:00:50,808 INFO  ~ login: nipun_batra
+20:00:50,933 INFO  ~ Number of application's worked threads is 16
+20:00:50,993 INFO  ~ Login Successful: nipun_batra
+Sessionnipun_batra
+Sessionnipun_batra
+20:01:02,796 INFO  ~ login: username0
+20:01:02,807 INFO  ~ Login Successful: username0
+Sessionusername0
+Sessionusername0
+Sessionusername0
+20:01:06,227 INFO  ~ listalldevices: ccb9729d228c45618f75a162ccedd7ad {"secretkey":ccb9729d228c45618f75a162ccedd7ad}
+20:01:06,227 INFO  ~ listalldevices: {"secretkey":ccb9729d228c45618f75a162ccedd7ad}
+Sessionusername0
+20:01:16,505 INFO  ~ querydata: {"conditions":{"fromtime":1354023060,"totime":1354026660},"devicename":"VirtualDevice","sensorname":"Sensor","username":"username0"}
+{"wavesegmentArray":[{
+  "secretkey": "ccb9729d228c45618f75a162ccedd7ad",
+  "data": {
+    "dname": "VirtualDevice",
+    "sname": "Sensor",
+    "sid": "1",
+    "timestamp": 1354026676000,
+    "channels": [
+      {
+        "cname": "Channel_0",
+        "unit": "none",
+        "readings": [
+          71.0,
+          86.0,
+          45.0,
+          36.0,
+          83.0,
+          94.0,
+          86.0,
+          37.0,
+          21.0,
+          0.0
+        ]
+      },
+      {
+        "cname": "Channel_1",
+        "unit": "none",
+        "readings": [
+          73.0,
+          47.0,
+          61.0,
+          80.0,
+          95.0,
+          48.0,
+          15.0,
+          12.0,
+          10.0,
+          76.0
+        ]
+      }
+    ]
+  },
+  "_id": {
+    "_time": 1354026676,
+    "_machine": 1152256639,
+    "_inc": 1378903503,
+    "_new": false
+  }
+}]}
+For waveseg 0 
+1354026676000
+Sessionusername0
+20:03:51,890 INFO  ~ querydata: {"conditions":{"fromtime":1353936660,"totime":1354026780},"devicename":"VirtualDevice","sensorname":"Sensor","username":"username0"}
+{"wavesegmentArray":[{
+  "secretkey": "ccb9729d228c45618f75a162ccedd7ad",
+  "data": {
+    "dname": "VirtualDevice",
+    "sname": "Sensor",
+    "sid": "1",
+    "timestamp": 1354026831000,
+    "channels": [
+      {
+        "cname": "Channel_0",
+        "unit": "none",
+        "readings": [
+          10.0,
+          38.0,
+          85.0,
+          74.0,
+          92.0,
+          66.0,
+          14.0,
+          46.0,
+          3.0,
+          48.0
+        ]
+      },
+      {
+        "cname": "Channel_1",
+        "unit": "none",
+        "readings": [
+          78.0,
+          66.0,
+          74.0,
+          46.0,
+          21.0,
+          49.0,
+          20.0,
+          29.0,
+          63.0,
+          74.0
+        ]
+      }
+    ]
+  },
+  "_id": {
+    "_time": 1354026831,
+    "_machine": 1152256639,
+    "_inc": 1378943747,
+    "_new": false
+  }
+}]}
+Array of Responese[edu.iiitd.muc.sensoract.format.WaveSegmentArray@5089841d]
+org.jfree.data.time.TimeSeriesCollection@a3ee9be7
+Creating image
+20:08:27,369 ERROR ~ 
+
+@6cf43kihl
+Internal Server Error (500) for request POST /querydata2
+
+Compilation error (In /app/edu/iiitd/muc/sensoract/apis/QueryData.java around line 183)
+The file /app/edu/iiitd/muc/sensoract/apis/QueryData.java could not be compiled. Error raised is : The method saveChartAsPNG(File, JFreeChart, int, int) in the type ChartUtilities is not applicable for the arguments (String, JFreeChart, int, int)
+
+play.exceptions.CompilationException: The method saveChartAsPNG(File, JFreeChart, int, int) in the type ChartUtilities is not applicable for the arguments (String, JFreeChart, int, int)
+	at play.classloading.ApplicationCompiler$2.acceptResult(ApplicationCompiler.java:246)
+	at org.eclipse.jdt.internal.compiler.Compiler.handleInternalException(Compiler.java:676)
+	at org.eclipse.jdt.internal.compiler.Compiler.compile(Compiler.java:520)
+	at play.classloading.ApplicationCompiler.compile(ApplicationCompiler.java:282)
+	at play.classloading.ApplicationClasses$ApplicationClass.compile(ApplicationClasses.java:277)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:322)
+	at play.Play.detectChanges(Play.java:614)
+	at play.Invoker$Invocation.init(Invoker.java:198)
+	at Invocation.HTTP Request(Play!)
+Sessionusername0
+20:09:39,002 INFO  ~ querydata: {"conditions":{"fromtime":1353936660,"totime":1354026780},"devicename":"VirtualDevice","sensorname":"Sensor","username":"username0"}
+{"wavesegmentArray":[{
+  "secretkey": "ccb9729d228c45618f75a162ccedd7ad",
+  "data": {
+    "dname": "VirtualDevice",
+    "sname": "Sensor",
+    "sid": "1",
+    "timestamp": 1354027179000,
+    "channels": [
+      {
+        "cname": "Channel_0",
+        "unit": "none",
+        "readings": [
+          48.0,
+          58.0,
+          76.0,
+          95.0,
+          91.0,
+          11.0,
+          83.0,
+          2.0,
+          52.0,
+          88.0
+        ]
+      },
+      {
+        "cname": "Channel_1",
+        "unit": "none",
+        "readings": [
+          22.0,
+          30.0,
+          87.0,
+          63.0,
+          14.0,
+          22.0,
+          13.0,
+          66.0,
+          77.0,
+          24.0
+        ]
+      }
+    ]
+  },
+  "_id": {
+    "_time": 1354027179,
+    "_machine": 1152256639,
+    "_inc": 1379033869,
+    "_new": false
+  }
+}]}
+Array of Responese[edu.iiitd.muc.sensoract.format.WaveSegmentArray@728b5f94]
+org.jfree.data.time.TimeSeriesCollection@3417177d
+Creating image
+Sessionusername0
+20:11:35,528 INFO  ~ querydata: {"conditions":{"fromtime":1353936660,"totime":1354026780},"devicename":"VirtualDevice","sensorname":"Sensor","username":"username0"}
+{"wavesegmentArray":[{
+  "secretkey": "ccb9729d228c45618f75a162ccedd7ad",
+  "data": {
+    "dname": "VirtualDevice",
+    "sname": "Sensor",
+    "sid": "1",
+    "timestamp": 1354027295000,
+    "channels": [
+      {
+        "cname": "Channel_0",
+        "unit": "none",
+        "readings": [
+          38.0,
+          71.0,
+          81.0,
+          6.0,
+          79.0,
+          54.0,
+          7.0,
+          31.0,
+          63.0,
+          25.0
+        ]
+      },
+      {
+        "cname": "Channel_1",
+        "unit": "none",
+        "readings": [
+          4.0,
+          46.0,
+          30.0,
+          84.0,
+          96.0,
+          15.0,
+          53.0,
+          48.0,
+          62.0,
+          57.0
+        ]
+      }
+    ]
+  },
+  "_id": {
+    "_time": 1354027295,
+    "_machine": 1152256639,
+    "_inc": 1379062659,
+    "_new": false
+  }
+}]}
+Array of Responese[edu.iiitd.muc.sensoract.format.WaveSegmentArray@35ea8fcf]
+org.jfree.data.time.TimeSeriesCollection@ae81f0c3
+/public/569beaa8-8e60-4603-96d1-3ec11d764899.png
+Creating image
+Sessionusername0
+20:12:15,361 INFO  ~ querydata: {"conditions":{"fromtime":1353936660,"totime":1354026780},"devicename":"VirtualDevice","sensorname":"Sensor","username":"username0"}
+{"wavesegmentArray":[{
+  "secretkey": "ccb9729d228c45618f75a162ccedd7ad",
+  "data": {
+    "dname": "VirtualDevice",
+    "sname": "Sensor",
+    "sid": "1",
+    "timestamp": 1354027335000,
+    "channels": [
+      {
+        "cname": "Channel_0",
+        "unit": "none",
+        "readings": [
+          83.0,
+          52.0,
+          79.0,
+          56.0,
+          70.0,
+          31.0,
+          30.0,
+          21.0,
+          30.0,
+          7.0
+        ]
+      },
+      {
+        "cname": "Channel_1",
+        "unit": "none",
+        "readings": [
+          4.0,
+          34.0,
+          48.0,
+          36.0,
+          48.0,
+          40.0,
+          90.0,
+          68.0,
+          1.0,
+          13.0
+        ]
+      }
+    ]
+  },
+  "_id": {
+    "_time": 1354027335,
+    "_machine": 1152256639,
+    "_inc": 1379072437,
+    "_new": false
+  }
+}]}
+Array of Responese[edu.iiitd.muc.sensoract.format.WaveSegmentArray@2607d7ca]
+org.jfree.data.time.TimeSeriesCollection@709acef7
+Here/public/98ba02e8-cd3e-4666-9e12-a10eff2e3b7f.png
+Creating image
