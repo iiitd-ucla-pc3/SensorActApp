@@ -1,3 +1,4 @@
+
 var speakWorker;
 try {
   speakWorker = new Worker('../public/javascripts/speakWorker.js');

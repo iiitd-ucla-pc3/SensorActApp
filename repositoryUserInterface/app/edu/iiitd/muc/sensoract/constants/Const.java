@@ -237,12 +237,7 @@ public class Const {
 		public static final String E404 = "Not Found!";
 	}
 
-	/**
-	 * Defines the constants for SensorAct warning messages
-	 * 
-	 * @author samy
-	 * 
-	 */
+
 	public class Warnings {
 
 		public static final String WARNING1 = "warning1";

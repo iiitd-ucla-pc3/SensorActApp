@@ -1,3 +1,4 @@
+
 importScripts('speakGenerator.js');
 
 onmessage = function(event) {
