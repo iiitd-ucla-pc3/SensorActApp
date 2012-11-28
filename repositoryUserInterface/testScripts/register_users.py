@@ -1,4 +1,9 @@
-import json,urllib,urllib2,subprocess,time,csv,sys
+import urllib,urllib2,subprocess,time,csv,sys
+
+try:
+	import js
+except ImportError:
+	import simplejson as json
 
 url="http://localhost:9000/user/register"
 url2="http://localhost:9000/user/login"

@@ -1,4 +1,9 @@
-import json,urllib,urllib2,subprocess,time,csv,sys,random
+import urllib,urllib2,subprocess,time,csv,sys,random
+
+try:
+	import json
+except ImportError:
+	import simplejson as json
 
 #Upload URL
 url="http://localhost:9000/data/upload/wavesegment"

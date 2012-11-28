@@ -1,4 +1,8 @@
-import json,urllib,urllib2
+import urllib,urllib2
+try:
+	import json
+except ImportError:
+	import simplejson as json
 
 class SensorActAdapter:
 	
