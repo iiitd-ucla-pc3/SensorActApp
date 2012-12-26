@@ -42,6 +42,7 @@
 				});
 				
 				setNavURL("#devices" ,'href', temp+URL_DEVICES);
+				setNavURL("#deviceactuate" ,'href',temp+URL_ACTUATE);
 				setNavURL("#visualization",'href', temp+URL_VISUALIZATION);
 				setNavURL("#repositoryInformation",'href',temp+URL_REPOSITORY_INFO);
 				setNavURL("#home",'href',temp+URL_HOME);
@@ -89,19 +90,13 @@
 			}
 			
 
-			function serverReturn(data)
-			        {
+			function serverReturn(data) {
 			      
-			        var json = jQuery.parseJSON(data.toString());
-			        speak(json.outputtext);			   
-			        $("#input_message").html(json.inputcommand);
-			        $("#output_message").html(json.outputtext);
-			        
-			        
-			        }
-
-			
-		
+			    var json = jQuery.parseJSON(data.toString());
+			    speak(json.outputtext);			   
+			    $("#input_message").html(json.inputcommand);
+			    $("#output_message").html(json.outputtext);		        
+			}
 		</script>
 	</head>
 	<body onload="setup()">
@@ -118,6 +113,9 @@
 						</li>
 						<li>
 							<a id="devices" >Devices</a>
+						</li>
+						<li>
+							<a id="deviceactuate" >Actuation</a>
 						</li>
 						<li>
 							<a id="visualization">Visualization</a>

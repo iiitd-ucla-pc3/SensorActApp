@@ -12,19 +12,13 @@ lang="en">
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<title>SensorAct</title>
-		<link rel="stylesheet" type="text/css"
-		href="@{'/public/stylesheets/styles_non_centered.css'}">
-		<link rel="stylesheet" type="text/css"
-		href="@{'/public/stylesheets/style.css'}">
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/styles_non_centered.css'}">
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/style.css'}">
 		<script src="@{'/public/js/libs/modernizr-2.0.6.min.js'}"></script>
-		<link rel="stylesheet" type="text/css"
-		href="@{'/public/stylesheets/jquery-ui-1.8.21.custom.css'}">
-		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}"
-		type="text/javascript" charset="${_response_encoding}"></script>
-		<script src="@{'/public/javascripts/jquery-ui-1.8.20.custom.min.js'}"
-		type="text/javascript" charset="${_response_encoding}"></script>
-		<script src="@{'/public/javascripts/constants.js'}"
-		type="text/javascript" charset="${_response_encoding}"></script>
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery-ui-1.8.21.custom.css'}">
+		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/jquery-ui-1.8.20.custom.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 		<script type="text/javascript" src="@{'/public/javascripts/utilityFunctions.js'}"></script>
 		<script type="text/javascript">
 
@@ -72,13 +66,14 @@ lang="en">
 				 * Adding the link attribute to Logout,Home element
 				 */
 					setNavURL("#devices" ,'href', temp+URL_DEVICES);
+					setNavURL("#deviceactuate" ,'href',temp+URL_ACTUATE);
 					setNavURL("#visualization",'href', temp+URL_VISUALIZATION);
 					setNavURL("#repositoryInformation",'href',temp+URL_REPOSITORY_INFO);
 					setNavURL("#home",'href',temp+URL_HOME);
 					setNavURL("#logout",'href',temp+URL_LOGOUT_USER);
-						$("#logout").click(function() {
-
-					window.location = URL_LOGOUT_USER;
+					
+				$("#logout").click(function() {
+					window.location = temp + URL_LOGOUT_USER;
 				});
 					/*
 					 * Setting the AJAX to work in sycnhronous fashion
@@ -528,7 +523,7 @@ lang="en">
 					
 						$.post(findDeviceOrTemplate, JSON.stringify(editDevice), function(data) {
 							receivedData = data;
-							//alert(JSON.stringify(receivedData));
+							alert(JSON.stringify(receivedData));
 
 							//Successfully received data
 							if(receivedData.hasOwnProperty(RESPONSE_STATUS_CODE))//Means a failure has occured {
@@ -846,6 +841,7 @@ lang="en">
 
 						deviceObject[DEVICE_ACTUATORS][actuatorCount] = {};
 						deviceObject[DEVICE_ACTUATORS][actuatorCount][DEVICE_ACTUATOR_NAME] = $(this).val();
+						deviceObject[DEVICE_ACTUATORS][actuatorCount][DEVICE_ACTUATOR_ID] = 1;
 						validateFieldAndMakeErrorInformation(this, MIN_LENGTH_ACTUATOR_NAME, MAX_LENGTH_ACTUATOR_NAME, "actuator", "name", actuatorCount);
 						actuatorCount++;
 					});
@@ -893,6 +889,7 @@ lang="en">
 					deviceRequestToSend[DEVICE_PROFILE] = deviceObject;
 					deviceRequestToSend[SECRET_KEY] = secretkey;
 					var addDeviceOrTemplateURL;
+					var validationResult = true;
 					var temp="http://"+document.location.hostname+":"+document.location.port+"/";
 
 					if($("#deviceOrTemplateSelect").find(":selected").text() == "Device") {
@@ -904,19 +901,22 @@ lang="en">
 					}
 				
 					function postToDeleteDevice(){
-					try {
-									$.post(addDeviceOrTemplateURL, JSON.stringify(deviceRequestToSend), function(data) {
-										if(data[RESPONSE_STATUS_CODE] == 0) {
-											window.location = temp+"device";
-										} else {
-											alertAddDeviceError("Following error occured: " + data[RESPONSE_MESSAGE]);
-										}
+						try {
+								//alert(JSON.stringify(deviceRequestToSend));
+								$.post(addDeviceOrTemplateURL, JSON.stringify(deviceRequestToSend), function(data) {
+									if(data[RESPONSE_STATUS_CODE] == 0) {
+										window.location = temp+"device";
+									} else {
+										alertAddDeviceError("Following error occured: " + data[RESPONSE_MESSAGE]);
+										validationResult = false;
 
-									});
-								} catch(e) {
-									alertAddDeviceError(e);
-								}
-				}
+									}
+
+								});
+							} catch(e) {
+								alertAddDeviceError(e);
+							}
+					}
 			/**************----------------------Changes Made Here---------------------****************/
 
 					if(deviceToEdit != FAKE_DEVICE_NAME) {
@@ -925,13 +925,12 @@ lang="en">
 						messageToDeleteDevice[DEVICE_OR_TEMPLATE_NAME] = deviceToEdit;
 						messageToDeleteDevice[SECRET_KEY] = secretkey;
 
-
-
 						//Delete older device
-						if(mode == "update") {
+						if(mode == "update" && (validationResult == true && errorState == false)) {
 							var isDeleteSuccessful = false;
 
 							try {
+								//alert("Validation Successful");
 
 								$.post(deleteDeviceOrTemplate, JSON.stringify(messageToDeleteDevice), function(data) {
 
@@ -996,6 +995,9 @@ lang="en">
 						</li>
 						<li>
 							<a id="devices" class="active">Devices</a>
+						</li>
+						<li>
+							<a id="deviceactuate"> Actuation</a>
 						</li>
 						<li>
 							<a id="visualization">Visualization</a>

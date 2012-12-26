@@ -260,7 +260,7 @@ nav a:hover{
    =============== */
 
 	.wrapper{
-		width:1026px; /* 1140px - 10% for margins */
+		width:1026px;  /*1140px - 10% for margins */
 		margin:0 auto;
 	}
 }
@@ -533,6 +533,10 @@ border: 3px solid #f00;
 width:100%;
 }
 
+#displayTasklets label{
+width:100%;
+}
+
 .play{
 background:white;
 border-color:transparent transparent transparent #000000;
@@ -580,6 +584,10 @@ width:7px;
 	margin-left:15px;
 }
 
+.actuator{
+	margin-top:7px;
+	margin-left:15px;
+}
 
 .divCol{
 	

@@ -61,7 +61,7 @@ public class AddDevice extends SensorActAPI {
 	 * <li>Since the validation had been performed at the UI,this request is
 	 * just tunneled to the repository
 	 * <li>Replaces the secret key with the actual secret key
-	 * <li>If the addition of the device was successful,the succesful Response
+	 * <li>If the addition of the device was successful,the successful Response
 	 * format is sent to the UI which interprets the same and reloads the page
 	 * <li>If the addition of the device is unsuccessful,corresponding error
 	 * message is sent to the UI

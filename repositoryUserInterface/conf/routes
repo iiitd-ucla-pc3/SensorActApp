@@ -17,15 +17,19 @@ POST    /deletedevicetemplate                   Application.deletedevicetemplate
 GET     /device                                 Application.device
 GET     /device2                                Application.device2
 POST    /adddevice                              Application.adddevice
-POST    /adddevicetemplate                              Application.adddevicetemplate
+POST    /adddevicetemplate                      Application.adddevicetemplate
+GET		/actuate								Application.actuate
+POST	/actuatedevice							Application.actuatedevice
+POST	/listactuationrequests					Application.listactuationrequests
+POST	/cancelactuationrequests				Application.cancelactuationrequests
 
 GET     /listalldevices							Application.listalldevices
 GET     /listalldevicetemplates							Application.listalldevicetemplates
 
 POST    /querydata                              Application.querydata
 POST    /querydata2                              Application.querydata
-GET  /speak									Application.speak
-POST  /speak								Application.speak
+GET     /speak									Application.speak
+POST    /speak								Application.speak
 
 GET     /repository							  Application.repository
 GET     /getrepositoryinfo							  Application.getrepositoryinfo

@@ -160,6 +160,14 @@ public class Application extends Controller {
 		String queryBody = request.params.get(Const.REQUEST_BODY);
 		api.queryData2.doProcess(queryBody);
 	}
+	
+	public static void listactuationrequests() {		
+		api.listActRequests.doProcess();
+	}
+	
+	public static void cancelactuationrequests() {		
+		api.cancelActRequests.doProcess(request.params.get(Const.REQUEST_BODY));
+	}
 
 	public static void listalldevices() {
 		api.listAllDevices.doProcess();
@@ -180,6 +188,13 @@ public class Application extends Controller {
 		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
 		render();
 	}
+	
+	public static void actuate() {
+
+		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		render();
+	}
+	
 
 	public static void display2() {
 		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
@@ -217,6 +232,12 @@ public class Application extends Controller {
 	public static void soundinput(String userID) {
 
 		api.soundInput.doProcess(userID);
+
+	}
+	
+	public static void actuatedevice() {
+		String deviceActuateBody = request.params.get(Const.REQUEST_BODY);
+		api.actuateDevice.doProcess(deviceActuateBody);
 
 	}
 

@@ -48,6 +48,7 @@
 
 			/********************* --------------- Changes made here --------------- ***************/
 				setNavURL("#devices" ,'href', temp+URL_DEVICES);
+				setNavURL("#deviceactuate" ,'href',temp+URL_ACTUATE);
 				setNavURL("#visualization",'href', temp+URL_VISUALIZATION);
 				setNavURL("#repositoryInformation",'href',temp+URL_REPOSITORY_INFO);
 				setNavURL("#home",'href',temp+URL_HOME);
@@ -382,6 +383,9 @@ $("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLoc
 						</li>
 						<li>
 							<a id="devices" class="active" >Devices</a>
+						</li>
+						<li>
+							<a id="deviceactuate"> Actuation</a>
 						</li>
 						<li>
 							<a id="visualization">Visualization</a>

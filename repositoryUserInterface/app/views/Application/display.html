@@ -155,6 +155,7 @@
 				var temp="http://"+document.location.hostname+":"+document.location.port+"/";
 
 				setNavURL("#devices" ,'href', temp+URL_DEVICES);
+				setNavURL("#deviceactuate" ,'href',temp+URL_ACTUATE);
 				setNavURL("#visualization",'href', temp+URL_VISUALIZATION);
 				setNavURL("#repositoryInformation",'href',temp+URL_REPOSITORY_INFO);
 				setNavURL("#home",'href',temp+URL_HOME);
@@ -374,6 +375,7 @@
 					}
 					
 					try {
+
 
 					var temp="http://"+document.location.hostname+":"+document.location.port+"/";
 					$.post(temp+URL_QUERY_DATA, JSON.stringify(query), function(data) {
@@ -726,6 +728,7 @@
 				//Make a get request to get all the devices available
 				if (!(receivedDeviceData.hasOwnProperty(RESPONSE_STATUS_CODE)))//Success
 				{
+					//alert(JSON.stringify(receivedDeviceData));
 
 					if (receivedDeviceData[DEVICE_ARRAY].length > 0) {
 
@@ -978,6 +981,9 @@
 						</li>
 						<li>
 							<a id="devices"  >Devices</a>
+						</li>
+						<li>
+							<a id="deviceactuate"> Actuation</a>
 						</li>
 						<li>
 							<a id="visualization" class="active">Visualization</a>

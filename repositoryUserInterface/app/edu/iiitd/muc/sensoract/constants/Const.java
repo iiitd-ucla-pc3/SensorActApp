@@ -65,6 +65,9 @@ public class Const {
 	public static final String API_FINDDEVICETEMPLATE = "finddevicetemplate";
 	public static final String API_GENERATESECRETKEY = "generatesecretkey";
 	public static final String API_LISTALLDEVICETEMPLATES = "listalldevicetemplates";
+	public static final String API_ACTUATEDEVICE = "actuatedevice";
+	public static final String API_LISTACTUATIONREQUEST = "listactuationrequests";
+	public static final String API_CANCELACTUATIONREQUEST = "cancelactuationrequests";
 
 	/*
 	 * API parameters
@@ -166,6 +169,15 @@ public class Const {
 	public static final String URL_REPOSITORY_LIST_ALL_DEVICE_TEMPLATES = URL_REPOSITORY_SERVER
 			+ "device/template/list";
 
+	public static final String URL_REPOSITORY_ACTUATE_DEVICE = URL_REPOSITORY_SERVER
+			+ "device/actuate";
+	
+	public static final String URL_REPOSITORY_LIST_ACTUATION_REQUEST = URL_REPOSITORY_SERVER
+			+ "device/actuationrequest/list";
+	
+	public static final String URL_REPOSITORY_CANCEL_ACTUATION_REQUEST = URL_REPOSITORY_SERVER
+			+ "device/actuationrequest/cancel";
+	
 	public static final String URL_REPOSITORY_QUERY_DATA = URL_REPOSITORY_SERVER
 			+ "data/query";
 	public static final String URL_REPOSITORY_GET_INFO = URL_REPOSITORY_SERVER
