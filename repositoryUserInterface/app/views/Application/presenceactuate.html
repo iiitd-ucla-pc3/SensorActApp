@@ -1,0 +1,887 @@
+<!doctype html> <!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+	<!--<![endif]-->
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title>Device Actuation</title>
+		<!-- <link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/styles_non_centered.css'}"> -->
+		<link rel="shortcut icon" href="@{'/public/images/favicon.png'}" type="image/x-icon">
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/style.css'}"> 
+		<!-- link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/styles1.css'}">  -->
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery-ui-1.8.21.custom.css'}">
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery-ui-timepicker-addon.css'}">
+
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery.noty.css'}">
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/noty_theme_twitter.css'}">
+
+		<script src="@{'/public/js/libs/modernizr-2.0.6.min.js'}"></script>
+		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/jquery.noty.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/jquery-ui-1.8.20.custom.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/highcharts.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/utilityFunctions.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/exporting.js'}" type="text/javascript" charset="${_response_encoding}"></script>		
+		<script src="@{'/public/javascripts/jquery-ui-timepicker-addon.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<style type="text/css">
+			div.errorDiv
+			{
+				background: #000230;
+				color: #fff;
+				padding:10px;
+			}
+		</style>
+		<script type="text/javascript">
+			$(document).ready(function() {
+
+				createHeader();				
+
+				/**
+				 * Global Variables used during the lifecycle of the page
+				 *
+				 */
+				var selectedDate;
+				var fromDay, toDay;
+				var PIRSensor, PIRSensorID;
+
+				var temp="http://"+document.location.hostname+":"+document.location.port+"/";
+
+
+				/*
+				 * Setting the AJAX to work in sycnhronous fashion
+				 */
+				jQuery.ajaxSetup({
+					async : false
+				});
+
+
+			/********************* --------------- Changes made here --------------- ***************/
+
+				$("#logout").click(function() {
+
+					window.location = URL_LOGOUT_USER;
+				});
+
+				/*
+				 * Hiding Error Divs
+				 */
+				$("#errorDiv").hide();
+				$("#getActuateErrorDiv").hide();
+				$(".errorVisual").hide();
+				$("#labelActuatorSelect").hide();
+
+				createDateTimePicker(ID_FROMTIME_ACTUATE);
+				createDateTimePicker(ID_TOTIME_ACTUATE);
+				/*$(ID_TIME_ACTUATE).datetimepicker({
+					changeMonth : true,
+					changeYear : true,
+					dateFormat : "yy-mm-dd",
+					separator : "-"
+				});*/
+				
+				
+				/**
+				 * @param :Error Information
+				 * This function appends the passed string to the AddDeviceErrorDiv and shows the relevant error container
+				 * Now only in use for catch elements of unexpected errors
+				 */
+
+				function alertActuateDeviceError(errorInformation) {
+
+					$("#errorDiv").html(errorInformation);
+					$("#errorDiv").fadeIn('slow');
+					return false;
+				}
+
+				/**
+				 * @param :Error Information
+				 * This function appends the passed string to the GetDeviceErrorDiv and shows the relevant error container
+				 */
+				function alertGetActuateError(errorInformation) {
+					$("#getActuateErrorDiv").html(errorInformation);
+					$("#getActuateErrorDiv").fadeIn('slow');
+					return false;
+				}
+
+				$("#spanDateTime").hide();	
+				$(".errorVisual").hide();			
+
+				function makeRequest(selectedActuator, actuatorID, fromTime, toTime, thresholdM, thresholdNM) {
+					var tasklet = {};
+					var username = $("#username").val();
+					var actuatorName = selectedActuator;
+
+					var resource = username + ":" + deviceName + ":" + actuatorName + ":" + actuatorID;
+					var numRand = Math.floor(Math.random()*1000);
+
+					tasklet[ACTUATION_SECRETKEY]= FAKE_SECRET_KEY;
+					tasklet[ACTUATION_TASKLETNAME]="actuate_" + deviceName + actuatorName + numRand;
+
+					tasklet[ACTUATION_PARAM] = {};
+					tasklet[ACTUATION_INPUT] = {};
+
+					var Seconds = "*", Minutes = "*", Hour = "*", dayOfMon = "*", month ="*", year ="*", DayofWeek = "?",  cronExp ="";
+					var fromDayOfWeek = "", toDayOfWeek = "";
+					var flagT = false, flagD = false;
+
+					if (fromTime > 0 && toTime > 0) {
+
+						flagT = true;
+
+						// to convert to a cron expression						
+
+						fromdate = new Date(fromTime);
+						todate = new Date(toTime);
+
+						//Seconds = fromdate.getSeconds();					
+
+						var fromHour = fromdate.getHours();
+						var toHour = todate.getHours();
+						var fromMin = fromdate.getMinutes();
+						var toMin = todate.getMinutes();
+
+						//Minutes = fromMin+ "-" + toMin;
+
+						//Minutes = fromMin+ "-" + toMin;
+						Minutes = fromdate.getMinutes();
+						Hour = fromHour+ "-" + toHour;
+
+						
+						tasklet[ACTUATION_PARAM]["fromTime"] = datetimeToEpoch($(ID_FROMTIME_ACTUATE).val());
+						tasklet[ACTUATION_PARAM]["toTime"] = datetimeToEpoch($(ID_TOTIME_ACTUATE).val());	
+						Minutes = "*";
+
+					}
+					if (fromDay != "none" && toDay != "none"){
+						flagD = true;
+
+						if(fromDay == toDay)
+							DayofWeek = "?";
+						else						
+							DayofWeek = fromDay + "-" + toDay;
+
+						switch (fromDay) {
+							case '1':
+							fromDayOfWeek = "Sunday";
+							break;
+							case '2':
+							fromDayOfWeek = "Monday";
+							break;
+							case '3':
+							fromDayOfWeek = "Tuesday";
+							break;
+							case '4':
+							fromDayOfWeek = "Wednesday";
+							break;
+							case '5':
+							fromDayOfWeek = "Thursday";
+							break;
+							case '6':
+							fromDayOfWeek = "Friday";
+							break;
+							case '7':
+							fromDayOfWeek = "Saturday";
+							break;
+						}
+						switch (toDay) {
+							case '1':
+							toDayOfWeek = "Sunday";
+							break;
+							case '2':
+							toDayOfWeek = "Monday";
+							break;
+							case '3':
+							toDayOfWeek = "Tuesday";
+							break;
+							case '4':
+							toDayOfWeek = "Wednesday";
+							break;
+							case '5':
+							toDayOfWeek = "Thursday";
+							break;
+							case '6':
+							toDayOfWeek = "Friday";
+							break;
+							case '7':
+							toDayOfWeek = "Saturday";
+							break;
+						}
+						if(DayofWeek != "?")
+							dayOfMon = "?";							
+					}
+
+					cronExp = "*" + " " + Minutes + " " + Hour + " " + dayOfMon + " " + month + " " + DayofWeek + " " + year;
+
+					var fromtime = {
+								hour: fromHour,
+							    minute: Minutes,
+							    second: Seconds
+					};
+
+					var totime = {
+								hour: toHour,
+							    minute: Minutes,
+							    second: Seconds
+					};
+
+					if (flagT && flagD) {
+						tasklet[ACTUATION_DESC] = "Presence based actuation of " + actuatorName + " from " + getFormattedTime("hh:mm TT",fromtime,{ampm: true}) + " to " + getFormattedTime("hh:mm TT",totime,{ampm: true}) + " on days " + fromDayOfWeek + " to " + toDayOfWeek + " every week";
+						tasklet[ACTUATION_PARAM]["timeInterval"] = cronExp;
+
+					}						
+					else if (!flagT && flagD) {
+						tasklet[ACTUATION_DESC] = "Presence based actuation of " + actuatorName + " on days " + fromDayOfWeek + " to " + toDayOfWeek + " every week";
+						tasklet[ACTUATION_PARAM]["timeInterval"] = cronExp;
+					}
+					else if (flagT && !flagD) {
+						tasklet[ACTUATION_DESC] = "Presence based actuation of " + actuatorName + " from " + getFormattedTime("hh:mm TT",fromtime,{ampm: true}) + " to " + getFormattedTime("hh:mm TT",totime,{ampm: true});
+						tasklet[ACTUATION_PARAM]["timeInterval"] = cronExp;
+					}
+					else {
+						var sdate = new Date($.now());
+						tasklet[ACTUATION_DESC] = "Presence based actuation of " + actuatorName + " scheduled on " + $.datepicker.formatDate('dd-M-yy', sdate);
+					}
+						
+					tasklet[ACTUATION_PARAM]["resource"] = resource;
+					tasklet[ACTUATION_PARAM]["thresholdM"] = thresholdM;
+					tasklet[ACTUATION_PARAM]["thresholdNM"] = thresholdNM;
+					tasklet[ACTUATION_WHEN] = "deviceinfo";					
+					//tasklet[ACTUATION_INPUT]["timer"] = cronExp; --- For periodic and event
+					tasklet[ACTUATION_INPUT]["deviceinfo"] = username + ":" + deviceName + ":" + PIRSensor + ":" + PIRSensorID;
+					
+					
+					tasklet[ACTUATION_EXECUTE_SCRIPT]='now = os.time(); \
+										fromTimeM = now - thresholdM; \
+										fromTimeNM = now - thresholdNM; \
+										\
+										HashMap = java.require("java.util.HashMap"); \
+										motionData = HashMap:new(); \
+										nomotionData = HashMap:new(); \
+										\
+										countZero = 0; \
+										countOne = 0; \
+										sumM = 0;	\
+										sumNM = 0; \
+										\
+										motionData = PDS:readPastToNow(deviceinfo,fromTimeM, now); \
+										print(motionData:toString()); \
+										sumM = motionData:size(); \
+										print("SumM: " .. sumM)\
+										\
+										for key, value in java.pairs(motionData) do  \
+											print(key .. " : " .. value); \
+											if (value == 1) then \
+												countOne = countOne + 1; \
+											end \
+										end \
+										print("countOne: " .. countOne) \
+										\
+										nomotionData = PDS:readPastToNow(deviceinfo,fromTimeNM, now); \
+										sumNM = nomotionData:size(); \
+										print("SumNM: " .. sumNM)\
+										\
+										for key, value in java.pairs(nomotionData) do  \
+											print(key .. " : " .. value); \
+											if (value == 0) then \
+												countZero = countZero + 1 \
+											end \
+										end \
+										print("countZero: " .. countZero) \
+										\
+										if (countZero == sumNM) then \
+											PDS:write(resource,0.0);	 \
+										elseif (countOne/sumM > 0.1) then \
+											PDS:write(resource,1.0); \
+										end';
+
+										
+
+										
+
+					//alert(JSON.stringify(tasklet));
+					
+					try {
+
+						var temp="http://"+document.location.hostname+":"+document.location.port+"/";
+
+						$.post(temp+URL_ACTUATE_DEVICE, JSON.stringify(tasklet), function(data) {
+								receivedData = data;
+						});
+						if(receivedData[RESPONSE_STATUS_CODE] == SUCCESS) {
+							alert("Actuation request made successfully!");
+							window.location = temp + URL_PRESENCE_ACTUATE;
+						}
+						else {
+							alertActuateDeviceError("Following error occured: " + receivedData[RESPONSE_MESSAGE]);
+
+						}
+
+					} catch(e) {
+						alertGetActuateError("Following error occured: " + receivedData[RESPONSE_MESSAGE]);
+					}
+
+				}
+
+				/*
+				 * Validate the parameters to query for visualization
+				 * I/p:
+				 * Device name,SelectedSensors,startTime,endTime
+				 * O/p:
+				 * An array of 2 objects:
+				 * 1.The error state:true/false
+				 * 2.Error Information associated
+				 */
+
+				function validateRequest(selectedItem, fromTime, toTime, thresholdM, thresholdNM) {
+
+					$(".errorVisual").hide("");
+					$("#IDDeviceSelect,#fromtime","#totime").removeClass("error");
+					errorState = false;
+					errorInformation = "";
+					
+					if (typeof selectedItem === 'undefined') {
+						errorState = true;
+
+						$("#span" + removeSpace(deviceName)).show('slow', function() {
+						});
+						$("#span" + removeSpace(deviceName)).html('Please select an actuator');				
+
+					}
+					else if (thresholdM.length == 0) {						
+						errorState = true;
+						
+						$("#spanThresholdM").show('slow', function() {
+						});
+						$("#spanThresholdM").html("Please enter a threshold value");
+					}
+					else if (thresholdM > MAX_VALUE_THRESHOLD) {
+						errorState = true;
+			
+						$("#spanThresholdM").show('slow', function() {
+						});
+						$("#spanThresholdM").html("Maximum Threshold value is " + MAX_VALUE_THRESHOLD);
+					}
+					else if (thresholdNM.length == 0) {						
+						errorState = true;
+						
+						$("#spanThresholdNM").show('slow', function() {
+						});
+						$("#spanThresholdNM").html("Please enter a threshold value");
+					}
+					else if (thresholdNM > MAX_VALUE_THRESHOLD) {
+						errorState = true;
+			
+						$("#spanThresholdNM").show('slow', function() {
+						});
+						$("#spanThresholdNM").html("Maximum Threshold value is " + MAX_VALUE_THRESHOLD);
+					}
+					else if (fromTime.length == 0 && toTime.length != 0) {
+						errorState = true;
+			
+						$("#fromtime").addClass("error");
+						$("#spanDateTime").show('slow', function() {
+						});
+						$("#spanDateTime").html("Please select 'From Time'");
+					}
+					else if (fromTime.length != 0 && toTime.length == 0) {
+						errorState = true;
+			
+						$("#totime").addClass("error");
+						$("#spanDateTime").show('slow', function() {
+						});
+						$("#spanDateTime").html("Please select 'To Time'");
+					}
+					else if (fromTime.length != 0 && toTime.length != 0 && fromTime > toTime) {
+						errorState = true;
+
+						$("#spanDateTime").show('slow', function() {
+						});
+						$("#spanDateTime").html("From time should be less than To time");
+					}
+					else if(fromDay != 'none' && toDay =='none') {
+						errorState = true;
+			
+						$("#spanDayOfWeek").show('slow', function() {
+						});
+						$("#spanDayOfWeek").html("Please select 'To  Weekday'");
+					}					
+					else if(fromDay == 'none' && toDay !='none') {
+						errorState = true;
+			
+						$("#spanDayOfWeek").show('slow', function() {
+						});
+						$("#spanDayOfWeek").html("Please select 'From  Weekday'");
+					}
+					else if(fromDay > toDay) {
+						errorState = true;
+			
+						$("#spanDayOfWeek").show('slow', function() {
+						});
+						$("#spanDayOfWeek").html("From Weekday comes before To WeekdDay");
+					}
+					
+
+					return [errorState, errorInformation];
+				}
+
+
+				/* 'Make actuation request' button functionality*/
+
+				$("#IDActuateDevice").click(function() {
+
+					var selectedItem;
+					var selectedDeviceName = deviceName;
+					var thresholdM, thresholdNM, fromTime, toTime;
+					var actuatorID;	
+					var deviceError;
+					
+					fromDay = $("#fromdayOfWeek").val();
+					toDay = $("#todayOfWeek").val();
+					thresholdM = $("#thresholdM").val();
+					thresholdNM = $("#thresholdNM").val();
+
+					//alert("Clicked device:" +deviceName);					
+
+					// Validating whether any device has been selected
+
+					if (typeof selectedDeviceName === 'undefined' || selectedDeviceName == "") {
+						deviceError = true;
+						$("#IDDeviceSelect").addClass("error");
+						$("#spanDevice").show('slow', function() {
+						});
+
+						$("#spanDevice").html("Please Select a device");
+						$("#IDDeviceSelect").focus();
+
+						return false;
+					} 
+
+					// Validating the day of week fields
+
+						$("#div" + removeSpace(selectedDeviceName)).children('.actuator').find("input").each(function() {
+					
+							if ($(this).prop("checked")) {
+
+								var prop = $(this);
+								for (var index in receivedDeviceData[DEVICE_ARRAY]) {	
+
+								
+									if ( DEVICE_ACTUATORS in receivedDeviceData[DEVICE_ARRAY][index]) {
+									
+										var actuatorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_ACTUATORS];								
+
+										for (var indexActuators in receivedDeviceData[DEVICE_ARRAY][index][DEVICE_ACTUATORS]) {
+
+											var actuatorName = actuatorArray[indexActuators][DEVICE_ACTUATOR_NAME];											
+											if (actuatorName == prop.val()) {									
+												actuatorID = actuatorArray[indexActuators][DEVICE_ACTUATOR_ID];
+												PIRSensor = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS][0][DEVICE_SENSOR_NAME];
+												PIRSensorID = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS][0][DEVICE_SENSOR_ID];
+												break;
+											}	
+										}
+									}
+								}								
+								selectedItem = $(this).val();								
+							}
+						});	
+
+						if ($(ID_FROMTIME_ACTUATE).val().length > 0) {
+							fromTime = datetimeToEpoch($(ID_FROMTIME_ACTUATE).val()) * 1000;
+						} else {
+							fromTime = $(ID_FROMTIME_ACTUATE).val();
+						}
+
+						if ($(ID_TOTIME_ACTUATE).val().length > 0) {
+							toTime = datetimeToEpoch($(ID_TOTIME_ACTUATE).val()) * 1000;
+						} else {
+							toTime = $(ID_TOTIME_ACTUATE).val();
+						}
+					
+					var errorStatus = validateRequest(selectedItem, fromTime, toTime, thresholdM, thresholdNM );
+				
+					if (errorStatus[0]) {
+						return false;
+					}								
+					makeRequest(selectedItem, actuatorID, fromTime, toTime, thresholdM, thresholdNM);
+				});
+
+				/*
+				 * Displaying the list of devices and load the actuators associated with them
+				 */
+
+				//Getting Device List
+				try {
+					var temp="http://"+document.location.hostname+":"+document.location.port+"/";
+
+					$.get(temp+URL_LIST_ALL_DEVICES, function(data) {					
+						receivedDeviceData = data;					
+					});
+				} catch(e) {
+
+				}
+				//Make a get request to get all the devices available
+				if (!(receivedDeviceData.hasOwnProperty(RESPONSE_STATUS_CODE)))//Success
+				{
+
+					if (receivedDeviceData[DEVICE_ARRAY].length > 0) {
+
+						for (var index in receivedDeviceData[DEVICE_ARRAY]) {
+							var name = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_NAME];
+
+							$("#divDeviceSelect").append("<div class=\"device\" id=\"div" + removeSpace(name) + "\"><input type=\"radio\" name=\"IDDeviceSelect\" value=\"" + name + "\" />&nbsp&nbsp" + name + "</div>");
+						}
+
+						/*
+						 * Description:This function is used to change the HTML contents corresponding to a selected device
+						 * It basically adds relevant HTMl in accordance with the device selected
+						 *
+						 * Nature:Anonmyous function
+						 *
+						 * Called:Called every time a change occurs in the dropdown menu
+						 *
+						 */
+
+						var deviceName;
+						var previousValue = {};
+						$("input[name=IDDeviceSelect]").click(function() {
+							
+							var clickedItem = this.value;		
+							//alert("Clicked device:" + clickedItem);		 
+
+							$("#spanDevice").hide();
+							$("#labelActuatorSelect").hide();
+							$(".errorVisual").hide();
+
+						    if(previousValue[clickedItem] == 'checked'){
+						    	$("#div" + removeSpace(this.value)).children('.actuator').remove();
+							    $(this).attr("checked", false);							    
+								deviceName = "";
+								previousValue[clickedItem] = "unchecked";  	     
+						        
+						    }
+						    else {
+						    	previousValue[clickedItem] = $(this).attr('checked');  							
+
+								if ($(this).attr('checked')) {
+
+									deviceName = this.value;									
+									
+									for (var index in receivedDeviceData[DEVICE_ARRAY]) {
+										var name = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_NAME];
+								
+										if (name == this.value) {
+											if ($("#IDDeviceSelect").is('.error')) {
+												
+												$("#IDDeviceSelect").removeClass("error");
+												$("#spanDevice").hide();
+												$("#IDActuateDevice").removeAttr("disabled", "disabled");
+
+											}
+
+											if ( DEVICE_ACTUATORS in receivedDeviceData[DEVICE_ARRAY][index]) {
+											
+												var actuatorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_ACTUATORS];
+												
+												$("#labelActuatorSelect").show();
+
+												$("#div" + removeSpace(name)).append("<div class=\"actuator\">");
+												for (var actuator in actuatorArray) {
+													$("#div" + removeSpace(name)).children(".actuator").append("<input id=\"actuatorID\" type=\"radio\" name = \"actuatorID\" value=" + actuatorArray[actuator][DEVICE_ACTUATOR_NAME] + ">&nbsp" + actuatorArray[actuator][DEVICE_ACTUATOR_NAME] + "&nbsp&nbsp</input>");
+												}
+												$("#div" + removeSpace(name)).append("</div><span class=\"errorVisual\" id=\"span" + removeSpace(name) + "\" style=\"display:none;\"></span>");
+
+												error = 0;
+											}
+											else {
+												$(this).attr("checked",false);
+												deviceName = "";
+												alert("Please select a device which contains actuators!!");
+									
+											}
+										}
+									}
+								}
+																				
+							}
+							
+						});						
+					} 
+				}
+
+				$("#dialog:ui-dialog").dialog("destroy");
+				var dlg = $("#dialog").dialog({
+					autoOpen : false,
+					draggable : true,
+					resizable : true,
+					width : 700,
+					modal : true
+				});
+
+				$( "#dialog" ).bind( "dialogbeforeclose", function(event, ui) {
+					$("#dialog").html("");
+				});
+
+				/* 
+				 * List all the actuation requests
+				 */ 
+				$("#IDViewRequest").click(function() {
+
+					try {
+						
+						var temp="http://"+document.location.hostname+":"+document.location.port+"/";
+						$.post(temp+URL_LIST_ACTUATE_REQUEST, function(data) {
+								receivedData = data;
+						});						
+
+						if (receivedData[RESPONSE_STATUS_CODE] != NO_ACTUATION_REQUEST_FOUND) {
+
+							if (receivedData[DEVICE_ACTLIST_ARRAY].length > 0)	{ //Success
+								
+								// TODO: Replace tasklet name with tasklet description
+								$("#dialog").append("<div id =\"errorCDiv\" style=\"color: red;padding:5px; font-size: 1\"</div><br/>");
+								$("#errorCDiv").hide();
+								$("#dialog").append("<table id=\"actList\" style=\"display: block\">");
+								for (var index in receivedData[DEVICE_ACTLIST_ARRAY]) {
+									var name = receivedData[DEVICE_ACTLIST_ARRAY][index][ACTUATION_DESC];
+									var taskletId = receivedData[DEVICE_ACTLIST_ARRAY][index][ACTUATION_TASKLETID]; 
+									$("#dialog").append("<tr><td><input type=\"checkbox\" id=\"chkCReq\" value=\""+ taskletId +"\" +</td><td>" + name + "</td></tr>");															
+								}
+								$("#dialog").append("</table><br/>");
+								$("#dialog").append("<botton id=\"IDSelectAllButton\" class=\"google-button\" align=\"center\">Select/Deselect All</botton> &nbsp; <botton id=\"IDCancelReqButton\" class=\"google-button\" align=\"center\">Cancel Requests</botton>");
+								
+								var prevSelect = false;
+								$("#IDSelectAllButton").click(function() {
+
+									$("#dialog").find("input").each(function() {
+
+										if(prevSelect) {
+											$(this).attr('checked',false);
+										}											
+										else {
+											$(this).attr('checked',true);
+										}
+												
+									});
+
+									if (!prevSelect) {											
+										prevSelect = true;
+									}
+									else
+										prevSelect = false;
+
+								});
+
+								$("#IDCancelReqButton").click(function() {
+
+									var cancelReqList={};
+									var chkCount = 0;
+									var listCReq = new Array();
+									cancelReqList["secretkey"] = FAKE_SECRET_KEY;
+									cancelReqList["deviceCancelActuationRequestList"] = new Array();
+
+									$("#dialog").find("input").each(function() {
+
+										if ($(this).prop("checked")) {									
+											listCReq[chkCount] = $(this).val();
+											chkCount++;
+										}																									
+									});
+
+									if (chkCount < 1) {
+										var errorInformation = "Please select at least one request to cancel!";
+										$("#errorCDiv").show();
+										$("#errorCDiv").html(errorInformation);
+										$("#errorCDiv").fadeIn('slow');
+										return false;
+									}
+
+									cancelReqList["cancelRequestList"] = listCReq;											
+
+									try {
+										//var temp="http://"+document.location.hostname+":"+document.location.port+"/";
+										$.post(temp+URL_CANCEL_ACTUATE_REQUEST, JSON.stringify(cancelReqList), function(data) {
+										receivedData = data;
+										});
+										if(receivedData[RESPONSE_STATUS_CODE] == SUCCESS) {
+
+											alert("Actuation requests successfully cancelled!");
+											window.location = temp + URL_PRESENCE_ACTUATE;
+										}
+										else {
+											var errorInformation = receivedData[RESPONSE_MESSAGE];
+											$("#errorCDiv").html(errorInformation);
+											$("#errorCDiv").fadeIn('slow');
+											return false;
+										}
+											
+									}
+									catch(e) {
+										var errorInformation = receivedData[RESPONSE_MESSAGE];
+										$("#errorCDiv").html(errorInformation);
+										$("#errorCDiv").fadeIn('slow');
+										return false;
+									}
+
+
+								});						
+							}
+							else {
+								alertActuateDeviceError("Following error occured: " + receivedData[RESPONSE_MESSAGE]);
+							}
+
+							
+
+							dlg.dialog("open");
+							/*dlg.dialog("option", "position", {
+								//my: "center top",
+								//at: "right top",
+								//offset: "20 20"
+							});*/
+							return false;
+
+						}
+						else
+							alertGetActuateError("You have not made any actuation request!");
+
+
+					} catch(e) {
+
+						if (receivedData[RESPONSE_STATUS_CODE] == NO_ACTUATION_REQUEST_FOUND) 
+							alertGetActuateError("You have not made any actuation request!");
+						else
+							alertGetActuateError("Following error occured: " + receivedData[RESPONSE_MESSAGE]);
+					}
+
+				});
+				
+			});
+
+		</script>
+	</head>
+	<body>
+		<input type="hidden"  id ="username" value =${username} />
+		<div id="header-container">
+			<header class="wrapper clearfix">
+				<h1 id="title">SensorAct
+				<br />
+				<br />
+				<span style="font-size:25px;">Sense - Interact - Actuate</span></h1>
+				<nav id="navHeader">
+				</nav>
+				<br />
+				<br />
+				<nav>
+					<p class="pbox" style="margin-bottom:-20px;">
+						Welcome ${username} &nbsp | &nbsp<span id="logout">Logout</span>
+					</p>
+				</nav>
+
+			</header>
+		</div>
+		<div class="wrapper" style="">
+			<h1 class="newfont" id="device" style="text-align:center;">Actuate a Device based on Presence</h1>
+			<hr>			
+			<div style="display: none;" id="getActuateErrorDiv" class="errorDiv"></div>
+			<div style="display: none;" id="errorDiv" class="errorDiv"></div>
+			<label><sup>*</sup> <font size="1">Mandatory Fields</font></label>	
+			<div id="newActRequest">
+				<!--Right Pane starts here-->
+				<div id="displayTasklets" style="float:right;">
+					<div class="leftDiv" style="clear:both;text-align:center;">
+						<div id="dialog" title = "Actuation Requests Made" style="font-size:1;"></div>
+						<button id="IDViewRequest" class="google-button">
+						View Scheduled Actuation Requests
+						</button>
+						<br/>
+					</div>
+					<div class="rightDiv">
+						<span class="errorVisual" id="spanViewRequest"></span>
+					</div>
+					<br />
+				</div>
+				<!-- Right Pane ends here-->						
+				<!-- Left Pane starts here-->
+				<div id="visualBox" style="">
+					<div class="leftDiv">
+						<label>Select Device to actuate:<sup>*</sup></label>
+					</div>
+					<div class="rightDiv">
+						<div id="divDeviceSelect">
+
+						</div>
+						<span class="errorVisual" id="spanDevice"></span>
+					</div>
+					<div class="leftDiv" style="padding-top: 10px">
+							Select Threshold value for motion detection: <sup>*</sup><input type="text" id="thresholdM" maxlength= "2" size ="2"/>
+							<font size="1">(in seconds)</font>			
+					</div>
+					<div class="rightDiv">						
+						<span class="errorVisual" id="spanThresholdM"></span>
+					</div>
+					<div class="leftDiv" style="padding-top: 10px">
+							Select Threshold value for no motion detection: <sup>*</sup><input type="text" id="thresholdNM" maxlength= "2" size ="2"/>
+							<font size="1">(in seconds)</font>			
+					</div>
+					<div class="rightDiv">						
+						<span class="errorVisual" id="spanThresholdNM"></span>
+					</div>
+					<div class="leftDiv" style="padding-top: 15px">
+							From Time: <input type="text" id="fromtime" name="fromtime" readonly='true' />
+							&nbsp &nbsp &nbsp &nbsp
+							To Time: <input type="text" id="totime" name="totime" readonly='true' />			
+					</div>
+					<font size="1">(Ignore date selection. Actuation will happen everyday at the time you have specified)</font>
+					<div class="rightDiv">						
+						<span class="errorVisual" id="spanDateTime"></span>
+					</div>
+					<div class="leftDiv" style="padding-top: 15px">
+						From : <select id="fromdayOfWeek" size="1">
+								<option value="none">Select a Weekday</option>
+								<option value="1">Sunday</option>
+								<option value="2">Monday</option>
+								<option value="3">Tuesday</option>
+								<option value="4">Wednesday</option>
+								<option value="5">Thursday</option>
+								<option value="6">Friday</option>
+								<option value="7">Saturday</option>
+						</select>
+						&nbsp &nbsp &nbsp &nbsp
+						To : <select id="todayOfWeek" size="1">
+								<option value="none">Select a Weekday</option>o
+								<option value="1">Sunday</option>
+								<option value="2">Monday</option>
+								<option value="3">Tuesday</option>
+								<option value="4">Wednesday</option>
+								<option value="5">Thursday</option>
+								<option value="6">Friday</option>
+								<option value="7">Saturday</option>
+						</select><br/>									
+					</div>
+					<br/>
+					<div class="rightDiv">						
+						<span class="errorVisual" id="spanDayOfWeek"></span>
+					</div>									
+				</div>
+				<!-- Left pane ends here-->					
+				<p class="space"></p>				
+				<div style="clear:both;text-align:center; padding-top:20px">	
+					<button id="IDActuateDevice" class="google-button">
+						Make Actuation Request
+					</button>
+				</div>
+				<br/>
+			</div>
+			
+		</div>
+		<div style="clear:both;" id="footer-container">
+			<footer class="wrapper">
+				<h4 align="center">&copy2012 |MUC,IIIT-Delhi</h4>
+			</footer>
+		</div>
+	</body>
+</html>
