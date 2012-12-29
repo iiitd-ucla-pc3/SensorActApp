@@ -16,7 +16,9 @@
 		<script type="text/javascript">
 			$(document).ready(function() {
 
-				var repsonseFromServer;
+				createHeader();
+
+				var responseFromServer;
 
 				/*
 				 * Adding the link attribute to Logout,Home element	</body>
@@ -139,68 +141,44 @@
 				<br />
 				<br />
 				<span style="font-size:25px;">Sense - Interact - Actuate</span></h1>
+				<nav id = "navHeader">			
+				</nav>
+				<br />
+				<br />
 				<nav>
-			<ul>
-				<li>
-							<a id="home">Home</a>
-						</li>
-						<li>
-							<a id="devices"  >Devices</a>
-						</li>
-						<li>
-							<a id="deviceactuate"> Actuation</a>
-						</li>
-						<li>
-							<a id="visualization" >Visualization</a>
-						</li>
-						<li>
-							<a id="repositoryInformation" class="active">Repository</a>
-						</li>
-						<li>
-							<a id="speak" >Speak</a>
-						</li>
-				<!--<li>
-						<a id="logout">Logout</a>
-				</li>-->
-				
-			</ul>
-		</nav>
-		<br />
-		<br />
-		<nav>
 					<p class="pbox" style="margin-bottom:-20px;">
 						Welcome ${username} &nbsp | &nbsp<span id="logout">Logout</span>
 					</p>
-		</nav>
-	</header>
-	</div>
-	<div class="wrapper">
-		<h1 class="newfont" style="text-align:center;">Repository Information</h1>
-		<div id="errorDiv" class="errorDiv"></div>
-		<div id="repoInfo">
-			Please note down this information carefully for registering your repository account with the Broker
-			<br/>
-			<label>Repo Name</label>
-			<span id="repoName"></span>
-			<br/>
-			<label>Repo URL</label>
-			<span id="repoURL"></span>
-			<br/>
-			<button id ="generateRepoKey">
-				Generate Key to register repository to Broker
-			</button>
-			
-			<div id="generatedRepoKeyDiv">
-				<label>Generated Key</label>
-				<span id="generatedKey"></span>
-			</div>
+				</nav>
+			</header>
 		</div>
-		<hr>
-	</div>
-	<div style="clear:both;" id="footer-container">
-		<footer class="wrapper">
-			<h4 align="center">&copy2012 |MUC,IIIT-Delhi</h4>
-		</footer>
-	</div>
+		<div class="wrapper">
+			<h1 class="newfont" style="text-align:center;">Repository Information</h1>
+			<div id="errorDiv" class="errorDiv"></div>
+			<div id="repoInfo">
+				Please note down this information carefully for registering your repository account with the Broker
+				<br/>
+				<label>Repo Name</label>
+				<span id="repoName"></span>
+				<br/>
+				<label>Repo URL</label>
+				<span id="repoURL"></span>
+				<br/>
+				<button id ="generateRepoKey">
+					Generate Key to register repository to Broker
+				</button>
+				
+				<div id="generatedRepoKeyDiv">
+					<label>Generated Key</label>
+					<span id="generatedKey"></span>
+				</div>
+			</div>
+			<hr>
+		</div>
+		<div style="clear:both;" id="footer-container">
+			<footer class="wrapper">
+				<h4 align="center">&copy2012 |MUC,IIIT-Delhi</h4>
+			</footer>
+		</div>
 	</body>
 </html>

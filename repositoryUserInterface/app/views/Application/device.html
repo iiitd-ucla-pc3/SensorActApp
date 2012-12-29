@@ -19,6 +19,8 @@
 		<script type="text/javascript">
 			$(document).ready(function() {
 
+				createHeader();
+
 				/**
 				 * Global Variables used during the lifecycle of the page
 				 *
@@ -47,13 +49,6 @@
 				});
 
 			/********************* --------------- Changes made here --------------- ***************/
-				setNavURL("#devices" ,'href', temp+URL_DEVICES);
-				setNavURL("#deviceactuate" ,'href',temp+URL_ACTUATE);
-				setNavURL("#visualization",'href', temp+URL_VISUALIZATION);
-				setNavURL("#repositoryInformation",'href',temp+URL_REPOSITORY_INFO);
-				setNavURL("#home",'href',temp+URL_HOME);
-				setNavURL("#logout",'href',temp+URL_LOGOUT_USER);	
-				setNavURL("#speak",'href',temp+URL_SPEAK_INPUT);
 				$("#logout").click(function() {
 
 					window.location = URL_LOGOUT_USER;
@@ -376,30 +371,7 @@ $("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLoc
 				<br />
 				<br />
 				<span style="font-size:25px;">Sense - Interact - Actuate</span></h1>
-				<nav>
-					<ul>
-						<li>
-							<a id="home">Home</a>
-						</li>
-						<li>
-							<a id="devices" class="active" >Devices</a>
-						</li>
-						<li>
-							<a id="deviceactuate"> Actuation</a>
-						</li>
-						<li>
-							<a id="visualization">Visualization</a>
-						</li>
-						<li>
-							<a id="repositoryInformation">Repository</a>
-						</li>
-						<li>
-							<a id="speak" >Speak</a>
-						</li>
-						<!--<li>
-						<a id="logout">Logout</a>
-						</li>-->
-					</ul>
+				<nav id="navHeader">
 				</nav>
 				<br />
 				<br />

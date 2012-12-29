@@ -20,13 +20,7 @@
 
 							
 				var temp="http://"+document.location.hostname+":"+document.location.port+"/";
-				setNavURL("#devices" ,'href',temp+URL_DEVICES);
-				setNavURL("#deviceactuate" ,'href',temp+URL_ACTUATE);
-				setNavURL("#visualization",'href',temp+URL_VISUALIZATION);
-				setNavURL("#repositoryInformation",'href',temp+URL_REPOSITORY_INFO);
-				setNavURL("#home",'href',temp+URL_HOME);
-				setNavURL("#logout",'href',temp+URL_LOGOUT_USER);
-				setNavURL("#speak",'href',temp+URL_SPEAK_INPUT);
+				createHeader();
 				$("#logout").click(function() {
 
 					window.location = URL_LOGOUT_USER;
@@ -44,28 +38,7 @@
 				<br />
 				<br />
 				<span style="font-size:25px;">Sense - Interact - Actuate</span></h1>
-				<nav>
-					<ul>
-						<li>
-							<a id="home" class="active">Home</a>
-						</li>
-						<li>
-							<a id="devices" >Devices</a>
-						</li>
-						<li>
-							<a id="deviceactuate"> Actuation</a>
-						</li>
-						<li>
-							<a id="visualization">Visualization</a>
-						</li>
-						<li>
-							<a id="repositoryInformation">Repository</a>
-						</li>
-						<li>
-							<a id="speak" >Speak</a>
-						</li>
-						
-					</ul>
+				<nav id="navHeader">
 				</nav>
 				<br />
 				<br />

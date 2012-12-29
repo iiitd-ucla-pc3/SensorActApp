@@ -24,6 +24,8 @@ lang="en">
 
 			$(document).ready(function() {
 
+				createHeader();
+
 				/**
 				 * Global Variables used during the lifecycle of the page
 				 *
@@ -65,12 +67,6 @@ lang="en">
 				 /**
 				 * Adding the link attribute to Logout,Home element
 				 */
-					setNavURL("#devices" ,'href', temp+URL_DEVICES);
-					setNavURL("#deviceactuate" ,'href',temp+URL_ACTUATE);
-					setNavURL("#visualization",'href', temp+URL_VISUALIZATION);
-					setNavURL("#repositoryInformation",'href',temp+URL_REPOSITORY_INFO);
-					setNavURL("#home",'href',temp+URL_HOME);
-					setNavURL("#logout",'href',temp+URL_LOGOUT_USER);
 					
 				$("#logout").click(function() {
 					window.location = temp + URL_LOGOUT_USER;
@@ -523,7 +519,7 @@ lang="en">
 					
 						$.post(findDeviceOrTemplate, JSON.stringify(editDevice), function(data) {
 							receivedData = data;
-							alert(JSON.stringify(receivedData));
+							//alert(JSON.stringify(receivedData));
 
 							//Successfully received data
 							if(receivedData.hasOwnProperty(RESPONSE_STATUS_CODE))//Means a failure has occured {
@@ -979,39 +975,7 @@ lang="en">
 				<br>
 				<br>
 				<span style="font-size: 25px;">Sense - Interact - Actuate</span></h1>
-				<!--<nav>
-
-				<ul>
-				<li><a id="home">Home</a></li>
-
-				<li><a id="logout">Logout</a></li>
-				</ul>
-
-				</nav>-->
-				<nav>
-					<ul>
-						<li>
-							<a id="home">Home</a>
-						</li>
-						<li>
-							<a id="devices" class="active">Devices</a>
-						</li>
-						<li>
-							<a id="deviceactuate"> Actuation</a>
-						</li>
-						<li>
-							<a id="visualization">Visualization</a>
-						</li>
-						<li>
-							<a id="repositoryInformation">Repository</a>
-						</li>
-						<li>
-							<a id="speak">Speak</a>
-						</li>
-						<!--<li>
-						<a id="logout">Logout</a>
-						</li>-->
-					</ul>
+				<nav id="navHeader">
 				</nav>
 				<br />
 				<br />
@@ -1068,6 +1032,7 @@ lang="en">
 					<option value="template">Template</option>
 				</select>
 			</div>
+			<input id="username"  type="hidden" value=${username}>
 			<input id="devicename"  type="hidden" value=${devicename}>
 			<input id="isdevice"  type="hidden" value=${isdevice}>
 			<input	id="mode"  type="hidden" value=${mode}>

@@ -195,6 +195,21 @@ public class Application extends Controller {
 		render();
 	}
 	
+	public static void actuatedevice() {
+		String deviceActuateBody = request.params.get(Const.REQUEST_BODY);
+		api.actuateDevice.doProcess(deviceActuateBody);
+
+	}
+	
+	public static void presenceactuate() {
+		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		render();
+	}
+	
+	public static void addGuardRule() {
+		api.addGuardRule.doProcess(request.params.get(Const.REQUEST_BODY));
+
+	}	
 
 	public static void display2() {
 		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
@@ -234,11 +249,4 @@ public class Application extends Controller {
 		api.soundInput.doProcess(userID);
 
 	}
-	
-	public static void actuatedevice() {
-		String deviceActuateBody = request.params.get(Const.REQUEST_BODY);
-		api.actuateDevice.doProcess(deviceActuateBody);
-
-	}
-
 }

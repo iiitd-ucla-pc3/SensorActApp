@@ -38,6 +38,38 @@
  */
 
 /*
+ * Description: Renders the navigation header
+ */ 
+function createHeader() {    
+
+		var listOfPages = {
+			"Home" : URL_HOME,
+			"Devices" : URL_DEVICES,
+			"Actuation" : URL_ACTUATE,
+			"PresenceActuation" : URL_PRESENCE_ACTUATE,
+			"Visualization" : URL_VISUALIZATION,
+			"Repository" : URL_REPOSITORY_INFO,
+			"Speak" : URL_SPEAK_INPUT
+		};
+
+		var temp = "http://"+document.location.hostname+":"+document.location.port+"/";
+		var docURL = document.URL, urltoSet = "", value;
+
+	    $("#navHeader").append("<ul>");
+
+	    for (key in listOfPages) {
+	    	value = listOfPages[key];
+	    	urltoSet = temp+value;  
+	    	$("#navHeader").find("ul").append("<li><a id=\""+key+"\" href=\""+ urltoSet +"\">"+key+"</a></li>");         
+	    	if(docURL == urltoSet)             
+	    		$("#" +key).attr('class','active');     
+	    }
+	    $("#navHeader").append("</ul>");
+}
+
+ 
+
+/*
  * Description:Converts datetime from the UI format to epoch
  * Input:Date Time from the UI in the following format 2012-04-18-14:33
  * Output:Date Time in epoch format,such as 1334740020
@@ -141,3 +173,8 @@ function createDateTimePicker(selector){
 				});
 					
 }
+
+function getFormattedTime(format, time, options) {
+	return $.datepicker.formatTime(format,time,options);
+}
+

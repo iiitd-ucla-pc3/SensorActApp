@@ -4,6 +4,7 @@
 
 # Home page
 GET     /                                       Application.index
+GET /test				Application.test
 GET     /display                              Application.display
 GET     /display2                             Application.display2
 GET     /login									Application.login
@@ -18,10 +19,14 @@ GET     /device                                 Application.device
 GET     /device2                                Application.device2
 POST    /adddevice                              Application.adddevice
 POST    /adddevicetemplate                      Application.adddevicetemplate
+
 GET		/actuate								Application.actuate
 POST	/actuatedevice							Application.actuatedevice
 POST	/listactuationrequests					Application.listactuationrequests
 POST	/cancelactuationrequests				Application.cancelactuationrequests
+
+GET		/presenceactuate						Application.presenceactuate
+POST	/addguardrule							Application.addGuardRule
 
 GET     /listalldevices							Application.listalldevices
 GET     /listalldevicetemplates							Application.listalldevicetemplates

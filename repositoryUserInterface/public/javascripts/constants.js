@@ -39,12 +39,14 @@ var FAKE_DEVICE_NAME="aaaaaaaaaaaaaaaaaaa";
 var SECRET_KEY="secretkey";
 var USERNAME="username";
 var SUCCESS=0;
+var NO_ACTUATION_REQUEST_FOUND = 60;
 var FAILURE="Failure";
 var PASSWORD="password";
 var EMAIL="email";
 //Dictionary constants associated with device profile
 var DEVICE_ARRAY="devicelist";
 var DEVICE_TEMPLATE_ARRAY="templatelist";
+var DEVICE_ACTLIST_ARRAY="deviceActuationRequestList";
 
 var DEVICE_PROFILE="deviceprofile";
 var DEVICE_NAME="devicename";
@@ -61,6 +63,7 @@ var DEVICE_SENSOR_CHANNEL_TYPE="type";
 var DEVICE_SENSOR_CHANNEL_UNIT="unit";
 var DEVICE_SENSOR_CHANNEL_SAMPLING_PERIOD="samplingperiod";
 var DEVICE_ACTUATOR_NAME="name";
+var DEVICE_ACTUATOR_ID="aid";
 var DEVICE_IP="IP";
 var DEVICE_TAGS="tags";
 var DEVICE_LATITUDE="latitude";
@@ -85,6 +88,17 @@ var QUERY_DEVICE_NAME="devicename";
 var QUERY_SENSOR_NAME="sensorname";
 var QUERY_USER_NAME="username";
 var QUERY_IS_INTERACTIVE="interactive";
+
+//Dictionary constants associated with actuation
+var ACTUATION_SECRETKEY="secretkey";
+var ACTUATION_TASKLETNAME="taskletname";
+var ACTUATION_DESC="desc";
+var ACTUATION_PARAM="param";
+var ACTUATION_INPUT="input";
+var ACTUATION_WHEN="when";
+var ACTUATION_EXECUTE_SCRIPT="execute";
+
+var ACTUATION_TASKLETID="taskletId";
 
 //Dictionary constants associated with Chart Series
 var CHART_SERIES_NAME="name";
@@ -116,6 +130,10 @@ var RESPONSE_API_NAME="apiname";
 //ID Tags associated with HTML elements
 var ID_START_DATE_TIME_DISPLAY="#start_date_time";
 var ID_END_DATE_TIME_DISPLAY="#end_date_time";
+var ID_DATE_TIME_ACTUATE="#date_time";
+var ID_TIME_ACTUATE="#attime";
+var ID_FROMTIME_ACTUATE="#fromtime";
+var ID_TOTIME_ACTUATE="#totime";
 
 //Validations
 var MIN_LENGTH_ACTUATOR_NAME=2;
@@ -148,6 +166,7 @@ var MIN_VALUE_CHANNEL_SAMPLING_PERIOD=1;
 var MAX_VALUE_CHANNEL_SAMPLING_PERIOD=100;
 var MIN_VALUE_SENSOR_ID=1;
 var MAX_VALUE_SENSOR_ID=100;
+var MAX_VALUE_THRESHOLD=1800;   // 30 minutes
 
 //Dictionary elements associated with Repository information
 var REPOSITORY_NAME="name";
@@ -170,16 +189,20 @@ var URL_FIND_DEVICE="finddevice";
 var URL_ADD_DEVICE_TEMPLATE="adddevicetemplate";
 var URL_DELETE_DEVICE_TEMPLATE="deletedevicetemplate";
 var URL_FIND_DEVICE_TEMPLATE="finddevicetemplate";
-
-
+var URL_ACTUATE_DEVICE="actuatedevice";
+var URL_PRESENCE_ACTUATE_DEVICE="actuatebypresence";
 
 var URL_REGISTER_USER=URL_UI_SERVER+"register";
 var URL_QUERY_DATA="querydata2";
 var URL_LIST_ALL_DEVICES="listalldevices";
 var URL_LIST_ALL_DEVICE_TEMPLATES="listalldevicetemplates";
+var URL_LIST_ACTUATE_REQUEST="listactuationrequests";
+var URL_CANCEL_ACTUATE_REQUEST="cancelactuationrequests";
 
 var URL_HOME="home";
-var URL_DEVICES="device"
+var URL_DEVICES="device";
+var URL_ACTUATE="actuate";
+var URL_PRESENCE_ACTUATE="presenceactuate";
 var URL_LOGOUT_USER="logout";
 var URL_VISUALIZATION="display";
 var URL_REPOSITORY_INFO="repository";
@@ -191,7 +214,7 @@ var URL_SPEAK_INPUT = "speak";
 
 
 
-
+    
 /*
  * Test Objects
  * This sections contains all the test objects(which contain sample data formats)

@@ -33,41 +33,58 @@
  * *
  * *
  ******************************************************************************/
+/*
+ * Name: PresenceActuateDevice.java
+ * Project: SensorAct, MUC@IIIT-Delhi 
+ * Version: 1.0
+ * Date: 2012-12-26
+ * Author: Manaswi Saha
+ */
+
 package edu.iiitd.muc.sensoract.apis;
 
-import com.google.gson.Gson;
+/*
+ * Standard play imports
+ */
+import play.libs.WS.HttpResponse;
+import edu.iiitd.muc.sensoract.constants.Const;
+import edu.iiitd.muc.sensoract.utilities.SecretKey;
+import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 
-import controllers.Application;
-import edu.iiitd.muc.sensoract.utilities.SensorActLogger;
-
-public class SensorActAPI extends Application {
-
-	public static ParamValidator validator = new ParamValidator();
-	public static Gson gson = new Gson();
-	public static RegisterUser registeruser = new RegisterUser();
-	public static ListAllDevices listAllDevices = new ListAllDevices();
-	public static ListAllDeviceTemplates listAllDeviceTemplates = new ListAllDeviceTemplates();
-
-	public static AddDevice addDevice = new AddDevice();
-	public static AddDeviceTemplate addDeviceTemplate = new AddDeviceTemplate();
-
-	public static DeleteDevice deleteDevice = new DeleteDevice();
-	public static DeleteDeviceTemplate deleteDeviceTemplate = new DeleteDeviceTemplate();
-
-	public static ActuateDevice actuateDevice = new ActuateDevice();
-	public static AddGuardRule addGuardRule = new AddGuardRule();
-	public static ListActuationRequest listActRequests = new ListActuationRequest();
-	public static CancelActuationRequest cancelActRequests = new CancelActuationRequest();
+public class AddGuardRule extends SensorActAPI {
 	
-	public static QueryData queryData = new QueryData();
-	public static QueryData2 queryData2 = new QueryData2();
+	/**
+	 * Services the actuatebypresence API.
+	 * <p>
+	 * Followings are the steps to be followed to add a new device profile
+	 * successfully to the repository.
+	 * <ol>
+	 * <li>Gets the JSON string containing tasklet from UI
+	 * <li>Since the validation had been performed at the UI,this request is
+	 * just tunneled to the repository
+	 * <li>Replaces the secret key with the actual secret key
+	 * <li>If the tasklet has been successful,the successful Response
+	 * format is sent to the UI which interprets the same and reloads the page
+	 * <li>If the tasklet schedule fails then corresponding error
+	 * message is sent to the UI
+	 * </ol>
+	 * <p>
+	 * 
+	 * @param addGuardRuleJson
+	 *            actuation request in Json
+	 */
+	public final void doProcess(String addGuardRuleJson) {
+		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
+				.get(Const.USERNAME));
 
-	public static Login login = new Login();
-	public static GetRepositoryInfo getRepositoryInfo = new GetRepositoryInfo();
-	public static GenerateSecretKey generateSecretKey = new GenerateSecretKey();
-	public static FindDevice findDevice = new FindDevice();
-	public static FindDeviceTemplate findDeviceTemplate = new FindDeviceTemplate();
+		String presenceActuateBodyWithSecretKey = addGuardRuleJson.replace(
+				Const.FAKE_SECRET_KEY, secretkey);
+		logger.info(Const.API_PRESENCEACTUATEDEVICE, secretkey + " " + addGuardRuleJson);
 
-	public static SensorActLogger logger = new SensorActLogger();
-	public static SoundInput soundInput = new SoundInput();
+		HttpResponse responseFromVPDS = new SendHTTPRequest()
+				.sendPostRequest(Const.URL_REPOSITORY_PRESENCE_ACTUATE_DEVICE,
+						Const.MIME_TYPE_JSON, Const.API_PRESENCEACTUATEDEVICE,
+						presenceActuateBodyWithSecretKey);
+		renderJSON(responseFromVPDS.getString());
+	}
 }

@@ -66,6 +66,7 @@ public class Const {
 	public static final String API_GENERATESECRETKEY = "generatesecretkey";
 	public static final String API_LISTALLDEVICETEMPLATES = "listalldevicetemplates";
 	public static final String API_ACTUATEDEVICE = "actuatedevice";
+	public static final String API_PRESENCEACTUATEDEVICE = "actuatebypresence";
 	public static final String API_LISTACTUATIONREQUEST = "listactuationrequests";
 	public static final String API_CANCELACTUATIONREQUEST = "cancelactuationrequests";
 
@@ -171,6 +172,9 @@ public class Const {
 
 	public static final String URL_REPOSITORY_ACTUATE_DEVICE = URL_REPOSITORY_SERVER
 			+ "device/actuate";
+	
+	public static final String URL_REPOSITORY_PRESENCE_ACTUATE_DEVICE = URL_REPOSITORY_SERVER
+			+ "device/presenceactuate";
 	
 	public static final String URL_REPOSITORY_LIST_ACTUATION_REQUEST = URL_REPOSITORY_SERVER
 			+ "device/actuationrequest/list";
