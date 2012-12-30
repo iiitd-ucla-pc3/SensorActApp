@@ -51,7 +51,7 @@ import edu.iiitd.muc.sensoract.constants.Const;
 import edu.iiitd.muc.sensoract.utilities.SecretKey;
 import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 
-public class AddGuardRule extends SensorActAPI {
+public class DeleteAssocGuardRule extends SensorActAPI {
 	
 	/**
 	 * Services the /addguardrule API.

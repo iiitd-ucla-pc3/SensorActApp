@@ -54,10 +54,19 @@ public class SensorActAPI extends Application {
 	public static DeleteDevice deleteDevice = new DeleteDevice();
 	public static DeleteDeviceTemplate deleteDeviceTemplate = new DeleteDeviceTemplate();
 
-	public static ActuateDevice actuateDevice = new ActuateDevice();
-	public static AddGuardRule addGuardRule = new AddGuardRule();
+	public static ActuateDevice actuateDevice = new ActuateDevice();	
 	public static ListActuationRequest listActRequests = new ListActuationRequest();
 	public static CancelActuationRequest cancelActRequests = new CancelActuationRequest();
+	
+	public static AddGuardRule addGuardRule = new AddGuardRule();
+	public static DeleteGuardRule delGuardRule = new DeleteGuardRule();
+	public static GetGuardRule getGuardRule = new GetGuardRule();
+	public static ListGuardRule listGuardRule = new ListGuardRule();
+	
+	public static AddAssocGuardRule addAssoGuardRule = new AddAssocGuardRule();
+	public static DeleteAssocGuardRule delAssoGuardRule = new DeleteAssocGuardRule();
+	public static GetAssocGuardRule getAssoGuardRule = new GetAssocGuardRule();
+	public static ListAssocGuardRule listAssoGuardRule = new ListAssocGuardRule();
 	
 	public static QueryData queryData = new QueryData();
 	public static QueryData2 queryData2 = new QueryData2();

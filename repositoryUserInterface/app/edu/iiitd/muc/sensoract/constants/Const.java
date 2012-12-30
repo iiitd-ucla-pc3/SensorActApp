@@ -66,9 +66,12 @@ public class Const {
 	public static final String API_GENERATESECRETKEY = "generatesecretkey";
 	public static final String API_LISTALLDEVICETEMPLATES = "listalldevicetemplates";
 	public static final String API_ACTUATEDEVICE = "actuatedevice";
-	public static final String API_PRESENCEACTUATEDEVICE = "actuatebypresence";
 	public static final String API_LISTACTUATIONREQUEST = "listactuationrequests";
 	public static final String API_CANCELACTUATIONREQUEST = "cancelactuationrequests";
+	public static final String API_ADDGUARDRULE = "addguardrule";
+	public static final String API_DELGUARDRULE = "delguardrule";
+	public static final String API_GETGUARDRULE = "getguardrule";
+	public static final String API_LISTGUARDRULE = "listallguardrules";
 
 	/*
 	 * API parameters
@@ -182,6 +185,30 @@ public class Const {
 	public static final String URL_REPOSITORY_CANCEL_ACTUATION_REQUEST = URL_REPOSITORY_SERVER
 			+ "device/actuationrequest/cancel";
 	
+	public static final String URL_REPOSITORY_ADD_GUARD_RULE = URL_REPOSITORY_SERVER
+			+ "guardrule/add";
+	
+	public static final String URL_REPOSITORY_DELETE_GUARD_RULE = URL_REPOSITORY_SERVER
+			+ "guardrule/delete";
+	
+	public static final String URL_REPOSITORY_GET_GUARD_RULE = URL_REPOSITORY_SERVER
+			+ "guardrule/get";
+	
+	public static final String URL_REPOSITORY_LIST_GUARD_RULE = URL_REPOSITORY_SERVER
+			+ "guardrule/list";
+	
+	public static final String URL_REPOSITORY_ASSO_GUARD_RULE_ADD = URL_REPOSITORY_SERVER
+			+ "guardrule/association/add";
+	
+	public static final String URL_REPOSITORY_ASSO_GUARD_RULE_DELETE = URL_REPOSITORY_SERVER
+			+ "guardrule/association/delete";
+	
+	public static final String URL_REPOSITORY_ASSO_GUARD_RULE_GET = URL_REPOSITORY_SERVER
+			+ "guardrule/association/get";
+	
+	public static final String URL_REPOSITORY_ASSO_GUARD_RULE_LIST = URL_REPOSITORY_SERVER
+			+ "guardrule/association/list";
+
 	public static final String URL_REPOSITORY_QUERY_DATA = URL_REPOSITORY_SERVER
 			+ "data/query";
 	public static final String URL_REPOSITORY_GET_INFO = URL_REPOSITORY_SERVER

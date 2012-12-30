@@ -50,7 +50,7 @@ import edu.iiitd.muc.sensoract.exceptions.InvalidJsonException;
 /**
  * Application class, entry point for all APIs for the repo
  * 
- * @author Nipun Batra
+ * @author Nipun Batra, Manaswi Saha
  * @version 1.0
  * @category Controller
  */
@@ -205,11 +205,40 @@ public class Application extends Controller {
 		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
 		render();
 	}
+		
+	public static void guardrule() {
+		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		render();
+
+	}
 	
 	public static void addGuardRule() {
 		api.addGuardRule.doProcess(request.params.get(Const.REQUEST_BODY));
 
-	}	
+	}
+	
+	public static void delGuardRule() {
+		api.delGuardRule.doProcess(request.params.get(Const.REQUEST_BODY));
+
+	}
+	
+	public static void getGuardRule() {
+		api.getGuardRule.doProcess(request.params.get(Const.REQUEST_BODY));
+
+	}
+	
+	public static void listallguardrules() {
+		api.listGuardRule.doProcess();
+	}
+	
+	public static void editguardrule(String guardrulename, String mode) {
+		System.out.println("Guard Rule: " + guardrulename);
+		renderArgs.put("guardrulename", guardrulename);
+		renderArgs.put("mode", mode);
+		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		render();
+
+	}
 
 	public static void display2() {
 		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));

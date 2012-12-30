@@ -36,10 +36,12 @@
 //Common constants 
 var FAKE_SECRET_KEY="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 var FAKE_DEVICE_NAME="aaaaaaaaaaaaaaaaaaa";
+var FAKE_GUARD_RULE_NAME="aaaaa";
 var SECRET_KEY="secretkey";
 var USERNAME="username";
 var SUCCESS=0;
 var NO_ACTUATION_REQUEST_FOUND = 60;
+var NO_GUARD_RULE_FOUND = 40;
 var FAILURE="Failure";
 var PASSWORD="password";
 var EMAIL="email";
@@ -47,6 +49,7 @@ var EMAIL="email";
 var DEVICE_ARRAY="devicelist";
 var DEVICE_TEMPLATE_ARRAY="templatelist";
 var DEVICE_ACTLIST_ARRAY="deviceActuationRequestList";
+var GUARD_RULE_ARRAY="guardrulelist";
 
 var DEVICE_PROFILE="deviceprofile";
 var DEVICE_NAME="devicename";
@@ -99,6 +102,16 @@ var ACTUATION_WHEN="when";
 var ACTUATION_EXECUTE_SCRIPT="execute";
 
 var ACTUATION_TASKLETID="taskletId";
+
+//Dictionary constants associated with guard rules
+var GUARDRULE="rule";
+var GUARDRULE_NAME="name";
+var GUARDRULE_DESC="description";
+var GUARDRULE_TARGETOP="targetOperation";
+var GUARDRULE_PRIORITY="priority";
+var GUARDRULE_CONDITION="condition";
+var GUARDRULE_ACTION="action";
+
 
 //Dictionary constants associated with Chart Series
 var CHART_SERIES_NAME="name";
@@ -167,6 +180,12 @@ var MAX_VALUE_CHANNEL_SAMPLING_PERIOD=100;
 var MIN_VALUE_SENSOR_ID=1;
 var MAX_VALUE_SENSOR_ID=100;
 var MAX_VALUE_THRESHOLD=1800;   // 30 minutes
+var MIN_LENGTH_GUARDRULE_NAME=5;
+var MAX_LENGTH_GUARDRULE_NAME=20;
+var MIN_LENGTH_GUARDRULE_DESC=5;
+var MAX_LENGTH_GUARDRULE_DESC=40;
+
+
 
 //Dictionary elements associated with Repository information
 var REPOSITORY_NAME="name";
@@ -190,7 +209,12 @@ var URL_ADD_DEVICE_TEMPLATE="adddevicetemplate";
 var URL_DELETE_DEVICE_TEMPLATE="deletedevicetemplate";
 var URL_FIND_DEVICE_TEMPLATE="finddevicetemplate";
 var URL_ACTUATE_DEVICE="actuatedevice";
-var URL_PRESENCE_ACTUATE_DEVICE="actuatebypresence";
+
+var URL_ADD_GUARD_RULE="addguardrule";
+var URL_DEL_GUARD_RULE="delguardrule";
+var URL_GET_GUARD_RULE="getguardrule";
+var URL_EDIT_GUARD_RULE="editguardrule";
+var URL_LIST_GUARD_RULE="listallguardrules";
 
 var URL_REGISTER_USER=URL_UI_SERVER+"register";
 var URL_QUERY_DATA="querydata2";
@@ -203,6 +227,7 @@ var URL_HOME="home";
 var URL_DEVICES="device";
 var URL_ACTUATE="actuate";
 var URL_PRESENCE_ACTUATE="presenceactuate";
+var URL_GUARD_RULE="guardrule";
 var URL_LOGOUT_USER="logout";
 var URL_VISUALIZATION="display";
 var URL_REPOSITORY_INFO="repository";

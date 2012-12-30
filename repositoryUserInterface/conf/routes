@@ -4,7 +4,7 @@
 
 # Home page
 GET     /                                       Application.index
-GET /test				Application.test
+
 GET     /display                              Application.display
 GET     /display2                             Application.display2
 GET     /login									Application.login
@@ -24,9 +24,14 @@ GET		/actuate								Application.actuate
 POST	/actuatedevice							Application.actuatedevice
 POST	/listactuationrequests					Application.listactuationrequests
 POST	/cancelactuationrequests				Application.cancelactuationrequests
-
 GET		/presenceactuate						Application.presenceactuate
+
+GET		/guardrule								Application.guardrule
 POST	/addguardrule							Application.addGuardRule
+POST	/delguardrule							Application.delGuardRule
+POST	/getguardrule							Application.getGuardRule
+GET     /listallguardrules						Application.listallguardrules
+GET     /editguardrule/{guardrulename}/{mode}	Application.editguardrule
 
 GET     /listalldevices							Application.listalldevices
 GET     /listalldevicetemplates							Application.listalldevicetemplates

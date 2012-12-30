@@ -51,7 +51,7 @@ import edu.iiitd.muc.sensoract.constants.Const;
 import edu.iiitd.muc.sensoract.utilities.SecretKey;
 import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 
-public class AddGuardRule extends SensorActAPI {
+public class GetGuardRule extends SensorActAPI {
 	
 	/**
 	 * Services the /addguardrule API.
@@ -77,14 +77,14 @@ public class AddGuardRule extends SensorActAPI {
 		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
 				.get(Const.USERNAME));
 
-		String presenceActuateBodyWithSecretKey = addGuardRuleJson.replace(
+		String guardRuleWithSecretKey = addGuardRuleJson.replace(
 				Const.FAKE_SECRET_KEY, secretkey);
-		logger.info(Const.API_ADDGUARDRULE, secretkey + " " + addGuardRuleJson);
+		logger.info(Const.API_GETGUARDRULE, secretkey + " " + addGuardRuleJson);
 
 		HttpResponse responseFromVPDS = new SendHTTPRequest()
-				.sendPostRequest(Const.URL_REPOSITORY_ADD_GUARD_RULE,
-						Const.MIME_TYPE_JSON, Const.API_ADDGUARDRULE,
-						presenceActuateBodyWithSecretKey);
+				.sendPostRequest(Const.URL_REPOSITORY_GET_GUARD_RULE,
+						Const.MIME_TYPE_JSON, Const.API_GETGUARDRULE,
+						guardRuleWithSecretKey);
 		renderJSON(responseFromVPDS.getString());
 	}
 }
