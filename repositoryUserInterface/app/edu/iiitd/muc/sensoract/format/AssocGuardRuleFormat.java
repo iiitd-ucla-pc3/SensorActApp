@@ -33,59 +33,31 @@
  * *
  * *
  ******************************************************************************/
-/*
- * Name: ActuateDevice.java
- * Project: SensorAct, MUC@IIIT-Delhi 
- * Version: 1.0
- * Date: 2012-12-14
- * Author: Manaswi Saha
- */
+package edu.iiitd.muc.sensoract.format;
 
-package edu.iiitd.muc.sensoract.apis;
+import edu.iiitd.muc.sensoract.apis.SensorActAPI;
 
-/*
- * Standard play imports
- */
-import play.libs.WS.HttpResponse;
-import edu.iiitd.muc.sensoract.constants.Const;
-import edu.iiitd.muc.sensoract.format.DeviceActuateFormat;
-import edu.iiitd.muc.sensoract.utilities.SecretKey;
-import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
-
-public class ActuateDevice extends SensorActAPI {
+public class AssocGuardRuleFormat extends SensorActAPI {
 	
-	/**
-	 * Services the actuatedevice API.
-	 * <p>
-	 * Followings are the steps to be followed to add a new device profile
-	 * successfully to the repository.
-	 * <ol>
-	 * <li>Gets the JSON string containing tasklet from UI
-	 * <li>Since the validation had been performed at the UI,this request is
-	 * just tunneled to the repository
-	 * <li>Replaces the secret key with the actual secret key
-	 * <li>If the tasklet has been successful,the successful Response
-	 * format is sent to the UI which interprets the same and reloads the page
-	 * <li>If the tasklet schedule fails then corresponding error
-	 * message is sent to the UI
-	 * </ol>
-	 * <p>
-	 * 
-	 * @param deviceActuateBody
-	 *            Device profile in Json
-	 */
-	public final void doProcess(String deviceActuateBody) {
-		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
-				.get(Const.USERNAME));
+	public String secretkey = null;
+	public String rulename = null;
+	public String devicename = null;
+	public String sensorname = null;
+	public String actuatorname = null;
+	public String sensorid = null;
+	public String actuatorid = null;
 
-		String deviceActuateBodyWithSecretKey = deviceActuateBody.replace(
-				Const.FAKE_SECRET_KEY, secretkey);
-		logger.info(Const.API_ACTUATEDEVICE, secretkey + " " + deviceActuateBody);
-
-		HttpResponse responseFromVPDS = new SendHTTPRequest()
-				.sendPostRequest(Const.URL_REPOSITORY_ACTUATE_DEVICE,
-						Const.MIME_TYPE_JSON, Const.API_ACTUATEDEVICE,
-						deviceActuateBodyWithSecretKey);
-		renderJSON(responseFromVPDS.getString());
+	public AssocGuardRuleFormat(String secretkey,String rulename, String devicename,
+			String sensorname, String sensorid, String actuatorname,String actuatorid) {
+		
+		this.secretkey = secretkey;
+		this.rulename = rulename;
+		this.actuatorname = actuatorname;
+		this.sensorid = sensorid;
+		this.actuatorid = actuatorid;
+		this.devicename = devicename;
+		this.sensorname = sensorname;
+		
 	}
+
 }

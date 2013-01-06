@@ -54,7 +54,7 @@ import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 public class ListAssocGuardRule extends SensorActAPI {
 	
 	/**
-	 * Services the /addguardrule API.
+	 * Services the /listassocguardrule API.
 	 * <p>
 	 * Followings are the steps to be followed to add a new device profile
 	 * successfully to the repository.
@@ -63,28 +63,25 @@ public class ListAssocGuardRule extends SensorActAPI {
 	 * <li>Since the validation had been performed at the UI,this request is
 	 * just tunneled to the repository
 	 * <li>Replaces the secret key with the actual secret key
-	 * <li>If the addition has been successful,the successful Response
-	 * format is sent to the UI which interprets the same and reloads the page
-	 * <li>If the addition fails then corresponding error
-	 * message is sent to the UI
+	 * <li>It gets the list of all the guard rules associated with the user
 	 * </ol>
 	 * <p>
 	 * 
-	 * @param addGuardRuleJson
-	 *            actuation request in Json
+	 * @param listGuardRuleJson
+	 *            list guard rule request in Json
 	 */
-	public final void doProcess(String addGuardRuleJson) {
+	public final void doProcess() {
 		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
 				.get(Const.USERNAME));
 
-		String presenceActuateBodyWithSecretKey = addGuardRuleJson.replace(
-				Const.FAKE_SECRET_KEY, secretkey);
-		logger.info(Const.API_ADDGUARDRULE, secretkey + " " + addGuardRuleJson);
+		String listAssocGuardRuleReq = "{\"secretkey\":" + secretkey + "}";
+
+		logger.info(Const.API_LISTASSOCGUARDRULE, secretkey + " " + listAssocGuardRuleReq);
 
 		HttpResponse responseFromVPDS = new SendHTTPRequest()
-				.sendPostRequest(Const.URL_REPOSITORY_ADD_GUARD_RULE,
-						Const.MIME_TYPE_JSON, Const.API_ADDGUARDRULE,
-						presenceActuateBodyWithSecretKey);
+				.sendPostRequest(Const.URL_REPOSITORY_ASSOC_GUARD_RULE_LIST,
+						Const.MIME_TYPE_JSON, Const.API_LISTGUARDRULE,
+						listAssocGuardRuleReq);
 		renderJSON(responseFromVPDS.getString());
 	}
 }

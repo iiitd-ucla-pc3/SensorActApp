@@ -121,8 +121,28 @@ nav a,.pbox{
 	font-weight:bold;
 }
 
+/* Added here*/
+nav .loginbox{
+	display:block;
+	margin-bottom:10px;
+	margin-left:2px;
+	padding:1x 0;
+
+	background:#e44d26;
+	color:white;
+
+	text-align:center;
+	text-decoration:none;
+	font-weight:bold;
+
+	width:60%;
+	position:relative;
+	left:20%;
+}
+
 nav .pbox{
-margin-left:2px;
+	margin-top: 90px;	/* Made changes here*/
+	margin-left:2px;
 }
 nav a:hover, nav a:visited{
 	color:white;
@@ -183,9 +203,10 @@ nav a:hover{
 	
 	nav a{
 		float:left;
-		width:17%;
+		width:14%;	/* Made changes here*/
+		height: 40px;	/* Made changes here*/
 		margin:0 0.3%;
-		padding:20px 1%;
+		padding:20px 1%;	/* Made changes here*/
 		margin-bottom:0;
 		cursor:pointer;
 	}
@@ -197,7 +218,7 @@ nav a:hover{
     INTERMEDIATE: IE Fixes
    ======================== */
 
-	nav ul li{class="active"
+	nav ul li{	
 		display:inline;
 	}	
 	.oldie nav a{
@@ -621,6 +642,24 @@ label.errortr{
 width:250px;
 font-size:12px;
 
+}
+
+#newGuardRule label{
+width:100%;
+font-weight: bold;
+
+}
+
+#divEditDeviceSelect, #divDeviceSelect {
+				margin-left:15px;
+}
+
+.divRuleB1 {
+	clear:none;
+
+}
+.divRuleB2 {
+	
 }
 
 sup{

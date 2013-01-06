@@ -48,10 +48,15 @@ package edu.iiitd.muc.sensoract.apis;
  */
 import play.libs.WS.HttpResponse;
 import edu.iiitd.muc.sensoract.constants.Const;
+import edu.iiitd.muc.sensoract.format.GuardRuleAddFormat;
+import edu.iiitd.muc.sensoract.format.GuardRuleAddFormat.RuleFormat;
+import edu.iiitd.muc.sensoract.format.GuardRuleFormat;
+import edu.iiitd.muc.sensoract.format.RegisterUserRequest;
 import edu.iiitd.muc.sensoract.utilities.SecretKey;
 import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 
 public class AddGuardRule extends SensorActAPI {
+	
 	
 	/**
 	 * Services the /addguardrule API.
@@ -70,21 +75,43 @@ public class AddGuardRule extends SensorActAPI {
 	 * </ol>
 	 * <p>
 	 * 
-	 * @param addGuardRuleJson
-	 *            actuation request in Json
+	 */
+	 
+	 /**
+	  *  @param addGuardRuleJson
+	  *   add guard rule request in Json
 	 */
 	public final void doProcess(String addGuardRuleJson) {
 		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
 				.get(Const.USERNAME));
 
-		String presenceActuateBodyWithSecretKey = addGuardRuleJson.replace(
-				Const.FAKE_SECRET_KEY, secretkey);
+		String addGuardRuleBodyWithSecretKey = addGuardRuleJson.replace(
+				Const.FAKE_SECRET_KEY, secretkey);		
+		
+		// Get the guard rule and replace the condition clause with a string of usernames
+		
+		GuardRuleFormat guardRule = gson.fromJson(addGuardRuleBodyWithSecretKey, GuardRuleFormat.class);
+		
+		String condition = "";
+		for(String username : guardRule.rule.condition){
+			condition = condition + username + ",";
+		}
+		condition = condition.substring(0, condition.length()-1);
+		System.out.println("Condition list:" + condition);
+		
+		GuardRuleAddFormat guardRuleToSend = new GuardRuleAddFormat();
+		RuleFormat rule = guardRuleToSend.new RuleFormat(guardRule.rule.name,
+				guardRule.rule.description, guardRule.rule.targetOperation, guardRule.rule.priority,
+				condition, guardRule.rule.action);
+		guardRuleToSend = new GuardRuleAddFormat(guardRule.secretkey, rule);
+		
+		addGuardRuleJson = gson.toJson(guardRuleToSend);
 		logger.info(Const.API_ADDGUARDRULE, secretkey + " " + addGuardRuleJson);
-
+		
 		HttpResponse responseFromVPDS = new SendHTTPRequest()
 				.sendPostRequest(Const.URL_REPOSITORY_ADD_GUARD_RULE,
 						Const.MIME_TYPE_JSON, Const.API_ADDGUARDRULE,
-						presenceActuateBodyWithSecretKey);
+						addGuardRuleJson);
 		renderJSON(responseFromVPDS.getString());
 	}
 }

@@ -198,7 +198,7 @@
 					tasklet[ACTUATION_PARAM]["act1"] = resource;
 					tasklet[ACTUATION_PARAM]["status"] = status;
 					
-					tasklet[ACTUATION_EXECUTE_SCRIPT]="PDS:write(act1,status)";
+					tasklet[ACTUATION_EXECUTE_SCRIPT]="VPDS:write(act1,status)";
 					
 					try {
 
@@ -232,22 +232,65 @@
 				 * 2.Error Information associated
 				 */
 
-				function validateRequest(selectedItem, actuationTime, status) {
+				 function validateARequest(selectedActuator, selectedActuatorId) {
 
 					$(".errorVisual").hide("");
 					$("#IDDeviceSelect,#date_time,#attime").removeClass("error");
 					errorState = false;
-					errorInformation = "";
-					
-					if (typeof selectedItem === 'undefined') {
+
+
+					if (typeof selectedActuator === 'undefined') {
 						errorState = true;
 
 						$("#span" + removeSpace(deviceName)).show('slow', function() {
 						});
-						$("#span" + removeSpace(deviceName)).html('Please select an actuator');				
+						$("#span" + removeSpace(deviceName)).html('Please select an actuator');
 
-					} 
-					else if (typeof actuateAt === 'undefined') {
+					}
+					else{
+						//check whether there is an association for the selected actuator
+						var urlGuardRulesAssocGet =	temp+URL_ASSOC_GET_GUARD_RULE;
+						var getAssoc = {};
+						var guardRuleAssoc = [];
+						getAssoc[SECRET_KEY] = FAKE_SECRET_KEY;
+						getAssoc[GUARDASSOCRULE_DEVICENAME] = deviceName;
+						getAssoc[GUARDASSOCRULE_ACTUATORNAME] = selectedActuator;
+						getAssoc[GUARDASSOCRULE_ACTUATORID] = selectedActuatorId;
+
+						try{
+							$.post(urlGuardRulesAssocGet, JSON.stringify(getAssoc), function(data) {
+
+								guardRuleAssoc = data;
+
+							});
+						}
+						catch(e){}
+
+						if(guardRuleAssoc.hasOwnProperty(RESPONSE_STATUS_CODE)) {
+							if(guardRuleAssoc[RESPONSE_STATUS_CODE] == NO_GUARD_RULEASSOC_FOUND) {
+								
+								errorState = true;
+								var url = temp+URL_GUARD_RULE;
+
+								$("#span" + removeSpace(deviceName)).show('slow', function() {
+								});
+								$("#span" + removeSpace(deviceName)).html('This actuator is not associated with any guard rule. First <a href="'+url+'">Create an Association</a> for this actuator');
+							}						
+						}
+					}
+
+					return errorState;
+				}
+
+
+				function validateRequest(actuationTime, status) {
+
+					$(".errorVisual").hide("");
+					$("#IDDeviceSelect,#date_time,#attime").removeClass("error");
+					errorState = false;
+					errorInformation = "";					
+
+					if (typeof actuateAt === 'undefined') {
 						errorState = true;
 
 						$("#spanActuateAtSelect").show('slow', function() {
@@ -368,9 +411,13 @@
 					} 
 					else if ($("#actNow").attr('checked')) {
 						actuationTime = "";
-					}					
+					}	
+
+					if(validateARequest(selectedItem, actuatorID))
+						return false;
+	
 					
-					var errorStatus = validateRequest(selectedItem, actuationTime, status);
+					var errorStatus = validateRequest(actuationTime, status);
 				
 					if (errorStatus[0]) {
 						return false;
@@ -511,14 +558,13 @@
 								// TODO: Replace tasklet name with tasklet description
 								$("#dialog").append("<div id =\"errorCDiv\" style=\"color: red;padding:5px; font-size: 1\"</div><br/>");
 								$("#errorCDiv").hide();
-								$("#dialog").append("<table id=\"actList\" style=\"display: block\">");
+								$("#dialog").append("<table id=\"actList\" style=\"font-size:15px\"><tr><td></td><td><b>Request Description</b></tr></th></table");
 								for (var index in receivedData[DEVICE_ACTLIST_ARRAY]) {
 									var name = receivedData[DEVICE_ACTLIST_ARRAY][index][ACTUATION_DESC];
 									var taskletId = receivedData[DEVICE_ACTLIST_ARRAY][index][ACTUATION_TASKLETID]; 
-									$("#dialog").append("<tr><td><input type=\"checkbox\" id=\"chkCReq\" value=\""+ taskletId +"\" +</td><td>" + name + "</td></tr>");															
+									$("#actList").append("<tr><td><input type=\"checkbox\" id=\"chkCReq\" value=\""+ taskletId +"\" +</td><td>" + name + "</td></tr>");															
 								}
-								$("#dialog").append("</table><br/>");
-								$("#dialog").append("<botton id=\"IDSelectAllButton\" class=\"google-button\" align=\"center\">Select/Deselect All</botton> &nbsp; <botton id=\"IDCancelReqButton\" class=\"google-button\" align=\"center\">Cancel Requests</botton>");
+								$("#dialog").append("<br><botton id=\"IDSelectAllButton\" class=\"google-button\" align=\"center\">Select/Deselect All</botton> &nbsp; <botton id=\"IDCancelReqButton\" class=\"google-button\" align=\"center\">Cancel Requests</botton>");
 								
 								var prevSelect = false;
 								$("#IDSelectAllButton").click(function() {
@@ -580,9 +626,11 @@
 											window.location = temp + URL_ACTUATE;
 										}
 										else {
-											var errorInformation = receivedData[RESPONSE_MESSAGE];
-											$("#errorCDiv").html(errorInformation);
-											$("#errorCDiv").fadeIn('slow');
+											if(receivedData[RESPONSE_STATUS_CODE] == TASKLET_NOT_CANCELED) {
+												var errorInformation = "Request could not be canceled. Try again later";
+												$("#errorCDiv").html(errorInformation);
+												$("#errorCDiv").fadeIn('slow');
+											}
 											return false;
 										}
 											
@@ -618,8 +666,8 @@
 
 					} catch(e) {
 
-						if (receivedData[RESPONSE_STATUS_CODE] == NO_ACTUATION_REQUEST_FOUND) 
-							alertGetActuateError("You have not made any actuation request!");
+						if (receivedData[RESPONSE_STATUS_CODE] == ACTUATION_REQUEST_LISTFAILED) 
+							alertGetActuateError("Could not retrieve the list at this time. Please try again later.");
 						else
 							alertGetActuateError("Following error occured: " + receivedData[RESPONSE_MESSAGE]);
 					}

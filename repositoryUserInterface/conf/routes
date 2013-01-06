@@ -10,6 +10,7 @@ GET     /display2                             Application.display2
 GET     /login									Application.login
 POST    /login                                  Application.login
 POST    /register                               Application.registeruser
+POST    /listallusers                           Application.listallusers
 GET     /home									Application.home
 GET     /logout                                 Application.logout
 POST    /deletedevice                           Application.deletedevice
@@ -32,6 +33,12 @@ POST	/delguardrule							Application.delGuardRule
 POST	/getguardrule							Application.getGuardRule
 GET     /listallguardrules						Application.listallguardrules
 GET     /editguardrule/{guardrulename}/{mode}	Application.editguardrule
+
+POST	/addassocguardrule							Application.addAssocGuardRule
+POST	/delassocguardrule							Application.delAssocGuardRule
+POST	/getassocguardrule							Application.getAssocGuardRule
+GET     /listassocguardrules						Application.listassocguardrules
+GET     /assocguardrule/{guardrulename}/{mode} 		Application.assocguardrule
 
 GET     /listalldevices							Application.listalldevices
 GET     /listalldevicetemplates							Application.listalldevicetemplates

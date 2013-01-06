@@ -45,6 +45,7 @@ public class SensorActAPI extends Application {
 	public static ParamValidator validator = new ParamValidator();
 	public static Gson gson = new Gson();
 	public static RegisterUser registeruser = new RegisterUser();
+	public static UserList listAllUsers = new UserList();
 	public static ListAllDevices listAllDevices = new ListAllDevices();
 	public static ListAllDeviceTemplates listAllDeviceTemplates = new ListAllDeviceTemplates();
 
@@ -63,10 +64,10 @@ public class SensorActAPI extends Application {
 	public static GetGuardRule getGuardRule = new GetGuardRule();
 	public static ListGuardRule listGuardRule = new ListGuardRule();
 	
-	public static AddAssocGuardRule addAssoGuardRule = new AddAssocGuardRule();
-	public static DeleteAssocGuardRule delAssoGuardRule = new DeleteAssocGuardRule();
-	public static GetAssocGuardRule getAssoGuardRule = new GetAssocGuardRule();
-	public static ListAssocGuardRule listAssoGuardRule = new ListAssocGuardRule();
+	public static AddAssocGuardRule addAssocGuardRule = new AddAssocGuardRule();
+	public static DeleteAssocGuardRule delAssocGuardRule = new DeleteAssocGuardRule();
+	public static GetAssocGuardRule getAssocGuardRule = new GetAssocGuardRule();
+	public static ListAssocGuardRule listAssocGuardRule = new ListAssocGuardRule();
 	
 	public static QueryData queryData = new QueryData();
 	public static QueryData2 queryData2 = new QueryData2();

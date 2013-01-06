@@ -53,6 +53,7 @@ public class Const {
 	 */
 	public static final String API_LOGIN = "login";
 	public static final String API_ADDUSER = "adduser";
+	public static final String API_LISTALLUSERS = "listallusers";
 	public static final String API_PUBLISHDATA = "pubishdata";
 	public static final String API_ADDDEVICE = "adddevice";
 	public static final String API_DELETEDEVICE = "deletedevice";
@@ -72,6 +73,10 @@ public class Const {
 	public static final String API_DELGUARDRULE = "delguardrule";
 	public static final String API_GETGUARDRULE = "getguardrule";
 	public static final String API_LISTGUARDRULE = "listallguardrules";
+	public static final String API_ADDASSOCGUARDRULE = "addassocguardrule";
+	public static final String API_DELASSOCGUARDRULE = "delassocguardrule";
+	public static final String API_GETASSOCGUARDRULE = "getassocguardrule";
+	public static final String API_LISTASSOCGUARDRULE = "listassocguardrules";
 
 	/*
 	 * API parameters
@@ -153,6 +158,8 @@ public class Const {
 			+ "user/register";
 	public static final String URL_REPOSITORY_LOGIN_USER = URL_REPOSITORY_SERVER
 			+ "user/login";
+	public static final String URL_REPOSITORY_LIST_USERS = URL_REPOSITORY_SERVER
+			+ "user/list";
 	public static final String URL_REPOSITORY_ADD_DEVICE = URL_REPOSITORY_SERVER
 			+ "device/add";
 	public static final String URL_REPOSITORY_ADD_DEVICE_TEMPLATE = URL_REPOSITORY_SERVER
@@ -176,9 +183,6 @@ public class Const {
 	public static final String URL_REPOSITORY_ACTUATE_DEVICE = URL_REPOSITORY_SERVER
 			+ "device/actuate";
 	
-	public static final String URL_REPOSITORY_PRESENCE_ACTUATE_DEVICE = URL_REPOSITORY_SERVER
-			+ "device/presenceactuate";
-	
 	public static final String URL_REPOSITORY_LIST_ACTUATION_REQUEST = URL_REPOSITORY_SERVER
 			+ "device/actuationrequest/list";
 	
@@ -197,16 +201,16 @@ public class Const {
 	public static final String URL_REPOSITORY_LIST_GUARD_RULE = URL_REPOSITORY_SERVER
 			+ "guardrule/list";
 	
-	public static final String URL_REPOSITORY_ASSO_GUARD_RULE_ADD = URL_REPOSITORY_SERVER
+	public static final String URL_REPOSITORY_ASSOC_GUARD_RULE_ADD = URL_REPOSITORY_SERVER
 			+ "guardrule/association/add";
 	
-	public static final String URL_REPOSITORY_ASSO_GUARD_RULE_DELETE = URL_REPOSITORY_SERVER
+	public static final String URL_REPOSITORY_ASSOC_GUARD_RULE_DELETE = URL_REPOSITORY_SERVER
 			+ "guardrule/association/delete";
 	
-	public static final String URL_REPOSITORY_ASSO_GUARD_RULE_GET = URL_REPOSITORY_SERVER
+	public static final String URL_REPOSITORY_ASSOC_GUARD_RULE_GET = URL_REPOSITORY_SERVER
 			+ "guardrule/association/get";
 	
-	public static final String URL_REPOSITORY_ASSO_GUARD_RULE_LIST = URL_REPOSITORY_SERVER
+	public static final String URL_REPOSITORY_ASSOC_GUARD_RULE_LIST = URL_REPOSITORY_SERVER
 			+ "guardrule/association/list";
 
 	public static final String URL_REPOSITORY_QUERY_DATA = URL_REPOSITORY_SERVER

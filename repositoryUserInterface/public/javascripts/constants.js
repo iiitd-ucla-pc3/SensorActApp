@@ -41,15 +41,23 @@ var SECRET_KEY="secretkey";
 var USERNAME="username";
 var SUCCESS=0;
 var NO_ACTUATION_REQUEST_FOUND = 60;
+var ACTUATION_REQUEST_LISTFAILED = 61;
+var TASKLET_NOT_CANCELED = 54;
 var NO_GUARD_RULE_FOUND = 40;
+var NO_GUARD_RULEASSOC_FOUND = 41;
 var FAILURE="Failure";
 var PASSWORD="password";
 var EMAIL="email";
+
+//Dictionary constants associated with user profile
+var USERNAME_ARRAY="usernames";
+
 //Dictionary constants associated with device profile
 var DEVICE_ARRAY="devicelist";
 var DEVICE_TEMPLATE_ARRAY="templatelist";
 var DEVICE_ACTLIST_ARRAY="deviceActuationRequestList";
 var GUARD_RULE_ARRAY="guardrulelist";
+var GUARD_RULE_ASSOCARRAY="associationlist";
 
 var DEVICE_PROFILE="deviceprofile";
 var DEVICE_NAME="devicename";
@@ -111,6 +119,20 @@ var GUARDRULE_TARGETOP="targetOperation";
 var GUARDRULE_PRIORITY="priority";
 var GUARDRULE_CONDITION="condition";
 var GUARDRULE_ACTION="action";
+
+//Dictionary constants associated with guard rules
+var GUARDASSOCRULE_NAME="rulename";
+var GUARDASSOCRULE_DEVICENAME="devicename";
+var GUARDASSOCRULE_SENSORNAME="sensorname";
+var GUARDASSOCRULE_ACTUATORNAME="actuatorname";
+var GUARDASSOCRULE_ACTUATORID="actuatorid";
+var GUARDASSOCRULE_SENSORID="sensorid";
+
+var ASSOCRULE_DEVICE_ARRAY="devicesArray";
+var ASSOCRULE_SENSOR_ARRAY="sensorsArray";
+var ASSOCRULE_ACTUATOR_ARRAY="actuatorsArray";
+var ASSOCRULE_REMOVE_ARRAY="removeArray";
+
 
 
 //Dictionary constants associated with Chart Series
@@ -183,7 +205,7 @@ var MAX_VALUE_THRESHOLD=1800;   // 30 minutes
 var MIN_LENGTH_GUARDRULE_NAME=5;
 var MAX_LENGTH_GUARDRULE_NAME=20;
 var MIN_LENGTH_GUARDRULE_DESC=5;
-var MAX_LENGTH_GUARDRULE_DESC=40;
+var MAX_LENGTH_GUARDRULE_DESC=100;
 
 
 
@@ -201,6 +223,7 @@ var URL_UI_SERVER="http://localhost:9003/";
 
 var URL_LOGIN_USER="login";
 var URL_REGISTER_USER="register";
+var URL_LIST_USERS="listallusers";
 var URL_ADD_DEVICE="adddevice";
 var URL_DELETE_DEVICE="deletedevice";
 var URL_EDIT_DEVICE="editdevice";
@@ -215,6 +238,12 @@ var URL_DEL_GUARD_RULE="delguardrule";
 var URL_GET_GUARD_RULE="getguardrule";
 var URL_EDIT_GUARD_RULE="editguardrule";
 var URL_LIST_GUARD_RULE="listallguardrules";
+
+var URL_ASSOC_ADD_GUARD_RULE="addassocguardrule";
+var URL_ASSOC_DEL_GUARD_RULE="delassocguardrule";
+var URL_ASSOC_GET_GUARD_RULE="getassocguardrule";
+var URL_ASSOC_GUARD_RULE="assocguardrule";
+var URL_ASSOC_LIST_GUARD_RULE="listassocguardrules";
 
 var URL_REGISTER_USER=URL_UI_SERVER+"register";
 var URL_QUERY_DATA="querydata2";

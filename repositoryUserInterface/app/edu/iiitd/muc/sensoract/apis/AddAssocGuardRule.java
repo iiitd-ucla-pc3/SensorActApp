@@ -48,13 +48,15 @@ package edu.iiitd.muc.sensoract.apis;
  */
 import play.libs.WS.HttpResponse;
 import edu.iiitd.muc.sensoract.constants.Const;
+import edu.iiitd.muc.sensoract.format.AddAssocRequest;
+import edu.iiitd.muc.sensoract.format.AssocGuardRuleFormat;
 import edu.iiitd.muc.sensoract.utilities.SecretKey;
 import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 
 public class AddAssocGuardRule extends SensorActAPI {
 	
 	/**
-	 * Services the /addguardrule API.
+	 * Services the /addassocguardrule API.
 	 * <p>
 	 * Followings are the steps to be followed to add a new device profile
 	 * successfully to the repository.
@@ -70,21 +72,71 @@ public class AddAssocGuardRule extends SensorActAPI {
 	 * </ol>
 	 * <p>
 	 * 
-	 * @param addGuardRuleJson
-	 *            actuation request in Json
+	 * @param addAssocGuardRuleJson
+	 *            add association request in Json
 	 */
-	public final void doProcess(String addGuardRuleJson) {
+	public final void doProcess(String addAssocGuardRuleJson) {
 		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
 				.get(Const.USERNAME));
+		HttpResponse responseFromVPDS = null;
+		logger.info(Const.API_ADDASSOCGUARDRULE, secretkey + " " + addAssocGuardRuleJson);
+		
+		AddAssocRequest addAssocRequest = gson
+				.fromJson(addAssocGuardRuleJson, AddAssocRequest.class);
 
-		String presenceActuateBodyWithSecretKey = addGuardRuleJson.replace(
-				Const.FAKE_SECRET_KEY, secretkey);
-		logger.info(Const.API_ADDGUARDRULE, secretkey + " " + addGuardRuleJson);
+		int numberOfDevicesRequest = addAssocRequest.devicesArray.size();
 
-		HttpResponse responseFromVPDS = new SendHTTPRequest()
-				.sendPostRequest(Const.URL_REPOSITORY_ADD_GUARD_RULE,
-						Const.MIME_TYPE_JSON, Const.API_ADDGUARDRULE,
-						presenceActuateBodyWithSecretKey);
+		for (int i = 0; i < numberOfDevicesRequest; i++) {
+
+			String devicename = addAssocRequest.devicesArray.get(i).devicename;
+			
+			if(addAssocRequest.devicesArray.get(i).sensorsArray.size() > 0) {
+				int numberOfSensorsInDevice = addAssocRequest.devicesArray.get(i).sensorsArray
+						.size();
+				for (int j = 0; j < numberOfSensorsInDevice; j++) {
+					AssocGuardRuleFormat toSend = new AssocGuardRuleFormat(
+							secretkey,
+							addAssocRequest.rulename,
+							devicename,
+							addAssocRequest.devicesArray.get(i).sensorsArray.get(j).sensorname,
+							addAssocRequest.devicesArray.get(i).sensorsArray.get(j).sensorid,
+							null,
+							null);
+					String addAssocBodyWithSecretKey = gson.toJson(toSend);
+					responseFromVPDS = new SendHTTPRequest()
+					.sendPostRequest(Const.URL_REPOSITORY_ASSOC_GUARD_RULE_ADD,
+							Const.MIME_TYPE_JSON, Const.API_ADDASSOCGUARDRULE,
+							addAssocBodyWithSecretKey);
+
+				}
+				
+			}
+			
+			if(addAssocRequest.devicesArray.get(i).actuatorsArray.size() > 0) {
+				int numberOfActuatorsInDevice = addAssocRequest.devicesArray.get(i).actuatorsArray
+						.size();
+				for (int j = 0; j < numberOfActuatorsInDevice; j++) {
+					AssocGuardRuleFormat toSend = new AssocGuardRuleFormat(
+							secretkey,
+							addAssocRequest.rulename,
+							devicename,
+							null,
+							null,
+							addAssocRequest.devicesArray.get(i).actuatorsArray.get(j).actuatorname,
+							addAssocRequest.devicesArray.get(i).actuatorsArray.get(j).actuatorid
+							);
+					String addAssocBodyWithSecretKey = gson.toJson(toSend);
+					responseFromVPDS = new SendHTTPRequest()
+					.sendPostRequest(Const.URL_REPOSITORY_ASSOC_GUARD_RULE_ADD,
+							Const.MIME_TYPE_JSON, Const.API_ADDASSOCGUARDRULE,
+							addAssocBodyWithSecretKey);
+
+				}
+				
+			}
+
+		}
 		renderJSON(responseFromVPDS.getString());
+		
 	}
 }

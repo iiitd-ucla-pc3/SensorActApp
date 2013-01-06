@@ -176,6 +176,10 @@ public class Application extends Controller {
 	public static void listalldevicetemplates() {
 		api.listAllDeviceTemplates.doProcess();
 	}
+	
+	public static void listallusers() {
+		api.listAllUsers.doProcess();
+	}
 
 	public static void registeruser() {
 
@@ -205,7 +209,7 @@ public class Application extends Controller {
 		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
 		render();
 	}
-		
+	
 	public static void guardrule() {
 		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
 		render();
@@ -232,6 +236,34 @@ public class Application extends Controller {
 	}
 	
 	public static void editguardrule(String guardrulename, String mode) {
+		System.out.println("Guard Rule: " + guardrulename);
+		renderArgs.put("guardrulename", guardrulename);
+		renderArgs.put("mode", mode);
+		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		render();
+
+	}	
+	
+	public static void addAssocGuardRule() {
+		api.addAssocGuardRule.doProcess(request.params.get(Const.REQUEST_BODY));
+
+	}
+	
+	public static void delAssocGuardRule() {
+		api.delAssocGuardRule.doProcess(request.params.get(Const.REQUEST_BODY));
+
+	}
+	
+	public static void getAssocGuardRule() {
+		api.getAssocGuardRule.doProcess(request.params.get(Const.REQUEST_BODY));
+
+	}
+	
+	public static void listassocguardrules() {
+		api.listAssocGuardRule.doProcess();
+	}
+	
+	public static void assocguardrule(String guardrulename, String mode) {
 		System.out.println("Guard Rule: " + guardrulename);
 		renderArgs.put("guardrulename", guardrulename);
 		renderArgs.put("mode", mode);

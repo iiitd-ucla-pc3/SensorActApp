@@ -54,7 +54,7 @@ import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 public class GetAssocGuardRule extends SensorActAPI {
 	
 	/**
-	 * Services the /addguardrule API.
+	 * Services the /getguardrule API.
 	 * <p>
 	 * Followings are the steps to be followed to add a new device profile
 	 * successfully to the repository.
@@ -70,21 +70,21 @@ public class GetAssocGuardRule extends SensorActAPI {
 	 * </ol>
 	 * <p>
 	 * 
-	 * @param addGuardRuleJson
+	 * @param getAssocGuardRuleJson
 	 *            actuation request in Json
 	 */
-	public final void doProcess(String addGuardRuleJson) {
+	public final void doProcess(String getAssocGuardRuleJson) {
 		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
 				.get(Const.USERNAME));
 
-		String presenceActuateBodyWithSecretKey = addGuardRuleJson.replace(
+		String getAssocBodyWithSecretKey = getAssocGuardRuleJson.replace(
 				Const.FAKE_SECRET_KEY, secretkey);
-		logger.info(Const.API_ADDGUARDRULE, secretkey + " " + addGuardRuleJson);
+		logger.info(Const.API_GETASSOCGUARDRULE, secretkey + " " + getAssocGuardRuleJson);
 
 		HttpResponse responseFromVPDS = new SendHTTPRequest()
-				.sendPostRequest(Const.URL_REPOSITORY_ADD_GUARD_RULE,
-						Const.MIME_TYPE_JSON, Const.API_ADDGUARDRULE,
-						presenceActuateBodyWithSecretKey);
+				.sendPostRequest(Const.URL_REPOSITORY_ASSOC_GUARD_RULE_GET,
+						Const.MIME_TYPE_JSON, Const.API_GETASSOCGUARDRULE,
+						getAssocBodyWithSecretKey);
 		renderJSON(responseFromVPDS.getString());
 	}
 }

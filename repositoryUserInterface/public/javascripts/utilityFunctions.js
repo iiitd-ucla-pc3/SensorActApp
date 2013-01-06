@@ -46,11 +46,11 @@ function createHeader() {
 			"Home" : URL_HOME,
 			"Devices" : URL_DEVICES,
 			"Guard Rules" : URL_GUARD_RULE,
-			"Actuation" : URL_ACTUATE,
+			"Time Actuation" : URL_ACTUATE,
 			"Presence Actuation" : URL_PRESENCE_ACTUATE,
-			"Visualization" : URL_VISUALIZATION,
-			"Repository" : URL_REPOSITORY_INFO,
-			"Speak" : URL_SPEAK_INPUT
+			"Visualization" : URL_VISUALIZATION
+			//"Repository" : URL_REPOSITORY_INFO,
+			//"Speak" : URL_SPEAK_INPUT
 		};
 
 		var temp = "http://"+document.location.hostname+":"+document.location.port+"/";

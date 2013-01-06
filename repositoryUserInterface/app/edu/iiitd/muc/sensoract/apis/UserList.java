@@ -33,59 +33,40 @@
  * *
  * *
  ******************************************************************************/
-/*
- * Name: ActuateDevice.java
- * Project: SensorAct, MUC@IIIT-Delhi 
- * Version: 1.0
- * Date: 2012-12-14
- * Author: Manaswi Saha
- */
-
 package edu.iiitd.muc.sensoract.apis;
 
-/*
- * Standard play imports
- */
+import play.libs.WS;
 import play.libs.WS.HttpResponse;
 import edu.iiitd.muc.sensoract.constants.Const;
-import edu.iiitd.muc.sensoract.format.DeviceActuateFormat;
+import edu.iiitd.muc.sensoract.exceptions.InvalidJsonException;
+import edu.iiitd.muc.sensoract.format.APIResponse;
+import edu.iiitd.muc.sensoract.format.LoginUserRequest;
+import edu.iiitd.muc.sensoract.format.RegisterUserRequest;
 import edu.iiitd.muc.sensoract.utilities.SecretKey;
 import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 
-public class ActuateDevice extends SensorActAPI {
-	
-	/**
-	 * Services the actuatedevice API.
-	 * <p>
-	 * Followings are the steps to be followed to add a new device profile
-	 * successfully to the repository.
-	 * <ol>
-	 * <li>Gets the JSON string containing tasklet from UI
-	 * <li>Since the validation had been performed at the UI,this request is
-	 * just tunneled to the repository
-	 * <li>Replaces the secret key with the actual secret key
-	 * <li>If the tasklet has been successful,the successful Response
-	 * format is sent to the UI which interprets the same and reloads the page
-	 * <li>If the tasklet schedule fails then corresponding error
-	 * message is sent to the UI
-	 * </ol>
-	 * <p>
-	 * 
-	 * @param deviceActuateBody
-	 *            Device profile in Json
-	 */
-	public final void doProcess(String deviceActuateBody) {
+/**
+ * Get the list of all the users
+ * 
+ * @author Manaswi Saha
+ * 
+ */
+public class UserList extends SensorActAPI {
+
+	public final void doProcess() {
+
 		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
 				.get(Const.USERNAME));
 
-		String deviceActuateBodyWithSecretKey = deviceActuateBody.replace(
-				Const.FAKE_SECRET_KEY, secretkey);
-		logger.info(Const.API_ACTUATEDEVICE, secretkey + " " + deviceActuateBody);
+		String userListJsonWithSecretKey = "{\"secretkey\":" + secretkey + "}";
+
+		logger.info(Const.API_LISTALLUSERS, secretkey + " " + userListJsonWithSecretKey);
 
 		HttpResponse responseFromVPDS = new SendHTTPRequest()
-				.sendPostRequest(Const.URL_REPOSITORY_ACTUATE_DEVICE,
-						Const.MIME_TYPE_JSON, Const.API_ACTUATEDEVICE,
-						deviceActuateBodyWithSecretKey);
+				.sendPostRequest(Const.URL_REPOSITORY_LIST_USERS,
+						Const.MIME_TYPE_JSON, Const.API_LISTALLUSERS,
+						userListJsonWithSecretKey);
 		renderJSON(responseFromVPDS.getString());
 	}
+
 }

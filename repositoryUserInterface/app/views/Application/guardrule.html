@@ -1,0 +1,368 @@
+<!doctype html> <!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+	<!--<![endif]-->
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title>Guard Rules</title>
+		<!--<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/styles_non_centered.css'}">-->
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery-ui-1.8.21.custom.css'}">
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/style.css'}">
+		<script src="@{'/public/js/libs/modernizr-2.0.6.min.js'}"></script>
+		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/jquery-ui-1.8.20.custom.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/utilityFunctions.js'}" type="text/javascript" ></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+
+				createHeader();
+
+				/**
+				 * Global Variables used during the lifecycle of the page
+				 *
+				 */
+				var newSensorCount = 0;
+				var newActuatorCount = 0;
+				var secretkey = FAKE_SECRET_KEY;
+				var errorState = false;
+				var errorInformation = "";
+				var guardRuleList = {};
+				var temp="http://"+document.location.hostname+":"+document.location.port+"/";
+
+
+				/*
+				 * Setting the AJAX to work in sycnhronous fashion
+				 */
+				jQuery.ajaxSetup({
+					async : false
+				});
+
+			/********************* --------------- Changes made here --------------- ***************/
+				$("#logout").click(function() {
+
+					window.location = URL_LOGOUT_USER;
+				});
+				/*
+				 * Hiding Error Divs
+				 */
+				$("#errorDiv").hide();
+				$("#newDevice").hide();
+
+				$("#getDeviceErrorDiv").hide();
+
+				function alertGetDeviceError(errorInformation) {
+					$("#getDeviceErrorDiv").html(errorInformation);
+					$("#getDeviceErrorDiv").fadeIn('slow');
+					return false;
+				}
+
+				function createNewAccordion(accordionId) {
+				 	$("#"+accordionId).accordion({
+					autoHeight : false,
+					active : -1,
+					collapsible : true,
+					icons : {
+						"header" : "ui-icon-plus",
+						"headerSelected" : "ui-icon-minus"
+							}
+						});
+
+				 	}
+
+				function createCustomElement(elementType,parent,id,Class,content)
+					{
+						
+						var $_element=$(document.createElement(elementType));
+						
+
+						$_element.attr(
+						{
+							"class":Class,
+							"id":id
+						});
+						if(elementType=="input")
+						{
+							$_element.val(content);
+							$_element.attr(
+							{
+								"readonly":"readonly"
+							});
+						}
+						else
+						{
+							$_element.append(content);
+						}
+						
+						parent.append($_element);
+						return $_element;
+						
+
+					}
+
+				function createAccordionHeader(accordionId,guardruleName, guardruleDesc, guardruleId) 	{						
+					
+					$("#"+accordionId).append("<h2><a href=\"#\">" + guardruleName + " | " + guardruleDesc + "<br/> </a></h2><div id=\"" + guardruleId + "\"></div>");
+				}
+
+				function createModifyButtons(parentId,removeGRButton,saveAsButton,editGRButton, urlGuardRulesDelete) {
+						//alert(urlDevicesOrTemplatesDelete);						
+
+						var removeButton=createCustomElement('button',parentId,removeGRButton,'google-button google-button-blue',"Remove");
+						//removeButton.click(function(){confirm("Do you want to remove button?");});
+						createCustomElement('button',parentId,saveAsButton,'google-button google-button-blue',"Save as");
+						createCustomElement('button',parentId,editGRButton,'google-button google-button-blue',"Edit");						
+
+						$('#' + removeGRButton).click(function() {
+
+							if(!confirm("Do you want to Remove the Guard Rule?"))
+								return false;
+							var GRIndex = this.id.toString();
+							GRIndex = parseInt(GRIndex.substr(GRIndex.length - 1));
+							var GRToBeRemoved = guardRuleList[GUARD_RULE_ARRAY][GRIndex][GUARDRULE_NAME];
+							var messageToDeleteGR = {}
+							messageToDeleteGR[GUARDRULE_NAME] = GRToBeRemoved;
+							messageToDeleteGR[SECRET_KEY] = secretkey;
+							$.post(urlGuardRulesDelete, JSON.stringify(messageToDeleteGR), function(data) {
+
+								if(data[RESPONSE_STATUS_CODE] == SUCCESS) {
+									window.location.reload();
+								} else {
+									alertGetDeviceError(data[RESPONSE_MESSAGE]);
+								}
+
+							});
+						});
+						$('#' + editGRButton).click(function() {
+
+							var GRIndex = this.id.toString();
+							GRIndex = parseInt(GRIndex.substr(GRIndex.length - 1));
+							var GRToBeEdited = guardRuleList[GUARD_RULE_ARRAY][GRIndex][GUARDRULE_NAME];
+							var messageToEditDevice = {}
+							messageToEditDevice[GUARDRULE_NAME] = GRToBeEdited;
+							messageToEditDevice[FAKE_SECRET_KEY] = secretkey;
+							window.location = URL_EDIT_GUARD_RULE + "/" + GRToBeEdited + "/update";
+
+						});
+						$('#' + saveAsButton).click(function() {
+
+							var GRIndex = this.id.toString();
+							GRIndex = parseInt(GRIndex.substr(GRIndex.length - 1));
+							var GRToBeEdited = guardRuleList[GUARD_RULE_ARRAY][GRIndex][GUARDRULE_NAME];
+							var messageToEditDevice = {}
+							messageToEditDevice[GUARDRULE_NAME] = GRToBeEdited;
+							messageToEditDevice[SECRET_KEY] = secretkey;
+							window.location = URL_EDIT_GUARD_RULE + "/" + GRToBeEdited + "/create";
+
+						});						
+					}
+				
+				/*
+				 * Make a query to fetch all the devices associated with the user
+				 */
+				function displayGuardRules(urlGuardRulesList, urlGuardRulesDelete, urlGuardRulesAssocGet) {
+				
+					try {
+						$.get(urlGuardRulesList, function(data) {
+
+							guardRuleList = data;
+							if(guardRuleList.hasOwnProperty(RESPONSE_STATUS_CODE)) {
+								
+								$("#guardrule").prepend('No ');								
+							} else {
+
+								var numberOfGR = guardRuleList[GUARD_RULE_ARRAY].length;
+								//alert(numberOfGR);
+								if(numberOfGR > 0) {									
+									
+									for(var i = 0; i < numberOfGR; i++) {
+											var id = "guardrule" + i.toString();
+											createAccordionHeader("accordion",guardRuleList[GUARD_RULE_ARRAY][i][GUARDRULE_NAME], guardRuleList[GUARD_RULE_ARRAY][i][GUARDRULE_DESC],id);										
+									}
+									for(var i = 0; i < numberOfGR; i++) {
+
+										var idSelector = "#guardrule" + i.toString();
+										var removeGRButton = "removeGR_" + i.toString();
+										var editGRButton = "editGR_" + i.toString();
+										var saveAsButton = "saveAsGR_" + i.toString();
+
+
+										createModifyButtons($(idSelector),removeGRButton,saveAsButton,editGRButton, urlGuardRulesDelete);
+
+										//$(idSelector).find('button').css({"clear":"none"});
+										createCustomElement("div",$(idSelector),null,"grAttrib","");
+										//$(".grAttrib").css({"clear":"right"});
+
+										var temp=createCustomElement("p",$(idSelector).children(".grAttrib"),null,'google-button','Rule');
+											
+										temp.css('cursor','default');
+										temp.css('font-size','19px');
+										
+										var targetop = guardRuleList[GUARD_RULE_ARRAY][i][GUARDRULE_TARGETOP];
+										var priority = guardRuleList[GUARD_RULE_ARRAY][i][GUARDRULE_PRIORITY];
+										var condition = guardRuleList[GUARD_RULE_ARRAY][i][GUARDRULE_CONDITION];
+										var action = guardRuleList[GUARD_RULE_ARRAY][i][GUARDRULE_ACTION];
+
+										if(condition == "")
+											condition = "all";										
+
+										$(idSelector).children(".grAttrib").append("<div class='divRuleB1'> \
+											<div class='divLeft'><label>Operation</label></div> \
+											<div class='divRight'><input value=" + targetop + " readonly=readonly></input></div> \
+											</div> \
+											<div class='divRuleB1'><div class='divLeft'><label>Priority</label></div><div class='divRight'><input value=" + priority + " readonly=readonly></input></div></div> \
+											<div class='divRuleB2'><div class='divLeft'><label id='condition'>Applied to </label></div><div class='divRight'><textarea rows='3' cols='20'>" + condition + "</textarea></div></div> \
+											<div class='divRuleB2'><div class='divLeft'><label>Action</label></div><div class='divRight'><input value=" + action + " readonly=readonly></input></div></div><br/><br/>");	
+
+
+										// Fetch Associations
+										var getAssoc = {};
+										getAssoc[SECRET_KEY] = secretkey;
+										getAssoc[GUARDASSOCRULE_NAME] = guardRuleList[GUARD_RULE_ARRAY][i][GUARDRULE_NAME];
+
+										try {
+											$.post(urlGuardRulesAssocGet, JSON.stringify(getAssoc), function(assocdata) {
+												guardRuleAssocList = assocdata;
+											});
+										}
+										catch(e) {
+											alertGetDeviceError(e);
+										}										
+
+										createCustomElement("div",$(idSelector),null,"associations","");
+
+										if(guardRuleAssocList.hasOwnProperty(RESPONSE_STATUS_CODE)) {
+
+											var button = createCustomElement('button',$(idSelector).children(".associations"),'assocMakeGuardRule'+i,'google-button google-button-blue','Make Associations');
+											button.css('float','left');
+											button.css('width','25%');
+
+											$("#assocMakeGuardRule"+i).click(function() {
+
+												var GRIndex = this.id.toString();
+												GRIndex = parseInt(GRIndex.substr(GRIndex.length - 1));
+												
+												var guardrulename = guardRuleList[GUARD_RULE_ARRAY][GRIndex][GUARDRULE_NAME];
+
+												window.location = URL_ASSOC_GUARD_RULE + "/" + guardrulename + "/create";
+											});
+										} 
+										else {
+
+											var numberOfAssoc = guardRuleAssocList[GUARD_RULE_ASSOCARRAY].length;
+
+											var temp=createCustomElement("p",$(idSelector).children(".associations"),null,'google-button','Associations');
+												
+											temp.css('cursor','default');
+											temp.css('font-size','18px');
+						
+											if(numberOfAssoc > 0) {	
+
+												var device, sensor, actuator;
+												for(var j = 0; j < numberOfAssoc; j++) {
+
+													device = guardRuleAssocList[GUARD_RULE_ASSOCARRAY][j][GUARDASSOCRULE_DEVICENAME];
+													sensor = guardRuleAssocList[GUARD_RULE_ASSOCARRAY][j][GUARDASSOCRULE_SENSORNAME];
+													actuator = guardRuleAssocList[GUARD_RULE_ASSOCARRAY][j][GUARDASSOCRULE_ACTUATORNAME];
+
+													if(targetop == "read") {																
+														$(idSelector).children(".associations").append("<div id='devDiv' style='font-weight:bold;'><label id=\"newDeviceNameLabel\">device</label><input id=newDeviceName value=" + device + "></input></div>");
+														$(idSelector).children(".associations").append("<div id=\"assoc\"><label>Sensor<br/>Name</label><input value=\"" + sensor + "\"></input></div><hr>");
+													}
+													else if(targetop == "write"){
+														$(idSelector).children(".associations").append("<div id='devDiv' style='font-weight:bold;'><label id=\"newDeviceNameLabel\">Device</label><input id=newDeviceName value=" + device + "></input></div>");
+														$(idSelector).children(".associations").append("<div id=\"assoc\"><label>Actuator<br/>Name</label><input value=\"" + actuator + "\"></input></div><hr>");
+													}																								
+												}													
+
+												var button = createCustomElement("button",$(idSelector).children(".associations"),'assocEditGuardRule'+i,'google-button google-button-blue','Add/Edit Associations');
+												button.css('float','left');
+												button.css('width','35%');
+
+												$("#assocEditGuardRule"+i).click(function() {
+
+													var GRIndex = this.id.toString();
+													GRIndex = parseInt(GRIndex.substr(GRIndex.length - 1));
+													
+													var guardrulename = guardRuleList[GUARD_RULE_ARRAY][GRIndex][GUARDRULE_NAME];
+
+													window.location = URL_ASSOC_GUARD_RULE + "/" + guardrulename + "/update";													
+												});													
+												
+											}
+										} 
+
+									}
+
+								} 
+								else
+									$("#guardrule").prepend('No ');
+
+							}// End else
+
+						});
+					} catch(e) {
+						//alert("here i am");
+						alertGetDeviceError(e);
+					}
+					return guardRuleList;
+				}
+
+				displayGuardRules(temp+URL_LIST_GUARD_RULE, temp+URL_DEL_GUARD_RULE, temp+URL_ASSOC_GET_GUARD_RULE);				
+				/*
+				 * Description:This function is used to create an accordion with a given id
+				 */
+		
+				 createNewAccordion("accordion");
+				
+				$("#addGuardRule").click(function() {
+
+					window.location = URL_EDIT_GUARD_RULE + "/" + FAKE_GUARD_RULE_NAME + "/create";
+					return false;
+				});
+				
+			});
+
+		</script>
+	</head>
+	<body>
+		<div id="header-container">
+			<header class="wrapper clearfix">
+				<h1 id="title">SensorAct
+				<br />
+				<br />
+				<span style="font-size:25px;">Sense - Interact - Actuate</span></h1>
+				<nav id="navHeader">
+				</nav>
+				<br />
+				<br />
+				<nav>
+					<p class="pbox" style="margin-bottom:-20px;">
+						Welcome ${username} &nbsp | &nbsp<span id="logout">Logout</span>
+					</p>
+				</nav>
+			</header>
+		</div>
+		<div class="wrapper" style="">
+			<div id="getDeviceErrorDiv" class ="errorDiv"></div>
+			<h1 class="newfont" id="guardrule" style="text-align:center;">Guard Rules Created</h1>
+			<hr>
+			<div id="accordion"></div>			
+			<hr>
+			<!--<div id="errorDiv" class="errorDiv"></div>-->
+			<button id="addGuardRule" class="google-button-blue">
+				Create New Guard Rule
+			</button>			
+			<input type="hidden"  id ="username" value =${username}></input>
+		</div>
+		<br/>
+		<div style="clear:both;" id="footer-container">
+			<footer class="wrapper">
+				<h4 align="center">&copy2012 |MUC,IIIT-Delhi</h4>
+			</footer>
+		</div>
+	</body>
+</html>

@@ -46,7 +46,7 @@
 				 */
 				var selectedDate;
 				var fromDay, toDay;
-				var PIRSensor, PIRSensorID;
+				var MotionSensor, MotionSensorID;
 
 				var temp="http://"+document.location.hostname+":"+document.location.port+"/";
 
@@ -72,7 +72,7 @@
 				$("#errorDiv").hide();
 				$("#getActuateErrorDiv").hide();
 				$(".errorVisual").hide();
-				$("#labelActuatorSelect").hide();
+				//$("#labelActuatorSelect").hide();
 
 				createDateTimePicker(ID_FROMTIME_ACTUATE);
 				createDateTimePicker(ID_TOTIME_ACTUATE);
@@ -156,6 +156,8 @@
 						Minutes = "*";
 
 					}
+					fromDay = "none";
+					toDay = "none";
 					if (fromDay != "none" && toDay != "none"){
 						flagD = true;
 
@@ -229,21 +231,21 @@
 					};
 
 					if (flagT && flagD) {
-						tasklet[ACTUATION_DESC] = "Presence based actuation of " + actuatorName + " from " + getFormattedTime("hh:mm TT",fromtime,{ampm: true}) + " to " + getFormattedTime("hh:mm TT",totime,{ampm: true}) + " on days " + fromDayOfWeek + " to " + toDayOfWeek + " every week";
+						tasklet[ACTUATION_DESC] = "Presence based actuation of " + deviceName +":"+ actuatorName.toUpperCase() + " from " + getFormattedTime("hh:mm TT",fromtime,{ampm: true}) + " to " + getFormattedTime("hh:mm TT",totime,{ampm: true}) + " on days " + fromDayOfWeek + " to " + toDayOfWeek + " every week";
 						tasklet[ACTUATION_PARAM]["timeInterval"] = cronExp;
 
 					}						
 					else if (!flagT && flagD) {
-						tasklet[ACTUATION_DESC] = "Presence based actuation of " + actuatorName + " on days " + fromDayOfWeek + " to " + toDayOfWeek + " every week";
+						tasklet[ACTUATION_DESC] = "Presence based actuation of " + deviceName +":"+ actuatorName.toUpperCase() + " on days " + fromDayOfWeek + " to " + toDayOfWeek + " every week";
 						tasklet[ACTUATION_PARAM]["timeInterval"] = cronExp;
 					}
 					else if (flagT && !flagD) {
-						tasklet[ACTUATION_DESC] = "Presence based actuation of " + actuatorName + " from " + getFormattedTime("hh:mm TT",fromtime,{ampm: true}) + " to " + getFormattedTime("hh:mm TT",totime,{ampm: true});
+						tasklet[ACTUATION_DESC] = "Presence based actuation of " + deviceName +":"+ actuatorName.toUpperCase() + " from " + getFormattedTime("hh:mm TT",fromtime,{ampm: true}) + " to " + getFormattedTime("hh:mm TT",totime,{ampm: true});
 						tasklet[ACTUATION_PARAM]["timeInterval"] = cronExp;
 					}
 					else {
 						var sdate = new Date($.now());
-						tasklet[ACTUATION_DESC] = "Presence based actuation of " + actuatorName + " scheduled on " + $.datepicker.formatDate('dd-M-yy', sdate);
+						tasklet[ACTUATION_DESC] = "Presence based actuation of " + deviceName +":"+ actuatorName.toUpperCase() + " scheduled on " + $.datepicker.formatDate('dd-M-yy', sdate) + " with threshold count for motion detection - " + thresholdM + " and for no motion detection - " + thresholdNM + " seconds";	
 					}
 						
 					tasklet[ACTUATION_PARAM]["resource"] = resource;
@@ -251,58 +253,55 @@
 					tasklet[ACTUATION_PARAM]["thresholdNM"] = thresholdNM;
 					tasklet[ACTUATION_WHEN] = "deviceinfo";					
 					//tasklet[ACTUATION_INPUT]["timer"] = cronExp; --- For periodic and event
-					tasklet[ACTUATION_INPUT]["deviceinfo"] = username + ":" + deviceName + ":" + PIRSensor + ":" + PIRSensorID;
+					tasklet[ACTUATION_INPUT]["deviceinfo"] = username + ":" + deviceMSName + ":" + MotionSensor + ":" + MotionSensorID;
 					
 					
-					tasklet[ACTUATION_EXECUTE_SCRIPT]='now = os.time(); \
-										fromTimeM = now - thresholdM; \
-										fromTimeNM = now - thresholdNM; \
+					tasklet[ACTUATION_EXECUTE_SCRIPT]='now = os.time() \
+										fromTimeM = now - thresholdM \
+										fromTimeNM = now - thresholdNM \
 										\
-										HashMap = java.require("java.util.HashMap"); \
-										motionData = HashMap:new(); \
-										nomotionData = HashMap:new(); \
+										HashMap = java.require("java.util.HashMap") \
+										nomotionData = HashMap:new() \
 										\
-										countZero = 0; \
-										countOne = 0; \
-										sumM = 0;	\
-										sumNM = 0; \
-										\
-										motionData = PDS:readPastToNow(deviceinfo,fromTimeM, now); \
-										print(motionData:toString()); \
-										sumM = motionData:size(); \
-										print("SumM: " .. sumM)\
-										\
-										for key, value in java.pairs(motionData) do  \
-											print(key .. " : " .. value); \
-											if (value == 1) then \
-												countOne = countOne + 1; \
-											end \
+										countZero = 0 \
+										countOne = 0 \
+										numberOfConsecOneM = tonumber(thresholdM) \
+										if (numberOfConsecOneM == nil) then \
+											print("number is not valid") \
+											do return end \
 										end \
-										print("countOne: " .. countOne) \
 										\
-										nomotionData = PDS:readPastToNow(deviceinfo,fromTimeNM, now); \
-										sumNM = nomotionData:size(); \
+										sumNM = 0 \
+										\
+										nomotionData = VPDS:readPastToNow(deviceinfo,fromTimeNM, now) \
+										sumNM = nomotionData:size() \
 										print("SumNM: " .. sumNM)\
 										\
+										prevVal = 1 \
 										for key, value in java.pairs(nomotionData) do  \
-											print(key .. " : " .. value); \
+											print(key .. " : " .. value) \
+											if (value == 1 and prevVal == value) then \
+												countOne = countOne + 1 \
+											end \
 											if (value == 0) then \
 												countZero = countZero + 1 \
 											end \
+											if (countOne >= numberOfConsecOneM) then \
+												print("countOne: " .. countOne) \
+												VPDS:write(resource,1) \
+												do return end \
+											end \
+											prevVal = value \
 										end \
+										print("countOne: " .. countOne) \
 										print("countZero: " .. countZero) \
 										\
 										if (countZero == sumNM) then \
-											PDS:write(resource,0.0);	 \
-										elseif (countOne/sumM > 0.1) then \
-											PDS:write(resource,1.0); \
+											VPDS:write(resource,0);	 \
 										end';
 
-										
 
-										
-
-					//alert(JSON.stringify(tasklet));
+					//alert(JSON.stringify(tasklet));				
 					
 					try {
 
@@ -327,7 +326,7 @@
 				}
 
 				/*
-				 * Validate the parameters to query for visualization
+				 * Validate the parameters for presence based actuation for visualization
 				 * I/p:
 				 * Device name,SelectedSensors,startTime,endTime
 				 * O/p:
@@ -335,15 +334,58 @@
 				 * 1.The error state:true/false
 				 * 2.Error Information associated
 				 */
-
-				function validateRequest(selectedItem, fromTime, toTime, thresholdM, thresholdNM) {
-
+				function validateSRequest(selectedSItem,selectedItemId){
 					$(".errorVisual").hide("");
-					$("#IDDeviceSelect,#fromtime","#totime").removeClass("error");
-					errorState = false;
-					errorInformation = "";
+					$("#IDMSensorSelect").removeClass("error");
+					errorState = false;				
 					
-					if (typeof selectedItem === 'undefined') {
+					if (typeof selectedSItem === 'undefined') {
+						errorState = true;
+
+						$("#spanMS" + removeSpace(deviceMSName)).show('slow', function() {
+						});
+						$("#spanMS" + removeSpace(deviceMSName)).html('Please select a motion sensor');	
+					}					
+					else{
+						//check whether there is an association for the selected actuator
+						var urlGuardRulesAssocGet =	temp+URL_ASSOC_GET_GUARD_RULE;
+						var getAssoc = {};
+						var guardRuleAssoc = [];
+						getAssoc[SECRET_KEY] = FAKE_SECRET_KEY;
+						getAssoc[GUARDASSOCRULE_DEVICENAME] = deviceMSName;
+						getAssoc[GUARDASSOCRULE_SENSORNAME] = selectedSItem;
+						getAssoc[GUARDASSOCRULE_SENSORID] = selectedItemId;
+
+						try{
+							$.post(urlGuardRulesAssocGet, JSON.stringify(getAssoc), function(data) {
+
+								guardRuleAssoc = data;
+
+							});
+						}
+						catch(e){}
+
+						if(guardRuleAssoc.hasOwnProperty(RESPONSE_STATUS_CODE)) {
+							if(guardRuleAssoc[RESPONSE_STATUS_CODE] == NO_GUARD_RULEASSOC_FOUND) {
+								
+								errorState = true;
+								var url = temp+URL_GUARD_RULE;
+
+								$("#spanMS" + removeSpace(deviceMSName)).show('slow', function() {
+								});
+								$("#spanMS" + removeSpace(deviceMSName)).html('This sensor is not associated with any guard rule. First <a href="'+url+'">Create an Association</a> for this sensor');
+							}						
+						}	
+					}
+
+					return errorState;
+				}
+				function validateARequest(selectedAItem, actuatorID) {
+					$(".errorVisual").hide("");
+					$("#IDDeviceSelect").removeClass("error");
+					errorState = false;
+
+					if (typeof selectedAItem === 'undefined') {
 						errorState = true;
 
 						$("#span" + removeSpace(deviceName)).show('slow', function() {
@@ -351,12 +393,59 @@
 						$("#span" + removeSpace(deviceName)).html('Please select an actuator');				
 
 					}
-					else if (thresholdM.length == 0) {						
+					else{
+						//check whether there is an association for the selected actuator
+						var urlGuardRulesAssocGet =	temp+URL_ASSOC_GET_GUARD_RULE;
+						var getAssoc = {};
+						var guardRuleAssoc = [];
+						getAssoc[SECRET_KEY] = FAKE_SECRET_KEY;
+						getAssoc[GUARDASSOCRULE_DEVICENAME] = deviceName;
+						getAssoc[GUARDASSOCRULE_ACTUATORNAME] = selectedAItem;
+						getAssoc[GUARDASSOCRULE_ACTUATORID] = actuatorID;
+
+						try{
+							$.post(urlGuardRulesAssocGet, JSON.stringify(getAssoc), function(data) {
+
+								guardRuleAssoc = data;
+
+							});
+						}
+						catch(e){}
+
+						if(guardRuleAssoc.hasOwnProperty(RESPONSE_STATUS_CODE)) {
+							if(guardRuleAssoc[RESPONSE_STATUS_CODE] == NO_GUARD_RULEASSOC_FOUND) {
+								
+								errorState = true;
+								var url = temp+URL_GUARD_RULE;
+
+								$("#span" + removeSpace(deviceName)).show('slow', function() {
+								});
+								$("#span" + removeSpace(deviceName)).html('This actuator is not associated with any guard rule. First <a href="'+url+'">Create an Association</a> for this actuator');								
+							}						
+						}	
+					}
+
+					return errorState;
+				}
+
+				function validateRequest(fromTime, toTime, thresholdM, thresholdNM) {		
+
+					$(".errorVisual").hide("");
+					$("#IDMSensorSelect, #IDDeviceSelect,#fromtime","#totime").removeClass("error");			
+					
+					if (thresholdM.length == 0) {						
 						errorState = true;
 						
 						$("#spanThresholdM").show('slow', function() {
 						});
 						$("#spanThresholdM").html("Please enter a threshold value");
+					}
+					else if (isNaN(thresholdM)){
+						errorState = true;
+			
+						$("#spanThresholdM").show('slow', function() {
+						});
+						$("#spanThresholdM").html("Threshold value should be numeric");
 					}
 					else if (thresholdM > MAX_VALUE_THRESHOLD) {
 						errorState = true;
@@ -371,6 +460,13 @@
 						$("#spanThresholdNM").show('slow', function() {
 						});
 						$("#spanThresholdNM").html("Please enter a threshold value");
+					}
+					else if (isNaN(thresholdNM)){
+						errorState = true;
+			
+						$("#spanThresholdNM").show('slow', function() {
+						});
+						$("#spanThresholdNM").html("Threshold value should be numeric");
 					}
 					else if (thresholdNM > MAX_VALUE_THRESHOLD) {
 						errorState = true;
@@ -425,7 +521,7 @@
 					}
 					
 
-					return [errorState, errorInformation];
+					return errorState;
 				}
 
 
@@ -433,81 +529,127 @@
 
 				$("#IDActuateDevice").click(function() {
 
-					var selectedItem;
-					var selectedDeviceName = deviceName;
-					var thresholdM, thresholdNM, fromTime, toTime;
-					var actuatorID;	
-					var deviceError;
+					var selectedSItem,selectedAItem;
+					var selectedADeviceName = deviceName;
+					var selectedSDeviceName = deviceMSName;
+					var thresholdM, thresholdNM, fromTime="", toTime="";
+					var actuatorID;						
 					
 					fromDay = $("#fromdayOfWeek").val();
 					toDay = $("#todayOfWeek").val();
 					thresholdM = $("#thresholdM").val();
-					thresholdNM = $("#thresholdNM").val();
+					thresholdNM = $("#thresholdNM").val();					
+	
 
-					//alert("Clicked device:" +deviceName);					
+					// Validating whether any device for motion sensor has been selected
 
-					// Validating whether any device has been selected
+					if (typeof selectedSDeviceName === 'undefined' || selectedSDeviceName == "") {
+						
+						$("#IDMSensorSelect").addClass("error");
+						$("#spanSensor").show('slow', function() {});
 
-					if (typeof selectedDeviceName === 'undefined' || selectedDeviceName == "") {
-						deviceError = true;
+						$("#spanSensor").html("Please Select a device");
+						$("#IDMSensorSelect").focus();
+
+						return false;
+					}
+
+					$("#divMS" + removeSpace(selectedSDeviceName)).children('.sensor').find("input").each(function() {
+					
+						if ($(this).prop("checked")) {
+
+							var property = $(this);
+							for (var index in receivedDeviceData[DEVICE_ARRAY]) {	
+							
+								if ( DEVICE_SENSORS in receivedDeviceData[DEVICE_ARRAY][index]) {
+								
+									var sensorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS];	
+
+									for (var indexSensors in receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS]) {
+
+										var sensorName = sensorArray[indexSensors][DEVICE_SENSOR_NAME];											
+										if (sensorName == property.val()) {									
+											MotionSensor = sensorArray[indexSensors][DEVICE_SENSOR_NAME];
+											MotionSensorID = sensorArray[indexSensors][DEVICE_SENSOR_ID];
+											break;
+										}	
+									}
+								}
+							}
+							selectedSItem = $(this).val();
+						}
+					});	
+
+					var errorState = validateSRequest(selectedSItem, MotionSensorID);
+					if (errorState) {
+						return false;
+					}				
+
+					// Validating whether any device for actuator has been selected
+
+					if (typeof selectedADeviceName === 'undefined' || selectedADeviceName == "") {
+						
 						$("#IDDeviceSelect").addClass("error");
-						$("#spanDevice").show('slow', function() {
-						});
+						$("#spanDevice").show('slow', function() {});
 
 						$("#spanDevice").html("Please Select a device");
 						$("#IDDeviceSelect").focus();
 
 						return false;
-					} 
+					}			
 
-					// Validating the day of week fields
-
-						$("#div" + removeSpace(selectedDeviceName)).children('.actuator').find("input").each(function() {
-					
-							if ($(this).prop("checked")) {
-
-								var prop = $(this);
-								for (var index in receivedDeviceData[DEVICE_ARRAY]) {	
-
-								
-									if ( DEVICE_ACTUATORS in receivedDeviceData[DEVICE_ARRAY][index]) {
-									
-										var actuatorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_ACTUATORS];								
-
-										for (var indexActuators in receivedDeviceData[DEVICE_ARRAY][index][DEVICE_ACTUATORS]) {
-
-											var actuatorName = actuatorArray[indexActuators][DEVICE_ACTUATOR_NAME];											
-											if (actuatorName == prop.val()) {									
-												actuatorID = actuatorArray[indexActuators][DEVICE_ACTUATOR_ID];
-												PIRSensor = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS][0][DEVICE_SENSOR_NAME];
-												PIRSensorID = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS][0][DEVICE_SENSOR_ID];
-												break;
-											}	
-										}
-									}
-								}								
-								selectedItem = $(this).val();								
-							}
-						});	
-
-						if ($(ID_FROMTIME_ACTUATE).val().length > 0) {
-							fromTime = datetimeToEpoch($(ID_FROMTIME_ACTUATE).val()) * 1000;
-						} else {
-							fromTime = $(ID_FROMTIME_ACTUATE).val();
-						}
-
-						if ($(ID_TOTIME_ACTUATE).val().length > 0) {
-							toTime = datetimeToEpoch($(ID_TOTIME_ACTUATE).val()) * 1000;
-						} else {
-							toTime = $(ID_TOTIME_ACTUATE).val();
-						}
-					
-					var errorStatus = validateRequest(selectedItem, fromTime, toTime, thresholdM, thresholdNM );
+					$("#div" + removeSpace(selectedADeviceName)).children('.actuator').find("input").each(function() {
 				
-					if (errorStatus[0]) {
+						if ($(this).prop("checked")) {
+
+							var property = $(this);
+							for (var index in receivedDeviceData[DEVICE_ARRAY]) {	
+							
+								if ( DEVICE_ACTUATORS in receivedDeviceData[DEVICE_ARRAY][index]) {
+								
+									var actuatorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_ACTUATORS];								
+
+									for (var indexActuators in receivedDeviceData[DEVICE_ARRAY][index][DEVICE_ACTUATORS]) {
+
+										var actuatorName = actuatorArray[indexActuators][DEVICE_ACTUATOR_NAME];											
+										if (actuatorName == property.val()) {								
+											actuatorID = actuatorArray[indexActuators][DEVICE_ACTUATOR_ID];
+											break;
+										}	
+									}
+								}
+							}								
+							selectedAItem = $(this).val();								
+						}
+					});
+
+
+					errorState = validateARequest(selectedAItem, actuatorID);
+					if (errorState) {
 						return false;
-					}								
-					makeRequest(selectedItem, actuatorID, fromTime, toTime, thresholdM, thresholdNM);
+					}	
+
+					/*
+
+					if ($(ID_FROMTIME_ACTUATE).val().length > 0) {
+						fromTime = datetimeToEpoch($(ID_FROMTIME_ACTUATE).val()) * 1000;
+					} else {
+						fromTime = $(ID_FROMTIME_ACTUATE).val();
+					}
+
+					if ($(ID_TOTIME_ACTUATE).val().length > 0) {
+						toTime = datetimeToEpoch($(ID_TOTIME_ACTUATE).val()) * 1000;
+					} else {
+						toTime = $(ID_TOTIME_ACTUATE).val();
+					}*/
+
+					var errorStatus = validateRequest(fromTime, toTime, thresholdM, thresholdNM);
+				
+					if (errorStatus) {
+						return false;
+					}
+													
+					makeRequest(selectedAItem, actuatorID, fromTime, toTime, thresholdM, thresholdNM);
 				});
 
 				/*
@@ -533,7 +675,10 @@
 						for (var index in receivedDeviceData[DEVICE_ARRAY]) {
 							var name = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_NAME];
 
-							$("#divDeviceSelect").append("<div class=\"device\" id=\"div" + removeSpace(name) + "\"><input type=\"radio\" name=\"IDDeviceSelect\" value=\"" + name + "\" />&nbsp&nbsp" + name + "</div>");
+							if(!(typeof receivedDeviceData[DEVICE_ARRAY][index][DEVICE_ACTUATORS] === 'undefined'))	
+								$("#divDeviceSelect").append("<div class=\"device\" id=\"div" + removeSpace(name) + "\"><input type=\"radio\" name=\"IDDeviceSelect\" value=\"" + name + "\" />&nbsp&nbsp" + name + "</div>");
+							if(!(typeof receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS] === 'undefined'))
+								$("#divMSensorSelect").append("<div class=\"msensor\" id=\"divMS" + removeSpace(name) + "\"><input type=\"radio\" name=\"IDMSensorSelect\" value=\"" + name + "\" />&nbsp&nbsp" + name + "</div>");
 						}
 
 						/*
@@ -547,20 +692,29 @@
 						 */
 
 						var deviceName;
+						var deviceMSName;
 						var previousValue = {};
-						$("input[name=IDDeviceSelect]").click(function() {
+						$("input[name=IDDeviceSelect],input[name=IDMSensorSelect]").click(function() {
 							
-							var clickedItem = this.value;		
+							var clickedItem = $(this).attr('name')+this.value;		
 							//alert("Clicked device:" + clickedItem);		 
 
 							$("#spanDevice").hide();
-							$("#labelActuatorSelect").hide();
+							$("#spanSensor").hide();
 							$(".errorVisual").hide();
 
 						    if(previousValue[clickedItem] == 'checked'){
-						    	$("#div" + removeSpace(this.value)).children('.actuator').remove();
+						    	//alert(previousValue[clickedItem]);
+						    	if($(this).attr('name') == "IDDeviceSelect") {
+						    		$("#div" + removeSpace(this.value)).children('.actuator').remove();
+						    		deviceName = "";
+						    	}
+						    	else{
+						    		$("#divMS" + removeSpace(this.value)).children('.sensor').remove();
+						    		deviceMSName = "";
+						    	}
 							    $(this).attr("checked", false);							    
-								deviceName = "";
+								
 								previousValue[clickedItem] = "unchecked";  	     
 						        
 						    }
@@ -569,39 +723,62 @@
 
 								if ($(this).attr('checked')) {
 
-									deviceName = this.value;									
+									if($(this).attr('name') == "IDDeviceSelect") 
+										deviceName = this.value;
+									else if($(this).attr('name') == "IDMSensorSelect")
+										deviceMSName = this.value;
 									
 									for (var index in receivedDeviceData[DEVICE_ARRAY]) {
 										var name = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_NAME];
 								
 										if (name == this.value) {
-											if ($("#IDDeviceSelect").is('.error')) {
-												
-												$("#IDDeviceSelect").removeClass("error");
-												$("#spanDevice").hide();
-												$("#IDActuateDevice").removeAttr("disabled", "disabled");
+																					
+											if($(this).attr('name') == "IDDeviceSelect") {
 
+												if ($("#IDDeviceSelect").is('.error')) {
+													
+													$("#IDDeviceSelect").removeClass("error");
+													$("#spanDevice").hide();
+													$("#IDActuateDevice").removeAttr("disabled", "disabled");
+
+												}												
+
+												if ( DEVICE_ACTUATORS in receivedDeviceData[DEVICE_ARRAY][index]) {
+												
+													var actuatorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_ACTUATORS];
+													
+													//$("#labelActuatorSelect").show();
+
+													$("#div" + removeSpace(name)).append("<div class=\"actuator\">");
+													for (var actuator in actuatorArray) {
+														$("#div" + removeSpace(name)).children(".actuator").append("<input id=\"actuatorID\" type=\"radio\" name = \"actuatorID\" value=" + actuatorArray[actuator][DEVICE_ACTUATOR_NAME] + ">&nbsp" + actuatorArray[actuator][DEVICE_ACTUATOR_NAME] + "&nbsp&nbsp</input>");
+													}
+													$("#div" + removeSpace(name)).append("</div><span class=\"errorVisual\" id=\"span" + removeSpace(name) + "\" style=\"display:none;\"></span>");
+
+													error = 0;
+												}												
 											}
+											else{
+												if ($("#IDMSensorSelect").is('.error')) {
 
-											if ( DEVICE_ACTUATORS in receivedDeviceData[DEVICE_ARRAY][index]) {
-											
-												var actuatorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_ACTUATORS];
-												
-												$("#labelActuatorSelect").show();
+													$("#IDMSensorSelect").removeClass("error");
+													$("#spanSensor").hide();
+													$("#IDActuateDevice").removeAttr("disabled", "disabled");
 
-												$("#div" + removeSpace(name)).append("<div class=\"actuator\">");
-												for (var actuator in actuatorArray) {
-													$("#div" + removeSpace(name)).children(".actuator").append("<input id=\"actuatorID\" type=\"radio\" name = \"actuatorID\" value=" + actuatorArray[actuator][DEVICE_ACTUATOR_NAME] + ">&nbsp" + actuatorArray[actuator][DEVICE_ACTUATOR_NAME] + "&nbsp&nbsp</input>");
 												}
-												$("#div" + removeSpace(name)).append("</div><span class=\"errorVisual\" id=\"span" + removeSpace(name) + "\" style=\"display:none;\"></span>");
 
-												error = 0;
-											}
-											else {
-												$(this).attr("checked",false);
-												deviceName = "";
-												alert("Please select a device which contains actuators!!");
-									
+												if ( DEVICE_SENSORS in receivedDeviceData[DEVICE_ARRAY][index]) {
+												
+													var sensorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS];
+													
+													$("#divMS" + removeSpace(name)).append("<div class=\"sensor\"></div>");
+													for (var sensor in sensorArray) {
+														$("#divMS" + removeSpace(name)).children(".sensor").append("<input id=\"sensorID\" type=\"radio\" name = \"sensorID\" value=" + sensorArray[sensor][DEVICE_SENSOR_NAME] + ">&nbsp" + sensorArray[sensor][DEVICE_SENSOR_NAME] + "&nbsp&nbsp</input>");
+													}
+													$("#divMS" + removeSpace(name)).append("<span class=\"errorVisual\" id=\"spanMS" + removeSpace(name) + "\" style=\"display:none;\"></span>");
+
+													error = 0;
+												}
 											}
 										}
 									}
@@ -645,14 +822,14 @@
 								// TODO: Replace tasklet name with tasklet description
 								$("#dialog").append("<div id =\"errorCDiv\" style=\"color: red;padding:5px; font-size: 1\"</div><br/>");
 								$("#errorCDiv").hide();
-								$("#dialog").append("<table id=\"actList\" style=\"display: block\">");
+								$("#dialog").append("<table id=\"actList\" style=\"font-size:15px\"><tr><td></td><td><b>Request Description</b></tr></th></table");
 								for (var index in receivedData[DEVICE_ACTLIST_ARRAY]) {
 									var name = receivedData[DEVICE_ACTLIST_ARRAY][index][ACTUATION_DESC];
 									var taskletId = receivedData[DEVICE_ACTLIST_ARRAY][index][ACTUATION_TASKLETID]; 
-									$("#dialog").append("<tr><td><input type=\"checkbox\" id=\"chkCReq\" value=\""+ taskletId +"\" +</td><td>" + name + "</td></tr>");															
+									$("#actList").append("<tr><td><input type=\"checkbox\" id=\"chkCReq\" value=\""+ taskletId +"\" +</td><td>" + name + "</td></tr>");															
 								}
-								$("#dialog").append("</table><br/>");
-								$("#dialog").append("<botton id=\"IDSelectAllButton\" class=\"google-button\" align=\"center\">Select/Deselect All</botton> &nbsp; <botton id=\"IDCancelReqButton\" class=\"google-button\" align=\"center\">Cancel Requests</botton>");
+								//$("#dialog").append("</table><br/>");
+								$("#dialog").append("<br><botton id=\"IDSelectAllButton\" class=\"google-button\" align=\"center\">Select/Deselect All</botton> &nbsp; <botton id=\"IDCancelReqButton\" class=\"google-button\" align=\"center\">Cancel Requests</botton>");
 								
 								var prevSelect = false;
 								$("#IDSelectAllButton").click(function() {
@@ -713,9 +890,11 @@
 											window.location = temp + URL_PRESENCE_ACTUATE;
 										}
 										else {
-											var errorInformation = receivedData[RESPONSE_MESSAGE];
-											$("#errorCDiv").html(errorInformation);
-											$("#errorCDiv").fadeIn('slow');
+											if(receivedData[RESPONSE_STATUS_CODE] == TASKLET_NOT_CANCELED) {
+												var errorInformation = "Request could not be canceled. Try again later";
+												$("#errorCDiv").html(errorInformation);
+												$("#errorCDiv").fadeIn('slow');
+											}
 											return false;
 										}
 											
@@ -751,8 +930,8 @@
 
 					} catch(e) {
 
-						if (receivedData[RESPONSE_STATUS_CODE] == NO_ACTUATION_REQUEST_FOUND) 
-							alertGetActuateError("You have not made any actuation request!");
+						if (receivedData[RESPONSE_STATUS_CODE] == ACTUATION_REQUEST_LISTFAILED) 
+							alertGetActuateError("Could not retrieve the list at this time. Please try again later.");
 						else
 							alertGetActuateError("Following error occured: " + receivedData[RESPONSE_MESSAGE]);
 					}
@@ -808,6 +987,15 @@
 				<!-- Left Pane starts here-->
 				<div id="visualBox" style="">
 					<div class="leftDiv">
+						<label>Select a motion sensor:<sup>*</sup></label>
+					</div>
+					<div class="rightDiv">
+						<div id="divMSensorSelect">
+
+						</div>
+						<span class="errorVisual" id="spanSensor"></span>
+					</div>
+					<div class="leftDiv">
 						<label>Select Device to actuate:<sup>*</sup></label>
 					</div>
 					<div class="rightDiv">
@@ -817,19 +1005,20 @@
 						<span class="errorVisual" id="spanDevice"></span>
 					</div>
 					<div class="leftDiv" style="padding-top: 10px">
-							Select Threshold value for motion detection: <sup>*</sup><input type="text" id="thresholdM" maxlength= "2" size ="2"/>
-							<font size="1">(in seconds)</font>			
+							Select Threshold value for motion detection: <sup>*</sup><input type="text" id="thresholdM" maxlength= "4" size ="4" value="1"/>
+							<font size="1">(in count)</font>			
 					</div>
 					<div class="rightDiv">						
 						<span class="errorVisual" id="spanThresholdM"></span>
 					</div>
 					<div class="leftDiv" style="padding-top: 10px">
-							Select Threshold value for no motion detection: <sup>*</sup><input type="text" id="thresholdNM" maxlength= "2" size ="2"/>
+							Select Threshold value for no motion detection: <sup>*</sup><input type="text" id="thresholdNM" maxlength= "4" size ="4" value="15"/>
 							<font size="1">(in seconds)</font>			
 					</div>
 					<div class="rightDiv">						
 						<span class="errorVisual" id="spanThresholdNM"></span>
 					</div>
+					<!--
 					<div class="leftDiv" style="padding-top: 15px">
 							From Time: <input type="text" id="fromtime" name="fromtime" readonly='true' />
 							&nbsp &nbsp &nbsp &nbsp
@@ -865,7 +1054,8 @@
 					<br/>
 					<div class="rightDiv">						
 						<span class="errorVisual" id="spanDayOfWeek"></span>
-					</div>									
+					</div>			
+					-->			
 				</div>
 				<!-- Left pane ends here-->					
 				<p class="space"></p>				

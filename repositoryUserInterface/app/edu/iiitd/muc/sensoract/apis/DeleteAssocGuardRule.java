@@ -48,13 +48,15 @@ package edu.iiitd.muc.sensoract.apis;
  */
 import play.libs.WS.HttpResponse;
 import edu.iiitd.muc.sensoract.constants.Const;
+import edu.iiitd.muc.sensoract.format.DeleteAssocRequest;
+import edu.iiitd.muc.sensoract.format.AssocGuardRuleFormat;
 import edu.iiitd.muc.sensoract.utilities.SecretKey;
 import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 
 public class DeleteAssocGuardRule extends SensorActAPI {
 	
 	/**
-	 * Services the /addguardrule API.
+	 * Services the /delassocguardrule API.
 	 * <p>
 	 * Followings are the steps to be followed to add a new device profile
 	 * successfully to the repository.
@@ -70,21 +72,58 @@ public class DeleteAssocGuardRule extends SensorActAPI {
 	 * </ol>
 	 * <p>
 	 * 
-	 * @param addGuardRuleJson
+	 * @param delAssocGuardRuleJson
 	 *            actuation request in Json
 	 */
-	public final void doProcess(String addGuardRuleJson) {
+	public final void doProcess(String delAssocGuardRuleJson) {
 		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
 				.get(Const.USERNAME));
+		HttpResponse responseFromVPDS = null;
+		logger.info(Const.API_DELASSOCGUARDRULE, secretkey + " " + delAssocGuardRuleJson);
 
-		String presenceActuateBodyWithSecretKey = addGuardRuleJson.replace(
-				Const.FAKE_SECRET_KEY, secretkey);
-		logger.info(Const.API_ADDGUARDRULE, secretkey + " " + addGuardRuleJson);
+		DeleteAssocRequest delAssocRequest = gson
+				.fromJson(delAssocGuardRuleJson, DeleteAssocRequest.class);
 
-		HttpResponse responseFromVPDS = new SendHTTPRequest()
-				.sendPostRequest(Const.URL_REPOSITORY_ADD_GUARD_RULE,
-						Const.MIME_TYPE_JSON, Const.API_ADDGUARDRULE,
-						presenceActuateBodyWithSecretKey);
+		int numberOfRemoveRequest = delAssocRequest.removeArray.size();
+
+		for (int i = 0; i < numberOfRemoveRequest; i++) {
+
+			String devicename = delAssocRequest.removeArray.get(i).devicename;
+			
+			if(delAssocRequest.removeArray.get(i).sensorname != null) {
+
+				AssocGuardRuleFormat toSend = new AssocGuardRuleFormat(
+						secretkey,
+						delAssocRequest.rulename,
+						devicename,
+						delAssocRequest.removeArray.get(i).sensorname,
+						delAssocRequest.removeArray.get(i).sensorid,
+						null,
+						null);
+				String addAssocBodyWithSecretKey = gson.toJson(toSend);
+				responseFromVPDS = new SendHTTPRequest()
+				.sendPostRequest(Const.URL_REPOSITORY_ASSOC_GUARD_RULE_DELETE,
+						Const.MIME_TYPE_JSON, Const.API_DELASSOCGUARDRULE,
+						addAssocBodyWithSecretKey);
+			}
+			else{
+				
+				AssocGuardRuleFormat toSend = new AssocGuardRuleFormat(
+						secretkey,
+						delAssocRequest.rulename,
+						devicename,						
+						null,
+						null,
+						delAssocRequest.removeArray.get(i).actuatorname,
+						delAssocRequest.removeArray.get(i).actuatorid);
+				String addAssocBodyWithSecretKey = gson.toJson(toSend);
+				responseFromVPDS = new SendHTTPRequest()
+				.sendPostRequest(Const.URL_REPOSITORY_ASSOC_GUARD_RULE_DELETE,
+						Const.MIME_TYPE_JSON, Const.API_DELASSOCGUARDRULE,
+						addAssocBodyWithSecretKey);
+			}
+
+		}
 		renderJSON(responseFromVPDS.getString());
 	}
 }
