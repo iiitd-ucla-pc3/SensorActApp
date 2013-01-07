@@ -13,7 +13,7 @@ registered_users = csv.writer(open('registered_users.csv', 'wb'), delimiter=',')
 
 obj={}
 obj["password"]="password"
-obj["email"]="email@gmail.com"
+
 
 obj2={}
 obj2["password"]="password"
@@ -28,6 +28,7 @@ while room_number<NUMBER_ROOMS :
 	
 	try:
 		obj["username"]="username"+str(room_number)
+		obj["email"]="email" +str(room_number) + "@gmail.com"
 		json_data=json.dumps(obj)
 		post_data = json_data.encode('utf-8')
 		req = urllib2.Request(url, post_data, {'Content-Type': 'application/json'})
