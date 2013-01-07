@@ -38,6 +38,7 @@ package edu.iiitd.muc.sensoract.apis;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -214,16 +215,10 @@ public class QueryData extends SensorActAPI {
 		String uuid = UUID.randomUUID().toString();
 
 		try {
-			System.out.println("Here"+new File(Const.BASE_IMAGE_URL + uuid
-					+ ".png").getCanonicalFile());
-
-			System.out.println("Here also"+new File(Const.BASE_IMAGE_URL + uuid
-					+ ".png").getAbsolutePath());
-
-			System.out.println("Creating image");
-			ChartUtilities.saveChartAsPNG(new File(Const.BASE_IMAGE_URL + uuid
+			String path = QueryData.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+			String decodedPath = URLDecoder.decode(path, "UTF-8");
+			ChartUtilities.saveChartAsPNG(new File(decodedPath+"/"+Const.BASE_IMAGE_URL + uuid
 					+ ".png").getCanonicalFile(), chart, 800, 800);
-			System.out.println("Image created");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

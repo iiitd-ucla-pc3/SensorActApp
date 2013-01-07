@@ -40,9 +40,10 @@ package controllers;
  */
 import java.util.HashMap;
 
-
+import play.Play;
 import play.mvc.Before;
 import play.mvc.Controller;
+import play.mvc.Http;
 import edu.iiitd.muc.sensoract.apis.SensorActAPI;
 import edu.iiitd.muc.sensoract.constants.Const;
 import edu.iiitd.muc.sensoract.exceptions.InvalidJsonException;
@@ -88,7 +89,9 @@ public class Application extends Controller {
 	public static void logout() {
 		usernameToSecretKeyMap.remove(session.get(Const.USERNAME));
 		session.clear();
-		redirect(Const.URL_UI_SERVER);
+		System.out.println("Proof" +Http.Request.current().getBase());
+		redirect(Http.Request.current().getBase());
+		Play.configuration.getProperty("application.baseUrl");
 	}
 
 	public static void home() {
