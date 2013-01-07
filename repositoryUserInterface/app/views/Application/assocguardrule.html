@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html
+class=" js flexbox canvas canvastext webgl no-touch geolocation postmessage no-websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients no-cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths"
+lang="en">
+	<!--<![endif]-->
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title>Associate Guard Rules</title>
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/styles_non_centered.css'}">
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/style.css'}">
+		<script src="@{'/public/js/libs/modernizr-2.0.6.min.js'}"></script>
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery-ui-1.8.21.custom.css'}">
+		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/jquery-ui-1.8.20.custom.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/utilityFunctions.js'}" type="text/javascript" ></script>
+		<script type="text/javascript">
+
+			$(document).ready(function() {
+
+				createHeader();
+
+				/**
+				 * Global Variables used during the lifecycle of the page
+				 *
+				 */
+				var guardRuleToEdit = $("#guardrulename").val();
+				var mode = $("#mode").val();
+				var targetOp;
+				
+				var temp="http://"+document.location.hostname+":"+document.location.port+"/";
+
+				var urlGetGuardRule = temp+URL_GET_GUARD_RULE;
+				
+				var urlGuardRulesAssocGet =	temp+URL_ASSOC_GET_GUARD_RULE;
+				var receivedDeviceData = {}; //ListofDevices Received
+				var secretkey = FAKE_SECRET_KEY;
+				var errorState = false;
+				var errorInformation = "";
+				var receivedData = {};
+				var guardRuleObject = {};
+				var guardRuleAssocList = {}; // List of Associated Devices
+				
+				/*counter for dynamic attribute allocation focus*/
+				var value = 0;
+				
+				var classReference = "";
+				
+				 /**
+				 * Adding the link attribute to Logout,Home element
+				 */
+					
+				$("#logout").click(function() {
+					window.location = temp + URL_LOGOUT_USER;
+				});
+					/*
+					 * Setting the AJAX to work in sycnhronous fashion
+					 */
+					 	
+					jQuery.ajaxSetup({
+						async : false
+					});
+
+				
+				/*
+				 * Hiding Error Divs
+				 */
+				$("#errorDiv").hide();
+				$("#getDeviceErrorDiv").hide();
+				$(".errorVisual").hide();
+
+				/*
+				 * Hiding the associated with div
+				 */
+				 if(mode == "create") {
+				 	$("#divAssociated").hide();
+				 }
+				 else
+				 	$("#divAssociated").show();
+				 	
+
+
+				/**
+				 * @param :Error Information
+				 * This function appends the passed string to the AddDeviceErrorDiv and shows the relevant error container
+				 * Now only in use for catch elements of unexpected errors
+				 */
+
+				function alertAddDeviceError(errorInformation) {
+
+					$("#errorDiv").html(errorInformation);
+					$("#errorDiv").fadeIn('slow');
+					return false;
+				}
+
+				/**
+				 * @param :Error Information
+				 * This function appends the passed string to the GetDeviceErrorDiv and shows the relevant error container
+				 */
+				function alertGetDeviceError(errorInformation) {
+					$("#getDeviceErrorDiv").html(errorInformation);
+					$("#getDeviceErrorDiv").fadeIn('slow');
+					return false;
+				}
+
+				function validFields(allSelectedItems) {
+
+					$(".errorVisual").hide("");
+					$("#IDDeviceSelect").removeClass("error");
+					errorState = false;
+
+					var sensorError = false;
+					for (device in allSelectedItems) {
+						if (allSelectedItems[device].length == 0) {
+							sensorError = true;
+							$("#span" + removeSpace(device)).show('slow', function() {
+							});
+							if(targetOp=="read")
+								$("#span" + removeSpace(device)).html('Please Select Sensor');
+							else if (targetOp == "write")
+								$("#span" + removeSpace(device)).html('Please Select Actuator');
+						}
+
+					}
+
+					if (deviceName.length == 0) {
+						errorState = true;
+					
+						$("#IDDeviceSelect").addClass("error");
+						$("#spanDevice").show('slow', function() {
+						});
+
+						$("#spanDevice").html("Please Select a device");
+						$("#IDDeviceSelect").focus();
+					} else if (sensorError) {
+						errorState = true;			
+
+					} 
+					
+
+					return errorState;
+				}
+
+				function getAllSelectedItems() {
+					var allSelectedItems = {};
+					var itemClass,ITEMARRAY, itemId;
+
+					if(targetOp == "read") {
+						itemClass = ".sensor";
+						ITEMARRAY = DEVICE_SENSORS;
+						itemId = "sid";
+					}
+					else if (targetOp == "write") {
+						itemClass = ".actuator";
+						ITEMARRAY = DEVICE_ACTUATORS;
+						itemId = "aid";						
+					}
+					var selectedArray;
+
+					var selectedDeviceName = deviceName;
+
+					for (var i = 0; i < selectedDeviceName.length; i++) {
+
+						allSelectedItems[selectedDeviceName[i]] = new Array();
+						
+						selectedArray = new Array();
+						var j =0;
+
+						$("#div" + removeSpace(selectedDeviceName[i])).children(itemClass).find("input").each(function() {	
+					
+							if ($(this).prop("checked")) {
+
+								var property = $(this);									
+								
+								for (var index in receivedDeviceData[DEVICE_ARRAY]) { // loop through devicesArray
+								
+									if ( ITEMARRAY in receivedDeviceData[DEVICE_ARRAY][index]) { // loop through each device set
+									
+										var itemArray = receivedDeviceData[DEVICE_ARRAY][index][ITEMARRAY];
+										var deviceSelected = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_NAME];
+										selectedArray[j] = {};
+
+										for (var indexItem in receivedDeviceData[DEVICE_ARRAY][index][ITEMARRAY]) {
+
+											var itemName = itemArray[indexItem]["name"];
+											
+											if (itemName == property.val() && deviceSelected == selectedDeviceName[i]) {
+												
+												selectedArray[j][0] = itemName;
+												selectedArray[j][1] = itemArray[indexItem][itemId];
+												j++;
+												
+											}											
+										}
+									}
+									
+								}
+
+							}
+
+						});
+
+						if(selectedArray.length-1 == j){							
+							selectedArray.pop(j);
+						}
+
+						allSelectedItems[selectedDeviceName[i]] = selectedArray;
+					}
+
+					return allSelectedItems;
+				}
+
+				// Get the target operation of the rule
+				var getGuardRule = {};
+				getGuardRule[GUARDRULE_NAME] = guardRuleToEdit;
+				getGuardRule[SECRET_KEY] = secretkey;
+
+				try {					
+				
+					$.post(urlGetGuardRule, JSON.stringify(getGuardRule), function(data) {
+						receivedData = data;
+
+						//Successfully received data
+						if(receivedData.hasOwnProperty(RESPONSE_STATUS_CODE)){
+							alertGetDeviceError("Following errors occurred " + receivedData[RESPONSE_MESSAGE]);
+						} else {
+							targetOp = receivedData[GUARDRULE_TARGETOP];								
+						}
+
+					});
+				} catch(e) {					
+					alertGetDeviceError(e);
+				}
+
+				/*
+				 * Get all devices
+				 */
+				 //Getting Device List
+				try {
+					var temp="http://"+document.location.hostname+":"+document.location.port+"/";
+
+					$.get(temp+URL_LIST_ALL_DEVICES, function(data) {
+					
+						receivedDeviceData = data;
+					
+					});
+				} catch(e) {}
+
+				/**
+				 * For Remove Association,
+				 * Make a query to fetch all the associated list and display the associated 
+				 * devices of the corresponding guard rule
+				 */
+				var getAssoc = {};
+				getAssoc[SECRET_KEY] = secretkey;
+				getAssoc[GUARDASSOCRULE_NAME] = guardRuleToEdit;
+
+				try{
+					$.post(urlGuardRulesAssocGet, JSON.stringify(getAssoc), function(data) {
+
+						guardRuleAssocList = data;
+
+					});
+				}
+				catch(e){}
+
+				var assocDevItems = {};
+				var numberOfAssoc;
+				var prevDevice="", newDevice="";
+
+				if(guardRuleAssocList.hasOwnProperty(RESPONSE_STATUS_CODE)) { // No associated devices
+
+					$("#divAssociated").hide();
+					
+				} else {
+
+					numberOfAssoc = guardRuleAssocList[GUARD_RULE_ASSOCARRAY].length;
+
+					if (numberOfAssoc > 0) {
+						var subText="";
+						if(targetOp == "read")
+							subText = 'Sensor';
+						else if(targetOp == "write")
+							subText = 'Actuator';
+
+						$("#divAssociated").show();
+						$("#divAssociated").append('<div><label id="editGuardRuleAssocLabel">Associated with <br/><font size="1" style="font-weight:normal">Device | '+subText+'</font></label></div><div id="divEditDeviceSelect"></div><span class="errorVisual" id="spanEditDevice"></span><p class="space"></p><button class="google-button-blue"  id="editAssocButton">Remove Association</button><br/>');
+						// Create the association list
+						//$("#divEditDeviceSelect").append("");
+						
+						countItem = [];
+						for (var index in receivedDeviceData[DEVICE_ARRAY]) {
+								var name = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_NAME];
+								countItem[removeSpace(name)] = 0;
+						}
+
+						for(var j = 0; j < numberOfAssoc; j++) {
+
+							var device, sensor, sensorid, actuator, actuatorid;
+
+							device = guardRuleAssocList[GUARD_RULE_ASSOCARRAY][j][GUARDASSOCRULE_DEVICENAME];
+							sensor = guardRuleAssocList[GUARD_RULE_ASSOCARRAY][j][GUARDASSOCRULE_SENSORNAME];
+							sensorid = guardRuleAssocList[GUARD_RULE_ASSOCARRAY][j][GUARDASSOCRULE_SENSORID];
+							actuator = guardRuleAssocList[GUARD_RULE_ASSOCARRAY][j][GUARDASSOCRULE_ACTUATORNAME];
+							actuatorid = guardRuleAssocList[GUARD_RULE_ASSOCARRAY][j][GUARDASSOCRULE_ACTUATORID];
+
+							newDevice = removeSpace(device);
+
+							if(prevDevice == "") {
+								assocDevItems[newDevice]={};						
+							}
+							else if (prevDevice != newDevice){
+								if (typeof assocDevItems[newDevice] === 'undefined') {						assocDevItems[newDevice]={};
+								}
+							}
+
+							countItem[newDevice]++;
+							prevDevice = removeSpace(device);								
+
+							if(targetOp == "read") {								
+								$("#divEditDeviceSelect").append("<div id=\"" + device + "\"><input type=\"checkbox\" name=\""+sensor+"\" value=\"" + sensorid + "\" />" + device + " | " + sensor + "</div>");
+								assocDevItems[removeSpace(device)][removeSpace(sensor)] = 1;
+								assocDevItems[removeSpace(device)]['len'] = countItem[removeSpace(device)];							
+							}
+							else if(targetOp == "write"){
+								$("#divEditDeviceSelect").append("<div id=\"" + removeSpace(device) + "\"><input type=\"checkbox\" name=\""+actuator+"\" value=\"" + actuatorid + "\" />" + device + " | " + actuator + "</div>");
+								assocDevItems[removeSpace(device)][removeSpace(actuator)] = 1;
+								assocDevItems[removeSpace(device)]['len'] = countItem[removeSpace(device)];								
+							}																								
+						}	
+					} 
+
+				}
+
+				/**
+				 * Get the selected associated Devices for removal
+				 */ 
+
+				/**
+				 * This function is invoked when Remove Association is clicked.
+				 * It does a validation for all the fields present in the guard rule
+				 */
+				$("#editAssocButton").click(function() {
+					errorState = false;	
+
+					var editAssocReq = {};
+					var ITEMNAME, ITEMID;
+					var countSelected = 0;
+					var selected = {};
+					var device, item, itemid;
+
+					if(targetOp == "read"){
+						ITEMNAME = GUARDASSOCRULE_SENSORNAME;
+						ITEMID = GUARDASSOCRULE_SENSORID;
+					}
+						
+					else if (targetOp == "write"){
+						ITEMNAME = GUARDASSOCRULE_ACTUATORNAME;
+						ITEMID = GUARDASSOCRULE_ACTUATORID;
+					}
+					
+					editAssocReq[SECRET_KEY] = secretkey;
+					editAssocReq[GUARDASSOCRULE_NAME] = guardRuleToEdit;
+
+					editAssocReq[ASSOCRULE_REMOVE_ARRAY] = new Array();
+
+
+					// Get selected items to remove
+					$("#divEditDeviceSelect").find("input").each(function(){
+
+						if($(this).is(":checked")){
+							
+							countSelected++;
+							device = $(this).parent().attr('id');
+							item = $(this).attr('name');
+							itemid = $(this).val();
+
+							selected[GUARDASSOCRULE_DEVICENAME] = device;
+							selected[ITEMNAME] = item;
+							selected[ITEMID] = itemid;
+							editAssocReq[ASSOCRULE_REMOVE_ARRAY].push(selected);							
+						}
+						selected = {};
+					});
+					
+				
+					if (countSelected == 0) {
+						
+						$("#spanEditDevice").show('slow', function() {
+						});
+						$("#spanEditDevice").html('Please Select an Association');						
+						return false;
+					}				
+					
+					var temp="http://"+document.location.hostname+":"+document.location.port+"/";
+					var delGuardRuleURL = temp+URL_ASSOC_DEL_GUARD_RULE;	
+
+					try {
+						$.post(delGuardRuleURL, JSON.stringify(editAssocReq), function(data) {
+							if(data[RESPONSE_STATUS_CODE] == 0) {
+								window.location = temp+"guardrule";
+							} else {
+								alertAddDeviceError("Following error occured: " + data[RESPONSE_MESSAGE]);
+								
+
+							}
+
+						});
+					} catch(e) {
+							alertAddDeviceError(e);
+					}
+					
+				});
+
+
+				/*
+				 * For Add Association, list all the user's devices and load the sensors/acutators 
+				 * based on the targetOp
+				 */
+
+				//Make a get request to get all the devices available
+				if (!(receivedDeviceData.hasOwnProperty(RESPONSE_STATUS_CODE)))//Success
+				{
+					//alert(JSON.stringify(receivedDeviceData));
+
+					if (receivedDeviceData[DEVICE_ARRAY].length > 0) {
+
+						for (var index in receivedDeviceData[DEVICE_ARRAY]) {
+							var name = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_NAME];
+
+							if(targetOp == "read"){
+								if ( DEVICE_SENSORS in receivedDeviceData[DEVICE_ARRAY][index]){
+									var array = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS];
+									if(!(typeof assocDevItems[removeSpace(name)] === 'undefined')) {
+										
+										if(array.length != assocDevItems[removeSpace(name)]['len'])
+											$("#divDeviceSelect").append("<div class=\"device\" id=\"div" + removeSpace(name) + "\"><input type=\"checkbox\" name=\"IDDeviceSelect\" value=\"" + name + "\" />" + name + "</div>");
+									}
+									else
+										$("#divDeviceSelect").append("<div class=\"device\" id=\"div" + removeSpace(name) + "\"><input type=\"checkbox\" name=\"IDDeviceSelect\" value=\"" + name + "\" />" + name + "</div>");
+
+								}									
+
+							}
+							else if (targetOp == "write"){
+								if ( DEVICE_ACTUATORS in receivedDeviceData[DEVICE_ARRAY][index]){
+									var array = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_ACTUATORS];
+									if(!(typeof assocDevItems[removeSpace(name)] === 'undefined')) {
+										
+										if(array.length != assocDevItems[removeSpace(name)]['len'])
+											$("#divDeviceSelect").append("<div class=\"device\" id=\"div" + removeSpace(name) + "\"><input type=\"checkbox\" name=\"IDDeviceSelect\" value=\"" + name + "\" />" + name + "</div>");
+									}
+									else
+										$("#divDeviceSelect").append("<div class=\"device\" id=\"div" + removeSpace(name) + "\"><input type=\"checkbox\" name=\"IDDeviceSelect\" value=\"" + name + "\" />" + name + "</div>");
+									
+								}
+									
+							}
+
+							
+						}
+						
+						/*
+						 * Description:This function is used to change the HTML contents corresponding to a selected device
+						 * It basically adds relevant HTMl in accordance with the device selected
+						 */
+
+						var deviceName = new Array();
+						$("input[name=IDDeviceSelect]").click(function() {
+
+							$("#spanDevice").hide();							
+							$(".errorVisual").hide();
+
+							if ($(this).is(":checked")) {
+
+								deviceName.push(this.value);
+								
+								for (var index in receivedDeviceData[DEVICE_ARRAY]) {
+									var name = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_NAME];
+							
+									if (name == this.value) {
+										if ($("#IDDeviceSelect").is('.error')) {
+											
+											$("#IDDeviceSelect").removeClass("error");
+											$("#spanDevice").hide();
+											$("#addAssocButton").removeAttr("disabled", "disabled");
+
+										}
+
+										if(targetOp == "read"){
+
+											if ( DEVICE_SENSORS in receivedDeviceData[DEVICE_ARRAY][index]) {
+											
+												var sensorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS];
+												
+												$("#div" + removeSpace(name)).append("<div class=\"sensor\">");
+												for (var sensor in sensorArray) {
+													if(!(typeof assocDevItems[removeSpace(name)] === 'undefined')) {
+														if (assocDevItems[removeSpace(name)][removeSpace(sensorArray[sensor][DEVICE_SENSOR_NAME])] != 1) {
+															$("#div" + removeSpace(name)).children(".sensor").append("<input id=\"sensorID\" type=\"checkbox\"value=\"" + sensorArray[sensor][DEVICE_SENSOR_NAME] + "\">" + sensorArray[sensor][DEVICE_SENSOR_NAME] + "&nbsp&nbsp</input>");
+														}								
+													}
+													else
+														$("#div" + removeSpace(name)).children(".sensor").append("<input id=\"sensorID\" type=\"checkbox\"value=\"" + sensorArray[sensor][DEVICE_SENSOR_NAME] + "\">" + sensorArray[sensor][DEVICE_SENSOR_NAME] + "&nbsp&nbsp</input>");													
+												}
+												$("#div" + removeSpace(name)).append("</div><span class=\"errorVisual\" id=\"span" + removeSpace(name) + "\" style=\"display:none;\"></span>");
+
+												error = 0;
+											}
+										}
+										else if (targetOp == "write") {
+
+											if ( DEVICE_ACTUATORS in receivedDeviceData[DEVICE_ARRAY][index]) {
+											
+												var sensorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_ACTUATORS];
+												
+												$("#div" + removeSpace(name)).append("<div class=\"actuator\">");
+												for (var sensor in sensorArray) {
+													if(!(typeof assocDevItems[removeSpace(name)] === 'undefined')) {
+														if (assocDevItems[removeSpace(name)][removeSpace(sensorArray[sensor][DEVICE_ACTUATOR_NAME])] != 1) {
+
+															$("#div" + removeSpace(name)).children(".actuator").append("<input id=\"sensorID\" type=\"checkbox\"value=\"" + sensorArray[sensor][DEVICE_ACTUATOR_NAME] + "\"> " + sensorArray[sensor][DEVICE_ACTUATOR_NAME] + "&nbsp&nbsp</input>");
+														}
+													}
+													else
+														$("#div" + removeSpace(name)).children(".actuator").append("<input id=\"sensorID\" type=\"checkbox\"value=\"" + sensorArray[sensor][DEVICE_ACTUATOR_NAME] + "\"> " + sensorArray[sensor][DEVICE_ACTUATOR_NAME] + "&nbsp&nbsp</input>");
+												}
+												$("#div" + removeSpace(name)).append("</div><span class=\"errorVisual\" id=\"span" + removeSpace(name) + "\" style=\"display:none;\"></span>");
+
+												error = 0;
+											}
+											
+										} // Analyse target operation										
+									} // Show details of the selected device
+								} // Loop through the devices
+							} else {
+								if (targetOp == "read")
+									$("#div" + removeSpace(this.value)).children('.sensor').remove();
+								else if (targetOp == "write") 
+									$("#div" + removeSpace(this.value)).children('.actuator').remove();
+								deviceName.splice(deviceName.indexOf(this.value), 1);
+							} // If Device is selected
+							
+						});
+					} 
+				}					
+
+				
+				/**
+				 * This function is invoked when Add Association is clicked.
+				 * It does a validation for all the fields present in the guard rule
+				 */
+				$("#addAssocButton").click(function() {
+					errorState = false;	
+
+					var addAssocReq = {};
+					var ITEM_ARRAY;
+
+					if(targetOp == "read")
+						ITEM_ARRAY = ASSOCRULE_SENSOR_ARRAY;
+					else
+						ITEM_ARRAY = ASSOCRULE_ACTUATOR_ARRAY;
+
+					var selectedItems = getAllSelectedItems();		
+
+					var errorStatus = validFields(selectedItems);
+				
+					if (errorStatus) return false;
+					
+					//Hide error div
+					//$("#errorDiv").html("");
+					//$("#errorDiv").hide();	
+
+					addAssocReq[SECRET_KEY] = secretkey;
+					addAssocReq[GUARDASSOCRULE_NAME] = guardRuleToEdit;
+
+					addAssocReq[ASSOCRULE_DEVICE_ARRAY] = new Array();
+					var i = 0;
+					for (device in selectedItems) {
+
+						addAssocReq[ASSOCRULE_DEVICE_ARRAY][i] = {};
+						addAssocReq[ASSOCRULE_DEVICE_ARRAY][i][GUARDASSOCRULE_DEVICENAME] = device;
+						var j = 0;
+						addAssocReq[ASSOCRULE_DEVICE_ARRAY][i][ITEM_ARRAY] = new Array();
+						for (index in selectedItems[device]) {
+
+							addAssocReq[ASSOCRULE_DEVICE_ARRAY][i][ITEM_ARRAY][j] = {};
+							if(targetOp=="read"){
+								addAssocReq[ASSOCRULE_DEVICE_ARRAY][i][ITEM_ARRAY][j][GUARDASSOCRULE_SENSORNAME] = selectedItems[device][index][0];
+								addAssocReq[ASSOCRULE_DEVICE_ARRAY][i][ITEM_ARRAY][j][GUARDASSOCRULE_SENSORID] = selectedItems[device][index][1];
+								addAssocReq[ASSOCRULE_DEVICE_ARRAY][i][ASSOCRULE_ACTUATOR_ARRAY] = new Array();
+							}
+							else{
+								addAssocReq[ASSOCRULE_DEVICE_ARRAY][i][ITEM_ARRAY][j][GUARDASSOCRULE_ACTUATORNAME] = selectedItems[device][index][0];
+								addAssocReq[ASSOCRULE_DEVICE_ARRAY][i][ITEM_ARRAY][j][GUARDASSOCRULE_ACTUATORID] = selectedItems[device][index][1];
+								addAssocReq[ASSOCRULE_DEVICE_ARRAY][i][ASSOCRULE_SENSOR_ARRAY] = new Array();
+
+							}
+							
+							j++;
+						}
+						i++;
+					}					
+					
+					
+					var temp="http://"+document.location.hostname+":"+document.location.port+"/";
+					var addGuardRuleURL = temp+URL_ASSOC_ADD_GUARD_RULE;
+						
+
+					try {
+						$.post(addGuardRuleURL, JSON.stringify(addAssocReq), function(data) {
+							if(data[RESPONSE_STATUS_CODE] == 0) {
+								window.location = temp+"guardrule";
+							} else {
+								alertAddDeviceError("Following error occured: " + data[RESPONSE_MESSAGE]);
+								
+
+							}
+
+						});
+					} catch(e) {
+							alertAddDeviceError(e);
+					}
+
+
+
+				});
+			});
+
+		</script>
+	</head>
+	<body>
+		<div id="header-container">
+			<header class="wrapper clearfix">
+				<h1 id="title"> SensorAct
+				<br>
+				<br>
+				<span style="font-size: 25px;">Sense - Interact - Actuate</span></h1>
+				<nav id="navHeader">
+				</nav>
+				
+				<nav>
+					<p class="pbox" style="margin-bottom:-20px;">
+						Welcome ${username} &nbsp | &nbsp<span id="logout">Logout</span>
+					</p>
+				</nav>
+			</header>
+		</div>
+		<div class="wrapper" style="width: 90%;">
+			<div id="modeDiv">
+				<h1 id="guardrule" class="newfont" style="text-align: center">Create Associations</h1>
+			</div>
+			<hr>
+			<div style="display: none;" id="getDeviceErrorDiv" class="errorDiv"></div>
+			<div style="display: none;" id="errorDiv" class="errorDiv"></div>
+			<div id="newGuardRule">
+				<div>				
+				<label id="newGuardRuleNameLabel">Rule Name </label>
+				<input id="newGuardRuleName" type="text" readonly="readonly" value=${guardrulename}>
+				<span style='color:red;' id="erRuleName"></span>
+				</div><br>
+				<div id = "divAssociated">					
+				</div><br/>
+				<div id = "divAssociateWith">
+					<div><label id="">Associate with</label></div>
+					<div id="divDeviceSelect"></div>
+					<span class="errorVisual" id="spanDevice"></span>
+					<p class="space"></p>
+					<button class='google-button-blue'  id="addAssocButton">
+						Add Association
+					</button>
+				</div>				
+			</div>
+			<input id="username"  type="hidden" value=${username}>
+			<input id="guardrulename"  type="hidden" value=${guardrulename}>
+			<input	id="mode"  type="hidden" value=${mode}>
+		</div>
+		<hr>
+		<div style="clear: both;" id="footer-container">
+			<footer class="wrapper">
+				<h4 align="center">©2012 |MUC,IIIT-Delhi</h4>
+			</footer>
+		</div>
+	</body>
+</html>
