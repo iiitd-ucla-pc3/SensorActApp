@@ -1,5 +1,5 @@
 import csv,subprocess
-f = open('registered_users.csv', 'rt')
+f = open('registered_users1.csv', 'rt')
 reader = csv.reader(f)
 count=0
 for row in reader:
