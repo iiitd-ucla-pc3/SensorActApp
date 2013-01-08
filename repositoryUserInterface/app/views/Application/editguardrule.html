@@ -24,7 +24,7 @@ lang="en">
 
 			$(document).ready(function() {
 
-				createHeader();
+				createHeader();				
 
 				/**
 				 * Global Variables used during the lifecycle of the page
@@ -57,6 +57,18 @@ lang="en">
 				$("#logout").click(function() {
 					window.location = temp + URL_LOGOUT_USER;
 				});
+
+				var getsecretkey = {};
+
+				$.get(temp + URL_GET_SECRET_KEY, function(rData) {
+
+			    		getsecretkey = rData;
+			    		
+			    });
+
+				$("#viewkey").click(function() {
+			    		alert("Your API Key is " + getsecretkey['secretkey']);
+			    });
 					/*
 					 * Setting the AJAX to work in synchronous fashion
 					 */
@@ -98,6 +110,9 @@ lang="en">
 
 				function validFields(rulename, ruledesc, priority, condition) {
 					
+					$(".errorVisual").hide("");
+					$("#newGuardRuleName,#newGuardRuleDesc,#newGuardRulePriority,#selectUsers").removeClass("error");
+					
 					if(((rulename.val().length) < MIN_LENGTH_GUARDRULE_NAME ) || ((rulename.val().length) > MAX_LENGTH_GUARDRULE_NAME)) { 				
 						errorState = true;
 						rulename.addClass("error");
@@ -122,12 +137,12 @@ lang="en">
 						$("#erRulePriority").html("Please enter a numeric value");
 
 					}
-					else if (condition.val().length > 0 && !isNaN(condition.val())) {						
+					else if (condition.val() == null) {						
 						errorState = true;
 						condition.addClass("error");
 						
-						$("#erRulePriority").show('slow', function() {});
-						$("#erRulePriority").html("Please enter a string");
+						$("#erRuleCond").show('slow', function() {});
+						$("#erRuleCond").html("Please select a user");
 
 					}
 
@@ -226,7 +241,7 @@ lang="en">
 				$("#addGuardRule").click(function() {
 					errorState = false;					
 					
-					var error = validFields($("#newGuardRuleName"), $("#newGuardRuleDesc"), $("#newGuardRulePriority"), $("#newGuardRuleCond"), $("#newGuardRuleAction"), $("#newGuardRuleOp"));
+					var error = validFields($("#newGuardRuleName"), $("#newGuardRuleDesc"), $("#newGuardRulePriority"), $("#selectUsers"));
 					
 					
 					if(error == true) {
@@ -237,7 +252,7 @@ lang="en">
 					$("#errorDiv").html("");
 					$("#errorDiv").hide();						
 					
-					guardRuleObject[GUARDRULE_NAME] = $("#newGuardRuleName").val();
+					guardRuleObject[GUARDRULE_NAME] = removeSpace($("#newGuardRuleName").val());
 					guardRuleObject[GUARDRULE_DESC] = $("#newGuardRuleDesc").val();
 					guardRuleObject[GUARDRULE_PRIORITY] = $("#newGuardRulePriority").val();					
 					guardRuleObject[GUARDRULE_CONDITION] = $("#selectUsers").val();
@@ -256,6 +271,7 @@ lang="en">
 					var delGuardRuleURL = temp+URL_DEL_GUARD_RULE;
 
 					//alert(JSON.stringify(addRequestToSend));	
+					
 					function postToDeleteGR(){
 						try {
 								
@@ -337,8 +353,9 @@ lang="en">
 				</nav>
 				
 				<nav>
-					<p class="pbox" style="margin-bottom:-20px;">
-						Welcome ${username} &nbsp | &nbsp<span id="logout">Logout</span>
+					<p class="pbox" style="margin-bottom:-20px;"> Welcome ${username} &nbsp | &nbsp
+						<span id="viewkey">View API key</span> &nbsp; | 
+						&nbsp<span id="logout">Logout</span>
 					</p>
 				</nav>
 			</header>
@@ -353,16 +370,18 @@ lang="en">
 			<div id="newGuardRule">
 				<br>
 				<label id="newGuardRuleNameLabel">Rule Name </label>
+				<div><font size="1">Please specify the name without spaces</font></div>
 				<input id="newGuardRuleName" type="text">
-				<span style='color:red;' id="erRuleName"></span>
+				<span style='color:red;' id="erRuleName" class="errorVisual"></span>
 				<br><br>
 				<label id="newGuardRuleDescLabel">Description </label>
 				<textarea id="newGuardRuleDesc" rows="3" cols="20">Enter rule description</textarea>
-				<span style='color:red;' id="erRuleDesc"></span>
+				<span style='color:red;' id="erRuleDesc" class="errorVisual"></span>
 				<br><br>
 				<label id="newGuardRulePriorityLabel">Priority </label>
-				<input id="newGuardRulePriority" type="text" maxlength = "2">
-				<span style='color:red;' id="erRulePriority"></span>
+				<div><font size="1">Enter a numeric value (lower the value, higher is the priority)</font></div>
+				<input id="newGuardRulePriority" type="text" maxlength = "5" size = "5">
+				<span style='color:red;' id="erRulePriority" class="errorVisual"></span>
 				<br><br>				
 				<div id="newGuardRuleCond" type="text">
 					<label id="newGuardRuleCondLabel">Condition </label>
@@ -371,21 +390,22 @@ lang="en">
 					</div>
 					<button id="selectAll" class="google-button">Select All</button>
 				</div>
-				<span style='color:red;' id="erRuleCond"></span>
+				<span style='color:red;' id="erRuleCond" class="errorVisual"></span>
 				<br><br>
+				<label id="newGuardRuleOpLabel">Target Operation </label>
+				<div><font size="1">Read for sensors; Write for Actuators</font></div>
+				<select id="newGuardRuleOp">
+					<option selected="selected" value="read">Read</option>
+					<option value="write">Write</option>
+				</select>
+				<span style='color:red;' id="erRuleOp" class="errorVisual"></span>
+				<br><br>					
 				<label id="newGuardRuleActionLabel">Action </label>
 				<select id="newGuardRuleAction">
 					<option selected="selected" value="allow">Allow</option>
 					<option value="deny">Deny</option>
 				</select>
-				<span style='color:red;' id="erRuleAction"></span>
-				<br><br>
-				<label id="newGuardRuleOpLabel">Target Operation </label>
-				<select id="newGuardRuleOp">
-					<option selected="selected" value="read">Read</option>
-					<option value="write">Write</option>
-				</select>
-				<span style='color:red;' id="erRuleOp"></span>
+				<span style='color:red;' id="erRuleAction" class="errorVisual"></span>
 				<br><br>
 				<!--  added this -->
 				<p class="space"></p>

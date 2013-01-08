@@ -162,6 +162,18 @@
 					window.location = URL_LOGOUT_USER;
 				});
 
+				var getsecretkey = {};
+
+				$.get(temp + URL_GET_SECRET_KEY, function(rData) {
+
+			    		getsecretkey = rData;
+			    		
+			    });
+
+				$("#viewkey").click(function() {
+			    		alert("Your API Key is " + getsecretkey['secretkey']);
+			    });
+
 				//Setting the correct datetime format to start and end time dialog
 				
 				createDateTimePicker(ID_START_DATE_TIME_DISPLAY);
@@ -198,7 +210,8 @@
 				var maxTimeStamp = -1; //to set Window Size when Motion Display
 				var WINDOW_SIZE = $("#windowSize").val();
 				var motionType = $("#motionType").is(':checked');
-				var library = $("#selectLibrary").val(); 
+				//var library = $("#selectLibrary").val(); 
+				var library="highcharts";
 				var map;
 				var line;
 				var newPath = new Array(); //For Google Maps Polyline Path
@@ -346,8 +359,8 @@
 					query[QUERY_CONDITIONS][QUERY_CONDITIONS_TO_TIME] = endTime;
 					query[QUERY_USER_NAME] = username;
 					query[QUERY_IS_INTERACTIVE] = interactive;
-					var mode=interactive=="true"?"interactive":"non interactive"+" mode";
-					var r =showNoty("Chart Loading in "+mode , "center", "off",500);
+					var mode=interactive=="true"?"interactive":"non interactive";
+					var r =showNoty("Chart Loading in "+mode + " mode", "center", "off",500);
 					query[QUERY_DEVICE_ARRAY] = new Array();
 					var i = 0;
 					for (device in allSelectedItems) {
@@ -968,8 +981,9 @@
 				<br />
 				<br />
 				<nav>
-					<p class="pbox" style="margin-bottom:-20px;">
-						Welcome ${username} &nbsp | &nbsp<span id="logout">Logout</span>
+					<p class="pbox" style="margin-bottom:-20px;"> Welcome ${username} &nbsp | &nbsp
+						<span id="viewkey">View API key</span> &nbsp; | 
+						&nbsp<span id="logout">Logout</span>
 					</p>
 				</nav>
 
@@ -1008,26 +1022,14 @@
 					<input type="text" id ="end_date_time" readonly='true' name="end_date_time" />
 					<span class="errorVisual" id="spanEndTime"></span>
 				</div>
-				<div class="leftDiv">
-					<label>Speed:</label>
-				</div>
-				<div class="rightDiv">
-					<select id="speed">
-						<option value="1">1X</option>
-						<option value="2">2X</option>
-						<option value="0.5">0.5X</option>
-						<option value="0.25">0.25X</option>
-						<option value="10">10X</option>
-						<option value="30">30X</option>
-					</select>
-				</div>
+				
 				<br />
 			</div>
 			<!-- Left pane ends here -->
 
 			<!--Right Pane starts here-->
 			<div id="visualFunctions" style="float:right;">
-				<div class="leftDiv">
+				<!--<div class="leftDiv">
 					Choose a Library
 				</div>
 				<div class="rightDiv">
@@ -1036,7 +1038,7 @@
 						<option value="google">Google</option>
 					</select>
 
-				</div>
+				</div>-->
 				<br />
 				<div class="leftDiv">
 					<label>Motion Display</label>
@@ -1054,6 +1056,19 @@
 							<option value="20">20</option>
 						</select>
 					</div>
+				</div>
+				<div class="leftDiv">
+					<label>Speed:</label>
+				</div>
+				<div class="rightDiv">
+					<select id="speed">
+						<option value="0.25">0.25X</option>
+						<option value="0.5">0.5X</option>
+						<option value="1">1X</option>
+						<option value="2">2X</option>
+						<option value="10">10X</option>
+						<option value="30">30X</option>
+					</select>
 				</div>
 			</div>
 			<!-- Right Pane ends here-->

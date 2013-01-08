@@ -55,6 +55,7 @@ function createHeader() {
 
 		var temp = "http://"+document.location.hostname+":"+document.location.port+"/";
 		var docURL = document.URL, urltoSet = "", value;
+		var secretkey;
 
 	    $("#navHeader").append("<ul>");
 

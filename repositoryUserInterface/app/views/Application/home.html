@@ -20,11 +20,26 @@
 
 							
 				var temp="http://"+document.location.hostname+":"+document.location.port+"/";
+				
+
 				createHeader();
 				$("#logout").click(function() {
 
 					window.location = URL_LOGOUT_USER;
 				});
+
+				var getsecretkey = {};
+
+				$.get(temp + URL_GET_SECRET_KEY, function(rData) {
+
+			    		getsecretkey = rData;
+			    		
+			    });
+
+				$("#viewkey").click(function() {
+			    		alert("Your API Key is " + getsecretkey['secretkey']);
+			    });
+				
 			});
 			</script>
 			
@@ -43,8 +58,9 @@
 				<br />
 				<br />
 				<nav>
-					<p class="pbox" style="margin-bottom:-20px;">
-						Welcome ${username} &nbsp | &nbsp<span id="logout">Logout</span>
+					<p class="pbox" style="margin-bottom:-20px;"> Welcome ${username} &nbsp | &nbsp
+						<span id="viewkey">View API key</span> &nbsp; | 
+						&nbsp<span id="logout">Logout</span>
 					</p>
 				</nav>
 			</header>

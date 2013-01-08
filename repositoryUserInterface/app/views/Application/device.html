@@ -53,6 +53,18 @@
 
 					window.location = URL_LOGOUT_USER;
 				});
+
+				var getsecretkey = {};
+
+				$.get(temp + URL_GET_SECRET_KEY, function(rData) {
+
+			    		getsecretkey = rData;
+			    		
+			    });
+
+				$("#viewkey").click(function() {
+			    		alert("Your API Key is " + getsecretkey['secretkey']);
+			    });
 				/*
 				 * Hiding Error Divs
 				 */
@@ -100,6 +112,7 @@
 						if(elementType=="input")
 						{
 							$_element.val(content);
+							$_element.attr('readonly','readonly');
 						}
 						else
 						{
@@ -114,8 +127,8 @@
 
 				function createAccordionHeader(accordionId,deviceName,deviceLocation,deviceId) {
 						
-//alert(deviceName);
-$("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLocation + "<br/> </a></h2><div id=\"" + deviceId + "\"></div>");
+					//alert(deviceName);
+					$("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLocation + "<br/> </a></h2><div id=\"" + deviceId + "\"></div>");
 				}
 
 				function appendElementToParent(parentReference,childHTML)
@@ -270,8 +283,9 @@ $("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLoc
 										
 										if(deviceOrTemplateDataList[index][DEVICE_OR_TEMPLATE_ARRAY][i].hasOwnProperty(DEVICE_SENSORS)) {
 											createCustomElement("div",$(idSelector),null,"oldSensors","");
+
 											
-											var temp=createCustomElement("p",$(idSelector).children(".oldSensors"),null,'google-button','Sensors');
+											var temp=createCustomElement("p",$(idSelector).children(".oldSensors"),null,'google-button','Sensors');										
 											
 											//temp.setStyle('font-size','25px');
 											temp.css('cursor','default');
@@ -293,13 +307,21 @@ $("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLoc
 
 												
 												var channelTableId = sensorId + "channel";
+												//alert(channelTableId);
 												$(idSelector).children(".oldSensors").children("#" + sensorId).append("<h4>Channels</h4><div id=" + channelTableId + "></div><p class='clear'></p><p class='space'></p><hr>");
 												for(var k = 0; k < numberOfChannels; k++) {
 													var channelName = channel[k][DEVICE_SENSOR_CHANNEL_NAME];
 													var channelType = channel[k][DEVICE_SENSOR_CHANNEL_TYPE];
 													var channelUnit = channel[k][DEVICE_SENSOR_CHANNEL_UNIT];
 													var channelSamplingPeriod = channel[k][DEVICE_SENSOR_CHANNEL_SAMPLING_PERIOD];
-													$("#" + channelTableId).append("<div class='divCol'><div class='divLeft'><label>Name</label></div><div class='divRight'><input value=" + channelName + "></input></div></div><div class='divCol'><div class='divLeft'><label>Type</label></div><div class='divRight'><input value=" + channelType + "></input></div></div><div class='divCol'><div class='divLeft'><label>Unit</label></div><div class='divRight'><input value=" + channelUnit + "></input></div></div><div class='divCol'><div class='divLeft'><label>SamplingPeriod</label></div><div class='divRight'><input value=" + channelSamplingPeriod + "></input></div></div><br/>");
+													var channelContent="<div class='divCol'> \
+														<div class='divLeft'><label>Name</label></div> \
+														<div class='divRight'><input value='" + channelName + "' readonly='readonly'></input></div></div> \
+														<div class='divCol'><div class='divLeft'><label>Type</label></div><div class='divRight'><input value='" + channelType + "' readonly='readonly'></input></div></div> \
+														<div class='divCol'><div class='divLeft'><label>Unit</label></div><div class='divRight'><input value='" + channelUnit + "' readonly='readonly'></input></div></div> \
+														<div class='divCol'><div class='divLeft'><label>SamplingPeriod</label></div><div class='divRight'><input value='" + channelSamplingPeriod + "' readonly='readonly'></input></div></div><br/>";
+														//alert(abc);
+													$(idSelector).children(".oldSensors").children("#" + sensorId).find("#" + channelTableId).append(channelContent);
 
 												}
 
@@ -310,13 +332,13 @@ $("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLoc
 
 											$(idSelector).append("<div class=\"oldActuators\" style=''></div>");
 											$(idSelector).children(".oldActuators").append("<p class='google-button' style='cursor:default;font-size:18px;'>Actuators</p>");
-											$(idSelector).children(".oldActuators").append("<div id='ipDiv' style='font-weight:bold;'><label id=\"newDeviceIPLabel\">IP</label><input id=newDeviceIP value=" + deviceOrTemplateDataList[index][DEVICE_OR_TEMPLATE_ARRAY][i][DEVICE_IP] + "></input></div>");
+											$(idSelector).children(".oldActuators").append("<div id='ipDiv' style='font-weight:bold;'><label id=\"newDeviceIPLabel\">IP</label><input id=newDeviceIP value=" + deviceOrTemplateDataList[index][DEVICE_OR_TEMPLATE_ARRAY][i][DEVICE_IP] + " readonly='readonly'></input></div>");
 											var actuator = deviceOrTemplateDataList[index][DEVICE_OR_TEMPLATE_ARRAY][i][DEVICE_ACTUATORS];
 											var numberOfActuators = actuator.length;
 											for(var j = 0; j < numberOfActuators; j++) {
 												var actuatorName = actuator[j][DEVICE_ACTUATOR_NAME];
 												//var sensorId = "actuator_" + i.toString() + "_" + j.toString();
-												$(idSelector).children(".oldActuators").append("<div id=\"oldActuator\"><label>Actuator<br/>Name</label><input value=\"" + actuatorName + "\"></input></div><hr>");
+												$(idSelector).children(".oldActuators").append("<div id=\"oldActuator\"><label>Actuator<br/>Name</label><input value=\"" + actuatorName + "\" readonly='readonly'></input></div><hr>");
 											}
 
 										}
@@ -324,7 +346,7 @@ $("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLoc
 									}
 
 								} else {
-									//$("#getDevziceErrorDiv").html("No device registered");
+									//$("#getDeviceErrorDiv").html("No device registered");
 									//$("#getDeviceErrorDiv").show();
 									//alert(index);
 									if(index == 0)
@@ -375,8 +397,9 @@ $("#"+accordionId).append("<h2><a href=\"#\">" + deviceName + "  | " + deviceLoc
 				<br />
 				<br />
 				<nav>
-					<p class="pbox" style="margin-bottom:-20px;">
-						Welcome ${username} &nbsp | &nbsp<span id="logout">Logout</span>
+					<p class="pbox" style="margin-bottom:-20px;"> Welcome ${username} &nbsp | &nbsp
+						<span id="viewkey">View API key</span> &nbsp; | 
+						&nbsp<span id="logout">Logout</span>
 					</p>
 				</nav>
 			</header>

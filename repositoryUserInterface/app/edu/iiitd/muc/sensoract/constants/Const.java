@@ -65,6 +65,7 @@ public class Const {
 	public static final String API_FINDDEVICE = "finddevice";
 	public static final String API_FINDDEVICETEMPLATE = "finddevicetemplate";
 	public static final String API_GENERATESECRETKEY = "generatesecretkey";
+	public static final String API_GETSECRETKEY = "getsecretkey";
 	public static final String API_LISTALLDEVICETEMPLATES = "listalldevicetemplates";
 	public static final String API_ACTUATEDEVICE = "actuatedevice";
 	public static final String API_LISTACTUATIONREQUEST = "listactuationrequests";

@@ -19,7 +19,7 @@
 		<script type="text/javascript">
 			$(document).ready(function() {
 
-				createHeader();
+				createHeader();				
 
 				/**
 				 * Global Variables used during the lifecycle of the page
@@ -46,6 +46,18 @@
 
 					window.location = URL_LOGOUT_USER;
 				});
+
+				var getsecretkey = {};
+
+				$.get(temp + URL_GET_SECRET_KEY, function(rData) {
+
+			    		getsecretkey = rData;
+			    		
+			    });
+
+				$("#viewkey").click(function() {
+			    		alert("Your API Key is " + getsecretkey['secretkey']);
+			    });
 				/*
 				 * Hiding Error Divs
 				 */
@@ -114,7 +126,7 @@
 						var removeButton=createCustomElement('button',parentId,removeGRButton,'google-button google-button-blue',"Remove");
 						//removeButton.click(function(){confirm("Do you want to remove button?");});
 						createCustomElement('button',parentId,saveAsButton,'google-button google-button-blue',"Save as");
-						createCustomElement('button',parentId,editGRButton,'google-button google-button-blue',"Edit");						
+						//createCustomElement('button',parentId,editGRButton,'google-button google-button-blue',"Edit");						
 
 						$('#' + removeGRButton).click(function() {
 
@@ -136,6 +148,7 @@
 
 							});
 						});
+						/*
 						$('#' + editGRButton).click(function() {
 
 							var GRIndex = this.id.toString();
@@ -146,7 +159,7 @@
 							messageToEditDevice[FAKE_SECRET_KEY] = secretkey;
 							window.location = URL_EDIT_GUARD_RULE + "/" + GRToBeEdited + "/update";
 
-						});
+						});*/
 						$('#' + saveAsButton).click(function() {
 
 							var GRIndex = this.id.toString();
@@ -214,7 +227,7 @@
 											<div class='divRight'><input value=" + targetop + " readonly=readonly></input></div> \
 											</div> \
 											<div class='divRuleB1'><div class='divLeft'><label>Priority</label></div><div class='divRight'><input value=" + priority + " readonly=readonly></input></div></div> \
-											<div class='divRuleB2'><div class='divLeft'><label id='condition'>Applied to </label></div><div class='divRight'><textarea rows='3' cols='20'>" + condition + "</textarea></div></div> \
+											<div class='divRuleB2'><div class='divLeft'><label id='condition'>Applied to </label></div><div class='divRight'><textarea rows='3' cols='20' readonly='readonly'>" + condition + "</textarea></div></div> \
 											<div class='divRuleB2'><div class='divLeft'><label>Action</label></div><div class='divRight'><input value=" + action + " readonly=readonly></input></div></div><br/><br/>");	
 
 
@@ -269,12 +282,12 @@
 													actuator = guardRuleAssocList[GUARD_RULE_ASSOCARRAY][j][GUARDASSOCRULE_ACTUATORNAME];
 
 													if(targetop == "read") {																
-														$(idSelector).children(".associations").append("<div id='devDiv' style='font-weight:bold;'><label id=\"newDeviceNameLabel\">device</label><input id=newDeviceName value=" + device + "></input></div>");
-														$(idSelector).children(".associations").append("<div id=\"assoc\"><label>Sensor<br/>Name</label><input value=\"" + sensor + "\"></input></div><hr>");
+														$(idSelector).children(".associations").append("<div id='devDiv' style='font-weight:bold;'><label id=\"newDeviceNameLabel\">Device</label><input id=newDeviceName value=" + device + " readonly='readonly'></input></div>");
+														$(idSelector).children(".associations").append("<div id=\"assoc\"><label>Sensor</label><input value=\"" + sensor + "\" readonly='readonly'></input></div><hr>");
 													}
 													else if(targetop == "write"){
-														$(idSelector).children(".associations").append("<div id='devDiv' style='font-weight:bold;'><label id=\"newDeviceNameLabel\">Device</label><input id=newDeviceName value=" + device + "></input></div>");
-														$(idSelector).children(".associations").append("<div id=\"assoc\"><label>Actuator<br/>Name</label><input value=\"" + actuator + "\"></input></div><hr>");
+														$(idSelector).children(".associations").append("<div id='devDiv' style='font-weight:bold;'><label id=\"newDeviceNameLabel\">Device</label><input id=newDeviceName value=" + device + " readonly='readonly'></input></div>");
+														$(idSelector).children(".associations").append("<div id=\"assoc\"><label>Actuator<br/>Name</label><input value=\"" + actuator + "\" readonly='readonly'></input></div><hr>");
 													}																								
 												}													
 
@@ -340,8 +353,9 @@
 				<br />
 				<br />
 				<nav>
-					<p class="pbox" style="margin-bottom:-20px;">
-						Welcome ${username} &nbsp | &nbsp<span id="logout">Logout</span>
+					<p class="pbox" style="margin-bottom:-20px;"> Welcome ${username} &nbsp | &nbsp
+						<span id="viewkey">View API key</span> &nbsp; | 
+						&nbsp<span id="logout">Logout</span>
 					</p>
 				</nav>
 			</header>

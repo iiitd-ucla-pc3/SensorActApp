@@ -47,6 +47,7 @@ import play.mvc.Http;
 import edu.iiitd.muc.sensoract.apis.SensorActAPI;
 import edu.iiitd.muc.sensoract.constants.Const;
 import edu.iiitd.muc.sensoract.exceptions.InvalidJsonException;
+import edu.iiitd.muc.sensoract.utilities.SecretKey;
 
 /**
  * Application class, entry point for all APIs for the repo
@@ -98,6 +99,10 @@ public class Application extends Controller {
 		flash.put(Const.USERNAME, session.get(Const.USERNAME));
 		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
 		render();
+	}
+	
+	public static void getsecretkey() {
+		api.getSecretKey.doProcess();
 	}
 
 	public static void device() {

@@ -4,6 +4,7 @@
 
 # Home page
 GET     /                                       Application.index
+GET		/getsecretkey							Application.getsecretkey
 
 GET     /display                              Application.display
 GET     /display2                             Application.display2

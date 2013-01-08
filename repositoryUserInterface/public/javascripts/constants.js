@@ -252,6 +252,8 @@ var URL_LIST_ALL_DEVICE_TEMPLATES="listalldevicetemplates";
 var URL_LIST_ACTUATE_REQUEST="listactuationrequests";
 var URL_CANCEL_ACTUATE_REQUEST="cancelactuationrequests";
 
+var URL_GET_SECRET_KEY="getsecretkey"
+
 var URL_HOME="home";
 var URL_DEVICES="device";
 var URL_ACTUATE="actuate";

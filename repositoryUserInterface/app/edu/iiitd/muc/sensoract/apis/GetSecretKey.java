@@ -34,13 +34,12 @@
  * *
  ******************************************************************************/
 /*
- * Name: ListActuationRequest.java
+ * Name: AddDevice.java
  * Project: SensorAct, MUC@IIIT-Delhi 
  * Version: 1.0
- * Date: 2012-12-23
- * Author: Manaswi Saha
+ * Date: 2012-05-10
+ * Author: Nipun Batra
  */
-
 package edu.iiitd.muc.sensoract.apis;
 
 /*
@@ -51,40 +50,22 @@ import edu.iiitd.muc.sensoract.constants.Const;
 import edu.iiitd.muc.sensoract.utilities.SecretKey;
 import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 
-public class ListActuationRequest extends SensorActAPI {
-	
+public class GetSecretKey extends SensorActAPI {
 	/**
-	 * Services the listactuationrequests API.
-	 * <p>
-	 * Followings are the steps to be followed to add a new device profile
-	 * successfully to the repository.
-	 * <ol>
-	 * <li>Gets the JSON string containing list actuation request from UI
-	 * <li>Since the validation had been performed at the UI,this request is
-	 * just tunneled to the repository
-	 * <li>Replaces the secret key with the actual secret key
-	 * <li>If the list request is successful,the successful Response
-	 * format is sent to the UI which interprets the same and reloads the page
-	 * <li>If the list request fails then corresponding error
-	 * message is sent to the UI
-	 * </ol>
-	 * <p>
+	 * Services the getsecretkey API.
 	 * 
-	 * @param listActnRequest
-	 *            actuation request in Json
+	 * 
+	 * @param body
+	 *            User credentials
 	 */
 	public final void doProcess() {
 		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
 				.get(Const.USERNAME));
+		String responseJson ="{\"secretkey\":\"" + secretkey + "\"}";
+		logger.info(Const.API_GETSECRETKEY, " "
+				+ responseJson);
 
-		String listActnRequestWithSecretKey = "{\"secretkey\":\"" + secretkey + "\"}";
-
-		logger.info(Const.API_LISTACTUATIONREQUEST, secretkey + " " + listActnRequestWithSecretKey);
-
-		HttpResponse responseFromVPDS = new SendHTTPRequest()
-				.sendPostRequest(Const.URL_REPOSITORY_LIST_ACTUATION_REQUEST,
-						Const.MIME_TYPE_JSON, Const.API_LISTACTUATIONREQUEST,
-						listActnRequestWithSecretKey);
-		renderJSON(responseFromVPDS.getString());
+		renderJSON(responseJson);
 	}
+
 }

@@ -331,6 +331,17 @@ span{
 	padding-left:10px;
 		
 }
+
+#viewkey
+{	font-size:85%;
+	text-decoration:underline;
+	text-align:center;
+	color:white;
+	cursor:pointer;
+	padding-left:10px;
+		
+}
+
 #homeDiv{
 style="border:2px;
 width:75%;

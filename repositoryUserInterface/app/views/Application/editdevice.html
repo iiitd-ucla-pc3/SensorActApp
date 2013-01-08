@@ -71,6 +71,18 @@ lang="en">
 				$("#logout").click(function() {
 					window.location = temp + URL_LOGOUT_USER;
 				});
+
+				var getsecretkey = {};
+
+				$.get(temp + URL_GET_SECRET_KEY, function(rData) {
+
+			    		getsecretkey = rData;
+			    		
+			    });
+
+				$("#viewkey").click(function() {
+			    		alert("Your API Key is " + getsecretkey['secretkey']);
+			    });
 					/*
 					 * Setting the AJAX to work in sycnhronous fashion
 					 */
@@ -532,6 +544,11 @@ lang="en">
 								$("#newDeviceName").val(receivedData[DEVICE_OR_TEMPLATE_NAME]);
 								$("#newDeviceLocation").val(receivedData[DEVICE_LOCATION]);
 								$("#newDeviceTags").val(receivedData[DEVICE_TAGS]);
+								
+								if($("#isdevice").val() == 'true')
+									$("#deviceOrTemplateSelect option[value='device']").attr('selected','selected');
+								else
+									$("#deviceOrTemplateSelect option[value='template']").attr('selected','selected');
 
 								//Add actuators
 								if(receivedData.hasOwnProperty(DEVICE_ACTUATORS)) {
@@ -663,7 +680,7 @@ lang="en">
 				 */
 
 				$("#addNewSensor").click(function() {
-									$("#noSensorNoActuator").html("");
+					$("#noSensorNoActuator").html("");
 					var parent  = $("#newSensorsDiv");
 					makeSensorDiv(parent,"","");
 					
@@ -675,7 +692,7 @@ lang="en">
 					});
 					$('.newSensorAddChannel').unbind('click').click(function() {
 
-												($(this).siblings(".newSensorChannels")).children('#noSensorChannelsError').text("");
+						($(this).siblings(".newSensorChannels")).children('#noSensorChannelsError').text("");
 						
 						var parent = $(this).siblings(".newSensorChannels");
 						makeDataTr(parent);
@@ -758,7 +775,7 @@ lang="en">
 			
 					
 					validateFieldAndMakeErrorInformation($("#newDeviceName"), MIN_LENGTH_DEVICE_NAME, MAX_LENGTH_DEVICE_NAME, "device", "name", "");
-					deviceObject[DEVICE_LOCATION] = $("#newDeviceLocation").val();
+					deviceObject[DEVICE_LOCATION] = removeSpace($("#newDeviceLocation").val());
 					validateFieldAndMakeErrorInformation($("#newDeviceLocation"), MIN_LENGTH_DEVICE_LOCATION, MAX_LENGTH_DEVICE_LOCATION, "device", "location", "");
 
 					deviceObject[DEVICE_TAGS] = $("#newDeviceTags").val();
@@ -769,7 +786,7 @@ lang="en">
 
 						deviceObject[DEVICE_SENSORS][sensorCount] = {};
 						if($(this).attr('id') == "newSensorName") {
-							deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_NAME] = $(this).val();
+							deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_NAME] = removeSpace($(this).val());
 
 							validateFieldAndMakeErrorInformation(this, MIN_LENGTH_SENSOR_NAME, MAX_LENGTH_SENSOR_NAME, "sensor", "name", sensorCount);
 							deviceObject[DEVICE_SENSORS][sensorCount][DEVICE_SENSOR_ID] = $(this).siblings(".newSensorID").val();
@@ -836,7 +853,7 @@ lang="en">
 					$("#newActuatorsDiv").find("input.labActName").each(function() {
 
 						deviceObject[DEVICE_ACTUATORS][actuatorCount] = {};
-						deviceObject[DEVICE_ACTUATORS][actuatorCount][DEVICE_ACTUATOR_NAME] = $(this).val();
+						deviceObject[DEVICE_ACTUATORS][actuatorCount][DEVICE_ACTUATOR_NAME] = removeSpace($(this).val());
 						deviceObject[DEVICE_ACTUATORS][actuatorCount][DEVICE_ACTUATOR_ID] = 1;
 						validateFieldAndMakeErrorInformation(this, MIN_LENGTH_ACTUATOR_NAME, MAX_LENGTH_ACTUATOR_NAME, "actuator", "name", actuatorCount);
 						actuatorCount++;
@@ -890,10 +907,10 @@ lang="en">
 
 					if($("#deviceOrTemplateSelect").find(":selected").text() == "Device") {
 						addDeviceOrTemplateURL = temp+URL_ADD_DEVICE;
-						deviceObject[DEVICE_NAME] = $("#newDeviceName").val();
+						deviceObject[DEVICE_NAME] = removeSpace($("#newDeviceName").val());
 					} else {
 						addDeviceOrTemplateURL = temp+URL_ADD_DEVICE_TEMPLATE;
-						deviceObject[DEVICE_TEMPLATE_NAME] = $("#newDeviceName").val();
+						deviceObject[DEVICE_TEMPLATE_NAME] = removeSpace($("#newDeviceName").val());
 					}
 				
 					function postToDeleteDevice(){
@@ -980,8 +997,9 @@ lang="en">
 				<br />
 				<br />
 				<nav>
-					<p class="pbox" style="margin-bottom:-20px;">
-						Welcome ${username} &nbsp | &nbsp<span id="logout">Logout</span>
+					<p class="pbox" style="margin-bottom:-20px;"> Welcome ${username} &nbsp | &nbsp
+						<span id="viewkey">View API key</span> &nbsp; | 
+						&nbsp<span id="logout">Logout</span>
 					</p>
 				</nav>
 			</header>
@@ -1028,7 +1046,7 @@ lang="en">
 				<!--  added this -->
 				&nbsp;&nbsp;&nbsp;
 				<select id="deviceOrTemplateSelect">
-					<option selected="selected" value="device">Device</option>
+					<option value="device">Device</option>
 					<option value="template">Template</option>
 				</select>
 			</div>

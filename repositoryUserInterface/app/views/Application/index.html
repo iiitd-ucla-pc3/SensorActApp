@@ -175,6 +175,8 @@
 						sign_up[EMAIL] = sign_up_email;
 						//alert(JSON.stringify(sign_up));
 						//Submit the login details
+						showNoty("Registering...", "topCenter", false);
+
 						try {
 
 							$.post("register", JSON.stringify(sign_up), function(data) {
@@ -182,7 +184,8 @@
 
 							});
 							if((responseFromServer[RESPONSE_STATUS_CODE] != 0)) {
-								alertError("Following error occured " + responseFromServer[RESPONSE_MESSAGE])
+								alertError("span_error","Following error occured " + responseFromServer[RESPONSE_MESSAGE]);
+								$.noty.closeAll();
 
 							} else {
 								removeError();
@@ -191,9 +194,10 @@
 							}
 
 						} catch(e) {
-							alertError(e);
+							$.noty.closeAll();
+							alertError("span_error",e);
 						}
-					}
+											}
 
 				});
 			});
@@ -238,19 +242,18 @@
 						<h1 class="newfont">Introducing SensorAct Project</h1>
 						<hr>
 						<video controls="controls"  poster="http://sandbox.thewikies.com/vfe-generator/images/big-buck-bunny_poster.jpg" width="420" height="315">
-							<source src="http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4" type="video/mp4" />
-							<source src="http://clips.vorwaerts-gmbh.de/big_buck_bunny.webm" type="video/webm" />
-							<source src="http://clips.vorwaerts-gmbh.de/big_buck_bunny.ogv" type="video/ogg" />
+							<source src="@{'public/videos/big_buck_bunny.mp4'}" type="video/mp4" />
+							<source src="@{'public/videos/big_buck_bunny.webm'}" type="video/webm" />
+							<source src="@{'public/videos/big_buck_bunny.ogv'}" type="video/ogg" />
 							<object type="application/x-shockwave-flash" data="http://releases.flowplayer.org/swf/flowplayer-3.2.1.swf" width="420" height="315">
 								<param name="movie" value="http://releases.flowplayer.org/swf/flowplayer-3.2.1.swf" />
 								<param name="allowFullScreen" value="true" />
-								<param name="wmode" value="transparent" />
-								<param name="flashVars" value="config={'playlist':['http%3A%2F%2Fsandbox.thewikies.com%2Fvfe-generator%2Fimages%2Fbig-buck-bunny_poster.jpg',{'url':'http%3A%2F%2Fclips.vorwaerts-gmbh.de%2Fbig_buck_bunny.mp4','autoPlay':false}]}" />
-								<img alt="Big Buck Bunny" src="http://sandbox.thewikies.com/vfe-generator/images/big-buck-bunny_poster.jpg" width="420" height="315" title="No video playback capabilities, please download the video below" />
+								<param name="wmode" value="transparent" />								
+								<img alt="Big Buck Bunny" src="@{'public/images/big-buck-bunny_poster.jpg'}" width="420" height="315" title="No video playback capabilities, please download the video below" />
 							</object>
 						</video>
 						<p>
-							<strong>Download video:</strong><a href="http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4">MP4 format</a> | <a href="http://clips.vorwaerts-gmbh.de/big_buck_bunny.ogv">Ogg format</a> | <a href="http://clips.vorwaerts-gmbh.de/big_buck_bunny.webm">WebM format</a>
+							<strong>Download video:</strong><a href="@{'public/videos/big_buck_bunny.mp4'}">MP4 format</a> | <a href="@{'public/videos/big_buck_bunny.ogv'}">Ogg format</a> | <a href="@{'public/videos/big_buck_bunny.webm'}">WebM format</a>
 						</p>
 						<!--  video controls="controls"
 						class="video-stream"
@@ -284,6 +287,7 @@
 					<label></label>
 					<span id="span_sign_up_email"></span>
 					<br />
+					<span id="span_error"></span>					
 					<nav>
 						<p class="loginbox">
 							<label name="sign_up_submit" id ="sign_up_submit" class="buttons"> Sign Up </label>
