@@ -34,11 +34,11 @@
  * *
  ******************************************************************************/
 /*
- * Name: AddDevice.java
+ * Name: GetSecretKey.java
  * Project: SensorAct, MUC@IIIT-Delhi 
  * Version: 1.0
- * Date: 2012-05-10
- * Author: Nipun Batra
+ * Date: 2013-01-09
+ * Author: Manaswi Saha
  */
 package edu.iiitd.muc.sensoract.apis;
 
