@@ -20,14 +20,16 @@
 
 							
 				var temp="http://"+document.location.hostname+":"+document.location.port+"/";
-				
+				var usertype = $("#usertype").val();
 
-				createHeader();
+				createHeaderVO();
 				createFooter();
 				$("#logout").click(function() {
 
 					window.location = URL_LOGOUT_USER;
 				});
+
+				/*
 
 				var getsecretkey = {};
 
@@ -40,6 +42,7 @@
 				$("#viewkey").click(function() {
 			    		alert("Your API Key is " + getsecretkey['secretkey']);
 			    });
+				*/
 				
 			});
 			</script>
@@ -60,7 +63,7 @@
 				<br />
 				<nav>
 					<p class="pbox" style="margin-bottom:-20px;"> Welcome ${username} &nbsp | &nbsp
-						<span id="viewkey">View API key</span> &nbsp; | 
+						<!--<span id="viewkey">View API key</span> &nbsp; | -->
 						&nbsp<span id="logout">Logout</span>
 					</p>
 				</nav>
@@ -69,8 +72,6 @@
 		<div class="wrapper" style="text-align:center;">
 			<p class="space"></p>
 			<img src="@{'/public/images/background_2.jpg'}" style="text-align:center" width="75%" height="350px"/>
-			<div id="status"></div>
-			<div id="wami"></div>
 			<hr/>
 
 			<p class="space"></p>
@@ -93,8 +94,9 @@
 			</p>
 			<hr>
 		</div>
+		<input id="usertype"  type="hidden" value=${usertype}>
 		<div style="clear:both;" id="footer-container">
-			
+
 		</div>
 	</body>
 </html>

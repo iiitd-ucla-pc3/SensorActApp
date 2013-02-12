@@ -35,6 +35,7 @@
 			$(document).ready(function() {
 
 				createHeader();
+				createFooter();
 
 				$(".errorVisual").hide();
 				$("#labelSensorSelect").hide();
@@ -155,24 +156,6 @@
 				}
 	//*****************************************Chart*****************************************************/
 				var temp="http://"+document.location.hostname+":"+document.location.port+"/";
-
-				
-				$("#logout").click(function() {
-
-					window.location = URL_LOGOUT_USER;
-				});
-
-				var getsecretkey = {};
-
-				$.get(temp + URL_GET_SECRET_KEY, function(rData) {
-
-			    		getsecretkey = rData;
-			    		
-			    });
-
-				$("#viewkey").click(function() {
-			    		alert("Your API Key is " + getsecretkey['secretkey']);
-			    });
 
 				//Setting the correct datetime format to start and end time dialog
 				
@@ -991,7 +974,9 @@
 		</div>
 		<div class="wrapper">
 			
-
+			<p class="space"></p>
+			<div id="selectedVPDS" style="float:right; font-size: 12px"><b>Selected VPDS:</b><label id="labelVpdsname"></label></div>
+			<br/>
 			<div>
 				<h1 class="newfont" style="text-align:center;">Visualization</h1>
 				<hr>
@@ -1115,11 +1100,15 @@
 
 		<hr>
 		</div>
+		<div id="iFields">
+			<input id="username"  type="hidden" value=${username}> 
+			<input id="usertype"  type="hidden" value=${usertype}> 
+			<input id="vpdsname"  type="hidden" value=${vpdsname}> 
+			<input id="vpdsurl"  type="hidden" value=${vpdsurl}>
+			<input id="vpdskey"  type="hidden" value=${vpdskey}>
+		</div>
 
 		<div style="clear:both;" id="footer-container">
-			<footer class="wrapper">
-				<h4 align="center">&copy2012 |MUC,IIIT-Delhi</h4>
-			</footer>
 		</div>
 
 	</body>

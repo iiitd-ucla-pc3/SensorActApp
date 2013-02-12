@@ -38,11 +38,16 @@
  */
 package edu.iiitd.muc.sensoract.constants;
 
+
+
+import controllers.Application;
+import edu.iiitd.muc.sensoract.apis.Global;
+
 /**
  * Defines all constants for SensorAct
  * 
  * 
- * @author Nipun
+ * @author Nipun, Manaswi
  * 
  */
 
@@ -52,9 +57,14 @@ public class Const {
 	 * API names
 	 */
 	public static final String API_LOGIN = "login";
+	public static final String API_RELOGIN = "relogin";
+	public static final String API_REGISTER_VPDS = "registerVPDSToBroker";
+	public static final String API_LIST_VPDS = "listvpds";
+	public static final String API_USER_LIST = "getuserlist";
+	public static final String API_MANAGE_VPDS = "manageVPDS";
 	public static final String API_ADDUSER = "adduser";
 	public static final String API_LISTALLUSERS = "listallusers";
-	public static final String API_PUBLISHDATA = "pubishdata";
+	public static final String API_PUBLISHDATA = "publishdata";
 	public static final String API_ADDDEVICE = "adddevice";
 	public static final String API_DELETEDEVICE = "deletedevice";
 	public static final String API_GETDEVICE = "getdevice";
@@ -99,7 +109,7 @@ public class Const {
 	/*
 	 * API parameter validation messages
 	 */
-	public static final String MSG_REQUIRED = " is requird";
+	public static final String MSG_REQUIRED = " is required";
 	public static final String MSG_LENGTH = " length must be ";
 	public static final String MSG_MIN_LENGTH = " minimum length is ";
 	public static final String MSG_MAX_LENGTH = " maximum length is ";
@@ -153,88 +163,41 @@ public class Const {
 	 * URL's
 	 */
 	public static final String URL_UI_SERVER = "http://localhost:9003/";
-	public static final String URL_BROKER_SERVER = "http://10.0.0.5:9001/";
-	public static final String URL_REPOSITORY_SERVER = "http://localhost:9000/";
-	public static final String URL_REPOSITORY_REGISTER_USER = URL_REPOSITORY_SERVER
-			+ "user/register";
-	public static final String URL_REPOSITORY_LOGIN_USER = URL_REPOSITORY_SERVER
-			+ "user/login";
-	public static final String URL_REPOSITORY_LIST_USERS = URL_REPOSITORY_SERVER
+	public static final String URL_BROKER_SERVER = "http://localhost:9001/";
+	//public static final String URL_REPOSITORY_SERVER = "http://localhost:9000/";
+	public String URL_REPOSITORY_SERVER="dfhdsf";
+	//VPDS APIs
+	
+	
+	
+	// Broker APIs
+	
+	public static final String URL_BROKER_LOGIN = URL_BROKER_SERVER + "user/login";
+	
+	public static final String URL_BROKER_REGISTER_VPDS = URL_BROKER_SERVER
+			+ "vpds/register";
+	
+	public static final String URL_BROKER_LIST_VPDS = URL_BROKER_SERVER
+			+ "vpds/list";
+	
+	public static final String URL_BROKER_LIST_USER = URL_BROKER_SERVER
 			+ "user/list";
-	public static final String URL_REPOSITORY_ADD_DEVICE = URL_REPOSITORY_SERVER
-			+ "device/add";
-	public static final String URL_REPOSITORY_ADD_DEVICE_TEMPLATE = URL_REPOSITORY_SERVER
-			+ "device/template/add";
 
-	public static final String URL_REPOSITORY_FIND_DEVICE = URL_REPOSITORY_SERVER
-			+ "device/get";
-	public static final String URL_REPOSITORY_FIND_DEVICE_TEMPLATE = URL_REPOSITORY_SERVER
-			+ "device/template/get";
+	public static final String URL_BROKER_REGISTER_USER = URL_BROKER_SERVER
+			+ "user/register";
 
-	public static final String URL_REPOSITORY_DELETE_DEVICE = URL_REPOSITORY_SERVER
-			+ "device/delete";
-	public static final String URL_REPOSITORY_DELETE_DEVICE_TEMPLATE = URL_REPOSITORY_SERVER
-			+ "device/template/delete";
-
-	public static final String URL_REPOSITORY_LIST_ALL_DEVICES = URL_REPOSITORY_SERVER
-			+ "device/list";
-	public static final String URL_REPOSITORY_LIST_ALL_DEVICE_TEMPLATES = URL_REPOSITORY_SERVER
-			+ "device/template/list";
-
-	public static final String URL_REPOSITORY_ACTUATE_DEVICE = URL_REPOSITORY_SERVER
-			+ "device/actuate";
+	public static final String URL_BROKER_SHARE_DEVICE = URL_BROKER_SERVER
+			+ "device/share";
 	
-	public static final String URL_REPOSITORY_LIST_ACTUATION_REQUEST = URL_REPOSITORY_SERVER
-			+ "device/actuationrequest/list";
+	public static final String URL_BROKER_SEARCH_DEVICE = URL_BROKER_SERVER
+			+ "device/search";
 	
-	public static final String URL_REPOSITORY_CANCEL_ACTUATION_REQUEST = URL_REPOSITORY_SERVER
-			+ "device/actuationrequest/cancel";
-	
-	public static final String URL_REPOSITORY_ADD_GUARD_RULE = URL_REPOSITORY_SERVER
-			+ "guardrule/add";
-	
-	public static final String URL_REPOSITORY_DELETE_GUARD_RULE = URL_REPOSITORY_SERVER
-			+ "guardrule/delete";
-	
-	public static final String URL_REPOSITORY_GET_GUARD_RULE = URL_REPOSITORY_SERVER
-			+ "guardrule/get";
-	
-	public static final String URL_REPOSITORY_LIST_GUARD_RULE = URL_REPOSITORY_SERVER
-			+ "guardrule/list";
-	
-	public static final String URL_REPOSITORY_ASSOC_GUARD_RULE_ADD = URL_REPOSITORY_SERVER
-			+ "guardrule/association/add";
-	
-	public static final String URL_REPOSITORY_ASSOC_GUARD_RULE_DELETE = URL_REPOSITORY_SERVER
-			+ "guardrule/association/delete";
-	
-	public static final String URL_REPOSITORY_ASSOC_GUARD_RULE_GET = URL_REPOSITORY_SERVER
-			+ "guardrule/association/get";
-	
-	public static final String URL_REPOSITORY_ASSOC_GUARD_RULE_LIST = URL_REPOSITORY_SERVER
-			+ "guardrule/association/list";
-
-	public static final String URL_REPOSITORY_QUERY_DATA = URL_REPOSITORY_SERVER
-			+ "data/query";
-	public static final String URL_REPOSITORY_GET_INFO = URL_REPOSITORY_SERVER
-			+ "repo/info";
-	public static final String URL_REPOSITORY_GENERATE_SECRET_KEY = URL_REPOSITORY_SERVER
-			+ "user/generate/repokey";
-
-	public static final String URL_BROKER_ADD_USER = URL_BROKER_SERVER
-			+ "registeruser";
-	// public static final String URL_REPSOSITORY_ADD_DEVICE =
-	// URL_BROKER_SERVER+"adddevice";
-	public static final String URL_BROKER_DELETE_DEVICE = URL_BROKER_SERVER
-			+ "deletedevice";
-	public static final String URL_BROKER_QUERY_DATA = URL_REPOSITORY_SERVER
-			+ "querydata";
-	public static final String URL_BROKER_LOGIN = URL_BROKER_SERVER + "login";
-	public static final String URL_HOME = URL_UI_SERVER + "home";
-	public static final String URL_LOGIN = URL_UI_SERVER + "login";
 
 	public static final String URL_BROKER_LIST_ALL_DEVICES = URL_BROKER_SERVER
 			+ "listalldevices";
+	
+	public static final String URL_HOME = URL_UI_SERVER + "home";
+	public static final String URL_LOGIN = URL_UI_SERVER + "login";
 
 	/*
 	 * Parameters
@@ -242,8 +205,16 @@ public class Const {
 
 	public static final String USERNAME = "username";
 	public static final String SECRETKEY = "secretkey";
+	public static final String USERTYPE = "usertype";
 	public static final String REQUEST_BODY = "body";
 	public static final String FAKE_SECRET_KEY = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+	
+	public static final String USER = "USER";
+	public static final String OWNER = "OWNER";
+	
+	public static final String VPDSURL = "vpdsurl";
+	public static final String VPDSKEY = "vpdskey";
+	public static final String VPDSNAME = "vpdsname";
 
 	/**
 	 * Defines the constants for SensorAct error messages
@@ -257,7 +228,7 @@ public class Const {
 	/*
 	 * Logger info constants
 	 */
-	public static final String LOGGER_INFO_LOGIN_SUCCESSFULL = "Login Successful: ";
+	public static final String LOGGER_INFO_LOGIN_SUCCESSFUL = "Login Successful: ";
 	public static final String LOGGER_INFO_LOGIN_FAILURE = "Login Failure: ";
 	public static final String LOGGER_INFO_SESSION_EXPIRED = "Session Expired: ";
 

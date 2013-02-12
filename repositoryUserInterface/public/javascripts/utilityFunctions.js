@@ -43,7 +43,7 @@
 function createHeader() {    
 
 		var listOfPages = {
-			"Home" : URL_HOME,
+			"Home" : URL_VPDSHOME,
 			"Devices" : URL_DEVICES,
 			"Guard Rules" : URL_GUARD_RULE,
 			"Time Actuation" : URL_ACTUATE,
@@ -53,9 +53,57 @@ function createHeader() {
 			//"Speak" : URL_SPEAK_INPUT
 		};
 
+		//var temp = "http://"+document.location.hostname+":"+document.location.port+"/";
+		var docURL = document.URL, urltoSet = "", value;
+		var secretkey;
+
+	    $("#navHeader").append("<ul>");
+
+	    for (key in listOfPages) {
+	    	value = listOfPages[key];
+	    	urltoSet = URL_UI_SERVER + value;  
+	    	$("#navHeader").find("ul").append("<li><a id=\""+key+"\" href=\""+ urltoSet +"\">"+key+"</a></li>");         
+	    	if(docURL == urltoSet)             
+	    		$("#" +key).attr('class','active');     
+	    }
+	    $("#navHeader").append("</ul>");
+
+	    $("#labelVpdsname").append($("#vpdsname").val());
+	    $("#selectedVPDS").append("<br/><<span id = 'gohome'>Go Home</span>");
+	    $("#gohome").click(function(){
+	    	window.location = URL_UI_SERVER + URL_HOME_VO;
+	    });
+
+	    $("#logout").click(function() {
+
+	    	window.location = URL_LOGOUT_USER;
+	    });
+
+
+	    var getsecretkey = {};
+
+		$.get(URL_UI_SERVER + URL_GET_SECRET_KEY, function(rData) {
+	    		getsecretkey = rData;	    		
+	    });
+
+		$("#viewkey").click(function() {
+	    		alert("Your API Key is " + getsecretkey['secretkey']);
+	    });
+}
+
+function createHeaderUser() {    
+
+		var listOfPages = {
+			"Home" : URL_HOME_USER,
+			"Register VPDS" : URL_REG_VPDS,
+			"Shared Devices" : URL_SHARED_DEVICES
+		};
+
 		var temp = "http://"+document.location.hostname+":"+document.location.port+"/";
 		var docURL = document.URL, urltoSet = "", value;
 		var secretkey;
+
+		$("#navHeader").css("width", "60%");
 
 	    $("#navHeader").append("<ul>");
 
@@ -69,8 +117,47 @@ function createHeader() {
 	    $("#navHeader").append("</ul>");
 }
 
- 
+function createHeaderVO() {    
 
+	var listOfPages = {
+		"Home" : URL_HOME_VO,
+		"Register VPDS" : URL_REG_VPDS,
+		"Shared Devices" : URL_SHARED_DEVICES,
+		"Manage VPDS" : URL_MANAGE_VPDS,
+		"Share Access" : URL_SHARE
+	};
+
+	var temp = "http://"+document.location.hostname+":"+document.location.port+"/";
+	var docURL = document.URL, urltoSet = "", value;
+	var secretkey;
+
+    $("#navHeader").append("<ul>");
+
+    for (key in listOfPages) {
+    	value = listOfPages[key];
+    	urltoSet = temp+value;  
+    	$("#navHeader").find("ul").append("<li><a id=\""+key+"\" href=\""+ urltoSet +"\">"+key+"</a></li>");         
+    	if(docURL == urltoSet)             
+    		$("#" +key).attr('class','active');     
+    }
+    $("#navHeader").append("</ul>");
+}
+ 
+function createFooter() {     
+	$("#footer-container").append("<footer class=\"wrapper\"><h4 align=\"center\">&copy;2012 |MUC, IIIT-Delhi</h4></footer>");
+}
+
+function includeHiddenFields() {
+
+	//alert(@Session["username"]);
+
+	$("#iFields").append('<input id="username"  type="hidden" value=@Session["username"]> \
+		<input id="usertype"  type="hidden" value=${usertype}> \
+		<input id="vpdsname"  type="hidden" value=${vpdsname}> \
+		<input id="vpdsurl"  type="hidden" value=${vpdsurl}> \
+		<input id="vpdskey"  type="hidden" value=${vpdskey}>');
+}
+ 
 /*
  * Description:Converts datetime from the UI format to epoch
  * Input:Date Time from the UI in the following format 2012-04-18-14:33

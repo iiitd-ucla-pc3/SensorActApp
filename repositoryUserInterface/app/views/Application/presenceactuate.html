@@ -38,7 +38,8 @@
 		<script type="text/javascript">
 			$(document).ready(function() {
 
-				createHeader();				
+				createHeader();	
+				createFooter();
 
 				/**
 				 * Global Variables used during the lifecycle of the page
@@ -60,23 +61,7 @@
 
 
 			/********************* --------------- Changes made here --------------- ***************/
-
-				$("#logout").click(function() {
-
-					window.location = URL_LOGOUT_USER;
-				});
-
-				var getsecretkey = {};
-
-				$.get(temp + URL_GET_SECRET_KEY, function(rData) {
-
-			    		getsecretkey = rData;
-			    		
-			    });
-
-				$("#viewkey").click(function() {
-			    		alert("Your API Key is " + getsecretkey['secretkey']);
-			    });
+ 
 
 				/*
 				 * Hiding Error Divs
@@ -831,10 +816,10 @@
 
 							if (receivedData[DEVICE_ACTLIST_ARRAY].length > 0)	{ //Success
 								
-								// TODO: Replace tasklet name with tasklet description
+								
 								$("#dialog").append("<div id =\"errorCDiv\" style=\"color: red;padding:5px; font-size: 1\"</div><br/>");
 								$("#errorCDiv").hide();
-								$("#dialog").append("<table id=\"actList\" style=\"font-size:15px\"><tr><td></td><td><b>Request Description</b></tr></th></table");
+								$("#dialog").append("<table id=\"actList\" style=\"font-size:15px\"><tr><td></td><td><b>Request Description</b></tr></td></table");
 								for (var index in receivedData[DEVICE_ACTLIST_ARRAY]) {
 									var name = receivedData[DEVICE_ACTLIST_ARRAY][index][ACTUATION_DESC];
 									var taskletId = receivedData[DEVICE_ACTLIST_ARRAY][index][ACTUATION_TASKLETID]; 
@@ -976,6 +961,9 @@
 			</header>
 		</div>
 		<div class="wrapper" style="">
+			<p class="space"></p>
+			<div id="selectedVPDS" style="float:right; font-size: 12px"><b>Selected VPDS:</b><label id="labelVpdsname"></label></div>
+			<br/>
 			<h1 class="newfont" id="device" style="text-align:center;">Actuate a Device based on Presence</h1>
 			<hr>			
 			<div style="display: none;" id="getActuateErrorDiv" class="errorDiv"></div>
@@ -1081,10 +1069,15 @@
 			</div>
 			
 		</div>
+		<div id="iFields">
+			<input id="username"  type="hidden" value=${username}> 
+			<input id="usertype"  type="hidden" value=${usertype}> 
+			<input id="vpdsname"  type="hidden" value=${vpdsname}> 
+			<input id="vpdsurl"  type="hidden" value=${vpdsurl}>
+			<input id="vpdskey"  type="hidden" value=${vpdskey}>
+		</div>
 		<div style="clear:both;" id="footer-container">
-			<footer class="wrapper">
-				<h4 align="center">&copy2012 |MUC,IIIT-Delhi</h4>
-			</footer>
+			
 		</div>
 	</body>
 </html>

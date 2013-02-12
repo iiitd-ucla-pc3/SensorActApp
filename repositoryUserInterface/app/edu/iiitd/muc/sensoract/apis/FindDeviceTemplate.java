@@ -63,7 +63,7 @@ public class FindDeviceTemplate extends SensorActAPI {
 				+ findDeviceRequestWithSecretKey);
 
 		HttpResponse responseFromBroker = new SendHTTPRequest()
-				.sendPostRequest(Const.URL_REPOSITORY_FIND_DEVICE_TEMPLATE,
+				.sendPostRequest(Global.URL_REPOSITORY_FIND_DEVICE_TEMPLATE,
 						Const.MIME_TYPE_JSON, Const.API_FINDDEVICETEMPLATE,
 						findDeviceRequestWithSecretKey);
 		renderJSON(responseFromBroker.getString());

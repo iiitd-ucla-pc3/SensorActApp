@@ -63,7 +63,7 @@ public class UserList extends SensorActAPI {
 		logger.info(Const.API_LISTALLUSERS, secretkey + " " + userListJsonWithSecretKey);
 
 		HttpResponse responseFromVPDS = new SendHTTPRequest()
-				.sendPostRequest(Const.URL_REPOSITORY_LIST_USERS,
+				.sendPostRequest(Global.URL_REPOSITORY_LIST_USERS,
 						Const.MIME_TYPE_JSON, Const.API_LISTALLUSERS,
 						userListJsonWithSecretKey);
 		renderJSON(responseFromVPDS.getString());

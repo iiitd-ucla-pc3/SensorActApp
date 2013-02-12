@@ -24,7 +24,8 @@ lang="en">
 
 			$(document).ready(function() {
 
-				createHeader();				
+				createHeader();	
+				createFooter();			
 
 				/**
 				 * Global Variables used during the lifecycle of the page
@@ -48,27 +49,8 @@ lang="en">
 				/*counter for dynamic attribute allocation focus*/
 				var value = 0;
 				
-				var classReference = "";
-				
-				 /**
-				 * Adding the link attribute to Logout,Home element
-				 */
-					
-				$("#logout").click(function() {
-					window.location = temp + URL_LOGOUT_USER;
-				});
+				var classReference = "";				
 
-				var getsecretkey = {};
-
-				$.get(temp + URL_GET_SECRET_KEY, function(rData) {
-
-			    		getsecretkey = rData;
-			    		
-			    });
-
-				$("#viewkey").click(function() {
-			    		alert("Your API Key is " + getsecretkey['secretkey']);
-			    });
 					/*
 					 * Setting the AJAX to work in synchronous fashion
 					 */
@@ -158,7 +140,7 @@ lang="en">
 
 						//Successfully received data
 						if(receivedUserList.hasOwnProperty(RESPONSE_STATUS_CODE)) {
-							alertGetDeviceError("Following errors occured " + receivedUserList[RESPONSE_MESSAGE]);
+							alertGetDeviceError("Following errors occurred " + receivedUserList[RESPONSE_MESSAGE]);
 						} else {
 
 							var userListCount = receivedUserList[USERNAME_ARRAY].length;
@@ -197,10 +179,10 @@ lang="en">
 							//alert(JSON.stringify(receivedData));
 
 							//Successfully received data
-							if(receivedData.hasOwnProperty(RESPONSE_STATUS_CODE))//Means a failure has occured {
+							if(receivedData.hasOwnProperty(RESPONSE_STATUS_CODE))//Means a failure has occured
 							//The API call has failed
 							{
-								alertGetDeviceError("Following errors occured " + receivedData[RESPONSE_MESSAGE]);
+								alertGetDeviceError("Following errors occurred " + receivedData[RESPONSE_MESSAGE]);
 							} else {
 								
 								$("#newGuardRuleName").val(receivedData[GUARDRULE_NAME]);
@@ -361,6 +343,9 @@ lang="en">
 			</header>
 		</div>
 		<div class="wrapper" style="width: 90%;">
+			<p class="space"></p>
+			<div id="selectedVPDS" style="float:right; font-size: 12px"><span><b>Selected VPDS:</b></span><span id="labelVpdsname"></span ></div>
+			<br/>
 			<div id="modeDiv">
 				<h1 id="guardrule" class="newfont" style="text-align: center">Guard Rule</h1>
 			</div>
@@ -414,15 +399,19 @@ lang="en">
 				</button>
 				<!--  added this -->
 			</div>
+			
+		</div>
+		<div id="iFields">
 			<input id="username"  type="hidden" value=${username}>
 			<input id="guardrulename"  type="hidden" value=${guardrulename}>
-			<input	id="mode"  type="hidden" value=${mode}>
+			<input id="mode"  type="hidden" value=${mode}>
+			<input id="usertype"  type="hidden" value=${usertype}> 
+			<input id="vpdsname"  type="hidden" value=${vpdsname}> 
+			<input id="vpdsurl"  type="hidden" value=${vpdsurl}>
+			<input id="vpdskey"  type="hidden" value=${vpdskey}>
 		</div>
-		<hr>
 		<div style="clear: both;" id="footer-container">
-			<footer class="wrapper">
-				<h4 align="center">©2012 |MUC,IIIT-Delhi</h4>
-			</footer>
+			
 		</div>
 	</body>
 </html>

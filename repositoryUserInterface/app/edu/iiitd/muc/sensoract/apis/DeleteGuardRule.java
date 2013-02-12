@@ -82,7 +82,7 @@ public class DeleteGuardRule extends SensorActAPI {
 		logger.info(Const.API_DELGUARDRULE, secretkey + " " + delGuardRuleJson);
 
 		HttpResponse responseFromVPDS = new SendHTTPRequest()
-				.sendPostRequest(Const.URL_REPOSITORY_DELETE_GUARD_RULE,
+				.sendPostRequest(Global.URL_REPOSITORY_DELETE_GUARD_RULE,
 						Const.MIME_TYPE_JSON, Const.API_DELGUARDRULE,
 						deleteRequestWithSecretKey);
 		renderJSON(responseFromVPDS.getString());

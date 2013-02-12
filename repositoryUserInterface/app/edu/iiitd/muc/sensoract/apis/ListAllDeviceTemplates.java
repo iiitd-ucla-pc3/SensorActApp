@@ -59,7 +59,7 @@ public class ListAllDeviceTemplates extends SensorActAPI {
 
 		HttpResponse responseFromBroker = new SendHTTPRequest()
 				.sendPostRequest(
-						Const.URL_REPOSITORY_LIST_ALL_DEVICE_TEMPLATES,
+						Global.URL_REPOSITORY_LIST_ALL_DEVICE_TEMPLATES,
 						Const.MIME_TYPE_JSON, Const.API_LISTALLDEVICETEMPLATES,
 						reqStr);
 		renderJSON(responseFromBroker.getString());

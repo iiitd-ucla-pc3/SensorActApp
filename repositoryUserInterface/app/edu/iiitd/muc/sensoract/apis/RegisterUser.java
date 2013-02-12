@@ -48,6 +48,7 @@ import edu.iiitd.muc.sensoract.format.RegisterUserRequest;
  * 1.username 2.password 3.email id
  * 
  * @author nipun
+ * @author manaswi
  * 
  */
 public class RegisterUser extends SensorActAPI {
@@ -113,7 +114,7 @@ public class RegisterUser extends SensorActAPI {
 	private HttpResponse sendRequestToBroker(String bodyToSendToBroker) {
 		HttpResponse response = null;
 		try {
-			response = WS.url(Const.URL_REPOSITORY_REGISTER_USER)
+			response = WS.url(Const.URL_BROKER_REGISTER_USER)
 					.body(bodyToSendToBroker).mimeType("application/json")
 					.post();
 		} catch (Exception e) {

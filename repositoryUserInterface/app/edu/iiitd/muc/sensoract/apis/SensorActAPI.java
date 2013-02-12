@@ -78,6 +78,11 @@ public class SensorActAPI extends Application {
 	public static GenerateSecretKey generateSecretKey = new GenerateSecretKey();
 	public static FindDevice findDevice = new FindDevice();
 	public static FindDeviceTemplate findDeviceTemplate = new FindDeviceTemplate();
+	
+	public static RegisterVPDSToBroker registerVPDS = new RegisterVPDSToBroker();
+	public static ManageVPDS manageVPDS = new ManageVPDS();
+	public static GetVPDSList getVPDSList = new GetVPDSList();
+	public static GetUserList getUserList = new GetUserList();
 
 	public static SensorActLogger logger = new SensorActLogger();
 	public static SoundInput soundInput = new SoundInput();

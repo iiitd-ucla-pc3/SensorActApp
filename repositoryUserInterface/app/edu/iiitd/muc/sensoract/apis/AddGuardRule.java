@@ -109,7 +109,7 @@ public class AddGuardRule extends SensorActAPI {
 		logger.info(Const.API_ADDGUARDRULE, secretkey + " " + addGuardRuleJson);
 		
 		HttpResponse responseFromVPDS = new SendHTTPRequest()
-				.sendPostRequest(Const.URL_REPOSITORY_ADD_GUARD_RULE,
+				.sendPostRequest(Global.URL_REPOSITORY_ADD_GUARD_RULE,
 						Const.MIME_TYPE_JSON, Const.API_ADDGUARDRULE,
 						addGuardRuleJson);
 		renderJSON(responseFromVPDS.getString());

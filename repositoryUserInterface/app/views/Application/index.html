@@ -152,11 +152,14 @@
 
 						} else {
 							$.noty.closeAll()
-							alertError('sign_in_error', responseFromServer[RESPONSE_MESSAGE]);
+							if(responseFromServer[RESPONSE_MESSAGE] == 'com.google.gson.JsonParseException: Expecting object found: "<!DOCTYPE"')
+								alert("SensorAct server has not been started or is incorrectly configured. Please contact the administrator.");
+							else
+								alertError('sign_in_error', responseFromServer[RESPONSE_MESSAGE]);
 						}
 
 					} catch(e) {
-						$.noty.closeAll()
+						$.noty.closeAll();
 						alertError('sign_in_error', e);
 					}
 					//}

@@ -80,7 +80,7 @@ public class GenerateSecretKey extends SensorActAPI {
 				+ generateRequestWithSecretKey);
 
 		HttpResponse responseFromBroker = new SendHTTPRequest()
-				.sendPostRequest(Const.URL_REPOSITORY_GENERATE_SECRET_KEY,
+				.sendPostRequest(Global.URL_REPOSITORY_GENERATE_SECRET_KEY,
 						Const.MIME_TYPE_JSON, Const.API_GENERATESECRETKEY,
 						generateRequestWithSecretKey);
 		renderJSON(responseFromBroker.getString());

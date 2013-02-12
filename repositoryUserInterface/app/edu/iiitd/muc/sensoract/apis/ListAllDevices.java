@@ -59,7 +59,7 @@ public class ListAllDevices extends SensorActAPI {
 		logger.info(Const.API_LISTALLDEVICES, secretkey + " " + reqStr);
 
 		HttpResponse responseFromBroker = new SendHTTPRequest()
-				.sendPostRequest(Const.URL_REPOSITORY_LIST_ALL_DEVICES,
+				.sendPostRequest(Global.URL_REPOSITORY_LIST_ALL_DEVICES,
 						Const.MIME_TYPE_JSON, Const.API_LISTALLDEVICES, reqStr);
 		renderJSON(responseFromBroker.getString());
 	}

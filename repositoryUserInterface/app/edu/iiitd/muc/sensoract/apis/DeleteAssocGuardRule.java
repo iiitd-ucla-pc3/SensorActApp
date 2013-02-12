@@ -102,7 +102,7 @@ public class DeleteAssocGuardRule extends SensorActAPI {
 						null);
 				String addAssocBodyWithSecretKey = gson.toJson(toSend);
 				responseFromVPDS = new SendHTTPRequest()
-				.sendPostRequest(Const.URL_REPOSITORY_ASSOC_GUARD_RULE_DELETE,
+				.sendPostRequest(Global.URL_REPOSITORY_ASSOC_GUARD_RULE_DELETE,
 						Const.MIME_TYPE_JSON, Const.API_DELASSOCGUARDRULE,
 						addAssocBodyWithSecretKey);
 			}
@@ -118,7 +118,7 @@ public class DeleteAssocGuardRule extends SensorActAPI {
 						delAssocRequest.removeArray.get(i).actuatorid);
 				String addAssocBodyWithSecretKey = gson.toJson(toSend);
 				responseFromVPDS = new SendHTTPRequest()
-				.sendPostRequest(Const.URL_REPOSITORY_ASSOC_GUARD_RULE_DELETE,
+				.sendPostRequest(Global.URL_REPOSITORY_ASSOC_GUARD_RULE_DELETE,
 						Const.MIME_TYPE_JSON, Const.API_DELASSOCGUARDRULE,
 						addAssocBodyWithSecretKey);
 			}

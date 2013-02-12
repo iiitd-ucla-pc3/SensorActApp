@@ -90,7 +90,7 @@ public class QueryData extends SensorActAPI {
 						queryRequest.username);
 				String queryBodyWithSecretKey = gson.toJson(queryToRepo);
 				HttpResponse responseFromBroker = new SendHTTPRequest()
-						.sendPostRequest(Const.URL_REPOSITORY_QUERY_DATA,
+						.sendPostRequest(Global.URL_REPOSITORY_QUERY_DATA,
 								Const.MIME_TYPE_JSON, Const.API_QUERYDATA,
 								queryBodyWithSecretKey);
 				System.out.println(responseFromBroker.getString());

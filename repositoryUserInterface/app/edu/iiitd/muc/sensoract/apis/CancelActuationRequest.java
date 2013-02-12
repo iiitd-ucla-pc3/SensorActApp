@@ -84,7 +84,7 @@ public class CancelActuationRequest extends SensorActAPI {
 		logger.info(Const.API_CANCELACTUATIONREQUEST, secretkey + " " + cancelActnRequestWithSecretKey);
 
 		HttpResponse responseFromVPDS = new SendHTTPRequest()
-				.sendPostRequest(Const.URL_REPOSITORY_CANCEL_ACTUATION_REQUEST,
+				.sendPostRequest(Global.URL_REPOSITORY_CANCEL_ACTUATION_REQUEST,
 						Const.MIME_TYPE_JSON, Const.API_CANCELACTUATIONREQUEST,
 						cancelActnRequestWithSecretKey);
 		renderJSON(responseFromVPDS.getString());

@@ -104,7 +104,7 @@ public class AddAssocGuardRule extends SensorActAPI {
 							null);
 					String addAssocBodyWithSecretKey = gson.toJson(toSend);
 					responseFromVPDS = new SendHTTPRequest()
-					.sendPostRequest(Const.URL_REPOSITORY_ASSOC_GUARD_RULE_ADD,
+					.sendPostRequest(Global.URL_REPOSITORY_ASSOC_GUARD_RULE_ADD,
 							Const.MIME_TYPE_JSON, Const.API_ADDASSOCGUARDRULE,
 							addAssocBodyWithSecretKey);
 
@@ -127,7 +127,7 @@ public class AddAssocGuardRule extends SensorActAPI {
 							);
 					String addAssocBodyWithSecretKey = gson.toJson(toSend);
 					responseFromVPDS = new SendHTTPRequest()
-					.sendPostRequest(Const.URL_REPOSITORY_ASSOC_GUARD_RULE_ADD,
+					.sendPostRequest(Global.URL_REPOSITORY_ASSOC_GUARD_RULE_ADD,
 							Const.MIME_TYPE_JSON, Const.API_ADDASSOCGUARDRULE,
 							addAssocBodyWithSecretKey);
 

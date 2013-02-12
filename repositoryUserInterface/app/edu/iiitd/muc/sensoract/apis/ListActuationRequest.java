@@ -82,7 +82,7 @@ public class ListActuationRequest extends SensorActAPI {
 		logger.info(Const.API_LISTACTUATIONREQUEST, secretkey + " " + listActnRequestWithSecretKey);
 
 		HttpResponse responseFromVPDS = new SendHTTPRequest()
-				.sendPostRequest(Const.URL_REPOSITORY_LIST_ACTUATION_REQUEST,
+				.sendPostRequest(Global.URL_REPOSITORY_LIST_ACTUATION_REQUEST,
 						Const.MIME_TYPE_JSON, Const.API_LISTACTUATIONREQUEST,
 						listActnRequestWithSecretKey);
 		renderJSON(responseFromVPDS.getString());

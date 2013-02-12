@@ -79,7 +79,7 @@ public class ListAssocGuardRule extends SensorActAPI {
 		logger.info(Const.API_LISTASSOCGUARDRULE, secretkey + " " + listAssocGuardRuleReq);
 
 		HttpResponse responseFromVPDS = new SendHTTPRequest()
-				.sendPostRequest(Const.URL_REPOSITORY_ASSOC_GUARD_RULE_LIST,
+				.sendPostRequest(Global.URL_REPOSITORY_ASSOC_GUARD_RULE_LIST,
 						Const.MIME_TYPE_JSON, Const.API_LISTGUARDRULE,
 						listAssocGuardRuleReq);
 		renderJSON(responseFromVPDS.getString());

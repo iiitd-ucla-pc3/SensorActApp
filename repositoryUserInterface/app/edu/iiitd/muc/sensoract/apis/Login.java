@@ -35,6 +35,9 @@
  ******************************************************************************/
 package edu.iiitd.muc.sensoract.apis;
 
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
+
 import play.libs.WS;
 import play.libs.WS.HttpResponse;
 import edu.iiitd.muc.sensoract.constants.Const;
@@ -44,7 +47,7 @@ import edu.iiitd.muc.sensoract.format.LoginUserRequest;
 
 /**
  * Contains methods to Login User sends in his username and password in json
- * format If successfull the secretkey is obtained and stored in the
+ * format If successful, the secretkey is obtained and stored in the
  * usernameToSessionMap
  * 
  * @author nipun
@@ -62,27 +65,40 @@ public class Login extends SensorActAPI {
 			renderJSON(gson.toJson(new APIResponse(Const.API_LOGIN, 1, e
 					.toString())));
 		}
-		HttpResponse responseFromRepository = sendRequestToBroker(loginBody);
+		HttpResponse responseFromBroker = sendRequestToBroker(loginBody);
 		try {
 			APIResponse apiResponse = gson.fromJson(
-					responseFromRepository.getString(), APIResponse.class);
+					responseFromBroker.getString(), APIResponse.class);
+			String secretkey, usertype;
 			if (apiResponse.statuscode == Const.SUCCESS) {
-				logger.info(Const.LOGGER_INFO_LOGIN_SUCCESSFULL
+				logger.info(Const.LOGGER_INFO_LOGIN_SUCCESSFUL
 						+ loginUserRequest.username);
-				session.put(Const.USERNAME, loginUserRequest.username);
-				usernameToSecretKeyMap.put(loginUserRequest.username,
-						apiResponse.message.toString());
-				renderJSON(responseFromRepository.getString());
+				StringTokenizer tokenizer = new StringTokenizer(apiResponse.message.toString(),":");
+				
+				try{
+					usertype = tokenizer.nextToken().trim();
+					secretkey = tokenizer.nextToken().trim();
+					
+					session.put(Const.USERNAME, loginUserRequest.username);
+					session.put(Const.USERTYPE, usertype);
+					usernameToSecretKeyMap.put(loginUserRequest.username,
+							secretkey);
+				}
+				catch(NoSuchElementException e){
+					System.out.println("Tokenizer error!");
+				}
+				
+				renderJSON(responseFromBroker.getString());
 
 			} else {
 
 				logger.info(Const.LOGGER_INFO_LOGIN_FAILURE
 						+ loginUserRequest.username);
-				renderJSON(responseFromRepository.getString());
+				renderJSON(responseFromBroker.getString());
 			}
 		} catch (Exception e) {
 			logger.error(Const.API_LOGIN, Const.LOGGER_ERROR_JSON_PARSE
-					+ responseFromRepository.getString());
+					+ responseFromBroker.getString());
 			renderJSON(gson.toJson(new APIResponse(Const.API_LOGIN, 1, e
 					.toString())));
 		}
@@ -98,7 +114,7 @@ public class Login extends SensorActAPI {
 	private HttpResponse sendRequestToBroker(String body) {
 		HttpResponse response = null;
 		try {
-			response = WS.url(Const.URL_REPOSITORY_LOGIN_USER).body(body)
+			response = WS.url(Const.URL_BROKER_LOGIN).body(body)
 					.mimeType("application/json").post();
 		} catch (Exception e) {
 			logger.error(Const.LOGGER_ERROR_CONNECTION_FAILURE + body);

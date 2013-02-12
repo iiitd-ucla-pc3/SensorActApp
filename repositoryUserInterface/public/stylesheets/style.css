@@ -569,6 +569,11 @@ width:100%;
 width:100%;
 }
 
+#registerVPDS label{
+width:100%;
+font-weight: bold;
+}
+
 .play{
 background:white;
 border-color:transparent transparent transparent #000000;
@@ -675,4 +680,37 @@ font-weight: bold;
 
 sup{
 	color: red
+}
+
+div.errorDiv{
+	background: #000230;
+	color: #fff;
+	padding:10px;
+}
+#labelVpdsname{
+	cursor: default;
+	width: 100px;
+	display: inline-block;
+	text-align: center;
+}
+
+#gohome{
+	width: 100%; 
+	text-align: right;
+	font-size:90%;
+	font-weight: bold;
+	text-decoration:underline;
+	text-align:center;
+	color:blue;
+	cursor:pointer;
+	padding-left:10px;
+}
+
+div #selectedVPDS{
+	clear:both;
+}
+
+.wrapper h2, .wrapper h1{
+	display: block;
+	clear:both;
 }

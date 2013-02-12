@@ -40,10 +40,13 @@ package controllers;
  */
 import java.util.HashMap;
 
+import org.junit.Test;
+
 import play.Play;
 import play.mvc.Before;
 import play.mvc.Controller;
 import play.mvc.Http;
+import edu.iiitd.muc.sensoract.apis.Global;
 import edu.iiitd.muc.sensoract.apis.SensorActAPI;
 import edu.iiitd.muc.sensoract.constants.Const;
 import edu.iiitd.muc.sensoract.exceptions.InvalidJsonException;
@@ -61,13 +64,14 @@ public class Application extends Controller {
 
 	public static SensorActAPI api = new SensorActAPI();
 	public static HashMap<String, String> usernameToSecretKeyMap = new HashMap<String, String>();
+	//public String URL_REPOSITORY_SERVER = "http://localhost:9000/";
 
 	/*
 	 * If a user has not logged in,he is redirected to the index page
 	 */
 	@Before(unless = { "login", "index","registeruser" })
 	static void checkAuthentication() {
-		System.out.println("Session" + session.get(Const.USERNAME));
+		System.out.println("Session: " + session.get(Const.USERNAME));
 		if (session.get(Const.USERNAME) == null)
 			index();
 
@@ -76,6 +80,16 @@ public class Application extends Controller {
 
 		}
 	}
+	
+	@Before(only={"device","guardrule","actuate","presenceactuate", 
+			"display","addguardrule","assocguardrule", "editdevice","editguardrule"})
+	static void checkVPDSDetails() {
+		System.out.println("Session VPDS URL: " + session.get(Const.VPDSURL));
+		if (session.get(Const.VPDSURL) == null)
+			home();
+		Global global=new Global(session.get(Const.VPDSURL));
+	}
+	
 
 	public static void index() {
 		if (usernameToSecretKeyMap.get(session.get(Const.USERNAME)) != null)
@@ -87,36 +101,142 @@ public class Application extends Controller {
 	{
 		render();
 	}
+	
 	public static void logout() {
 		usernameToSecretKeyMap.remove(session.get(Const.USERNAME));
 		session.clear();
-		System.out.println("Proof" +Http.Request.current().getBase());
-		redirect(Http.Request.current().getBase());
+		System.out.println("Proof: " + Http.Request.current().getBase());
+		//redirect(Http.Request.current().getBase());
+		index();
 		Play.configuration.getProperty("application.baseUrl");
+	}
+	
+	public static void relogin(){
+		session.remove(Const.USERTYPE);
+		session.put(Const.USERTYPE, Const.OWNER);
+		home();
 	}
 
 	public static void home() {
+		
+		String usertype = session.get(Const.USERTYPE);
+		System.out.println("UserType:" + usertype);
+		renderArgs.put(Const.USERTYPE, usertype);
+		if(usertype.equals(Const.USER))
+			homeuser();
+		else if(usertype.equals(Const.OWNER))
+			homevo();
+	}
+	
+	public static void homeuser() {
 		flash.put(Const.USERNAME, session.get(Const.USERNAME));
+		String usertype = session.get(Const.USERTYPE);
+		renderArgs.put(Const.USERTYPE, usertype);
 		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		render();
+	}
+	
+	public static void homevo() {
+		flash.put(Const.USERNAME, session.get(Const.USERNAME));
+		String usertype = session.get(Const.USERTYPE);
+		if(usertype.equals("USER"))
+			homeuser();
+		renderArgs.put(Const.USERTYPE, usertype);
+		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		render();
+	}
+	
+	public static void managehome() {
+		flash.put(Const.USERNAME, session.get(Const.USERNAME));
+		String usertype = session.get(Const.USERTYPE);
+		System.out.println("Snsodjsdjs");	
+		renderArgs.put(Const.USERTYPE, usertype);
+		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		renderArgs.put(Const.VPDSNAME, session.get(Const.VPDSNAME));
+		renderArgs.put(Const.VPDSURL, session.get(Const.VPDSURL));
+		renderArgs.put(Const.VPDSKEY, session.get(Const.VPDSKEY));
 		render();
 	}
 	
 	public static void getsecretkey() {
 		api.getSecretKey.doProcess();
 	}
-
-	public static void device() {
+	
+	public static void registervpds() {
 		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		String usertype = session.get(Const.USERTYPE);
+		renderArgs.put(Const.USERTYPE, usertype);
 		render();
 	}
+	
+	public static void registerVPDSToBroker() {
+		
+		String body = request.params.get(Const.REQUEST_BODY);
+		api.registerVPDS.doProcess(body);
+	}
+	
+	public static void sharedevices() {
+		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		String usertype = session.get(Const.USERTYPE);
+		renderArgs.put(Const.USERTYPE, usertype);
+		render();
+	}
+	public static void share() {
+		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		String usertype = session.get(Const.USERTYPE);
+		renderArgs.put(Const.USERTYPE, usertype);
+		render();
+	}
+	
+	public static void getuserlist() {
 
+		api.getUserList.doProcess();
+	}
+
+	public static void managevpds() {
+		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		String usertype = session.get(Const.USERTYPE);
+		renderArgs.put(Const.USERTYPE, usertype);
+		render();
+	}
+	
+	public static void getvpdsdetails() {
+		
+		String body = request.params.get(Const.REQUEST_BODY);
+		api.manageVPDS.doProcess(body);
+	}
+	
+	public static void listvpds() {
+		
+		String body = request.params.get(Const.REQUEST_BODY);
+		api.getVPDSList.doProcess(body);
+	}	
+	
+	
+	public static void device() {
+		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		String usertype = session.get(Const.USERTYPE);
+		renderArgs.put(Const.USERTYPE, usertype);
+		renderArgs.put(Const.VPDSNAME, session.get(Const.VPDSNAME));
+		renderArgs.put(Const.VPDSURL, session.get(Const.VPDSURL));
+		renderArgs.put(Const.VPDSKEY, session.get(Const.VPDSKEY));
+		render();
+	}
+	
+	
 	public static void editdevice(String devicename, String isdevice,
 			String mode) {
 		System.out.println("Device name" + devicename);
 		renderArgs.put("devicename", devicename);
 		renderArgs.put("isdevice", isdevice);
 		renderArgs.put("mode", mode);
-
+		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		String usertype = session.get(Const.USERTYPE);
+		renderArgs.put(Const.USERTYPE, usertype);
+		renderArgs.put(Const.VPDSNAME, session.get(Const.VPDSNAME));
+		renderArgs.put(Const.VPDSURL, session.get(Const.VPDSURL));
+		renderArgs.put(Const.VPDSKEY, session.get(Const.VPDSKEY));
+		
 		render();
 	}
 
@@ -134,6 +254,10 @@ public class Application extends Controller {
 
 	public static void device2() {
 		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		renderArgs.put(Const.VPDSNAME, session.get(Const.VPDSNAME));
+		renderArgs.put(Const.VPDSURL, session.get(Const.VPDSURL));
+		renderArgs.put(Const.VPDSKEY, session.get(Const.VPDSKEY));
+		
 		render();
 	}
 
@@ -194,32 +318,57 @@ public class Application extends Controller {
 		String registerUserBody = request.params.get(Const.REQUEST_BODY);
 		api.registeruser.doProcess(registerUserBody);
 	}
-
+	
+	
 	public static void display() {
 
 		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		renderArgs.put(Const.VPDSNAME, session.get(Const.VPDSNAME));
+		renderArgs.put(Const.VPDSURL, session.get(Const.VPDSURL));
+		renderArgs.put(Const.VPDSKEY, session.get(Const.VPDSKEY));
+		
 		render();
 	}
+	
 	
 	public static void actuate() {
 
 		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		renderArgs.put(Const.VPDSNAME, session.get(Const.VPDSNAME));
+		renderArgs.put(Const.VPDSURL, session.get(Const.VPDSURL));
+		renderArgs.put(Const.VPDSKEY, session.get(Const.VPDSKEY));
+		
 		render();
 	}
 	
+	
 	public static void actuatedevice() {
 		String deviceActuateBody = request.params.get(Const.REQUEST_BODY);
+		renderArgs.put(Const.VPDSNAME, session.get(Const.VPDSNAME));
+		renderArgs.put(Const.VPDSURL, session.get(Const.VPDSURL));
+		renderArgs.put(Const.VPDSKEY, session.get(Const.VPDSKEY));
+		
 		api.actuateDevice.doProcess(deviceActuateBody);
 
 	}
 	
+	
 	public static void presenceactuate() {
 		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		renderArgs.put(Const.VPDSNAME, session.get(Const.VPDSNAME));
+		renderArgs.put(Const.VPDSURL, session.get(Const.VPDSURL));
+		renderArgs.put(Const.VPDSKEY, session.get(Const.VPDSKEY));
+		
 		render();
 	}
 	
+	
 	public static void guardrule() {
 		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		renderArgs.put(Const.VPDSNAME, session.get(Const.VPDSNAME));
+		renderArgs.put(Const.VPDSURL, session.get(Const.VPDSURL));
+		renderArgs.put(Const.VPDSKEY, session.get(Const.VPDSKEY));
+		
 		render();
 
 	}
@@ -243,11 +392,15 @@ public class Application extends Controller {
 		api.listGuardRule.doProcess();
 	}
 	
+	
 	public static void editguardrule(String guardrulename, String mode) {
 		System.out.println("Guard Rule: " + guardrulename);
 		renderArgs.put("guardrulename", guardrulename);
 		renderArgs.put("mode", mode);
 		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		renderArgs.put(Const.VPDSNAME, session.get(Const.VPDSNAME));
+		renderArgs.put(Const.VPDSURL, session.get(Const.VPDSURL));
+		renderArgs.put(Const.VPDSKEY, session.get(Const.VPDSKEY));
 		render();
 
 	}	
@@ -271,11 +424,16 @@ public class Application extends Controller {
 		api.listAssocGuardRule.doProcess();
 	}
 	
+	
 	public static void assocguardrule(String guardrulename, String mode) {
 		System.out.println("Guard Rule: " + guardrulename);
 		renderArgs.put("guardrulename", guardrulename);
 		renderArgs.put("mode", mode);
 		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		renderArgs.put(Const.VPDSNAME, session.get(Const.VPDSNAME));
+		renderArgs.put(Const.VPDSURL, session.get(Const.VPDSURL));
+		renderArgs.put(Const.VPDSKEY, session.get(Const.VPDSKEY));
+		
 		render();
 
 	}
@@ -291,7 +449,6 @@ public class Application extends Controller {
 	}
 
 	public static void login() throws InvalidJsonException
-
 	{
 		String loginBody = request.params.get(Const.REQUEST_BODY);
 		api.login.doProcess(loginBody);

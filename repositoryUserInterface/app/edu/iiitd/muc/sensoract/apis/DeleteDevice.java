@@ -63,7 +63,7 @@ public class DeleteDevice extends SensorActAPI {
 				+ deleteRequestWithSecretKey);
 
 		HttpResponse responseFromBroker = new SendHTTPRequest()
-				.sendPostRequest(Const.URL_REPOSITORY_DELETE_DEVICE,
+				.sendPostRequest(Global.URL_REPOSITORY_DELETE_DEVICE,
 						Const.MIME_TYPE_JSON, Const.API_DELETEDEVICE,
 						deleteRequestWithSecretKey);
 		renderJSON(responseFromBroker.getString());

@@ -5,22 +5,42 @@
 # Home page
 GET     /                                       Application.index
 GET		/getsecretkey							Application.getsecretkey
+GET    /relogin									Application.relogin
 
-GET     /display                              Application.display
-GET     /display2                             Application.display2
+GET     /display                                Application.display
+GET     /display2                               Application.display2
 GET     /login									Application.login
 POST    /login                                  Application.login
 POST    /register                               Application.registeruser
 POST    /listallusers                           Application.listallusers
 GET     /home									Application.home
+GET     /homeuser								Application.homeuser
+GET     /homevo									Application.homevo
+GET     /managehome								Application.managehome
 GET     /logout                                 Application.logout
-POST    /deletedevice                           Application.deletedevice
-POST    /deletedevicetemplate                   Application.deletedevicetemplate
+
+GET     /registervpds							Application.registervpds
+POST    /registerVPDSToBroker					Application.registerVPDSToBroker
+
+GET     /sharedevices							Application.sharedevices
+GET		/useractuate							Application.useractuate
+GET		/userpresenceactuate					Application.userpresenceactuate
+
+GET     /share									Application.share
+GET     /getuserlist							Application.getuserlist
+
+GET     /managevpds								Application.managevpds
+POST	/getvpdsdetails							Application.getvpdsdetails
+POST	/listvpds								Application.listvpds
 
 GET     /device                                 Application.device
 GET     /device2                                Application.device2
 POST    /adddevice                              Application.adddevice
 POST    /adddevicetemplate                      Application.adddevicetemplate
+POST    /deletedevice                           Application.deletedevice
+POST    /deletedevicetemplate                   Application.deletedevicetemplate
+GET     /listalldevices							Application.listalldevices
+GET     /listalldevicetemplates					Application.listalldevicetemplates
 
 GET		/actuate								Application.actuate
 POST	/actuatedevice							Application.actuatedevice
@@ -41,21 +61,19 @@ POST	/getassocguardrule							Application.getAssocGuardRule
 GET     /listassocguardrules						Application.listassocguardrules
 GET     /assocguardrule/{guardrulename}/{mode} 		Application.assocguardrule
 
-GET     /listalldevices							Application.listalldevices
-GET     /listalldevicetemplates							Application.listalldevicetemplates
 
 POST    /querydata                              Application.querydata
 POST    /querydata2                              Application.querydata
 GET     /speak									Application.speak
 POST    /speak								Application.speak
 
-GET     /repository							  Application.repository
-GET     /getrepositoryinfo							  Application.getrepositoryinfo
-POST     /generatesecretkey							  Application.generatesecretkey
-GET      /editdevice/{devicename}/{isdevice}/{mode}                                 Application.editdevice
-POST     /finddevice                                 Application.finddevice
-POST     /finddevicetemplate                                 Application.finddevicetemplate
-POST	/soundinput/{userID}					Application.soundinput
+GET     /repository							 		 Application.repository
+GET     /getrepositoryinfo							 Application.getrepositoryinfo
+POST    /generatesecretkey							 Application.generatesecretkey
+GET     /editdevice/{devicename}/{isdevice}/{mode}   Application.editdevice
+POST    /finddevice                                  Application.finddevice
+POST    /finddevicetemplate                          Application.finddevicetemplate
+POST	/soundinput/{userID}						 Application.soundinput
 
 
 # Ignore favicon requests
@@ -65,4 +83,4 @@ GET     /favicon.ico                            404
 GET     /public/                                staticDir:public
 
 # Catch all
-*       /{controller}/{action}                  {controller}.{action}
+*       /.*										Application.index

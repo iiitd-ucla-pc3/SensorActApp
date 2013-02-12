@@ -25,6 +25,7 @@ lang="en">
 			$(document).ready(function() {
 
 				createHeader();
+				createFooter();				
 
 				/**
 				 * Global Variables used during the lifecycle of the page
@@ -63,33 +64,14 @@ lang="en">
 				var value = 0;
 				
 				var classReference = "";
-				
-				 /**
-				 * Adding the link attribute to Logout,Home element
-				 */
 					
-				$("#logout").click(function() {
-					window.location = temp + URL_LOGOUT_USER;
+				/*
+				 * Setting the AJAX to work in sycnhronous fashion
+				 */
+				 	
+				jQuery.ajaxSetup({
+					async : false
 				});
-
-				var getsecretkey = {};
-
-				$.get(temp + URL_GET_SECRET_KEY, function(rData) {
-
-			    		getsecretkey = rData;
-			    		
-			    });
-
-				$("#viewkey").click(function() {
-			    		alert("Your API Key is " + getsecretkey['secretkey']);
-			    });
-					/*
-					 * Setting the AJAX to work in sycnhronous fashion
-					 */
-					 	
-					jQuery.ajaxSetup({
-						async : false
-					});
 
 				
 				/*
@@ -1005,6 +987,9 @@ lang="en">
 			</header>
 		</div>
 		<div class="wrapper" style="width: 90%;">
+			<p class="space"></p>
+			<div id="selectedVPDS" style="float:right; font-size: 12px"><span><b>Selected VPDS:</b></span><span id="labelVpdsname"></span ></div>
+			<br/>
 			<div id="modeDiv">
 				<h1 class="newfont" style="text-align: center">Edit
 				Device/Template</h1>
@@ -1022,8 +1007,9 @@ lang="en">
 				<input id="newDeviceLocation" type="text">
 				<span style='color:red;'></span>
 				<br>
-				<label id="newDeviceTagsLabel">Tags </label>
-				<input id="newDeviceTags" type="text">
+				<label id="newDeviceTagsLabel">Tags </label>				
+				<input id="newDeviceTags" type="text"> 
+				<font size ='1'>(use comma separated tags to describe your device)</font><br/>
 				<span style='color:red;'></span>
 				<br>
 				<!--  added this -->
@@ -1058,10 +1044,14 @@ lang="en">
 			<!-- hr -->
 		</div>
 		<hr>
+		<div id="iFields">
+			<input id="username"  type="hidden" value=${username}> 
+			<input id="usertype"  type="hidden" value=${usertype}> 
+			<input id="vpdsname"  type="hidden" value=${vpdsname}> 
+			<input id="vpdsurl"  type="hidden" value=${vpdsurl}>
+			<input id="vpdskey"  type="hidden" value=${vpdskey}>
+		</div>
 		<div style="clear: both;" id="footer-container">
-			<footer class="wrapper">
-				<h4 align="center">©2012 |MUC,IIIT-Delhi</h4>
-			</footer>
 		</div>
 	</body>
 </html>

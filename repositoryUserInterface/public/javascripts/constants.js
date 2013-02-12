@@ -133,7 +133,14 @@ var ASSOCRULE_SENSOR_ARRAY="sensorsArray";
 var ASSOCRULE_ACTUATOR_ARRAY="actuatorsArray";
 var ASSOCRULE_REMOVE_ARRAY="removeArray";
 
+//Dictionary constants associated with VPDS registration
+var VPDS_NAME="vpdsname";
+var VPDS_KEY="ownerkey";
+var VPDS_URL="vpdsURL";
 
+//Dictionary constants associated with VPDS management
+var VPDSOWNER_KEY="vpdsownerkey";
+var VPDS_LIST_ARRAY="vpdslist";
 
 //Dictionary constants associated with Chart Series
 var CHART_SERIES_NAME="name";
@@ -206,7 +213,12 @@ var MIN_LENGTH_GUARDRULE_NAME=5;
 var MAX_LENGTH_GUARDRULE_NAME=20;
 var MIN_LENGTH_GUARDRULE_DESC=5;
 var MAX_LENGTH_GUARDRULE_DESC=100;
-
+var MIN_LENGTH_VPDS_NAME=5;
+var MAX_LENGTH_VPDS_NAME=20;
+var MIN_LENGTH_VPDS_KEY=8;
+var MAX_LENGTH_VPDS_KEY=20;
+var MIN_LENGTH_VPDS_URL=20;
+var MAX_LENGTH_VPDS_URL=40;
 
 
 //Dictionary elements associated with Repository information
@@ -219,7 +231,9 @@ var REPOSITORY_URL="URL"
 //URL's ------------------------------------------------------------------------
 //Note that this needs to be modified when on LAN etc to http://192.168.1.122:9000
 //############# DEVICE  ###################################
-var URL_UI_SERVER="http://localhost:9003/";
+var URL_UI_SERVER="http://"+document.location.hostname+":"+document.location.port+"/";
+
+// POST requests
 
 var URL_LOGIN_USER="login";
 var URL_REGISTER_USER="register";
@@ -252,20 +266,46 @@ var URL_LIST_ALL_DEVICE_TEMPLATES="listalldevicetemplates";
 var URL_LIST_ACTUATE_REQUEST="listactuationrequests";
 var URL_CANCEL_ACTUATE_REQUEST="cancelactuationrequests";
 
+var URL_REGISTER_VPDS="registerVPDSToBroker";
+var URL_GET_VPDS_DETAILS="getvpdsdetails";
+var URL_VPDS_LIST="listvpds";
+var URL_RELOGIN="relogin";
+
+
+// GET Requests
+
 var URL_GET_SECRET_KEY="getsecretkey"
+var URL_GET_USER_LIST="getuserlist"
 
 var URL_HOME="home";
+var URL_VPDSHOME="managehome";
+
+// VO specific user
+var URL_HOME_VO="homevo";
+var URL_REG_VPDS="registervpds";
+var URL_MANAGE_VPDS="managevpds";
+var URL_SHARED_DEVICES="sharedevices";
+var URL_SHARE="share";
 var URL_DEVICES="device";
 var URL_ACTUATE="actuate";
 var URL_PRESENCE_ACTUATE="presenceactuate";
 var URL_GUARD_RULE="guardrule";
-var URL_LOGOUT_USER="logout";
+var URL_GENERATE_SECRET_KEY="generatesecretkey";
 var URL_VISUALIZATION="display";
+
+// Unused pages
 var URL_REPOSITORY_INFO="repository";
 var URL_GET_REPOSITORY_INFO="getrepositoryinfo";
-var URL_GENERATE_SECRET_KEY="generatesecretkey";
 var URL_SOUNDINPUT_CONTROLLER="soundinput";
 var URL_SPEAK_INPUT = "speak";
+
+// User specific
+var URL_HOME_USER="homeuser";
+var URL_USER_ACTUATE="useractuate";
+var URL_USER_PRESENCE_ACTUATE="userpresenceactuate";
+
+var URL_LOGOUT_USER="logout";
+
 
 
 

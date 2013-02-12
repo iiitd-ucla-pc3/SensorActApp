@@ -20,6 +20,7 @@
 			$(document).ready(function() {
 
 				createHeader();
+				createFooter();
 
 				/**
 				 * Global Variables used during the lifecycle of the page
@@ -49,22 +50,7 @@
 				});
 
 			/********************* --------------- Changes made here --------------- ***************/
-				$("#logout").click(function() {
 
-					window.location = URL_LOGOUT_USER;
-				});
-
-				var getsecretkey = {};
-
-				$.get(temp + URL_GET_SECRET_KEY, function(rData) {
-
-			    		getsecretkey = rData;
-			    		
-			    });
-
-				$("#viewkey").click(function() {
-			    		alert("Your API Key is " + getsecretkey['secretkey']);
-			    });
 				/*
 				 * Hiding Error Divs
 				 */
@@ -405,6 +391,9 @@
 			</header>
 		</div>
 		<div class="wrapper" style="">
+			<p class="space"></p>
+			<div id="selectedVPDS" style="float:right; font-size: 12px"><b>Selected VPDS:</b><label id="labelVpdsname"></label></div>
+			<br/>
 			<!--<div id="getDeviceErrorDiv" class ="errorDiv"></div>-->
 			<h1 class="newfont" id="device" style="text-align:center;">Registered devices</h1>
 			<hr>
@@ -416,13 +405,15 @@
 			<button id="addNewDeviceOrTemplate" class="google-button-blue">
 				Create New Device/Template
 			</button>
-			<input type="hidden"  id =username value =${username}>
-			</input>
+		</div>
+		<div id="iFields">
+			<input id="username"  type="hidden" value=${username}> 
+			<input id="usertype"  type="hidden" value=${usertype}> 
+			<input id="vpdsname"  type="hidden" value=${vpdsname}> 
+			<input id="vpdsurl"  type="hidden" value=${vpdsurl}>
+			<input id="vpdskey"  type="hidden" value=${vpdskey}>
 		</div>
 		<div style="clear:both;" id="footer-container">
-			<footer class="wrapper">
-				<h4 align="center">&copy2012 |MUC,IIIT-Delhi</h4>
-			</footer>
 		</div>
 	</body>
 </html>

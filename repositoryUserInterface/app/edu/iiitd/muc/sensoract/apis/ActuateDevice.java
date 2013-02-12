@@ -83,7 +83,7 @@ public class ActuateDevice extends SensorActAPI {
 		logger.info(Const.API_ACTUATEDEVICE, secretkey + " " + deviceActuateBody);
 
 		HttpResponse responseFromVPDS = new SendHTTPRequest()
-				.sendPostRequest(Const.URL_REPOSITORY_ACTUATE_DEVICE,
+				.sendPostRequest(Global.URL_REPOSITORY_ACTUATE_DEVICE,
 						Const.MIME_TYPE_JSON, Const.API_ACTUATEDEVICE,
 						deviceActuateBodyWithSecretKey);
 		renderJSON(responseFromVPDS.getString());

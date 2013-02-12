@@ -64,7 +64,7 @@ public class GetRepositoryInfo extends SensorActAPI {
 	private HttpResponse sendRequestToRepository() {
 		HttpResponse response = null;
 		try {
-			response = WS.url(Const.URL_REPOSITORY_GET_INFO).get();
+			response = WS.url(Global.URL_REPOSITORY_GET_INFO).get();
 		} catch (Exception e) {
 			renderJSON(gson.toJson(new APIResponse(Const.API_LISTALLDEVICES, 1,
 					e.toString())));

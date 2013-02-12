@@ -54,7 +54,7 @@ public class QueryData2 extends SensorActAPI {
 		String queryBodyWithSecretKey = queryBody.replace(
 				Const.FAKE_SECRET_KEY, secretkey);
 		HttpResponse responseFromBroker = new SendHTTPRequest()
-				.sendPostRequest(Const.URL_REPOSITORY_QUERY_DATA,
+				.sendPostRequest(Global.URL_REPOSITORY_QUERY_DATA,
 						Const.MIME_TYPE_JSON, Const.API_QUERYDATA,
 						queryBodyWithSecretKey);
 		try {

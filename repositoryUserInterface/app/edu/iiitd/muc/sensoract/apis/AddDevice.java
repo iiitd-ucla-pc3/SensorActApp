@@ -81,7 +81,7 @@ public class AddDevice extends SensorActAPI {
 		// HttpResponse responseFromRepository=sendPostRe
 
 		HttpResponse responseFromBroker = new SendHTTPRequest()
-				.sendPostRequest(Const.URL_REPOSITORY_ADD_DEVICE,
+				.sendPostRequest(Global.URL_REPOSITORY_ADD_DEVICE,
 						Const.MIME_TYPE_JSON, Const.API_ADDDEVICE,
 						deviceBodyWithSecretKey);
 		renderJSON(responseFromBroker.getString());
