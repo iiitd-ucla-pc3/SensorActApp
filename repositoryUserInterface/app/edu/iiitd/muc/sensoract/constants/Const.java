@@ -67,8 +67,10 @@ public class Const {
 	public static final String API_PUBLISHDATA = "publishdata";
 	public static final String API_ADDDEVICE = "adddevice";
 	public static final String API_DELETEDEVICE = "deletedevice";
+	public static final String API_SHARE_DEVICE = "sharedevice";
 	public static final String API_GETDEVICE = "getdevice";
 	public static final String API_LISTALLDEVICES = "listalldevices";
+	public static final String API_LISTALLVPDSDEVICES = "listallvpdsdevices";
 	public static final String API_QUERYDATA = "querydata";
 	public static final String API_ADDDEVICETEMPLATE = "adddevicetemplate";
 	public static final String API_DELETEDEVICETEMPLATE = "deletedevicetemplate";

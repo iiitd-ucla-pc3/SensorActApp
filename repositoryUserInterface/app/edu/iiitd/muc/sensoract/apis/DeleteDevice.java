@@ -55,8 +55,7 @@ public class DeleteDevice extends SensorActAPI {
 	 * @param deleteDeviceRequest
 	 */
 	public final void doProcess(String deleteDeviceRequest) {
-		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
-				.get(Const.USERNAME));
+		String secretkey = Global.VPDS_OWNER_KEY;
 		String deleteRequestWithSecretKey = deleteDeviceRequest.replace(
 				Const.FAKE_SECRET_KEY, secretkey);
 		logger.info(Const.API_DELETEDEVICE, secretkey + " "

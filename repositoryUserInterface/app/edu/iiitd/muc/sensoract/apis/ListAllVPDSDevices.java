@@ -33,64 +33,41 @@
  * *
  * *
  ******************************************************************************/
-/*
- * Name: PresenceActuateDevice.java
- * Project: SensorAct, MUC@IIIT-Delhi 
- * Version: 1.0
- * Date: 2012-12-26
- * Author: Manaswi Saha
- */
-
 package edu.iiitd.muc.sensoract.apis;
 
-/*
- * Standard play imports
- */
 import play.libs.WS.HttpResponse;
 import edu.iiitd.muc.sensoract.constants.Const;
+import edu.iiitd.muc.sensoract.format.DeleteAssocRequest;
+import edu.iiitd.muc.sensoract.format.ListAllVPDSDevicesRequest;
 import edu.iiitd.muc.sensoract.utilities.SecretKey;
 import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 
 /**
- * /delguardrule API: Deletes the selected guardrule.
+ * Description:This API is invoked by the client UI to get a list of all the
+ * devices stored on the specified VPDS
+ * 
  * 
  * @author Manaswi Saha
- * @version 1.0
  */
+public class ListAllVPDSDevices extends SensorActAPI {
 
-public class DeleteGuardRule extends SensorActAPI {
-	
-	/**
-	 * Services the /addguardrule API.
-	 * <p>
-	 * Followings are the steps to be followed to add a new device profile
-	 * successfully to the repository.
-	 * <ol>
-	 * <li>Gets the JSON string containing guard rule from UI
-	 * <li>Since the validation had been performed at the UI,this request is
-	 * just tunneled to the repository
-	 * <li>Replaces the secret key with the actual secret key
-	 * <li>If the addition has been successful,the successful Response
-	 * format is sent to the UI which interprets the same and reloads the page
-	 * <li>If the addition fails then corresponding error
-	 * message is sent to the UI
-	 * </ol>
-	 * <p>
-	 * 
-	 * @param delGuardRuleJson
-	 *            delete guard rule request in Json
-	 */
-	public final void doProcess(String delGuardRuleJson) {
-		String secretkey = Global.VPDS_OWNER_KEY;
+	public final void doProcess(String listJson) {
 
-		String deleteRequestWithSecretKey = delGuardRuleJson.replace(
-				Const.FAKE_SECRET_KEY, secretkey);
-		logger.info(Const.API_DELGUARDRULE, secretkey + " " + delGuardRuleJson);
+		ListAllVPDSDevicesRequest listRequest = gson
+				.fromJson(listJson, ListAllVPDSDevicesRequest.class);
 
+		String secretkey = listRequest.ownerkey;
+		String vpdsURL = listRequest.vpdsURL + "device/list";
+		
+		String reqStr = "{\"secretkey\":" + secretkey + "}";
+
+		logger.info(Const.API_LISTALLVPDSDEVICES, session
+				.get(Const.USERNAME) + "VPDS URL: " + vpdsURL + " " + reqStr);
+		
+		
 		HttpResponse responseFromVPDS = new SendHTTPRequest()
-				.sendPostRequest(Global.URL_REPOSITORY_DELETE_GUARD_RULE,
-						Const.MIME_TYPE_JSON, Const.API_DELGUARDRULE,
-						deleteRequestWithSecretKey);
+				.sendPostRequest(vpdsURL,
+						Const.MIME_TYPE_JSON, Const.API_LISTALLVPDSDEVICES, reqStr);
 		renderJSON(responseFromVPDS.getString());
 	}
 }

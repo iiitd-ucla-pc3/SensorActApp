@@ -49,8 +49,7 @@ public class QueryData2 extends SensorActAPI {
 
 	public final void doProcess(String queryBody) {
 
-		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
-				.get(Const.USERNAME));
+		String secretkey = Global.VPDS_OWNER_KEY;
 		String queryBodyWithSecretKey = queryBody.replace(
 				Const.FAKE_SECRET_KEY, secretkey);
 		HttpResponse responseFromBroker = new SendHTTPRequest()

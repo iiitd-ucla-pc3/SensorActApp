@@ -52,8 +52,7 @@ public class ListAllDevices extends SensorActAPI {
 
 	public final void doProcess() {
 
-		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
-				.get(Const.USERNAME));
+		String secretkey = Global.VPDS_OWNER_KEY;
 		String reqStr = "{\"secretkey\":" + secretkey + "}";
 
 		logger.info(Const.API_LISTALLDEVICES, secretkey + " " + reqStr);

@@ -74,8 +74,7 @@ public class GetAssocGuardRule extends SensorActAPI {
 	 *            actuation request in Json
 	 */
 	public final void doProcess(String getAssocGuardRuleJson) {
-		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
-				.get(Const.USERNAME));
+		String secretkey = Global.VPDS_OWNER_KEY;
 
 		String getAssocBodyWithSecretKey = getAssocGuardRuleJson.replace(
 				Const.FAKE_SECRET_KEY, secretkey);

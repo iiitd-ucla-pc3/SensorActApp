@@ -28,6 +28,7 @@ GET		/userpresenceactuate					Application.userpresenceactuate
 
 GET     /share									Application.share
 GET     /getuserlist							Application.getuserlist
+POST	/sharedevice							Application.sharedevice
 
 GET     /managevpds								Application.managevpds
 POST	/getvpdsdetails							Application.getvpdsdetails
@@ -42,6 +43,8 @@ POST    /deletedevicetemplate                   Application.deletedevicetemplate
 GET     /listalldevices							Application.listalldevices
 GET     /listalldevicetemplates					Application.listalldevicetemplates
 
+POST	/listallvpdsdevices						Application.listallvpdsdevices
+
 GET		/actuate								Application.actuate
 POST	/actuatedevice							Application.actuatedevice
 POST	/listactuationrequests					Application.listactuationrequests
@@ -55,17 +58,17 @@ POST	/getguardrule							Application.getGuardRule
 GET     /listallguardrules						Application.listallguardrules
 GET     /editguardrule/{guardrulename}/{mode}	Application.editguardrule
 
-POST	/addassocguardrule							Application.addAssocGuardRule
-POST	/delassocguardrule							Application.delAssocGuardRule
-POST	/getassocguardrule							Application.getAssocGuardRule
-GET     /listassocguardrules						Application.listassocguardrules
-GET     /assocguardrule/{guardrulename}/{mode} 		Application.assocguardrule
+POST	/addassocguardrule						Application.addAssocGuardRule
+POST	/delassocguardrule						Application.delAssocGuardRule
+POST	/getassocguardrule						Application.getAssocGuardRule
+GET     /listassocguardrules					Application.listassocguardrules
+GET     /assocguardrule/{guardrulename}/{mode} 	Application.assocguardrule
 
 
 POST    /querydata                              Application.querydata
-POST    /querydata2                              Application.querydata
+POST    /querydata2                             Application.querydata
 GET     /speak									Application.speak
-POST    /speak								Application.speak
+POST    /speak									Application.speak
 
 GET     /repository							 		 Application.repository
 GET     /getrepositoryinfo							 Application.getrepositoryinfo

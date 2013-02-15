@@ -714,3 +714,65 @@ div #selectedVPDS{
 	display: block;
 	clear:both;
 }
+
+#infoImg1, #infoImg{
+	cursor:pointer;
+}
+
+#tableInfo{
+	border-color: #600;
+    border-width: 1px 1px 1px 1px;
+    border-style: solid;
+}
+
+#tableInfo td {
+    border-color: #600;
+    border-width: 1px 1px 0 0;
+    border-style: solid;
+    margin: 0;
+    padding: 4px;
+    background-color: white;
+}
+
+#divVPDS{
+	float: right;
+	width: 50%;
+	bottom-margin:20px;
+}
+
+#divUser {
+	clear: none;
+	width: 50%;
+}
+
+#shareAccess #visualBox{
+	width:100%;
+}
+
+#shareDevice{
+    clear: right;
+    -webkit-box-shadow:0 5px 10px #aaa;
+	-moz-box-shadow:0 5px 10px #aaa;
+    box-shadow:0 5px 10px #aaa;
+
+}
+
+#shareDevice td{
+
+	border-color: black;
+	border-style: dashed;
+	border-width: 0px 1px 0px 0;
+	padding: 10px;
+}	
+
+#trHeader td{
+	text-align: center;
+}
+
+#trData{
+	
+}
+
+#trControl td{
+	
+}

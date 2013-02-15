@@ -1,0 +1,744 @@
+<!doctype html> <!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+	<!--<![endif]-->
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title> Share Access</title>
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/style.css'}">
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery-ui-1.8.21.custom.css'}">
+
+		<script src="@{'/public/js/libs/modernizr-2.0.6.min.js'}"></script>
+		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/jquery-ui-1.8.20.custom.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script type="text/javascript" src="@{'/public/javascripts/utilityFunctions.js'}"></script>
+		<!--<script type="text/javascript" src="@{'/public/javascripts/speakClient.js'}"></script>-->
+		
+		<script type="text/javascript">
+			$(document).ready(function() {
+				jQuery.ajaxSetup({
+					async : false
+				});
+
+				if($("#usertype").val() == 'USER')
+					window.location = URL_HOME_USER;			
+
+				createHeaderVO();
+				createFooter();
+
+				$("#dialog:ui-dialog").dialog("destroy");
+				var dlg = $("#dialog").dialog({
+					autoOpen : false,
+					draggable : true,
+					resizable : true,
+					width : 500,
+					modal : true
+				});
+
+				$( "#dialog" ).bind( "dialogbeforeclose", function(event, ui) {
+					$("#dialog").html("");
+				});
+
+				$("#shareDevice").hide();
+				$("input:checkbox").prop("disabled",true);
+				$("input:checkbox").prop("checked", false);
+				$("input:radio").prop("checked", false);
+
+				$("#infoImg,#infoImg1").click(function() {
+
+					$("#dialog").html("<table id=\"tableInfo\" style=\"border: 1; font-size:10px\"> \
+										<tr> \
+											<td></td> \
+											<td><b>Read</b></td> \
+											<td><b>Write</b></td> \
+										</tr> \
+										<tr> \
+											<td><b>Data</b></td> \
+											<td>Read data from the sensors</td> \
+											<td>Set the status of the sensors</td> \
+										</tr> \
+										<tr> \
+											<td><b>Control</b></td> \
+											<td>Get the status of the Actuators (On/Off)</td> \
+											<td>Set the status of the Actuators (actuating devices) </td> \
+										</tr> \
+										</table>");		
+					
+					dlg.dialog("open");
+					dlg.dialog("option", "position", {
+						//my: "center top",
+						//at: "right top",
+						//offset: "20 20"
+					});
+					return false;
+				});
+
+				/*
+				var getsecretkey = {};
+
+				$.get(temp + URL_GET_SECRET_KEY, function(rData) {
+
+			    		getsecretkey = rData;
+			    		
+			    });
+
+				$("#viewkey").click(function() {
+			    		alert("Your API Key is " + getsecretkey['secretkey']);
+			    });
+				*/
+
+				function alertAddError(errorInformation) {
+
+					$("#errorDiv").html(errorInformation);
+					$("#errorDiv").fadeIn('slow');
+					return false;
+				}
+
+				/* Global Variables*/
+
+				var selectedDeviceName;
+				var selectedAccessType;		// Either Data/Control
+				var selectedVPDSName;
+				var selectedAccessRead, selectedAccessWrite;
+				var IDdeviceName, IDaccessRead, IDaccessWrite;
+				var responseFromVPDS = {};
+				var urlShareDevice = URL_UI_SERVER + URL_SHARE_DEVICE;
+
+
+				$("input[name=accessType]").click(function(){
+					selectedAccessType = $(this).val();
+					selectedDeviceName = undefined;
+					selectedAccessRead = undefined;
+					selectedAccessWrite = undefined;
+
+					$("#deviceName1 option[value='Select Device'], #deviceName2 option[value='Select Device']").prop('selected',true);
+
+					$(".errorVisual").hide("");
+					$("#accessType, #sensorName, #actuatorName, #accessRead1, #accessWrite1, #accessRead2, #accessWrite2,"+IDdeviceName).removeClass("error");
+
+					if(selectedAccessType == "data"){
+						IDdeviceName = "#deviceName1";
+						IDaccessRead = "accessRead1";
+						IDaccessWrite = "accessWrite1";
+						IDspanDeviceName = "#spanDeviceName1";
+
+						$("#trControl").css("background-color","white");
+						$("#trData").css("background-color","CC9933");
+
+						$("#deviceName1").prop('disabled', false);
+						$("#deviceName2").prop('disabled', true);
+
+						$("#sensorName").prop('disabled', false);
+						$("#actuatorName").prop('disabled', true);
+
+						$("#"+IDaccessRead).prop('disabled', false);
+						$("#accessRead2").prop('disabled', true);
+
+						$("#"+IDaccessWrite).prop('disabled', false);
+						$("#accessWrite2").prop('disabled', true);
+
+						$("#accessRead2").prop("checked", false);
+						$("#accessWrite2").prop("checked", false);
+					}
+					else if(selectedAccessType == "control"){
+						IDdeviceName = "#deviceName2";
+						IDaccessRead = "accessRead2";
+						IDaccessWrite = "accessWrite2";
+						IDspanDeviceName = "#spanDeviceName2";
+
+						$("#trData").css("background-color","white");
+						$("#trControl").css("background-color","CC9933");
+
+						$("#deviceName2").prop('disabled', false);
+						$("#deviceName1").prop('disabled', true);						
+
+						$("#actuatorName").prop('disabled', false);
+						$("#sensorName").prop('disabled', true);
+
+						$("#"+IDaccessRead).prop('disabled', false);
+						$("#accessRead1").prop('disabled', true);
+
+						$("#"+IDaccessWrite).prop('disabled', false);	
+						$("#accessWrite1").prop('disabled', true);
+
+						$("#accessRead1").prop("checked", false);
+						$("#accessWrite1").prop("checked", false);
+					}
+				});
+				
+				function validateRequest(deviceName,vpdsName, accessType,username,sensorName,actuatorName,accessRead, accessWrite) {
+
+					var errorState;
+
+					$(".errorVisual").hide("");
+					$("#user, #vpdsName, #accessType, #sensorName, #actuatorName, #accessRead1, #accessWrite1, #accessRead2, #accessWrite2,"+IDdeviceName).removeClass("error");			
+					
+					if (username == "Select User" || typeof username === 'undefined') {						
+						errorState = true;
+
+						$("#user").addClass("error");						
+						$("#spanUser").show('slow', function() {
+						});
+						$("#spanUser").html("Please select a user");
+					}
+					else if (vpdsName == "Select VPDS" || typeof vpdsName === 'undefined') {						
+						errorState = true;
+
+						$("#vpdsName").addClass("error");						
+						$("#spanVPDSName").show('slow', function() {
+						});
+						$("#spanVPDSName").html("Please select a VPDS");
+					}
+					else if (typeof accessType === 'undefined') {						
+						errorState = true;
+
+						$("#accessType").addClass("error");						
+						$("#spanAccessType").show('slow', function() {
+						});
+						$("#spanAccessType").html("Please select an access type");
+					}
+					else if (deviceName == "Select Device" || typeof deviceName === 'undefined') {					
+						errorState = true;
+
+						$(IDdeviceName).addClass("error");						
+						$(IDspanDeviceName).show('slow', function() {
+						});
+						$(IDspanDeviceName).html("Please select a device");
+					}
+					else if (accessType == "data" && (sensorName == "Select Sensors" || typeof sensorName === 'undefined')){				
+						errorState = true;
+
+						$("#sensorName").addClass("error");						
+						$("#spanSensorName").show('slow', function() {
+						});
+						$("#spanSensorName").html("Please select a sensor");
+					}
+					else if (accessType == "control" && (actuatorName == "Select Actuators" || typeof actuatorName === 'undefined') ) {			
+						errorState = true;
+
+						$("#actuatorName").addClass("error");						
+						$("#spanActuatorName").show('slow', function() {
+						});
+						$("#spanActuatorName").html("Please select an actuator");
+					}
+					else if (typeof accessRead === 'undefined' && typeof accessWrite === 'undefined') {			
+						errorState = true;
+
+						$("#accessRead").addClass("error");
+						$("#accessWrite").addClass("error");
+						if(accessType == "data") {
+							$("#spanAccessRW1").show('slow', function() {
+							});
+							$("#spanAccessRW1").html("Please select an access type");
+						}
+						else if(accessType == "control") {
+							$("#spanAccessRW2").show('slow', function() {
+							});
+							$("#spanAccessRW2").html("Please select an access type");
+						}
+							
+					}
+
+					return errorState;
+				}
+
+				/* Get UserList*/
+				var responseFromServer = {};
+				var urlGetUserList = URL_UI_SERVER + URL_GET_USER_LIST;
+				try{
+					$.get(urlGetUserList, function(rData) {
+
+				    		responseFromServer = rData;
+				    });
+				    
+				    if (responseFromServer.hasOwnProperty(RESPONSE_STATUS_CODE)){
+				    	alertAddError("Following errors occurred " + responseFromServer[RESPONSE_MESSAGE]);
+				    }
+				    else{
+				    	//alert(JSON.stringify(responseFromServer));
+				    	
+				    	var numberOfUsers = responseFromServer[USERNAME_ARRAY].length;
+				    	if (numberOfUsers > 0) {
+				    		
+				    		for (var index in responseFromServer[USERNAME_ARRAY]) 
+				    			$("#user").append("<option value ='"+responseFromServer[USERNAME_ARRAY][index]+"'>"+ responseFromServer[USERNAME_ARRAY][index]+"</option>");
+				    	}
+				    	else
+				    		alertAddError("No users found");			    	
+			    	}
+				}
+				catch(e){
+				    alertAddError("Error: " + e);
+				}
+
+				/* Get VPDS List*/
+				var jsonGetList = {};
+				var responseFromBroker = {};
+				jsonGetList[SECRET_KEY] = FAKE_SECRET_KEY;
+				var urlGetVPDSList = URL_UI_SERVER + URL_VPDS_LIST;
+				try{
+					$.post(urlGetVPDSList, jsonGetList, function(rData) {
+
+				    		responseFromBroker = rData;
+				    });
+				    
+				    if (responseFromBroker.hasOwnProperty(RESPONSE_STATUS_CODE)){
+				    	alertAddError("Following errors occurred " + responseFromServer[RESPONSE_MESSAGE]);
+				    }
+				    else{
+				    	//alert(JSON.stringify(responseFromServer));
+				    	
+				    	var numberOfVPDS = responseFromBroker[VPDS_LIST_ARRAY].length;
+				    	if (numberOfVPDS > 0) {
+				    		for (var index in responseFromBroker[VPDS_LIST_ARRAY]) 
+				    			$("#vpdsName").append("<option id='"+ responseFromBroker[VPDS_LIST_ARRAY][index][VPDSOWNER_KEY] +"' value ='"+responseFromBroker[VPDS_LIST_ARRAY][index][VPDS_URL]+"'>"+ responseFromBroker[VPDS_LIST_ARRAY][index][VPDS_NAME]+"</option>");
+				    	}
+				    	else
+				    		alertAddError("You have not registered any VPDS");	// Will never execute because share access is not visible to the user		    	
+			    	}
+				}
+				catch(e){
+				    alertAddError("Error: " + e);
+				}			
+
+				/* Reload on change of vpdsName value */
+				$("#vpdsName").change(function(){	
+
+					$("#errorDiv").hide();				
+
+					/* Get Device List*/
+					var jsonGetList = {};
+					var vpdsKey = $(this).find(':selected')[0].id;	
+
+					for (var index in responseFromBroker[VPDS_LIST_ARRAY]) {
+
+						if(responseFromBroker[VPDS_LIST_ARRAY][index][VPDSOWNER_KEY] == vpdsKey){
+							selectedVPDSName = responseFromBroker[VPDS_LIST_ARRAY][index][VPDS_NAME];
+						}
+					}
+
+					jsonGetList[VPDS_KEY] = vpdsKey;
+					jsonGetList[VPDS_URL] = $("#vpdsName").val();
+					var urlGetDeviceList = URL_UI_SERVER + URL_LIST_ALL_VPDS_DEVICES;
+					
+					try{
+						$.post(urlGetDeviceList, JSON.stringify(jsonGetList), function(rData) {
+
+					    		responseFromVPDS = rData;
+					    });
+					    
+					    if (responseFromVPDS.hasOwnProperty(RESPONSE_STATUS_CODE)){
+					    	alertAddError("Following errors occurred " + responseFromVPDS[RESPONSE_MESSAGE]);
+					    }
+					    else{	
+
+					    	$("#shareDevice").show('slow', function() {});
+							$("input [name=accessType]").prop('checked', false);
+
+					    	$("#deviceName1").html("");
+					    	$("#deviceName2").html("");
+
+					    	$("#deviceName1").append("<option value ='Select Device'>Select Device</option>");
+					    	$("#deviceName2").append("<option value ='Select Device'>Select Device</option>");
+					    	
+					    	var numberOfDevices = responseFromVPDS[DEVICE_ARRAY].length;
+					    	if (numberOfDevices > 0) {
+
+					    		for (var index in responseFromVPDS[DEVICE_ARRAY]) {
+
+					    			var dname = responseFromVPDS[DEVICE_ARRAY][index][DEVICE_NAME];
+
+					    			$("#deviceName1").append("<option value ='"+dname+"'>"+ dname+"</option>");
+					    			$("#deviceName2").append("<option value ='"+dname+"'>"+ dname+"</option>");
+					    		}
+					    	}
+					    	else
+					    		$(IDspanDeviceName).html("You haven't registered any devices on this VPDS!");			    	
+				    	}
+					}
+					catch(e){
+					    alertAddError("Error: " + e);
+					}
+				});		
+
+				/* Reload on change of deviceName value */
+				$("#deviceName1, #deviceName2").change(function(){	
+
+					/* Get Device List*/
+					var jsonGetList = {};
+
+					selectedDeviceName = $(this).val();					
+
+					if(selectedDeviceName == 'Select Device'){
+						$(IDspanDeviceName).html("Please select a valid device");
+
+						if(selectedAccessType == "data") {
+							$("#sensorName").html("");
+							$("#sensorName").append("<option value ='Select Sensors'>Select Sensors</option>");	
+							$("#sensorName").prop('disabled',true);
+						}
+						else{
+							$("#actuatorName").html("");						
+							$("#actuatorName").append("<option value ='Select Actuators'>Select Actuators</option>");
+							$("#actuatorName").prop('disabled',true);
+						}
+						return false;
+					}								
+				
+			    	var numberOfDevices = responseFromVPDS[DEVICE_ARRAY].length;
+			    	
+			    	if (numberOfDevices > 0) {
+
+			    		for (var index in responseFromVPDS[DEVICE_ARRAY]) {
+			    			var dname = responseFromVPDS[DEVICE_ARRAY][index][DEVICE_NAME];
+
+			    			if(dname == selectedDeviceName){
+
+			    				// Data Access selected - show sensors
+				    			if (selectedAccessType == "data") {
+
+				    				$("#sensorName").prop('disabled',false);
+				    				$("#sensorName").html("");
+									$("#sensorName").append("<option value ='Select Sensors'>Select Sensors</option>");	
+
+				    				if ( DEVICE_SENSORS in responseFromVPDS[DEVICE_ARRAY][index]) {
+								
+										var sensorArray = responseFromVPDS[DEVICE_ARRAY][index][DEVICE_SENSORS];
+										for (var sensor in sensorArray) {						
+											var sname = sensorArray[sensor][DEVICE_SENSOR_NAME];
+											var sid = sensorArray[sensor][DEVICE_SENSOR_ID];
+											$("#sensorName").append("<option id ='"+sid+"' value ='"+sname+"'>"+ sname+"</option>");
+										}
+									}
+				    			}
+				    			// Data Access selected - show actuators
+				    			else if (selectedAccessType == "control") {
+
+				    				$("#actuatorName").prop('disabled',false);
+				    				$("#actuatorName").html("");
+									$("#actuatorName").append("<option value ='Select Actuators'>Select Actuators</option>");	
+
+				    				if ( DEVICE_ACTUATORS in responseFromVPDS[DEVICE_ARRAY][index]) {
+													
+										var actuatorArray = responseFromVPDS[DEVICE_ARRAY][index][DEVICE_ACTUATORS];
+										for (var actuator in actuatorArray) {
+											var aname = actuatorArray[actuator][DEVICE_ACTUATOR_NAME];
+											var aid = actuatorArray[actuator][DEVICE_ACTUATOR_ID];
+											$("#actuatorName").append("<option id ='"+aid+"' value ='"+aname+"'>"+ aname+"</option>");
+										}
+									}
+				    			}
+			    			}			    						    			
+			    		}
+			    	}
+				});	
+				var count = 0;			
+				
+				$("input:checkbox").change(function(){
+					
+					if(this.name == IDaccessRead){						
+						if($(this).is(':checked'))
+							selectedAccessRead = this.value;
+						else
+							selectedAccessRead = undefined;						
+					}
+						
+					if(this.name == IDaccessWrite){
+						if($(this).is(':checked'))
+							selectedAccessWrite = this.value;
+						else
+							selectedAccessWrite = undefined;	
+					}
+					
+				});
+
+				/*IDShareAccess button click functionality*/
+				$("#IDShareAccess").click(function(){
+
+					$("#errorDiv").hide();
+
+					var deviceName = selectedDeviceName;
+					var accessType = selectedAccessType;
+					var vpdsName = selectedVPDSName;
+					var sensorID, actuatorID, sensorName, actuatorName;
+					var username;
+					var accessRead, accessWrite;
+
+					sensorName = $("#sensorName").val();
+					actuatorName = $("#actuatorName").val();
+					accessRead = selectedAccessRead;
+					accessWrite = selectedAccessWrite;
+					username = $("#user").val();
+
+					alert("Before validation: \nUser "+username + " \nVpds "+vpdsName + " \nAcType "+accessType + " \nDevice"+deviceName + " \nSN "+sensorName + " \nAN "+actuatorName + " \nAcR "+accessRead + " \nAcW "+accessWrite + "\n");	
+
+					var errorStatus = validateRequest(deviceName,vpdsName, accessType,username,sensorName,actuatorName,accessRead, accessWrite);
+
+					if(errorStatus)
+						return false;
+
+					sensorID = $("#sensorName").find(':selected')[0].id;
+					actuatorID = $("#actuatorName").find(':selected')[0].id;
+
+					if(accessRead == "read")
+						accessRead = true;
+					else
+						accessRead = false;
+
+					if(accessWrite == "write")
+						accessWrite = true;
+					else
+						accessWrite = false;
+
+					var jsonShareReq = {};
+					jsonShareReq[SECRET_KEY] = FAKE_SECRET_KEY;
+					jsonShareReq[VPDS_NAME] = selectedVPDSName;
+					jsonShareReq[SHARE_DEVICE_PERMISSION] = {};
+					jsonShareReq[USERNAME] = username;
+					jsonShareReq[EMAIL] = "";
+					jsonShareReq[SHARE_DEVICE] = {};
+					jsonShareReq[SHARE_DEVICE][DEVICE_NAME] = deviceName;
+
+					if(accessType == "data"){
+						jsonShareReq[SHARE_DEVICE][SHARE_SENSOR_NAME] = sensorName;
+						jsonShareReq[SHARE_DEVICE][SHARE_SENSOR_ID] = sensorID;
+						jsonShareReq[SHARE_DEVICE][SHARE_ACTUATOR_NAME] = null;
+						jsonShareReq[SHARE_DEVICE][SHARE_ACTUATOR_ID] = null;
+					}
+					else if (accessType == "control") {
+						jsonShareReq[SHARE_DEVICE][SHARE_SENSOR_NAME] = null;
+						jsonShareReq[SHARE_DEVICE][SHARE_SENSOR_ID] = null;
+						jsonShareReq[SHARE_DEVICE][SHARE_ACTUATOR_NAME] = actuatorName;
+						jsonShareReq[SHARE_DEVICE][SHARE_ACTUATOR_ID] = actuatorID;
+					}
+					
+					jsonShareReq[SHARE_DEVICE_PERMISSION][READ] = accessRead;
+					jsonShareReq[SHARE_DEVICE_PERMISSION][WRITE] = accessWrite;
+
+					//alert(JSON.stringify(jsonShareReq));
+					var responseFromSBerver={};
+					try{
+						$.post(urlShareDevice, JSON.stringify(jsonShareReq), function(rData) {
+
+					    		responseFromBServer = rData;
+					    });
+					    
+					    if (responseFromBServer[RESPONSE_STATUS_CODE] != SUCCESS){
+					    	alertAddError("Following errors occurred " + responseFromBServer[RESPONSE_MESSAGE]);
+					    }
+					    else{
+					    	
+					    	alert("Device Shared");
+					    	window.location = URL_SHARE;					    				    	
+				    	}
+					}
+					catch(e){
+					    alertAddError("Error: " + e);
+					}
+
+
+
+				});
+
+			});
+		</script>		
+	</head>
+	<!--<body onload="setup()">-->
+		<body>
+		<div id="header-container">
+			<header class="wrapper clearfix">
+				<h1 id="title">SensorAct
+				<br />
+				<br />
+				<span style="font-size:25px;">Sense - Interact - Actuate</span></h1>
+				<nav id="navHeader">
+				</nav>
+				<br />
+				<br />
+				<nav>
+					<p class="pbox" style="margin-bottom:-20px;"> Welcome ${username} &nbsp | &nbsp
+						<!--<span id="viewkey">View API key</span> &nbsp; | -->
+						&nbsp<span id="logout">Logout</span>
+					</p>
+				</nav>
+			</header>
+		</div>
+		<div class="wrapper" style="">
+			<h1 class="newfont" id="device" style="text-align:center;">Share Access</h1>
+			<hr>
+			<div style="display: none;" id="getRegisterErrorDiv" class="errorDiv"></div>
+			<div style="display: none;" id="errorDiv" class="errorDiv"></div>
+			<label><sup>*</sup> <font size="1">Mandatory Fields</font></label>
+			<p class="space"></p>
+			<div id="shareAccess" align="center">
+				<!-- Left pane starts -->
+				<div id="visualBox" style="">
+
+					<div id="dialog" title = "Permissions Information" style="font-size:1;"></div>
+
+					<div id="divUser">
+						<div class="leftDiv">
+							<label>Select User:<sup>*</sup></label>
+							<div><font size="1">Select the user you want to grant access to</font></div>
+							<select id="user"><option value="Select User"> Select User</option></select>
+							<div class="rightDiv">
+								<span class="errorVisual" id="spanUser"></span>
+							</div>
+						</div>						
+					</div>
+
+					<div id="divVPDS">
+						<div class="leftDiv">
+							<label>Select VPDS:<sup>*</sup></label>
+							<div><font size="1">Please specify the VPDS name without spaces</font></div>
+							<select id="vpdsName"><option value="Select VPDS"> Select VPDS</option></select>
+							<div class="rightDiv">
+								<span class="errorVisual" id="spanVPDSName"></span>
+							</div>
+						</div>							
+					</div>
+					<br><br><br><br>
+					<table id="shareDevice">
+						<tr id="trHeader">
+							<td>
+								<label>Access Type<sup>*</sup><img id = "infoImg" src="@{'/public/images/info_icon.jpg'}" alt="Click for more info"/></label>								
+							</td>
+							<td>
+								<label>Device<sup>*</sup></label>
+							</td>
+							<td>
+								<label>Sensors<sup>*</sup></label>
+							</td>
+							<td>
+								<label>Actuators<sup>*</sup></label>
+							</td>
+							<td>
+								<label>Read  Access<sup>*</sup><img id = "infoImg1" src="@{'/public/images/info_icon.jpg'}" alt="Click for more info"/></label>								
+							</td>
+							<td style="border-width: 0;">
+								<label>Write  Access<sup>*</sup><img id = "infoImg1" src="@{'/public/images/info_icon.jpg'}" alt="Click for more info"/></label>
+							</td>
+						</tr>
+						<tr id="trData">
+							<td>
+								<div class="leftDiv">								
+								<input type = "radio" name = "accessType" value="data"/> Data
+								</div>
+								<div class="rightDiv">
+									<span class="errorVisual" id="spanAccessType1"></span>
+								</div>
+							</td>
+							<td>
+								<div class="leftDiv">						
+									<select id="deviceName1">
+										<option value="Select Device"> Select Device</option>
+									</select>
+								</div>
+								<div class="rightDiv">
+									<span class="errorVisual" id="spanDeviceName1"></span>
+								</div>
+							</td>
+							<td>
+								<div class="leftDiv">						
+									<select id="sensorName">
+										<option value="Select Sensors"> Select Sensors</option>
+									</select>
+								</div>
+								<div class="rightDiv">
+									<span class="errorVisual" id="spanSensorName"></span>
+								</div>
+							</td>
+							<td align="center"> - </td>
+							<td>
+								<div class="leftDiv">
+									<input type = "checkbox" id="accessRead1" name="accessRead1" value="read"/> &nbsp;Read
+								</div>								
+							</td>
+							<td style="border-width: 0;">
+								<div class="leftDiv">
+									<input type = "checkbox" id="accessWrite1" name="accessWrite1" value="write"/>&nbsp; Write
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td colspan="2" style="border-width: 0;">
+								<div class="rightDiv">
+									<span class="errorVisual" id="spanAccessRW1"></span>
+								</div>
+							</td>
+						</tr>
+						<tr id="trControl">
+							<td>
+								<div class="leftDiv">
+								<input type = "radio" name = "accessType" value="control"/> Control
+								</div>
+								<div class="rightDiv">
+									<span class="errorVisual" id="spanAccessType2"></span>
+								</div>
+							</td>
+							<td>
+								<div class="leftDiv">						
+									<select id="deviceName2">
+										<option value="Select Device"> Select Device</option>
+									</select>
+								</div>
+								<div class="rightDiv">
+									<span class="errorVisual" id="spanDeviceName2"></span>
+								</div>
+							</td>
+							<td align="center"> - </td>
+							<td>
+								<div class="leftDiv">												
+									<select id="actuatorName"><option value="Select Actuators"> Select Actuators</option></select>
+								</div>
+								<div class="rightDiv">
+									<span class="errorVisual" id="spanActuatorName"></span>
+								</div>
+							</td>
+							<td>
+								<div class="leftDiv">
+									<input type = "checkbox"  id="accessRead2" name="accessRead2" value="read"/>&nbsp;Read
+								</div>
+							</td>								
+							<td style="border-width: 0;">
+								<div class="leftDiv">
+									<input type = "checkbox" id="accessWrite2" name="accessWrite2" value="write"/>&nbsp;Write
+								</div>
+							</td>								
+						</tr>
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td colspan="2" style="border-width: 0;">
+								<div class="rightDiv">
+									<span class="errorVisual" id="spanAccessRW2"></span>
+								</div>
+							</td>
+						</tr>						
+					</table>				
+				</div>
+				<p class="space"></p>				
+				<div style="clear:both; padding-top:20px">	
+					<button id="IDShareAccess" class="google-button-blue">
+						Share Access
+					</button>
+				</div>
+				<br/>
+			</div>
+		</div>
+		<input id="usertype"  type="hidden" value=${usertype}>
+		<div style="clear:both;" id="footer-container">
+			
+		</div>
+	</body>
+</html>

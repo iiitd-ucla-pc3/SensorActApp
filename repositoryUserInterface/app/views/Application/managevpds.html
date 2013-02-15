@@ -1,0 +1,223 @@
+<!doctype html> <!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+	<!--<![endif]-->
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title> Manage VPDS</title>
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/style.css'}">
+		<script src="@{'/public/js/libs/modernizr-2.0.6.min.js'}"></script>
+		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script type="text/javascript" src="@{'/public/javascripts/utilityFunctions.js'}"></script>
+		<!--<script type="text/javascript" src="@{'/public/javascripts/speakClient.js'}"></script>-->
+		
+		<script type="text/javascript">
+			$(document).ready(function() {
+				jQuery.ajaxSetup({
+					async : false
+				});
+
+							
+				var temp="http://"+document.location.hostname+":"+document.location.port+"/";
+				var usertype = $("#usertype").val();
+				
+				createHeaderVO();
+				createFooter();
+
+				$("#logout").click(function() {
+
+					window.location = URL_LOGOUT_USER;
+				});
+
+				/*
+				var getsecretkey = {};
+
+				$.get(temp + URL_GET_SECRET_KEY, function(rData) {
+
+			    		getsecretkey = rData;
+			    		
+			    });
+
+				$("#viewkey").click(function() {
+			    		alert("Your API Key is " + getsecretkey['secretkey']);
+			    });
+				*/
+
+				function alertAddRegisterError(errorInformation) {
+
+					$("#errorDiv").html(errorInformation);
+					$("#errorDiv").fadeIn('slow');
+					return false;
+				}
+
+
+				function validateRequest(vpdsName) {
+
+					var errorState = false;
+					$(".errorVisual").hide("");
+					$("#IDManageVPDS,#vpdsName").removeClass("error");
+
+					if(vpdsName.length <= 0 || vpdsName == "Select VPDS") { 				
+						errorState = true;
+						$("#vpdsName").addClass("error");
+
+						$("#spanVPDSName").show('slow',function(){});
+						$("#spanVPDSName").html("Please select the VPDS name");
+						
+					}
+					return errorState;
+				}
+
+				/* Get VPDS List*/
+				var jsonGetList = {};
+				var responseFromServer = {};
+				jsonGetList[SECRET_KEY] = FAKE_SECRET_KEY;
+				var urlGetVPDSList = URL_UI_SERVER + URL_VPDS_LIST;
+				try{
+					$.post(urlGetVPDSList, jsonGetList, function(rData) {
+
+				    		responseFromServer = rData;
+				    });
+				    
+				    if (responseFromServer.hasOwnProperty(RESPONSE_STATUS_CODE)){
+				    	alertAddRegisterError("Following errors occurred " + responseFromServer[RESPONSE_MESSAGE]);
+				    }
+				    else{
+				    	//alert(JSON.stringify(responseFromServer));
+				    	
+				    	var numberOfVPDS = responseFromServer[VPDS_LIST_ARRAY].length;
+				    	if (numberOfVPDS > 0) {
+				    		for (var index in responseFromServer[VPDS_LIST_ARRAY]) 
+				    			$("#vpdsName").append("<option id='"+ responseFromServer[VPDS_LIST_ARRAY][index][VPDSOWNER_KEY] +"' value ='"+responseFromServer[VPDS_LIST_ARRAY][index][VPDS_URL]+"'>"+ responseFromServer[VPDS_LIST_ARRAY][index][VPDS_NAME]+"</option>");
+				    	}
+				    	else
+				    		alertAddRegisterError("You have not registered any VPDS");			    	
+			    	}
+				}
+				catch(e){
+				    alertAddRegisterError("Error: " + e);
+				}
+
+				var vpdsName, vpdsKey, vpdsURL;
+
+				$('#vpdsName').change(function(){
+					   vpdsKey = $(this).find(':selected')[0].id;
+				})
+
+				/* 'Register VPDS request' button functionality*/
+
+				$("#IDManageVPDS").click(function() {
+
+					
+					for (var index in responseFromServer[VPDS_LIST_ARRAY]) {
+						if(responseFromServer[VPDS_LIST_ARRAY][index][VPDSOWNER_KEY] == vpdsKey){
+							vpdsName = responseFromServer[VPDS_LIST_ARRAY][index][VPDS_NAME];
+							vpdsURL = $("#vpdsName").val();
+
+						}
+					}
+
+					var errorStatus = validateRequest($("#vpdsName").val());
+					if (errorStatus) {
+						return false;
+					}								
+
+					// Fill in according to the format
+					var jsonReqObject = {};
+					var responseFromUIServer = {};
+					jsonReqObject[SECRET_KEY] = FAKE_SECRET_KEY;
+					jsonReqObject[VPDS_NAME] = vpdsName;
+					jsonReqObject[VPDSOWNER_KEY] = vpdsKey;
+					jsonReqObject[VPDS_URL] = vpdsURL;
+
+					//alert("After validation " + JSON.stringify(jsonReqObject));
+					
+					// Make request to the broker to register the VPDS (URL_REGISTER_VPDS)
+					try{
+
+						$.post(URL_UI_SERVER + URL_GET_VPDS_DETAILS, JSON.stringify(jsonReqObject), function(rData) {
+
+				    		responseFromUIServer = rData;
+				    		
+				    	});
+
+				    	//alert(JSON.stringify(responseFromUIServer));
+
+				    	if(!responseFromUIServer.hasOwnProperty('url')){
+				    		alertAddRegisterError("Following errors occurred " + responseFromUIServer[RESPONSE_MESSAGE]);
+				    	}
+				    	else{	
+
+				    		window.location = responseFromUIServer['url'];			    		
+
+				    	}
+				    }
+				    catch(e){
+				    	alertAddRegisterError("Error: " + e);
+				    }
+				});
+				
+			});
+			</script>
+			
+			
+	</head>
+	<!--<body onload="setup()">-->
+		<body>
+		<div id="header-container">
+			<header class="wrapper clearfix">
+				<h1 id="title">SensorAct
+				<br />
+				<br />
+				<span style="font-size:25px;">Sense - Interact - Actuate</span></h1>
+				<nav id="navHeader">
+				</nav>
+				<br />
+				<br />
+				<nav>
+					<p class="pbox" style="margin-bottom:-20px;"> Welcome ${username} &nbsp | &nbsp
+						<!--<span id="viewkey">View API key</span> &nbsp; | -->
+						&nbsp<span id="logout">Logout</span>
+					</p>
+				</nav>
+			</header>
+		</div>
+		<div class="wrapper" style="">
+			<h1 class="newfont" id="device" style="text-align:center;">Manage VPDS</h1>
+			<hr>			
+			<div style="display: none;" id="getRegisterErrorDiv" class="errorDiv"></div>
+			<div style="display: none;" id="errorDiv" class="errorDiv"></div>
+			<label><sup>*</sup> <font size="1">Mandatory Fields</font></label>	
+			<p class="space"></p>
+			<div id="manageVPDS">
+				<!-- Left pane starts -->
+				<div id="visualBox" style="">
+
+					<div class="leftDiv">
+						<table>
+						<tr><td>Select VPDS:<sup>*</sup></td> <td><select id="vpdsName"><option value="Select VPDS"> Select VPDS</option></select> <br/><span class="errorVisual" id="spanVPDSName"></span></td></tr>
+						<tr><td colspan ='2'><div><font size="1">Please select the VPDS you want to manage <br>(add/delete devices; create guard rules; actuate your devices; visualize data)</font></div></td></tr>
+						</table>
+					</div>
+					
+					<p class="space"></p>				
+					<div style="clear:both; padding-top:20px">	
+						<button id="IDManageVPDS" class="google-button-blue">
+							Manage VPDS
+						</button>
+					</div>
+					<br/>
+				</div>
+			</div>
+		</div>
+		<input id="username"  type="hidden" value=${username}>
+		<input id="usertype"  type="hidden" value=${usertype}>
+		<div style="clear:both;" id="footer-container">
+			
+		</div>
+	</body>
+</html>

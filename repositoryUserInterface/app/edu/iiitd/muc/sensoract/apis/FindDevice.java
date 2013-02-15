@@ -55,8 +55,7 @@ public class FindDevice extends SensorActAPI {
 	 * @param findDeviceRequest
 	 */
 	public final void doProcess(String findDeviceRequest) {
-		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
-				.get(Const.USERNAME));
+		String secretkey = Global.VPDS_OWNER_KEY;
 		String findDeviceRequestWithSecretKey = findDeviceRequest.replace(
 				Const.FAKE_SECRET_KEY, secretkey);
 		logger.info(Const.API_FINDDEVICE, secretkey + " "

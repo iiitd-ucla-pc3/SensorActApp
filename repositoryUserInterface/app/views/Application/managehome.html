@@ -1,0 +1,86 @@
+<!doctype html> <!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+	<!--<![endif]-->
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title> VPDS Management Home</title>
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/style.css'}">
+		<script src="@{'/public/js/libs/modernizr-2.0.6.min.js'}"></script>
+		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script type="text/javascript" src="@{'/public/javascripts/utilityFunctions.js'}"></script>
+		<!--<script type="text/javascript" src="@{'/public/javascripts/speakClient.js'}"></script>-->
+		
+		<script type="text/javascript">
+			$(document).ready(function() {
+
+							
+				var temp="http://"+document.location.hostname+":"+document.location.port+"/";		
+				
+
+				createHeader();
+				createFooter();
+				//includeHiddenFields();
+
+				if($("#vpdsname").val() == '' || $("#vpdsname").val() === 'undefined')
+					window.location = URL_HOME_VO;
+				else if ($("#usertype").val() == "USER")
+					window.location = URL_HOME_USER;
+				
+			});
+			</script>
+			
+			
+	</head>
+	<!--<body onload="setup()">-->
+		<body>
+		<div id="header-container">
+			<header class="wrapper clearfix">
+				<h1 id="title">SensorAct
+				<br />
+				<br />
+				<span style="font-size:25px;">Sense - Interact - Actuate</span></h1>
+				<nav id="navHeader">
+				</nav>
+				<br />
+				<br />
+				<nav>
+					<p class="pbox" style="margin-bottom:-20px;"> Welcome ${username} &nbsp | &nbsp
+						<span id="viewkey">View API key</span> &nbsp; | 
+						&nbsp<span id="logout">Logout</span>
+					</p>
+				</nav>
+			</header>
+		</div>
+		<div class="wrapper" style="text-align:center;">
+			<p class="space"></p>
+			<div id="selectedVPDS" style="float:right; font-size: 12px"><b>Selected VPDS:</b><label id="labelVpdsname"></label></div>
+			<br/>
+			<h2>Welcome to VPDS Management</h2>
+			Please select one of the above tabs to manage your VPDS			
+			<img src="@{'/public/images/background_2.jpg'}" style="text-align:center" width="75%" height="350px"/>
+			<hr/>
+			<p class="space"></p>
+			<p class='newfont' style="font-size:20px;">
+				Smart Rooms at IIIT-Delhi
+				<br />
+				By MUC Group
+			</p>
+			<hr>
+		</div>
+		<div id="iFields">
+			<input id="username"  type="hidden" value=${username}> 
+			<input id="usertype"  type="hidden" value=${usertype}> 
+			<input id="vpdsname"  type="hidden" value=${vpdsname}> 
+			<input id="vpdsurl"  type="hidden" value=${vpdsurl}>
+			<input id="vpdskey"  type="hidden" value=${vpdskey}>
+		</div>
+		<div style="clear:both;" id="footer-container">
+			
+		</div>
+	</body>
+</html>

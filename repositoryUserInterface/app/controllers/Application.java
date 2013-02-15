@@ -64,7 +64,6 @@ public class Application extends Controller {
 
 	public static SensorActAPI api = new SensorActAPI();
 	public static HashMap<String, String> usernameToSecretKeyMap = new HashMap<String, String>();
-	//public String URL_REPOSITORY_SERVER = "http://localhost:9000/";
 
 	/*
 	 * If a user has not logged in,he is redirected to the index page
@@ -72,10 +71,13 @@ public class Application extends Controller {
 	@Before(unless = { "login", "index","registeruser" })
 	static void checkAuthentication() {
 		System.out.println("Session: " + session.get(Const.USERNAME));
-		if (session.get(Const.USERNAME) == null)
+		if (session.get(Const.USERNAME) == null){
 			index();
+			System.out.println("New session will be created");
+		}		
 
 		if (usernameToSecretKeyMap.get(session.get(Const.USERNAME)) == null) {
+			System.out.println("New session exists");
 			index();
 
 		}
@@ -87,13 +89,17 @@ public class Application extends Controller {
 		System.out.println("Session VPDS URL: " + session.get(Const.VPDSURL));
 		if (session.get(Const.VPDSURL) == null)
 			home();
-		Global global=new Global(session.get(Const.VPDSURL));
+		Global global=new Global(session.get(Const.VPDSURL), session.get(Const.VPDSKEY));
 	}
 	
 
 	public static void index() {
-		if (usernameToSecretKeyMap.get(session.get(Const.USERNAME)) != null)
+		if (usernameToSecretKeyMap.get(session.get(Const.USERNAME)) != null) {
+			System.out.println("Session exists");
 			home();
+			
+		}
+			
 		render();
 	}
 
@@ -189,8 +195,11 @@ public class Application extends Controller {
 	}
 	
 	public static void getuserlist() {
-
 		api.getUserList.doProcess();
+	}
+	
+	public static void sharedevice() {
+		api.shareDevice.doProcess(request.params.get(Const.REQUEST_BODY));
 	}
 
 	public static void managevpds() {
@@ -303,6 +312,10 @@ public class Application extends Controller {
 
 	public static void listalldevices() {
 		api.listAllDevices.doProcess();
+	}
+	
+	public static void listallvpdsdevices() {
+		api.listAllVPDSDevices.doProcess(request.params.get(Const.REQUEST_BODY));
 	}
 
 	public static void listalldevicetemplates() {

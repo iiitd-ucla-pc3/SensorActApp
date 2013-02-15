@@ -6,6 +6,7 @@ import controllers.Application;
 
 public class Global {
 	public static String URL_REPOSITORY_SERVER;
+	public static String VPDS_OWNER_KEY;
 	
 	public static String URL_REPOSITORY_REGISTER_USER;
 	
@@ -62,8 +63,9 @@ public class Global {
 		
 	}
 
-	public Global(String vpds) {
+	public Global(String vpds, String key) {
 		this.URL_REPOSITORY_SERVER=vpds;
+		this.VPDS_OWNER_KEY = key;
 		
 		this.URL_REPOSITORY_REGISTER_USER = URL_REPOSITORY_SERVER
 				+ "user/register";

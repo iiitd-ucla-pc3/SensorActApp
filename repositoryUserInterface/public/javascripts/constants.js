@@ -50,7 +50,7 @@ var PASSWORD="password";
 var EMAIL="email";
 
 //Dictionary constants associated with user profile
-var USERNAME_ARRAY="usernames";
+var USERNAME_ARRAY="usernamelist";
 
 //Dictionary constants associated with device profile
 var DEVICE_ARRAY="devicelist";
@@ -132,6 +132,16 @@ var ASSOCRULE_DEVICE_ARRAY="devicesArray";
 var ASSOCRULE_SENSOR_ARRAY="sensorsArray";
 var ASSOCRULE_ACTUATOR_ARRAY="actuatorsArray";
 var ASSOCRULE_REMOVE_ARRAY="removeArray";
+
+//Dictionary constants associated with Device Share
+var SHARE_DEVICE="device";
+var SHARE_DEVICE_PERMISSION="permission";
+var SHARE_SENSOR_NAME="sensorname";
+var SHARE_SENSOR_ID="sensorid";
+var SHARE_ACTUATOR_NAME="actuatorname";
+var SHARE_ACTUATOR_ID="actuatorid";
+var READ="read";
+var WRITE="write";
 
 //Dictionary constants associated with VPDS registration
 var VPDS_NAME="vpdsname";
@@ -216,7 +226,7 @@ var MAX_LENGTH_GUARDRULE_DESC=100;
 var MIN_LENGTH_VPDS_NAME=5;
 var MAX_LENGTH_VPDS_NAME=20;
 var MIN_LENGTH_VPDS_KEY=8;
-var MAX_LENGTH_VPDS_KEY=20;
+var MAX_LENGTH_VPDS_KEY=32;
 var MIN_LENGTH_VPDS_URL=20;
 var MAX_LENGTH_VPDS_URL=40;
 
@@ -242,6 +252,7 @@ var URL_ADD_DEVICE="adddevice";
 var URL_DELETE_DEVICE="deletedevice";
 var URL_EDIT_DEVICE="editdevice";
 var URL_FIND_DEVICE="finddevice";
+var URL_SHARE_DEVICE="sharedevice";
 var URL_ADD_DEVICE_TEMPLATE="adddevicetemplate";
 var URL_DELETE_DEVICE_TEMPLATE="deletedevicetemplate";
 var URL_FIND_DEVICE_TEMPLATE="finddevicetemplate";
@@ -262,6 +273,7 @@ var URL_ASSOC_LIST_GUARD_RULE="listassocguardrules";
 var URL_REGISTER_USER=URL_UI_SERVER+"register";
 var URL_QUERY_DATA="querydata2";
 var URL_LIST_ALL_DEVICES="listalldevices";
+var URL_LIST_ALL_VPDS_DEVICES="listallvpdsdevices";
 var URL_LIST_ALL_DEVICE_TEMPLATES="listalldevicetemplates";
 var URL_LIST_ACTUATE_REQUEST="listactuationrequests";
 var URL_CANCEL_ACTUATE_REQUEST="cancelactuationrequests";

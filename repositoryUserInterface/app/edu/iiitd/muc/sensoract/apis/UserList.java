@@ -46,7 +46,7 @@ import edu.iiitd.muc.sensoract.utilities.SecretKey;
 import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 
 /**
- * Get the list of all the users
+ * Get the list of all the users on the VPDS
  * 
  * @author Manaswi Saha
  * 

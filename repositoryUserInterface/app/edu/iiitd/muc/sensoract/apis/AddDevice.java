@@ -72,8 +72,7 @@ public class AddDevice extends SensorActAPI {
 	 *            Device profile in Json
 	 */
 	public final void doProcess(String deviceBody) {
-		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
-				.get(Const.USERNAME));
+		String secretkey = Global.VPDS_OWNER_KEY;
 
 		String deviceBodyWithSecretKey = deviceBody.replace(
 				Const.FAKE_SECRET_KEY, secretkey);

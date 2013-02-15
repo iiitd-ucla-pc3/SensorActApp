@@ -33,64 +33,15 @@
  * *
  * *
  ******************************************************************************/
-/*
- * Name: PresenceActuateDevice.java
- * Project: SensorAct, MUC@IIIT-Delhi 
- * Version: 1.0
- * Date: 2012-12-26
- * Author: Manaswi Saha
- */
+package edu.iiitd.muc.sensoract.format;
 
-package edu.iiitd.muc.sensoract.apis;
+import java.util.ArrayList;
 
-/*
- * Standard play imports
- */
-import play.libs.WS.HttpResponse;
-import edu.iiitd.muc.sensoract.constants.Const;
-import edu.iiitd.muc.sensoract.utilities.SecretKey;
-import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
+import edu.iiitd.muc.sensoract.apis.SensorActAPI;
 
-/**
- * /delguardrule API: Deletes the selected guardrule.
- * 
- * @author Manaswi Saha
- * @version 1.0
- */
-
-public class DeleteGuardRule extends SensorActAPI {
+public class ListAllVPDSDevicesRequest extends SensorActAPI {
 	
-	/**
-	 * Services the /addguardrule API.
-	 * <p>
-	 * Followings are the steps to be followed to add a new device profile
-	 * successfully to the repository.
-	 * <ol>
-	 * <li>Gets the JSON string containing guard rule from UI
-	 * <li>Since the validation had been performed at the UI,this request is
-	 * just tunneled to the repository
-	 * <li>Replaces the secret key with the actual secret key
-	 * <li>If the addition has been successful,the successful Response
-	 * format is sent to the UI which interprets the same and reloads the page
-	 * <li>If the addition fails then corresponding error
-	 * message is sent to the UI
-	 * </ol>
-	 * <p>
-	 * 
-	 * @param delGuardRuleJson
-	 *            delete guard rule request in Json
-	 */
-	public final void doProcess(String delGuardRuleJson) {
-		String secretkey = Global.VPDS_OWNER_KEY;
+	public String ownerkey = null;
+	public String vpdsURL = null;
 
-		String deleteRequestWithSecretKey = delGuardRuleJson.replace(
-				Const.FAKE_SECRET_KEY, secretkey);
-		logger.info(Const.API_DELGUARDRULE, secretkey + " " + delGuardRuleJson);
-
-		HttpResponse responseFromVPDS = new SendHTTPRequest()
-				.sendPostRequest(Global.URL_REPOSITORY_DELETE_GUARD_RULE,
-						Const.MIME_TYPE_JSON, Const.API_DELGUARDRULE,
-						deleteRequestWithSecretKey);
-		renderJSON(responseFromVPDS.getString());
-	}
 }

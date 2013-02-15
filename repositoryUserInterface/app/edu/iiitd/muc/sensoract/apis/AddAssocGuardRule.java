@@ -76,8 +76,7 @@ public class AddAssocGuardRule extends SensorActAPI {
 	 *            add association request in Json
 	 */
 	public final void doProcess(String addAssocGuardRuleJson) {
-		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
-				.get(Const.USERNAME));
+		String secretkey = Global.VPDS_OWNER_KEY;
 		HttpResponse responseFromVPDS = null;
 		logger.info(Const.API_ADDASSOCGUARDRULE, secretkey + " " + addAssocGuardRuleJson);
 		

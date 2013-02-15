@@ -47,6 +47,7 @@ public class SensorActAPI extends Application {
 	public static RegisterUser registeruser = new RegisterUser();
 	public static UserList listAllUsers = new UserList();
 	public static ListAllDevices listAllDevices = new ListAllDevices();
+	public static ListAllVPDSDevices listAllVPDSDevices = new ListAllVPDSDevices();
 	public static ListAllDeviceTemplates listAllDeviceTemplates = new ListAllDeviceTemplates();
 
 	public static AddDevice addDevice = new AddDevice();
@@ -83,6 +84,7 @@ public class SensorActAPI extends Application {
 	public static ManageVPDS manageVPDS = new ManageVPDS();
 	public static GetVPDSList getVPDSList = new GetVPDSList();
 	public static GetUserList getUserList = new GetUserList();
+	public static ShareDevice shareDevice = new ShareDevice();
 
 	public static SensorActLogger logger = new SensorActLogger();
 	public static SoundInput soundInput = new SoundInput();

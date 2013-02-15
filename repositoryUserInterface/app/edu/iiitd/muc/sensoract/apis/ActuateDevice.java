@@ -75,8 +75,7 @@ public class ActuateDevice extends SensorActAPI {
 	 *            Device profile in Json
 	 */
 	public final void doProcess(String deviceActuateBody) {
-		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
-				.get(Const.USERNAME));
+		String secretkey = Global.VPDS_OWNER_KEY;
 
 		String deviceActuateBodyWithSecretKey = deviceActuateBody.replace(
 				Const.FAKE_SECRET_KEY, secretkey);
