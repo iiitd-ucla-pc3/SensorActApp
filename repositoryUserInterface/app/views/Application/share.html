@@ -310,6 +310,11 @@
 
 					$("#errorDiv").hide();				
 
+					if($("#vpdsName").val() == "Select VPDS"){
+						alertAddError("Select a valid VPDS from the list");
+						return false;
+					}
+
 					/* Get Device List*/
 					var jsonGetList = {};
 					var vpdsKey = $(this).find(':selected')[0].id;	
@@ -338,6 +343,7 @@
 
 					    	$(".shareDevice").show('slow', function() {});
 							$("input [name=accessType]").prop('checked', false);
+							$("#vpdsName").removeClass("error");
 
 					    	$("#deviceName1").html("");
 					    	$("#deviceName2").html("");
