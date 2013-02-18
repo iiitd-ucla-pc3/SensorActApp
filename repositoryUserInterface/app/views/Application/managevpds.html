@@ -28,26 +28,7 @@
 				createHeaderVO();
 				createFooter();
 
-				$("#logout").click(function() {
-
-					window.location = URL_LOGOUT_USER;
-				});
-
-				/*
-				var getsecretkey = {};
-
-				$.get(temp + URL_GET_SECRET_KEY, function(rData) {
-
-			    		getsecretkey = rData;
-			    		
-			    });
-
-				$("#viewkey").click(function() {
-			    		alert("Your API Key is " + getsecretkey['secretkey']);
-			    });
-				*/
-
-				function alertAddRegisterError(errorInformation) {
+				function alertAddError(errorInformation) {
 
 					$("#errorDiv").html(errorInformation);
 					$("#errorDiv").fadeIn('slow');
@@ -73,18 +54,16 @@
 				}
 
 				/* Get VPDS List*/
-				var jsonGetList = {};
 				var responseFromServer = {};
-				jsonGetList[SECRET_KEY] = FAKE_SECRET_KEY;
 				var urlGetVPDSList = URL_UI_SERVER + URL_VPDS_LIST;
 				try{
-					$.post(urlGetVPDSList, jsonGetList, function(rData) {
+					$.post(urlGetVPDSList, function(rData) {
 
 				    		responseFromServer = rData;
 				    });
 				    
 				    if (responseFromServer.hasOwnProperty(RESPONSE_STATUS_CODE)){
-				    	alertAddRegisterError("Following errors occurred " + responseFromServer[RESPONSE_MESSAGE]);
+				    	alertAddError("Following errors occurred " + responseFromServer[RESPONSE_MESSAGE]);
 				    }
 				    else{
 				    	//alert(JSON.stringify(responseFromServer));
@@ -95,11 +74,11 @@
 				    			$("#vpdsName").append("<option id='"+ responseFromServer[VPDS_LIST_ARRAY][index][VPDSOWNER_KEY] +"' value ='"+responseFromServer[VPDS_LIST_ARRAY][index][VPDS_URL]+"'>"+ responseFromServer[VPDS_LIST_ARRAY][index][VPDS_NAME]+"</option>");
 				    	}
 				    	else
-				    		alertAddRegisterError("You have not registered any VPDS");			    	
+				    		alertAddError("You have not registered any VPDS");			    	
 			    	}
 				}
 				catch(e){
-				    alertAddRegisterError("Error: " + e);
+				    alertAddError("Error: " + e);
 				}
 
 				var vpdsName, vpdsKey, vpdsURL;
@@ -148,7 +127,7 @@
 				    	//alert(JSON.stringify(responseFromUIServer));
 
 				    	if(!responseFromUIServer.hasOwnProperty('url')){
-				    		alertAddRegisterError("Following errors occurred " + responseFromUIServer[RESPONSE_MESSAGE]);
+				    		alertAddError("Following errors occurred " + responseFromUIServer[RESPONSE_MESSAGE]);
 				    	}
 				    	else{	
 
@@ -157,7 +136,7 @@
 				    	}
 				    }
 				    catch(e){
-				    	alertAddRegisterError("Error: " + e);
+				    	alertAddError("Error: " + e);
 				    }
 				});
 				

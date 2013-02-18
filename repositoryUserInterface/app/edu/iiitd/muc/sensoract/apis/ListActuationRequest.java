@@ -48,6 +48,10 @@ package edu.iiitd.muc.sensoract.apis;
  */
 import play.libs.WS.HttpResponse;
 import edu.iiitd.muc.sensoract.constants.Const;
+import edu.iiitd.muc.sensoract.format.ActuateRequest;
+import edu.iiitd.muc.sensoract.format.ActuateVPDSRequest;
+import edu.iiitd.muc.sensoract.format.GetAccessKeyResponseFormat;
+import edu.iiitd.muc.sensoract.format.ListActuateRequest;
 import edu.iiitd.muc.sensoract.utilities.SecretKey;
 import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 
@@ -73,17 +77,62 @@ public class ListActuationRequest extends SensorActAPI {
 	 * @param listActnRequest
 	 *            actuation request in Json
 	 */
-	public final void doProcess() {
-		String secretkey = Global.VPDS_OWNER_KEY;
+	public final void doProcess(String body) {
+		
+		//Differentiate between a user and an owner
+		String usertype = session.get(Const.USERTYPE);
+		String secretkey = null;
+		String vpdsURL = null;
+		HttpResponse responseFromBroker = null;	
+		
+		ListActuateRequest actRequest = gson
+				.fromJson(body, ListActuateRequest.class);
+		
+		if(usertype.equals(Const.USER)){
+			
+			/* Get accesskey from Broker */
+			
+			// From Json - vpdsname and secretkey
+			String usersecretkey = new SecretKey().getSecretKeyFromHashMap(session
+					.get(Const.USERNAME));
+			String jsonGetAccessKey = "{\"secretkey\" : \"" + usersecretkey + "\",\"vpdsname\": \""+ actRequest.vpdsname + "\"}";
+			logger.info(Const.API_LISTACTUATIONREQUEST, "For "+ usertype + " " +jsonGetAccessKey);
+			
+			// Make request
+			responseFromBroker = new SendHTTPRequest()
+			.sendPostRequest(Const.URL_BROKER_GET_ACCESS_KEY,
+					Const.MIME_TYPE_JSON, Const.API_LISTACTUATIONREQUEST,
+					jsonGetAccessKey);
+			System.out.println("Get access key "+responseFromBroker.getString());
+			GetAccessKeyResponseFormat response = gson.fromJson(
+					responseFromBroker.getString(),GetAccessKeyResponseFormat.class);
+			
+			//Set secretkey as accesskey
+			secretkey = response.accesskey;
+			vpdsURL = response.vpdsurl;
+		}
+		else if(usertype.equals(Const.OWNER)){
+			//Set secretkey as owner key
+			secretkey = Global.VPDS_OWNER_KEY;			
+		}
 
 		String listActnRequestWithSecretKey = "{\"secretkey\":\"" + secretkey + "\"}";
-
+		
 		logger.info(Const.API_LISTACTUATIONREQUEST, secretkey + " " + listActnRequestWithSecretKey);
+		
+		if(usertype.equals(Const.USER)){
+			responseFromBroker = new SendHTTPRequest()
+			.sendPostRequest(vpdsURL + "device/actuationrequest/list",
+					Const.MIME_TYPE_JSON, Const.API_LISTACTUATIONREQUEST,
+					listActnRequestWithSecretKey);
+		}
+		else {
+			responseFromBroker = new SendHTTPRequest()
+			.sendPostRequest(Global.URL_REPOSITORY_LIST_ACTUATION_REQUEST,
+					Const.MIME_TYPE_JSON, Const.API_LISTACTUATIONREQUEST,
+					listActnRequestWithSecretKey);
+		}		
 
-		HttpResponse responseFromVPDS = new SendHTTPRequest()
-				.sendPostRequest(Global.URL_REPOSITORY_LIST_ACTUATION_REQUEST,
-						Const.MIME_TYPE_JSON, Const.API_LISTACTUATIONREQUEST,
-						listActnRequestWithSecretKey);
-		renderJSON(responseFromVPDS.getString());
+		renderJSON(responseFromBroker.getString());
 	}
 }

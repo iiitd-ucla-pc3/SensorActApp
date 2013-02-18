@@ -18,43 +18,277 @@
 		<script type="text/javascript">
 			$(document).ready(function() {
 
-							
-				var temp="http://"+document.location.hostname+":"+document.location.port+"/";
+				jQuery.ajaxSetup({
+					async : false
+				});
+
 				var usertype = $("#usertype").val();
 
 				if (usertype == "USER")
 					createHeaderUser();
 				else if (usertype == "OWNER")
 					createHeaderVO();
-
 				createFooter();
-				
-				$("#logout").click(function() {
 
-					window.location = URL_LOGOUT_USER;
+				$("#sensor").hide();
+				$("#actuator").hide();
+
+				function alertAddError(errorInformation) {
+
+					$("#errorDiv").html(errorInformation);
+					$("#errorDiv").fadeIn('slow');
+					return false;
+				}
+
+				function alertAddErrorActuation(errorInformation) {
+
+					$("#errorADiv").html(errorInformation);
+					$("#errorADiv").fadeIn('slow');
+					return false;
+				}
+
+				/* Global variables*/
+				var selectedDevice = undefined;
+
+
+				var jsonToSend = {};
+				var responseFromServer = {};
+				jsonToSend[SECRET_KEY] = FAKE_SECRET_KEY;
+				jsonToSend[USERTYPE] = usertype;
+
+				var urlGetShareDevices = URL_UI_SERVER + URL_VIEW_SHARED_DEVICES;
+				try{
+					$.post(urlGetShareDevices, JSON.stringify(jsonToSend), function(rData) {
+
+				    		responseFromServer = rData;
+				    });
+				    
+				    
+				    if (responseFromServer.hasOwnProperty(RESPONSE_STATUS_CODE)){
+				    	alertAddError("Following errors occurred " + responseFromServer[RESPONSE_MESSAGE]);
+				    }
+				    else{
+				    	
+				    	var numberOfDevices = responseFromServer[VIEW_SHARE_DEVICE_LIST].length;
+				    	if (numberOfDevices > 0) {		    		
+				    		for (var index in responseFromServer[VIEW_SHARE_DEVICE_LIST]) {
+
+				    			if(!(typeof responseFromServer[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][SHARE_SENSOR_NAME] === 'undefined')){
+
+				    				$("#sensor").show('slow', function() {});
+				    				$("#sensor .shareDevice").append('<tr><td><div class="leftDiv"> \
+										<input type = "radio" name ="select" value="sensor"/></div></td> \
+										<td><div class="leftDiv"> \
+				    					<label id="voname">'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][VIEW_SHARE_VONAME]+'</label><input id="vpdsname" type="hidden" value="'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][VIEW_SHARE_VPDS_NAME]+'"/></div></td> \
+				    					<td><div class="leftDiv">	\
+										<label id="devicename">'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][DEVICE_NAME]+'</label></div></td> \
+										<td><div class="leftDiv">	\
+										<label id="sensorName">'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][SHARE_SENSOR_NAME]+'</label><input id="sensorid" type="hidden" value="'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][SHARE_SENSOR_ID]+'"/></div></td> \
+										<td><div class="leftDiv" style="text-align:center"> \
+										<label id="readSensor">'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE_PERMISSION][READ]+'</label></td> \
+										<td style="border-width: 0;"><div class="leftDiv" style="text-align:center"> \
+										<label id="writeSensor">'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE_PERMISSION][WRITE]+'</label></div></td></tr>');
+
+				    			}
+
+				    			if(!(typeof responseFromServer[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][SHARE_ACTUATOR_NAME] === 'undefined')){
+
+				    				$("#actuator").show('slow', function() {});
+				    				$("#actuator .shareDevice").append('<tr><td><div class="leftDiv"> \
+										<input type = "radio" name ="select" value="actuator"/></div></td> \
+										<td><div class="leftDiv"> \
+				    					<label id="voname">'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][VIEW_SHARE_VONAME]+'</label></div></td> \
+				    					<td><div class="leftDiv">	\
+										<label id="devicename">'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][DEVICE_NAME]+'</label></div></td> \
+										<td><div class="leftDiv">	\
+										<label id="actuatorName">'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][SHARE_ACTUATOR_NAME]+'</label><input id="actuatorid" type="hidden" value="'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][SHARE_ACTUATOR_ID]+'"/></div></td> \
+										<td><div class="leftDiv" style="text-align:center"> \
+										<label id="readActuator">'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE_PERMISSION][READ]+'</label></td> \
+										<td style="border-width: 0;"><div class="leftDiv" style="text-align:center"> \
+										<label id="writeActuator">'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE_PERMISSION][WRITE]+'</label></div></td></tr>');
+				    			}
+
+				    		}
+				    	}
+				    	else
+				    		$("#device").prepend("No ");
+			    	}
+				}
+				catch(e){
+				    alertAddError("Error: " + e);
+				}
+
+				$("input[name=select]").change(function(){
+					selectedDevice = $(this).val();
 				});
 
-				/*
-				var getsecretkey = {};
+				/* Visualize Data */
+				$("#IDViewData").click(function(){
 
-				$.get(temp + URL_GET_SECRET_KEY, function(rData) {
+					$("#errorDiv").hide();
+					$("#errorADiv").hide();
 
-			    		getsecretkey = rData;
-			    		
-			    });
+					if(selectedDevice != "sensor") {
+						alertAddError("Error: Please select an entry to Visualize Data");
+						return false;
+					}
 
-				$("#viewkey").click(function() {
-			    		alert("Your API Key is " + getsecretkey['secretkey']);
-			    });
-				*/
+					var devicename = $("#devicename").html();
+					var vpdsname = $("#vpdsname").val();
+					var sensorName = $("#sensorName").html();					
+					var readPermission = $("#readSensor").html();
+
+					if(!readPermission){
+						alert("Permission to visualize data is disabled by the owner!");
+						return false;
+					}
+
+					// Make a post request with parameters - vpdsname, devicename, sensorname,sensorid- to transfer
+					// them to the next page
+					var urlOperationClassifier = URL_UI_SERVER + URL_OP_CLASSIFIER;
+					var jsonOpClassify = {};
+					var responseFromUIServer = {};
+					//jsonOpClassify[USERTYPE] = usertype;
+					jsonOpClassify[DEVICE_NAME] = devicename;
+					jsonOpClassify[SHARE_SENSOR_NAME] = sensorName;
+					jsonOpClassify[VIEW_SHARE_VPDS_NAME] = vpdsname;
+					jsonOpClassify[ORIGIN] = "visualize";
+					try{
+						$.post(urlOperationClassifier, JSON.stringify(jsonOpClassify), function(rData) {
+
+				    		responseFromUIServer = rData;
+				    		
+				    	});
+
+				    	if(!responseFromUIServer.hasOwnProperty('url')){
+				    		alertAddError("Following errors occurred " + responseFromUIServer[RESPONSE_MESSAGE]);
+				    	}
+				    	else{	
+
+				    		window.location = responseFromUIServer['url'];			    		
+
+				    	}
+					}
+					catch(e) {
+						alertAddError("Error: " + e);
+					}
+				});
+
+				/* Time Actuate*/
+				$("#IDTimeActuate").click(function(){
+
+					$("#errorDiv").hide();
+					$("#errorADiv").hide();		
+
+					if(selectedDevice != "actuator") {
+						alertAddErrorActuation("Error: Please select an entry to actuate based on Time");
+						return false;
+					}
+
+					var devicename = $("#devicename").html();
+					var vpdsname = $("#vpdsname").val();
+					var actuatorName = $("#actuatorName").html();
+					var actuatorid = $("#actuatorid").val();
+					var writePermission = $("#writeActuator").html();
+
+					if(!writePermission){
+						alert("Permission to actuate is disabled by the owner!");
+						return false;
+					}
+
+					// Make a post request with parameters - vpdsname, devicename, actuatorname, actuatorid- to transfer
+					// them to the next page
+					var urlOperationClassifier = URL_UI_SERVER + URL_OP_CLASSIFIER;
+					var jsonOpClassify = {};
+					var responseFromUIServer = {};
+					//jsonOpClassify[USERTYPE] = usertype;
+					jsonOpClassify[DEVICE_NAME] = devicename;
+					jsonOpClassify[SHARE_ACTUATOR_NAME] = actuatorName;
+					jsonOpClassify[SHARE_ACTUATOR_ID] = actuatorid;
+					jsonOpClassify[VIEW_SHARE_VPDS_NAME] = vpdsname;
+					jsonOpClassify[ORIGIN] = "actuate";
+					try{
+						$.post(urlOperationClassifier, JSON.stringify(jsonOpClassify), function(rData) {
+
+				    		responseFromUIServer = rData;
+				    		
+				    	});
+
+				    	if(!responseFromUIServer.hasOwnProperty('url')){
+				    		alertAddError("Following errors occurred " + responseFromUIServer[RESPONSE_MESSAGE]);
+				    	}
+				    	else{
+				    		window.location = responseFromUIServer['url'];
+				    	}
+					}
+					catch(e) {
+						alertAddError("Error: " + e);
+					}
+				});
 				
+				/* Presence Actuate*/
+				$("#IDPresenceActuate").click(function(){
+
+					$("#errorDiv").hide();
+					$("#errorADiv").hide();
+
+					alert("Currently disabled!");
+					return false;
+
+					if(selectedDevice != "actuator") {
+						alertAddErrorActuation("Error: Please select an entry to actuate based on Presence");
+						return false;
+					}
+
+					var devicename = $("#devicename").html();
+					var vpdsname = $("#vpdsname").val();
+					var actuatorName = $("#actuatorName").html();
+					var actuatorid = $("#actuatorid").val();
+					var writePermission = $("#writeActuator").html();
+
+					if(!writePermission){
+						alert("Permission to actuate is disabled by the owner!");
+						return false;
+					}
+
+					// Make a post request with parameters - vpdsname, devicename, actuatorname, actuatorid- to transfer
+					// them to the next page
+					var urlOperationClassifier = URL_UI_SERVER + URL_OP_CLASSIFIER;
+					var jsonOpClassify = {};
+					var responseFromUIServer = {};
+					//jsonOpClassify[USERTYPE] = usertype;
+					jsonOpClassify[DEVICE_NAME] = devicename;
+					jsonOpClassify[SHARE_ACTUATOR_NAME] = actuatorName;
+					jsonOpClassify[SHARE_ACTUATOR_ID] = actuatorid;
+					jsonOpClassify[VIEW_SHARE_VPDS_NAME] = vpdsname;
+					jsonOpClassify[ORIGIN] = "presenceactuate";
+					try{
+						$.post(urlOperationClassifier, JSON.stringify(jsonOpClassify), function(rData) {
+
+				    		responseFromUIServer = rData;
+				    		
+				    	});
+
+				    	if(!responseFromUIServer.hasOwnProperty('url')){
+				    		alertAddError("Following errors occurred " + responseFromUIServer[RESPONSE_MESSAGE]);
+				    	}
+				    	else{	
+
+				    		window.location = responseFromUIServer['url'];			    		
+
+				    	}
+					}
+					catch(e) {
+						alertAddError("Error: " + e);
+					}
+				});
 			});
 			</script>
 			
 			
 	</head>
 	<!--<body onload="setup()">-->
-		<body>
+		<body id ="sharedevices">
 		<div id="header-container">
 			<header class="wrapper clearfix">
 				<h1 id="title">SensorAct
@@ -75,9 +309,80 @@
 		</div>
 		<div class="wrapper" style="">
 			<h1 class="newfont" id="device" style="text-align:center;">Devices shared with me</h1>
-			<hr>	
-
 			<hr>
+			<div style="display: none;" id="errorDiv" class="errorDiv"></div>
+			<br/>
+			<div id="shareAccess" align="center">
+				<div id="sensor">
+					<table class="shareDevice">
+						<tr id="trHeader">
+							<td>
+																
+							</td>
+							<td>
+								<label>Shared By</label>
+							</td>
+							<td>
+								<label>Device</label>
+							</td>
+							<td>
+								<label>Sensor</label>
+							</td>
+							<td>
+								<label>Read  Access</label>								
+							</td>
+							<td style="border-width: 0 0px 1px 1px;">
+								<label>Write  Access</label>
+							</td>
+						</tr>
+					</table>
+					<p class="space"></p>				
+					<div style="clear:both;text-align:center; padding-top:20px">	
+						<button id="IDViewData" class="google-button">
+							Visualize Data
+						</button>
+					</div>
+					<br/>					
+				</div>
+				<p class="space"></p><br/>
+				<div style="display: none;" id="errorADiv" class="errorDiv"></div>
+				<br/>
+				<div id="actuator">
+					<table class="shareDevice" >
+						<tr id="trHeader">
+							<td>
+																
+							</td>
+							<td>
+								<label>Shared By</label>
+							</td>
+							<td>
+								<label>Device</label>
+							</td>
+							<td>
+								<label>Actuator</label>
+							</td>
+							<td>
+								<label>Read  Access</label>								
+							</td>
+							<td style="border-width: 0 0px 1px 1px;">
+								<label>Write  Access</label>
+							</td>
+						</tr>										
+					</table>
+					<p class="space"></p>				
+					<div style="clear:both;text-align:center; clear:none; padding-top:20px">	
+						<button id="IDTimeActuate" class="google-button">
+							Time Actuation
+						</button>
+						&nbsp; &nbsp;
+						<button id="IDPresenceActuate" class="google-button">
+							Presence Actuation
+						</button>
+					</div>					
+					<br/>
+				</div>
+			</div>
 		</div>
 		<input id="usertype"  type="hidden" value=${usertype}>
 		<div style="clear:both;" id="footer-container">

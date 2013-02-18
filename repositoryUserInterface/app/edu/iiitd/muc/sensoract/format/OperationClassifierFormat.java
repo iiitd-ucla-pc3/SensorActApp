@@ -35,22 +35,13 @@
  ******************************************************************************/
 package edu.iiitd.muc.sensoract.format;
 
-import edu.iiitd.muc.sensoract.apis.SensorActAPI;
+public class OperationClassifierFormat {
 
-public class QueryToRepo extends SensorActAPI {
-	public QueryConditions conditions;
-	public String devicename;
-	public String sensorname;
-	public String username;
-	public String secretkey;
-
-	public QueryToRepo(QueryConditions conditions, String devicename,
-			String sensorname, String username, String secretkey) {
-		this.conditions = conditions;
-		this.devicename = devicename;
-		this.sensorname = sensorname;
-		this.username = username;
-		this.secretkey = secretkey;
-	}
-
+	public String vpdsname = null;
+	public String devicename = null;
+	public String sensorname = null;
+	public String actuatorname = null;
+	public String actuatorid = null;
+	public String origin = null;	
+	
 }

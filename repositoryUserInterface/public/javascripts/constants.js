@@ -48,6 +48,8 @@ var NO_GUARD_RULEASSOC_FOUND = 41;
 var FAILURE="Failure";
 var PASSWORD="password";
 var EMAIL="email";
+var USERTYPE="usertype";
+var ORIGIN="origin";
 
 //Dictionary constants associated with user profile
 var USERNAME_ARRAY="usernamelist";
@@ -142,6 +144,11 @@ var SHARE_ACTUATOR_NAME="actuatorname";
 var SHARE_ACTUATOR_ID="actuatorid";
 var READ="read";
 var WRITE="write";
+
+//Dictionary constants associated with View Shared Devices with users
+var VIEW_SHARE_DEVICE_LIST="devicelist";
+var VIEW_SHARE_VONAME="voname";
+var VIEW_SHARE_VPDS_NAME="vpdsname";
 
 //Dictionary constants associated with VPDS registration
 var VPDS_NAME="vpdsname";
@@ -248,11 +255,15 @@ var URL_UI_SERVER="http://"+document.location.hostname+":"+document.location.por
 var URL_LOGIN_USER="login";
 var URL_REGISTER_USER="register";
 var URL_LIST_USERS="listallusers";
+
+var URL_SHARE_DEVICE="sharedevice";
+var URL_VIEW_SHARED_DEVICES="viewsharedevices";
+var URL_OP_CLASSIFIER="opclassifier";
+
 var URL_ADD_DEVICE="adddevice";
 var URL_DELETE_DEVICE="deletedevice";
 var URL_EDIT_DEVICE="editdevice";
 var URL_FIND_DEVICE="finddevice";
-var URL_SHARE_DEVICE="sharedevice";
 var URL_ADD_DEVICE_TEMPLATE="adddevicetemplate";
 var URL_DELETE_DEVICE_TEMPLATE="deletedevicetemplate";
 var URL_FIND_DEVICE_TEMPLATE="finddevicetemplate";

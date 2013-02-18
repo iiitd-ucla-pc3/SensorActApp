@@ -44,5 +44,6 @@ public class QueryRequest extends SensorActAPI {
 	public ArrayList<QueryDevice> devicesArray;
 	public String username;
 	public String interactive;
+	public String vpdsname;
 
 }

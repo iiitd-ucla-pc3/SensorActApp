@@ -175,8 +175,7 @@ public class Application extends Controller {
 		render();
 	}
 	
-	public static void registerVPDSToBroker() {
-		
+	public static void registerVPDSToBroker() {		
 		String body = request.params.get(Const.REQUEST_BODY);
 		api.registerVPDS.doProcess(body);
 	}
@@ -200,6 +199,43 @@ public class Application extends Controller {
 	
 	public static void sharedevice() {
 		api.shareDevice.doProcess(request.params.get(Const.REQUEST_BODY));
+	}
+	
+	public static void viewsharedevices() {
+		api.viewShareDevices.doProcess(request.params.get(Const.REQUEST_BODY));
+	}
+	
+	public static void opclassifier() {
+		api.opClassifier.doProcess(request.params.get(Const.REQUEST_BODY));
+	}
+	
+	public static void userdisplay() {
+
+		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		renderArgs.put(Const.VPDSNAME, session.get(Const.VPDSNAME));
+		renderArgs.put(Const.DEVICENAME, session.get(Const.DEVICENAME));
+		renderArgs.put(Const.SENSORNAME, session.get(Const.SENSORNAME));
+		
+		render();
+	}
+	
+	public static void useractuate() {
+
+		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		renderArgs.put(Const.VPDSNAME, session.get(Const.VPDSNAME));
+		renderArgs.put(Const.DEVICENAME, session.get(Const.DEVICENAME));
+		renderArgs.put(Const.ACTUATORNAME, session.get(Const.ACTUATORNAME));
+		
+		render();
+	}
+	
+	public static void userpresenceactuate() {
+		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		renderArgs.put(Const.VPDSNAME, session.get(Const.VPDSNAME));
+		renderArgs.put(Const.DEVICENAME, session.get(Const.DEVICENAME));
+		renderArgs.put(Const.ACTUATORNAME, session.get(Const.ACTUATORNAME));
+		
+		render();
 	}
 
 	public static void managevpds() {
@@ -303,7 +339,7 @@ public class Application extends Controller {
 	}
 	
 	public static void listactuationrequests() {		
-		api.listActRequests.doProcess();
+		api.listActRequests.doProcess(request.params.get(Const.REQUEST_BODY));
 	}
 	
 	public static void cancelactuationrequests() {		

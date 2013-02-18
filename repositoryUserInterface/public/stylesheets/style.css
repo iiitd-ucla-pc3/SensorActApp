@@ -749,15 +749,16 @@ div #selectedVPDS{
 	width:100%;
 }
 
-#shareDevice{
+.shareDevice{
     clear: right;
     -webkit-box-shadow:0 5px 10px #aaa;
 	-moz-box-shadow:0 5px 10px #aaa;
     box-shadow:0 5px 10px #aaa;
+    width:100%;
 
 }
 
-#shareDevice td{
+.shareDevice td{
 
 	border-color: black;
 	border-style: dashed;
@@ -767,6 +768,14 @@ div #selectedVPDS{
 
 #trHeader td{
 	text-align: center;
+}
+
+#sensor #trHeader td{
+	border-width: 0 1px 1px 0px;
+}
+
+#actuator #trHeader td{
+	border-width: 0 1px 1px 0px;
 }
 
 #trData{

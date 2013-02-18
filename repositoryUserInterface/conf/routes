@@ -5,7 +5,8 @@
 # Home page
 GET     /                                       Application.index
 GET		/getsecretkey							Application.getsecretkey
-GET    /relogin									Application.relogin
+GET     /relogin								Application.relogin
+POST	/opclassifier							Application.opclassifier
 
 GET     /display                                Application.display
 GET     /display2                               Application.display2
@@ -25,10 +26,12 @@ POST    /registerVPDSToBroker					Application.registerVPDSToBroker
 GET     /sharedevices							Application.sharedevices
 GET		/useractuate							Application.useractuate
 GET		/userpresenceactuate					Application.userpresenceactuate
+GET     /userdisplay                            Application.userdisplay
 
 GET     /share									Application.share
 GET     /getuserlist							Application.getuserlist
 POST	/sharedevice							Application.sharedevice
+POST	/viewsharedevices						Application.viewsharedevices
 
 GET     /managevpds								Application.managevpds
 POST	/getvpdsdetails							Application.getvpdsdetails
@@ -46,10 +49,11 @@ GET     /listalldevicetemplates					Application.listalldevicetemplates
 POST	/listallvpdsdevices						Application.listallvpdsdevices
 
 GET		/actuate								Application.actuate
+GET		/presenceactuate						Application.presenceactuate
 POST	/actuatedevice							Application.actuatedevice
 POST	/listactuationrequests					Application.listactuationrequests
 POST	/cancelactuationrequests				Application.cancelactuationrequests
-GET		/presenceactuate						Application.presenceactuate
+
 
 GET		/guardrule								Application.guardrule
 POST	/addguardrule							Application.addGuardRule

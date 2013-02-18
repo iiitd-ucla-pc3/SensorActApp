@@ -33,24 +33,65 @@
  * *
  * *
  ******************************************************************************/
-package edu.iiitd.muc.sensoract.format;
+package edu.iiitd.muc.sensoract.apis;
 
-import edu.iiitd.muc.sensoract.apis.SensorActAPI;
+import play.libs.WS;
+import play.libs.WS.HttpResponse;
+import edu.iiitd.muc.sensoract.constants.Const;
+import edu.iiitd.muc.sensoract.exceptions.InvalidJsonException;
+import edu.iiitd.muc.sensoract.format.APIResponse;
+import edu.iiitd.muc.sensoract.format.ViewSharedRequest;
+import edu.iiitd.muc.sensoract.utilities.SecretKey;
+import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 
-public class QueryToRepo extends SensorActAPI {
-	public QueryConditions conditions;
-	public String devicename;
-	public String sensorname;
-	public String username;
-	public String secretkey;
+/**
+ * /viewsharedevices : Used to get shared devices list
+ * 
+ * @author Manaswi Saha
+ * 
+ */
+public class ViewSharedDevices extends SensorActAPI {
 
-	public QueryToRepo(QueryConditions conditions, String devicename,
-			String sensorname, String username, String secretkey) {
-		this.conditions = conditions;
-		this.devicename = devicename;
-		this.sensorname = sensorname;
-		this.username = username;
-		this.secretkey = secretkey;
+	/**
+	 * 
+	 * @param body
+	 */
+
+	public final void doProcess(String body) {
+		
+		HttpResponse responseFromBroker = null;
+		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
+				.get(Const.USERNAME));
+		
+		String requestWithSecretKey = body.replace(Const.FAKE_SECRET_KEY, secretkey);		
+		
+		ViewSharedRequest request = null;
+		try {
+			request = gson
+					.fromJson(requestWithSecretKey, ViewSharedRequest.class);
+		} catch (Exception e) {
+			renderJSON(gson.toJson(new APIResponse(Const.API_VIEW_SHARED_DEVICES, 1, e
+					.toString())));
+		}
+		
+		String jsonToSend = "{\"secretkey\" :\""+ secretkey +"\"}";
+		
+		logger.info(Const.API_VIEW_SHARED_DEVICES, "for " + request.usertype + " " + requestWithSecretKey);
+		
+		if(request.usertype == Const.OWNER)
+			responseFromBroker = new SendHTTPRequest()
+		.sendPostRequest(Const.URL_BROKER_VIEW_SHARE_DEVICES_OWNER,
+				Const.MIME_TYPE_JSON, Const.API_VIEW_SHARED_DEVICES,
+				requestWithSecretKey);
+		else
+			responseFromBroker = new SendHTTPRequest()
+		.sendPostRequest(Const.URL_BROKER_VIEW_SHARE_DEVICES_USER,
+				Const.MIME_TYPE_JSON, Const.API_VIEW_SHARED_DEVICES,
+				jsonToSend);
+		
+		renderJSON(responseFromBroker.getString());
+
 	}
+	
 
 }

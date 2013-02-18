@@ -48,6 +48,10 @@ package edu.iiitd.muc.sensoract.apis;
  */
 import play.libs.WS.HttpResponse;
 import edu.iiitd.muc.sensoract.constants.Const;
+import edu.iiitd.muc.sensoract.format.CancelActuateRequestFormat;
+import edu.iiitd.muc.sensoract.format.ActuateVPDSRequest;
+import edu.iiitd.muc.sensoract.format.CancelActuationVPDSRequest;
+import edu.iiitd.muc.sensoract.format.GetAccessKeyResponseFormat;
 import edu.iiitd.muc.sensoract.utilities.SecretKey;
 import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 
@@ -74,18 +78,64 @@ public class CancelActuationRequest extends SensorActAPI {
 	 *            actuation request in Json
 	 */
 	public final void doProcess(String cancelActReqList) {
-		String secretkey = Global.VPDS_OWNER_KEY;
+		
+		String usertype = session.get(Const.USERTYPE);
+		String secretkey = null;
+		String vpdsURL = null;
+		HttpResponse responseFromBroker = null;	
+		
+		CancelActuateRequestFormat actRequest = gson
+				.fromJson(cancelActReqList, CancelActuateRequestFormat.class);
+		
+		if(usertype.equals(Const.USER)){
+			
+			/* Get accesskey from Broker */
+			
+			// From Json - vpdsname and secretkey
+			String usersecretkey = new SecretKey().getSecretKeyFromHashMap(session
+					.get(Const.USERNAME));
+			String jsonGetAccessKey = "{\"secretkey\" : \"" + usersecretkey + "\",\"vpdsname\": \""+ actRequest.vpdsname + "\"}";
+			logger.info(Const.API_CANCELACTUATIONREQUEST, "For "+ usertype + " " +jsonGetAccessKey);
+			
+			// Make request
+			responseFromBroker = new SendHTTPRequest()
+			.sendPostRequest(Const.URL_BROKER_GET_ACCESS_KEY,
+					Const.MIME_TYPE_JSON, Const.API_ACTUATEDEVICE,
+					jsonGetAccessKey);
+			System.out.println("Get access key "+responseFromBroker.getString());
+			
+			GetAccessKeyResponseFormat response = gson.fromJson(
+					responseFromBroker.getString(),GetAccessKeyResponseFormat.class);
+			
+			//Set secretkey as accesskey
+			actRequest.secretkey = response.accesskey;
+			vpdsURL = response.vpdsurl;
+		}
+		else if(usertype.equals(Const.OWNER)){
+			//Set secretkey as owner key
+			actRequest.secretkey = Global.VPDS_OWNER_KEY;			
+		}
+		
+		CancelActuationVPDSRequest toSend = new CancelActuationVPDSRequest(
+				actRequest.secretkey, actRequest.cancelRequestList);
+		
+		String jsonToSend = gson.toJson(toSend);
 
-		String cancelActnRequestWithSecretKey = cancelActReqList.replace(
-				Const.FAKE_SECRET_KEY, secretkey);
-		logger.info(Const.API_CANCELACTUATIONREQUEST, secretkey + " " + cancelActReqList);
+		logger.info(Const.API_CANCELACTUATIONREQUEST, secretkey + " " + jsonToSend);
+		
+		if(usertype.equals(Const.USER)){
+			responseFromBroker = new SendHTTPRequest()
+			.sendPostRequest(vpdsURL + "device/actuationrequest/cancel",
+					Const.MIME_TYPE_JSON, Const.API_CANCELACTUATIONREQUEST,
+					jsonToSend);
+		}
+		else if(usertype.equals(Const.OWNER)){
+			responseFromBroker = new SendHTTPRequest()
+			.sendPostRequest(Global.URL_REPOSITORY_CANCEL_ACTUATION_REQUEST,
+					Const.MIME_TYPE_JSON, Const.API_CANCELACTUATIONREQUEST,
+					jsonToSend);
+		}		
 
-		logger.info(Const.API_CANCELACTUATIONREQUEST, secretkey + " " + cancelActnRequestWithSecretKey);
-
-		HttpResponse responseFromVPDS = new SendHTTPRequest()
-				.sendPostRequest(Global.URL_REPOSITORY_CANCEL_ACTUATION_REQUEST,
-						Const.MIME_TYPE_JSON, Const.API_CANCELACTUATIONREQUEST,
-						cancelActnRequestWithSecretKey);
-		renderJSON(responseFromVPDS.getString());
+		renderJSON(responseFromBroker.getString());
 	}
 }

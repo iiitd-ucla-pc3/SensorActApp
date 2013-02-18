@@ -62,9 +62,11 @@ import edu.iiitd.muc.sensoract.constants.Const;
 import edu.iiitd.muc.sensoract.format.ChartSeries;
 import edu.iiitd.muc.sensoract.format.ChartSeriesArray;
 import edu.iiitd.muc.sensoract.format.ChartSeriesStats;
+import edu.iiitd.muc.sensoract.format.GetAccessKeyResponseFormat;
 import edu.iiitd.muc.sensoract.format.QueryRequest;
 import edu.iiitd.muc.sensoract.format.QueryToRepo;
 import edu.iiitd.muc.sensoract.format.WaveSegmentArray;
+import edu.iiitd.muc.sensoract.utilities.SecretKey;
 import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 
 public class QueryData extends SensorActAPI {
@@ -74,6 +76,39 @@ public class QueryData extends SensorActAPI {
 		ArrayList<WaveSegmentArray> arrayOfResponses = new ArrayList<WaveSegmentArray>();
 		QueryRequest queryRequest = gson
 				.fromJson(queryBody, QueryRequest.class);
+		
+		String usertype = session.get(Const.USERTYPE);
+		String secretkey = null;
+		String vpdsURL = null;
+		HttpResponse responseFromBroker = null;
+		
+		if(usertype.equals(Const.USER)){
+			
+			/* Get accesskey from Broker */
+			
+			// From Json - vpdsname and secretkey
+			String usersecretkey = new SecretKey().getSecretKeyFromHashMap(session
+					.get(Const.USERNAME));
+			String jsonGetAccessKey = "{\"secretkey\" : \"" + usersecretkey + "\",\"vpdsname\": \""+ queryRequest.vpdsname + "\"}";
+			logger.info(Const.API_QUERYDATA, "For "+ usertype + " " +jsonGetAccessKey);
+			
+			// Make request
+			responseFromBroker = new SendHTTPRequest()
+			.sendPostRequest(Const.URL_BROKER_GET_ACCESS_KEY,
+					Const.MIME_TYPE_JSON, Const.API_QUERYDATA,
+					jsonGetAccessKey);
+			System.out.println("Get access key "+responseFromBroker.getString());
+			GetAccessKeyResponseFormat response = gson.fromJson(
+					responseFromBroker.getString(),GetAccessKeyResponseFormat.class);
+			
+			//Set secretkey as accesskey
+			secretkey = response.accesskey;
+			vpdsURL = response.vpdsurl;
+		}
+		else if(usertype.equals(Const.OWNER)){
+			//Set secretkey as owner key
+			secretkey = Global.VPDS_OWNER_KEY;			
+		}
 
 		int numberOfDevicesRequest = queryRequest.devicesArray.size();
 
@@ -87,13 +122,23 @@ public class QueryData extends SensorActAPI {
 						queryRequest.conditions,
 						devicename,
 						queryRequest.devicesArray.get(i).sensorsArray.get(j).sensor,
-						queryRequest.username);
+						queryRequest.username, secretkey);
 				String queryBodyWithSecretKey = gson.toJson(queryToRepo);
-				HttpResponse responseFromBroker = new SendHTTPRequest()
-						.sendPostRequest(Global.URL_REPOSITORY_QUERY_DATA,
-								Const.MIME_TYPE_JSON, Const.API_QUERYDATA,
-								queryBodyWithSecretKey);
-				System.out.println(responseFromBroker.getString());
+				
+				if(usertype.equals(Const.USER)){
+					responseFromBroker = new SendHTTPRequest()
+					.sendPostRequest(vpdsURL + "data/query",
+							Const.MIME_TYPE_JSON, Const.API_QUERYDATA,
+							queryBodyWithSecretKey);
+				}
+				else {
+					responseFromBroker = new SendHTTPRequest()
+					.sendPostRequest(Global.URL_REPOSITORY_QUERY_DATA,
+							Const.MIME_TYPE_JSON, Const.API_QUERYDATA,
+							queryBodyWithSecretKey);
+				}
+				
+				System.out.println("Data response: "+responseFromBroker.getString());
 				WaveSegmentArray wa = gson.fromJson(
 						responseFromBroker.getString(), WaveSegmentArray.class);
 				/*

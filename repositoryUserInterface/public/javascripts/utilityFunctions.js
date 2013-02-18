@@ -115,6 +115,11 @@ function createHeaderUser() {
 	    		$("#" +key).attr('class','active');     
 	    }
 	    $("#navHeader").append("</ul>");
+
+	    $("#logout").click(function() {
+
+			window.location = URL_LOGOUT_USER;
+		});
 }
 
 function createHeaderVO() {    
@@ -141,6 +146,11 @@ function createHeaderVO() {
     		$("#" +key).attr('class','active');     
     }
     $("#navHeader").append("</ul>");
+
+    $("#logout").click(function() {
+
+		window.location = URL_LOGOUT_USER;
+	});
 }
  
 function createFooter() {     

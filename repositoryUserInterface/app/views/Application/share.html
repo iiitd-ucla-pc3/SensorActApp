@@ -43,7 +43,7 @@
 					$("#dialog").html("");
 				});
 
-				$("#shareDevice").hide();
+				$(".shareDevice").hide();
 				$("input:checkbox").prop("disabled",true);
 				$("input:checkbox").prop("checked", false);
 				$("input:radio").prop("checked", false);
@@ -336,7 +336,7 @@
 					    }
 					    else{	
 
-					    	$("#shareDevice").show('slow', function() {});
+					    	$(".shareDevice").show('slow', function() {});
 							$("input [name=accessType]").prop('checked', false);
 
 					    	$("#deviceName1").html("");
@@ -474,7 +474,7 @@
 					accessWrite = selectedAccessWrite;
 					username = $("#user").val();
 
-					alert("Before validation: \nUser "+username + " \nVpds "+vpdsName + " \nAcType "+accessType + " \nDevice"+deviceName + " \nSN "+sensorName + " \nAN "+actuatorName + " \nAcR "+accessRead + " \nAcW "+accessWrite + "\n");	
+					//alert("Before validation: \nUser "+username + " \nVpds "+vpdsName + " \nAcType "+accessType + " \nDevice"+deviceName + " \nSN "+sensorName + " \nAN "+actuatorName + " \nAcR "+accessRead + " \nAcW "+accessWrite + "\n");	
 
 					var errorStatus = validateRequest(deviceName,vpdsName, accessType,username,sensorName,actuatorName,accessRead, accessWrite);
 
@@ -602,7 +602,7 @@
 						</div>							
 					</div>
 					<br><br><br><br>
-					<table id="shareDevice">
+					<table class="shareDevice">
 						<tr id="trHeader">
 							<td>
 								<label>Access Type<sup>*</sup><img id = "infoImg" src="@{'/public/images/info_icon.jpg'}" alt="Click for more info"/></label>								

@@ -58,6 +58,7 @@ public class Const {
 	 */
 	public static final String API_LOGIN = "login";
 	public static final String API_RELOGIN = "relogin";
+	public static final String API_OPCLASSIFIER = "opclassifier";
 	public static final String API_REGISTER_VPDS = "registerVPDSToBroker";
 	public static final String API_LIST_VPDS = "listvpds";
 	public static final String API_USER_LIST = "getuserlist";
@@ -68,6 +69,7 @@ public class Const {
 	public static final String API_ADDDEVICE = "adddevice";
 	public static final String API_DELETEDEVICE = "deletedevice";
 	public static final String API_SHARE_DEVICE = "sharedevice";
+	public static final String API_VIEW_SHARED_DEVICES = "viewsharedevices";
 	public static final String API_GETDEVICE = "getdevice";
 	public static final String API_LISTALLDEVICES = "listalldevices";
 	public static final String API_LISTALLVPDSDEVICES = "listallvpdsdevices";
@@ -191,9 +193,17 @@ public class Const {
 	public static final String URL_BROKER_SHARE_DEVICE = URL_BROKER_SERVER
 			+ "device/share";
 	
+	public static final String URL_BROKER_VIEW_SHARE_DEVICES_OWNER = URL_BROKER_SERVER
+			+ "device/owner/shared";
+	
+	public static final String URL_BROKER_VIEW_SHARE_DEVICES_USER = URL_BROKER_SERVER
+			+ "device/user/shared";
+	
 	public static final String URL_BROKER_SEARCH_DEVICE = URL_BROKER_SERVER
 			+ "device/search";
 	
+	public static final String URL_BROKER_GET_ACCESS_KEY = URL_BROKER_SERVER
+			+ "accesskey/get";
 
 	public static final String URL_BROKER_LIST_ALL_DEVICES = URL_BROKER_SERVER
 			+ "listalldevices";
@@ -217,6 +227,11 @@ public class Const {
 	public static final String VPDSURL = "vpdsurl";
 	public static final String VPDSKEY = "vpdskey";
 	public static final String VPDSNAME = "vpdsname";
+	
+	public static final String DEVICENAME = "devicename";
+	public static final String SENSORNAME = "sensorname";
+	public static final String ACTUATORNAME = "actuatorname";
+	public static final String ACTUATORID = "actuatorid";
 
 	/**
 	 * Defines the constants for SensorAct error messages

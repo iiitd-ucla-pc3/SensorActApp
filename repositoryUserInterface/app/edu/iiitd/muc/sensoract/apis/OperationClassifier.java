@@ -33,24 +33,67 @@
  * *
  * *
  ******************************************************************************/
-package edu.iiitd.muc.sensoract.format;
+package edu.iiitd.muc.sensoract.apis;
 
-import edu.iiitd.muc.sensoract.apis.SensorActAPI;
+import play.libs.WS;
+import play.libs.WS.HttpResponse;
+import play.mvc.Http;
+import edu.iiitd.muc.sensoract.constants.Const;
+import edu.iiitd.muc.sensoract.exceptions.InvalidJsonException;
+import edu.iiitd.muc.sensoract.format.APIResponse;
+import edu.iiitd.muc.sensoract.format.ManageVPDSRequest;
+import edu.iiitd.muc.sensoract.format.OperationClassifierFormat;
+import edu.iiitd.muc.sensoract.utilities.SecretKey;
+import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 
-public class QueryToRepo extends SensorActAPI {
-	public QueryConditions conditions;
-	public String devicename;
-	public String sensorname;
-	public String username;
-	public String secretkey;
+/**
+ * Redirects to the appropriate page and puts relevant variables in the session
+ * 
+ * @author Manaswi Saha
+ * 
+ */
+public class OperationClassifier extends SensorActAPI {
 
-	public QueryToRepo(QueryConditions conditions, String devicename,
-			String sensorname, String username, String secretkey) {
-		this.conditions = conditions;
-		this.devicename = devicename;
-		this.sensorname = sensorname;
-		this.username = username;
-		this.secretkey = secretkey;
+	/**
+	 * 
+	 * @param body
+	 */
+
+	public final void doProcess(String body) {
+		
+		logger.info(Const.API_OPCLASSIFIER, body);
+		
+		OperationClassifierFormat oprequest = null;
+		try {
+			oprequest = gson
+					.fromJson(body, OperationClassifierFormat.class);
+		} catch (Exception e) {
+			renderJSON(gson.toJson(new APIResponse(Const.API_OPCLASSIFIER, 1, e
+					.toString())));
+		}
+		
+		session.put(Const.VPDSNAME,oprequest.vpdsname);
+		session.put(Const.DEVICENAME,oprequest.devicename);
+		
+		if(oprequest.origin.equals("visualize")) {
+			session.put(Const.SENSORNAME,oprequest.sensorname);
+			renderJSON("{\"url\": \"" + Http.Request.current().getBase() + "/userdisplay\"}");
+		}
+		else if (oprequest.origin.equals("actuate"))  {
+			session.put(Const.ACTUATORNAME,oprequest.actuatorname);
+			session.put(Const.ACTUATORID,oprequest.actuatorid);
+			renderJSON("{\"url\": \"" + Http.Request.current().getBase() + "/useractuate\"}");
+		}
+		else{
+			session.put(Const.ACTUATORNAME,oprequest.actuatorname);
+			session.put(Const.ACTUATORID,oprequest.actuatorid);
+			renderJSON("{\"url\": \"" + Http.Request.current().getBase() + "/userpresenceactuate\"}");
+		}
+		
+
+		
+
 	}
+	
 
 }

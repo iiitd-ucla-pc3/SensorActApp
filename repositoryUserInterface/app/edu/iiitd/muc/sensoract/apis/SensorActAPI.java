@@ -85,6 +85,8 @@ public class SensorActAPI extends Application {
 	public static GetVPDSList getVPDSList = new GetVPDSList();
 	public static GetUserList getUserList = new GetUserList();
 	public static ShareDevice shareDevice = new ShareDevice();
+	public static ViewSharedDevices viewShareDevices = new ViewSharedDevices();
+	public static OperationClassifier opClassifier = new OperationClassifier();
 
 	public static SensorActLogger logger = new SensorActLogger();
 	public static SoundInput soundInput = new SoundInput();

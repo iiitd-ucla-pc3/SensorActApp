@@ -35,22 +35,16 @@
  ******************************************************************************/
 package edu.iiitd.muc.sensoract.format;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import edu.iiitd.muc.sensoract.apis.SensorActAPI;
 
-public class QueryToRepo extends SensorActAPI {
-	public QueryConditions conditions;
-	public String devicename;
-	public String sensorname;
-	public String username;
-	public String secretkey;
-
-	public QueryToRepo(QueryConditions conditions, String devicename,
-			String sensorname, String username, String secretkey) {
-		this.conditions = conditions;
-		this.devicename = devicename;
-		this.sensorname = sensorname;
-		this.username = username;
-		this.secretkey = secretkey;
-	}
+public class CancelActuateRequestFormat extends SensorActAPI {
+	
+	public String secretkey = null;
+	public List<String> cancelRequestList = new ArrayList<String>();
+	public String vpdsname = null;
 
 }

@@ -46,9 +46,15 @@ package edu.iiitd.muc.sensoract.apis;
 /*
  * Standard play imports
  */
+import java.util.Map;
+
 import play.libs.WS.HttpResponse;
 import edu.iiitd.muc.sensoract.constants.Const;
+import edu.iiitd.muc.sensoract.format.ActuateRequest;
+import edu.iiitd.muc.sensoract.format.ActuateVPDSRequest;
 import edu.iiitd.muc.sensoract.format.DeviceActuateFormat;
+import edu.iiitd.muc.sensoract.format.GetAccessKeyResponseFormat;
+import edu.iiitd.muc.sensoract.format.QueryRequest;
 import edu.iiitd.muc.sensoract.utilities.SecretKey;
 import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 
@@ -75,16 +81,65 @@ public class ActuateDevice extends SensorActAPI {
 	 *            Device profile in Json
 	 */
 	public final void doProcess(String deviceActuateBody) {
-		String secretkey = Global.VPDS_OWNER_KEY;
+		
+		String usertype = session.get(Const.USERTYPE);
+		String secretkey = null;
+		String vpdsURL = null;
+		HttpResponse responseFromBroker = null;	
+		
+		ActuateRequest actRequest = gson
+				.fromJson(deviceActuateBody, ActuateRequest.class);
+		
+		if(usertype.equals(Const.USER)){
+			
+			/* Get accesskey from Broker */
+			
+			// From Json - vpdsname and secretkey
+			String usersecretkey = new SecretKey().getSecretKeyFromHashMap(session
+					.get(Const.USERNAME));
+			String jsonGetAccessKey = "{\"secretkey\" : \"" + usersecretkey + "\",\"vpdsname\": \""+ actRequest.vpdsname + "\"}";
+			logger.info(Const.API_ACTUATEDEVICE, "For "+ usertype + " " +jsonGetAccessKey);
+			
+			// Make request
+			responseFromBroker = new SendHTTPRequest()
+			.sendPostRequest(Const.URL_BROKER_GET_ACCESS_KEY,
+					Const.MIME_TYPE_JSON, Const.API_ACTUATEDEVICE,
+					jsonGetAccessKey);
+			System.out.println("Get access key "+responseFromBroker.getString());
+			
+			GetAccessKeyResponseFormat response = gson.fromJson(
+					responseFromBroker.getString(),GetAccessKeyResponseFormat.class);
+			
+			//Set secretkey as accesskey
+			actRequest.secretkey = response.accesskey;
+			vpdsURL = response.vpdsurl;
+		}
+		else if(usertype.equals(Const.OWNER)){
+			//Set secretkey as owner key
+			actRequest.secretkey = Global.VPDS_OWNER_KEY;			
+		}
+		
+		ActuateVPDSRequest toSend = new ActuateVPDSRequest(
+				actRequest.secretkey, actRequest.taskletname, actRequest.desc, actRequest.param,
+				actRequest.input, actRequest.when, actRequest.execute);
+		
+		String jsonToSend = gson.toJson(toSend);
 
-		String deviceActuateBodyWithSecretKey = deviceActuateBody.replace(
-				Const.FAKE_SECRET_KEY, secretkey);
-		logger.info(Const.API_ACTUATEDEVICE, secretkey + " " + deviceActuateBody);
-
-		HttpResponse responseFromVPDS = new SendHTTPRequest()
-				.sendPostRequest(Global.URL_REPOSITORY_ACTUATE_DEVICE,
-						Const.MIME_TYPE_JSON, Const.API_ACTUATEDEVICE,
-						deviceActuateBodyWithSecretKey);
-		renderJSON(responseFromVPDS.getString());
+		logger.info(Const.API_ACTUATEDEVICE, secretkey + " " + jsonToSend);
+		
+		if(usertype.equals(Const.USER)){
+			responseFromBroker = new SendHTTPRequest()
+			.sendPostRequest(vpdsURL + "device/actuate",
+					Const.MIME_TYPE_JSON, Const.API_ACTUATEDEVICE,
+					jsonToSend);
+		}
+		else {
+			responseFromBroker = new SendHTTPRequest()
+			.sendPostRequest(Global.URL_REPOSITORY_ACTUATE_DEVICE,
+					Const.MIME_TYPE_JSON, Const.API_ACTUATEDEVICE,
+					jsonToSend);
+		}
+		
+		renderJSON(responseFromBroker.getString());
 	}
 }
