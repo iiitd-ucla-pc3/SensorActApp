@@ -264,7 +264,7 @@
 				    	var numberOfUsers = responseFromServer[USERNAME_ARRAY].length;
 				    	if (numberOfUsers > 0) {
 				    		
-				    		for (var index in responseFromServer[USERNAME_ARRAY]) 
+				    		for (var index in responseFromServer[USERNAME_ARRAY]) responseFromServer
 				    			$("#user").append("<option value ='"+responseFromServer[USERNAME_ARRAY][index]+"'>"+ responseFromServer[USERNAME_ARRAY][index]+"</option>");
 				    	}
 				    	else
@@ -539,8 +539,123 @@
 					catch(e){
 					    alertAddError("Error: " + e);
 					}
+				});
+
+				$("#dialogList:ui-dialog").dialog("destroy");
+				var dlg1 = $("#dialogList").dialog({
+					autoOpen : false,
+					draggable : true,
+					resizable : true,
+					width : 1000,
+					modal : true
+				});
+
+				$( "#dialogList" ).bind( "dialogbeforeclose", function(event, ui) {
+					$("#dialogList").html("");
+				});
+
+				/* 
+				 * List all the devices shared by the OWNER
+				 */ 
+				$("#IDViewRequest").click(function() {
+
+					try {
+						
+						$.post(URL_UI_SERVER+URL_LIST_SHARED_DEVICES, function(data) {
+								receivedData = data;
+						});						
+
+						if (!receivedData.hasOwnProperty(RESPONSE_STATUS_CODE)) {
+
+							if (receivedData[VIEW_SHARE_DEVICE_LIST].length > 0)	{ //Success						
+								
+								$("#dialogList").append("<div id =\"errorCDiv\" style=\"color: red;padding:5px; font-size: 1\"</div><br/>");
+								$("#errorCDiv").hide();
+								$("#dialogList").append("<table id=\"sList\" class = \"shareDevice\" style=\"font-size:15px;\"> \
+									<tr id=\"listHeader\"><td>User Name</td> \
+										<td>VPDS Name</td> \
+										<td>Device Name</td> \
+										<td>Sensor Name</td> \
+										<td>Actuator Name</td> \
+										<td>Read Access</td> \
+										<td style=\"border-width:0px\">Write Access</td> \
+									</tr></table");
+								var sensor_name, actuator_name;
+								for (var index in receivedData[VIEW_SHARE_DEVICE_LIST]) {
+
+									if (typeof receivedData[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][SHARE_ACTUATOR_NAME] === 'undefined')
+										actuator_name = "--";
+									else
+										actuator_name = receivedData[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][SHARE_ACTUATOR_NAME];
+									if (typeof receivedData[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][SHARE_SENSOR_NAME] === 'undefined')
+										sensor_name = "--";
+									else
+										 sensor_name = receivedData[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][SHARE_SENSOR_NAME];
+										
+									$("#sList").append('<tr> \
+										<td><div class="leftDiv"> \
+				    					<label id="user">'+receivedData[VIEW_SHARE_DEVICE_LIST][index][SHARE_USERNAME]+'</label></div></td> \
+										<td><div class="leftDiv"> \
+				    					<label id="vpdsname">'+receivedData[VIEW_SHARE_DEVICE_LIST][index][VIEW_SHARE_VPDS_NAME]+'</label></div></td> \
+				    					<td><div class="leftDiv">	\
+										<label id="devicename">'+receivedData[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][DEVICE_NAME]+'</label></div></td> \
+										<td><div class="leftDiv">	\
+										<label id="sensorname">'+sensor_name+'</label><input id="sensorid" type="hidden" value="'+receivedData[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][SHARE_SENSOR_ID]+'"/></div></td> \
+										<td><div class="leftDiv">	\
+										<label id="actuatorname">'+actuator_name+'</label><input id="actuatorid" type="hidden" value="'+receivedData[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][SHARE_ACTUATOR_ID]+'"/></div></td> \
+										<td><div class="leftDiv" style="text-align:center"> \
+										<label id="readActuator">'+receivedData[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE_PERMISSION][READ]+'</label></td> \
+										<td style="border-width: 0;"><div class="leftDiv" style="text-align:center"> \
+										<label id="writeActuator">'+receivedData[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE_PERMISSION][WRITE]+'</label></div></td></tr>');															
+								}
+								
+								//$("#dialog").append("<br><botton id=\"IDSelectAllButton\" class=\"google-button\" align=\"center\">Select/Deselect All</botton> &nbsp; <botton id=\"IDCancelReqButton\" class=\"google-button\" align=\"center\">Cancel Requests</botton>");
+								
+								/*var prevSelect = false;
+								$("#IDSelectAllButton").click(function() {
+
+									$("#dialog").find("input").each(function() {
+
+										if(prevSelect) {
+											$(this).attr('checked',false);
+										}											
+										else {
+											$(this).attr('checked',true);
+										}
+												
+									});
+
+									if (!prevSelect) {											
+										prevSelect = true;
+									}
+									else
+										prevSelect = false;
+
+								});	*/				
+							}
+							else {
+								alertAddError("Following error occured: " + receivedData[RESPONSE_MESSAGE]);
+							}
+
+							
+
+							dlg1.dialog("open");
+							/*dlg.dialog("option", "position", {
+								//my: "center top",
+								//at: "right top",
+								//offset: "20 20"
+							});*/
+							return false;
+
+						}
+						else
+							alertAddError("You have not shared any devices!");
 
 
+					} catch(e) {
+
+						alertAddError("Following error occurred: " + receivedData[RESPONSE_MESSAGE]);
+					}
 
 				});
 
@@ -579,6 +694,23 @@
 				<div id="visualBox" style="">
 
 					<div id="dialog" title = "Permissions Information" style="font-size:1;"></div>
+					<div id="dialogList" title = "Devices Shared By You" style="font-size:1;"></div>
+
+					<!--Right Pane starts here-->
+					<div id="displaySharedDevices" style="float:right;">
+						<div class="leftDiv" style="clear:both;text-align:center;">
+							<div id="dialog" title = "Devices Shared By Me" style="font-size:1;"></div>
+							<button id="IDViewRequest" class="google-button">
+							View Devices Shared By Me
+							</button>
+							<br/>
+						</div>
+						<div class="rightDiv">
+							<span class="errorVisual" id="spanViewRequest"></span>
+						</div>
+						<br />
+					</div>
+					<!-- Right Pane ends here-->
 
 					<div id="divUser">
 						<div class="leftDiv">

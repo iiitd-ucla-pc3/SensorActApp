@@ -86,6 +86,7 @@ public class SensorActAPI extends Application {
 	public static GetUserList getUserList = new GetUserList();
 	public static ShareDevice shareDevice = new ShareDevice();
 	public static ViewSharedDevices viewShareDevices = new ViewSharedDevices();
+	public static ListSharedDevicesByOwner listSharedDevices = new ListSharedDevicesByOwner();
 	public static OperationClassifier opClassifier = new OperationClassifier();
 
 	public static SensorActLogger logger = new SensorActLogger();

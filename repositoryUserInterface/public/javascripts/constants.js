@@ -142,6 +142,7 @@ var SHARE_SENSOR_NAME="sensorname";
 var SHARE_SENSOR_ID="sensorid";
 var SHARE_ACTUATOR_NAME="actuatorname";
 var SHARE_ACTUATOR_ID="actuatorid";
+var SHARE_USERNAME="username";
 var READ="read";
 var WRITE="write";
 
@@ -259,6 +260,7 @@ var URL_LIST_USERS="listallusers";
 var URL_SHARE_DEVICE="sharedevice";
 var URL_VIEW_SHARED_DEVICES="viewsharedevices";
 var URL_OP_CLASSIFIER="opclassifier";
+var URL_LIST_SHARED_DEVICES="listsharedevices";
 
 var URL_ADD_DEVICE="adddevice";
 var URL_DELETE_DEVICE="deletedevice";

@@ -32,6 +32,7 @@ GET     /share									Application.share
 GET     /getuserlist							Application.getuserlist
 POST	/sharedevice							Application.sharedevice
 POST	/viewsharedevices						Application.viewsharedevices
+POST	/listsharedevices						Application.listsharedevices
 
 GET     /managevpds								Application.managevpds
 POST	/getvpdsdetails							Application.getvpdsdetails

@@ -38,8 +38,12 @@
 		<script type="text/javascript">
 			$(document).ready(function() {
 
-				createHeader();	
+				createHeaderUser();	
 				createFooter();
+
+				var devicename = $("#devicename").val();
+				var actuatorname = $("#actuatorname").val();
+				var vpdsname = $("#vpdsname").val();
 
 				/**
 				 * Global Variables used during the lifecycle of the page
@@ -48,8 +52,6 @@
 				var selectedDate;
 				var fromDay, toDay;
 				var MotionSensor, MotionSensorID;
-
-				var temp="http://"+document.location.hostname+":"+document.location.port+"/";
 
 
 				/*
@@ -302,14 +304,12 @@
 					
 					try {
 
-						var temp="http://"+document.location.hostname+":"+document.location.port+"/";
-
-						$.post(temp+URL_ACTUATE_DEVICE, JSON.stringify(tasklet), function(data) {
+						$.post(URL_UI_SERVER+URL_ACTUATE_DEVICE, JSON.stringify(tasklet), function(data) {
 								receivedData = data;
 						});
 						if(receivedData[RESPONSE_STATUS_CODE] == SUCCESS) {
 							alert("Actuation request made successfully!");
-							window.location = temp + URL_PRESENCE_ACTUATE;
+							window.location = URL_UI_SERVER + URL_SHARED_DEVICES;
 						}
 						else {
 							alertActuateDeviceError("Following error occured: " + receivedData[RESPONSE_MESSAGE]);
@@ -345,7 +345,7 @@
 					}					
 					else{
 						//check whether there is an association for the selected actuator
-						var urlGuardRulesAssocGet =	temp+URL_ASSOC_GET_GUARD_RULE;
+						var urlGuardRulesAssocGet =	URL_UI_SERVER+URL_ASSOC_GET_GUARD_RULE;
 						var getAssoc = {};
 						var guardRuleAssoc = [];
 						getAssoc[SECRET_KEY] = FAKE_SECRET_KEY;
@@ -366,7 +366,7 @@
 							if(guardRuleAssoc[RESPONSE_STATUS_CODE] == NO_GUARD_RULEASSOC_FOUND) {
 								
 								errorState = true;
-								var url = temp+URL_GUARD_RULE;
+								var url = URL_UI_SERVER+URL_GUARD_RULE;
 
 								$("#spanMS" + removeSpace(deviceMSName)).show('slow', function() {
 								});
@@ -377,58 +377,12 @@
 
 					return errorState;
 				}
-				function validateARequest(selectedAItem, actuatorID) {
-					$(".errorVisual").hide("");
-					$("#IDDeviceSelect").removeClass("error");
-					errorState = false;
-
-					if (typeof selectedAItem === 'undefined') {
-						errorState = true;
-
-						$("#span" + removeSpace(deviceName)).show('slow', function() {
-						});
-						$("#span" + removeSpace(deviceName)).html('Please select an actuator');				
-
-					}
-					else{
-						//check whether there is an association for the selected actuator
-						var urlGuardRulesAssocGet =	temp+URL_ASSOC_GET_GUARD_RULE;
-						var getAssoc = {};
-						var guardRuleAssoc = [];
-						getAssoc[SECRET_KEY] = FAKE_SECRET_KEY;
-						getAssoc[GUARDASSOCRULE_DEVICENAME] = deviceName;
-						getAssoc[GUARDASSOCRULE_ACTUATORNAME] = selectedAItem;
-						getAssoc[GUARDASSOCRULE_ACTUATORID] = actuatorID;
-
-						try{
-							$.post(urlGuardRulesAssocGet, JSON.stringify(getAssoc), function(data) {
-
-								guardRuleAssoc = data;
-
-							});
-						}
-						catch(e){}
-
-						if(guardRuleAssoc.hasOwnProperty(RESPONSE_STATUS_CODE)) {
-							if(guardRuleAssoc[RESPONSE_STATUS_CODE] == NO_GUARD_RULEASSOC_FOUND) {
-								
-								errorState = true;
-								var url = temp+URL_GUARD_RULE;
-
-								$("#span" + removeSpace(deviceName)).show('slow', function() {
-								});
-								$("#span" + removeSpace(deviceName)).html('This actuator is not associated with any guard rule. First <a href="'+url+'">Create an Association</a> for this actuator');								
-							}						
-						}	
-					}
-
-					return errorState;
-				}
+		
 
 				function validateRequest(fromTime, toTime, thresholdM, thresholdNM) {		
 
 					$(".errorVisual").hide("");
-					$("#IDMSensorSelect, #IDDeviceSelect,#fromtime","#totime").removeClass("error");			
+					$("#IDMSensorSelect,#fromtime","#totime").removeClass("error");			
 					
 					if (thresholdM.length == 0) {						
 						errorState = true;
@@ -580,51 +534,7 @@
 					var errorState = validateSRequest(selectedSItem, MotionSensorID);
 					if (errorState) {
 						return false;
-					}				
-
-					// Validating whether any device for actuator has been selected
-
-					if (typeof selectedADeviceName === 'undefined' || selectedADeviceName == "") {
-						
-						$("#IDDeviceSelect").addClass("error");
-						$("#spanDevice").show('slow', function() {});
-
-						$("#spanDevice").html("Please Select a device");
-						$("#IDDeviceSelect").focus();
-
-						return false;
-					}			
-
-					$("#div" + removeSpace(selectedADeviceName)).children('.actuator').find("input").each(function() {
-				
-						if ($(this).prop("checked")) {
-
-							var property = $(this);
-							for (var index in receivedDeviceData[DEVICE_ARRAY]) {	
-							
-								if ( DEVICE_ACTUATORS in receivedDeviceData[DEVICE_ARRAY][index]) {
-								
-									var actuatorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_ACTUATORS];								
-
-									for (var indexActuators in receivedDeviceData[DEVICE_ARRAY][index][DEVICE_ACTUATORS]) {
-
-										var actuatorName = actuatorArray[indexActuators][DEVICE_ACTUATOR_NAME];											
-										if (actuatorName == property.val()) {								
-											actuatorID = actuatorArray[indexActuators][DEVICE_ACTUATOR_ID];
-											break;
-										}	
-									}
-								}
-							}								
-							selectedAItem = $(this).val();								
-						}
-					});
-
-
-					errorState = validateARequest(selectedAItem, actuatorID);
-					if (errorState) {
-						return false;
-					}	
+					}
 
 					/*
 
@@ -646,7 +556,7 @@
 						return false;
 					}
 													
-					makeRequest(selectedAItem, actuatorID, fromTime, toTime, thresholdM, thresholdNM);
+					makeRequest(fromTime, toTime, thresholdM, thresholdNM);
 				});
 
 				/*
@@ -655,9 +565,8 @@
 
 				//Getting Device List
 				try {
-					var temp="http://"+document.location.hostname+":"+document.location.port+"/";
 
-					$.get(temp+URL_LIST_ALL_DEVICES, function(data) {					
+					$.get(URL_UI_SERVER+URL_LIST_ALL_DEVICES, function(data) {					
 						receivedDeviceData = data;					
 					});
 				} catch(e) {
@@ -672,8 +581,6 @@
 						for (var index in receivedDeviceData[DEVICE_ARRAY]) {
 							var name = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_NAME];
 
-							if(!(typeof receivedDeviceData[DEVICE_ARRAY][index][DEVICE_ACTUATORS] === 'undefined'))	
-								$("#divDeviceSelect").append("<div class=\"device\" id=\"div" + removeSpace(name) + "\"><input type=\"radio\" name=\"IDDeviceSelect\" value=\"" + name + "\" />&nbsp&nbsp" + name + "</div>");
 							if(!(typeof receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS] === 'undefined'))
 								$("#divMSensorSelect").append("<div class=\"msensor\" id=\"divMS" + removeSpace(name) + "\"><input type=\"radio\" name=\"IDMSensorSelect\" value=\"" + name + "\" />&nbsp&nbsp" + name + "</div>");
 						}
@@ -691,7 +598,7 @@
 						var deviceName;
 						var deviceMSName;
 						var previousValue = {};
-						$("input[name=IDDeviceSelect],input[name=IDMSensorSelect]").click(function() {
+						$("input[name=IDMSensorSelect]").click(function() {
 							
 							var clickedItem = $(this).attr('name')+this.value;		
 							//alert("Clicked device:" + clickedItem);		 
@@ -702,14 +609,11 @@
 
 						    if(previousValue[clickedItem] == 'checked'){
 						    	//alert(previousValue[clickedItem]);
-						    	if($(this).attr('name') == "IDDeviceSelect") {
-						    		$("#div" + removeSpace(this.value)).children('.actuator').remove();
-						    		deviceName = "";
-						    	}
-						    	else{
+						    	if($(this).attr('name') == "IDMSensorSelect") {
 						    		$("#divMS" + removeSpace(this.value)).children('.sensor').remove();
 						    		deviceMSName = "";
 						    	}
+
 							    $(this).attr("checked", false);							    
 								
 								previousValue[clickedItem] = "unchecked";  	     
@@ -720,8 +624,6 @@
 
 								if ($(this).attr('checked')) {
 
-									if($(this).attr('name') == "IDDeviceSelect") 
-										deviceName = this.value;
 									else if($(this).attr('name') == "IDMSensorSelect")
 										deviceMSName = this.value;
 									
@@ -729,53 +631,26 @@
 										var name = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_NAME];
 								
 										if (name == this.value) {
-																					
-											if($(this).attr('name') == "IDDeviceSelect") {
+											
+											if ($("#IDMSensorSelect").is('.error')) {
 
-												if ($("#IDDeviceSelect").is('.error')) {
-													
-													$("#IDDeviceSelect").removeClass("error");
-													$("#spanDevice").hide();
-													$("#IDActuateDevice").removeAttr("disabled", "disabled");
+												$("#IDMSensorSelect").removeClass("error");
+												$("#spanSensor").hide();
+												$("#IDActuateDevice").removeAttr("disabled", "disabled");
 
-												}												
-
-												if ( DEVICE_ACTUATORS in receivedDeviceData[DEVICE_ARRAY][index]) {
-												
-													var actuatorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_ACTUATORS];
-													
-													//$("#labelActuatorSelect").show();
-
-													$("#div" + removeSpace(name)).append("<div class=\"actuator\">");
-													for (var actuator in actuatorArray) {
-														$("#div" + removeSpace(name)).children(".actuator").append("<input id=\"actuatorID\" type=\"radio\" name = \"actuatorID\" value=" + actuatorArray[actuator][DEVICE_ACTUATOR_NAME] + ">&nbsp" + actuatorArray[actuator][DEVICE_ACTUATOR_NAME] + "&nbsp&nbsp</input>");
-													}
-													$("#div" + removeSpace(name)).append("</div><span class=\"errorVisual\" id=\"span" + removeSpace(name) + "\" style=\"display:none;\"></span>");
-
-													error = 0;
-												}												
 											}
-											else{
-												if ($("#IDMSensorSelect").is('.error')) {
 
-													$("#IDMSensorSelect").removeClass("error");
-													$("#spanSensor").hide();
-													$("#IDActuateDevice").removeAttr("disabled", "disabled");
-
-												}
-
-												if ( DEVICE_SENSORS in receivedDeviceData[DEVICE_ARRAY][index]) {
+											if ( DEVICE_SENSORS in receivedDeviceData[DEVICE_ARRAY][index]) {
+											
+												var sensorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS];
 												
-													var sensorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS];
-													
-													$("#divMS" + removeSpace(name)).append("<div class=\"sensor\"></div>");
-													for (var sensor in sensorArray) {
-														$("#divMS" + removeSpace(name)).children(".sensor").append("<input id=\"sensorID\" type=\"radio\" name = \"sensorID\" value=" + sensorArray[sensor][DEVICE_SENSOR_NAME] + ">&nbsp" + sensorArray[sensor][DEVICE_SENSOR_NAME] + "&nbsp&nbsp</input>");
-													}
-													$("#divMS" + removeSpace(name)).append("<span class=\"errorVisual\" id=\"spanMS" + removeSpace(name) + "\" style=\"display:none;\"></span>");
-
-													error = 0;
+												$("#divMS" + removeSpace(name)).append("<div class=\"sensor\"></div>");
+												for (var sensor in sensorArray) {
+													$("#divMS" + removeSpace(name)).children(".sensor").append("<input id=\"sensorID\" type=\"radio\" name = \"sensorID\" value=" + sensorArray[sensor][DEVICE_SENSOR_NAME] + ">&nbsp" + sensorArray[sensor][DEVICE_SENSOR_NAME] + "&nbsp&nbsp</input>");
 												}
+												$("#divMS" + removeSpace(name)).append("<span class=\"errorVisual\" id=\"spanMS" + removeSpace(name) + "\" style=\"display:none;\"></span>");
+
+												error = 0;
 											}
 										}
 									}
@@ -806,9 +681,11 @@
 				$("#IDViewRequest").click(function() {
 
 					try {
+
+						var jsonList = {};
+						jsonList[VPDS_NAME]=vpdsname;
 						
-						var temp="http://"+document.location.hostname+":"+document.location.port+"/";
-						$.post(temp+URL_LIST_ACTUATE_REQUEST, function(data) {
+						$.post(URL_UI_SERVER+URL_LIST_ACTUATE_REQUEST, JSON.stringify(jsonList), function(data) {
 								receivedData = data;
 						});						
 
@@ -819,7 +696,7 @@
 								
 								$("#dialog").append("<div id =\"errorCDiv\" style=\"color: red;padding:5px; font-size: 1\"</div><br/>");
 								$("#errorCDiv").hide();
-								$("#dialog").append("<table id=\"actList\" style=\"font-size:15px\"><tr><td></td><td><b>Request Description</b></tr></table");
+								$("#dialog").append("<table id=\"actList\" style=\"font-size:15px\"><tr><td></td><td><b>Request Description</b></tr></td></table");
 								for (var index in receivedData[DEVICE_ACTLIST_ARRAY]) {
 									var name = receivedData[DEVICE_ACTLIST_ARRAY][index][ACTUATION_DESC];
 									var taskletId = receivedData[DEVICE_ACTLIST_ARRAY][index][ACTUATION_TASKLETID]; 
@@ -877,14 +754,14 @@
 									cancelReqList["cancelRequestList"] = listCReq;											
 
 									try {
-										//var temp="http://"+document.location.hostname+":"+document.location.port+"/";
-										$.post(temp+URL_CANCEL_ACTUATE_REQUEST, JSON.stringify(cancelReqList), function(data) {
+										
+										$.post(URL_UI_SERVER+URL_CANCEL_ACTUATE_REQUEST, JSON.stringify(cancelReqList), function(data) {
 										receivedData = data;
 										});
 										if(receivedData[RESPONSE_STATUS_CODE] == SUCCESS) {
 
 											alert("Actuation requests successfully cancelled!");
-											window.location = temp + URL_PRESENCE_ACTUATE;
+											window.location = URL_UI_SERVER + URL_PRESENCE_ACTUATE;
 										}
 										else {
 											if(receivedData[RESPONSE_STATUS_CODE] == TASKLET_NOT_CANCELED) {
@@ -987,6 +864,25 @@
 				<!-- Right Pane ends here-->						
 				<!-- Left Pane starts here-->
 				<div id="visualBox" style="">
+					
+					<div class="leftDiv">
+						<label>Device :</label>
+					</div>
+					<div class="rightDiv">
+						<div id="selectedDevice">
+							<input type="text" readonly='true' value=${devicename} />
+						</div>
+					</div>
+
+					<div class="leftDiv">
+						<label>Actuator : </label>
+					</div>
+					<div class="rightDiv">
+						<div id="selectedActuator">
+							<input type="text" readonly='true' value=${actuatorname} />
+						</div>
+					</div>
+
 					<div class="leftDiv">
 						<label>Select a motion sensor:<sup>*</sup></label>
 					</div>
@@ -996,15 +892,7 @@
 						</div>
 						<span class="errorVisual" id="spanSensor"></span>
 					</div>
-					<div class="leftDiv">
-						<label>Select Device to actuate:<sup>*</sup></label>
-					</div>
-					<div class="rightDiv">
-						<div id="divDeviceSelect">
 
-						</div>
-						<span class="errorVisual" id="spanDevice"></span>
-					</div>
 					<div class="leftDiv" style="padding-top: 10px">
 							Select Threshold value for motion detection: <sup>*</sup><input type="text" id="thresholdM" maxlength= "4" size ="4" value="1"/>
 							<font size="1">(in count)</font>			
@@ -1072,9 +960,9 @@
 		<div id="iFields">
 			<input id="username"  type="hidden" value=${username}> 
 			<input id="usertype"  type="hidden" value=${usertype}> 
-			<input id="vpdsname"  type="hidden" value=${vpdsname}> 
-			<input id="vpdsurl"  type="hidden" value=${vpdsurl}>
-			<input id="vpdskey"  type="hidden" value=${vpdskey}>
+			<input id="vpdsname"  type="hidden" value=${vpdsname}>
+			<input id="devicename"  type="hidden" value=${devicename}>
+			<input id="actuatorname"  type="hidden" value=${actuatorname}>
 		</div>
 		<div style="clear:both;" id="footer-container">
 			

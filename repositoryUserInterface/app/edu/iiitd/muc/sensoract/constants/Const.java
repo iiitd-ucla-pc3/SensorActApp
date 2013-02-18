@@ -70,6 +70,7 @@ public class Const {
 	public static final String API_DELETEDEVICE = "deletedevice";
 	public static final String API_SHARE_DEVICE = "sharedevice";
 	public static final String API_VIEW_SHARED_DEVICES = "viewsharedevices";
+	public static final String API_LIST_SHARED_DEVICES_OWNER = "listsharedevices";
 	public static final String API_GETDEVICE = "getdevice";
 	public static final String API_LISTALLDEVICES = "listalldevices";
 	public static final String API_LISTALLVPDSDEVICES = "listallvpdsdevices";
@@ -198,6 +199,9 @@ public class Const {
 	
 	public static final String URL_BROKER_VIEW_SHARE_DEVICES_USER = URL_BROKER_SERVER
 			+ "device/user/shared";
+	
+	public static final String URL_BROKER_LIST_SHARED_DEVICES_BY_OWNER = URL_BROKER_SERVER
+			+ "device/owner/shared";
 	
 	public static final String URL_BROKER_SEARCH_DEVICE = URL_BROKER_SERVER
 			+ "device/search";

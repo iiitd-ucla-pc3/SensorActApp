@@ -1,0 +1,932 @@
+<!DOCTYPE html> <!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+	<!--<![endif]-->
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title> Display </title>
+		<link rel="shortcut icon" href="@{'/public/images/favicon.png'}" type="image/x-icon">
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/style.css'}">
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery-ui-1.8.21.custom.css'}">
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery-ui-timepicker-addon.css'}">
+
+		<!--<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/styles_non_centered.css'}">-->
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery.noty.css'}">
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/noty_theme_twitter.css'}">
+
+		<script src="@{'/public/js/libs/modernizr-2.0.6.min.js'}"></script>
+		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/jquery.noty.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/jquery-ui-1.8.20.custom.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/highcharts.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/utilityFunctions.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/exporting.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/jquery-ui-timepicker-addon.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+
+		<!--Google API-->
+		<!--<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDDZ2cfkjgRuqcVocQt_xt4esmqpNQT3KM&sensor=false"></script>-->
+		<!--Google API-->
+
+		<script type="text/javascript">
+			$(document).ready(function() {			
+
+				createHeaderUser();
+				createFooter();
+
+				var devicename = $("#devicename").val();
+				var sensorname = $("#sensorname").val();
+				var vpdsname = $("#vpdsname").val();
+
+				$(".errorVisual").hide();
+		
+				$("#resizer").hide();
+				$("#imageDiv").hide();
+				$("#tools").hide();
+
+				/***When Selected library is not Highcharts**/
+				if (!$("#selectLibrary").value == "highcharts" && $("#motionType").is(":checked"))
+					$("#divWindowSize").hide();
+
+				/****When MotionDisplay is OFF***/
+				if(!$("#motionType").is(":checked")) 
+				{
+					$("#speed").attr('disabled', 'disabled');//Disable Speed
+					$("#divWindowSize").hide();	//Disable WindowSize
+				}
+				jQuery.ajaxSetup({
+					async : false
+				});
+				/*
+				* Global variables and settings
+				*/
+
+				//Setting the charting library to use local time
+				Highcharts.setOptions({
+					global : {
+						useUTC : false
+					}
+				});
+
+	
+				var container = $('#container')[0];
+				$('#resizer').resizable({
+					// On resize, set the chart size to that of the
+					// resizer minus padding. If your chart has a lot of data or other
+					// content, the redrawing might be slow. In that case, we recommend
+					// that you use the 'stop' event instead of 'resize'.
+					resize : function() {
+						chart.setSize(this.offsetWidth - 20, this.offsetHeight - 20, false);
+					}
+				});
+			
+
+		//*****************************************Chart*****************************************************/
+				var chart;
+
+				function createChart() {
+					chart = new Highcharts.Chart({
+						chart : {
+							renderTo : 'container',
+							type : 'line',
+							marginRight : 130,
+							marginBottom : 25,
+							useUTC : false,
+							zoomType : 'xy',
+
+							events : {
+								
+							}
+						},
+						title : {
+							text : 'Motion Graph',
+							x : -20 //center
+						},
+						subtitle : {
+							text : '',
+							x : -20
+						},
+						xAxis : {
+							type : 'datetime',
+
+						},
+						plotOptions : {
+							line : {
+								marker : {
+									enabled : false
+								}
+
+							}
+
+						},
+						yAxis : {
+							title : {
+								text : 'Readings'
+							},
+							plotLines : [{
+								value : 0,
+								width : 1,
+								color : '#808080',
+								line : {
+									marker : {
+										enabled : true
+									}
+								}
+							}]
+						},
+						tooltip : {
+							formatter : function() {
+								return '<b>' + this.series.name + '</b><br/>' + Highcharts.dateFormat('%e%b', this.x) + ': ' + this.y;
+							}
+						},
+						credits : {
+							enabled : false
+						},
+						legend : {
+							layout : 'vertical',
+							align : 'right',
+							verticalAlign : 'top',
+							x : 0,
+							y : 100,
+							borderWidth : 0
+						},
+						series : series
+					});
+		
+				}
+	//*****************************************Chart*****************************************************/
+				var temp="http://"+document.location.hostname+":"+document.location.port+"/";
+
+				//Setting the correct datetime format to start and end time dialog
+				
+				createDateTimePicker(ID_START_DATE_TIME_DISPLAY);
+				createDateTimePicker(ID_END_DATE_TIME_DISPLAY);
+				/*$(ID_START_DATE_TIME_DISPLAY).datetimepicker({
+					changeMonth : true,
+					changeYear : true,
+					dateFormat : "yy-mm-dd",
+					separator : "-"
+				});
+
+				$(ID_END_DATE_TIME_DISPLAY).datetimepicker({
+					changeMonth : true,
+					changeYear : true,
+					dateFormat : "yy-mm-dd",
+					separator : "-"
+				});*/
+
+				var startTime;
+				var endTime;
+				var receivedData={};
+				var errorState;
+				var errorInformation;
+				var query;
+				var username = $("#username").val();
+				var secretkey = FAKE_SECRET_KEY;
+				var series = new Array();
+				var receivedDeviceData = {}; //ListofDevices Received
+				var motionCounter; //Total Count of the Motion
+				var motionInterval;//To SetTimeInterval
+				var motionStatus = true;
+				var SPEED = 1;//Speed if Motion Display in ON
+				var minTimeStamp = -1;// To calculate the min & max timestamp
+				var maxTimeStamp = -1; //to set Window Size when Motion Display
+				var WINDOW_SIZE = $("#windowSize").val();
+				var motionType = $("#motionType").is(':checked');
+				//var library = $("#selectLibrary").val(); 
+				var library="highcharts";
+				var map;
+				var line;
+				var newPath = new Array(); //For Google Maps Polyline Path
+				var tempPath = new Array();//Temporary variable to store path
+				var motionMarker; // Markers to be placed on GMaps
+				var overlays = []; // All overlays items to be stored in it
+				var downloadData = new Array(); // Received Data is stored
+				var statsData = ""; //Statistics Data
+				var interactive; 
+				
+				/*
+				*	It is used to PLAY / PAUSE /RESET the Motion Chart when Motion Display is ON 
+				*
+				*/
+				$("#motionStop").click(function() {
+
+					
+					if (motionStatus) {
+						//Pausing the Motion Chart
+						motionStatus = false;
+						$(this).html("Start");
+						$(this).removeClass("pause");//Removing Pause Image
+						$(this).addClass("play");	//Setting the play Image
+						clearTimeout(motionInterval);
+
+						//Resetting
+						if ((library == "highcharts" && motionCounter == (maxTimeStamp - (WINDOW_SIZE - 2) * oneSECOND)) || (library == "google" && motionCounter == newPath.length)) {
+							if(library=="google")
+							line.setMap(null);
+
+							motionStatus = true;
+							$(this).html("Stop");
+							$(this).removeClass("play");//Removing Play Image
+							$(this).addClass("pause");//Setting Pause Image
+							$("#IDSendQuery").click();
+						}
+					} else {
+						//Playing Again the Motion Chart
+						motionStatus = true;
+						$(this).html("Stop");
+						$(this).removeClass("play");//Removing Play Image
+						$(this).addClass("pause");	//Setting Play Image
+						if (library == "highcharts")
+							motionRepeat();
+						else if (library == "google")
+							mapRepeat();
+
+					}
+
+				});
+				
+				/** When Motion Display in ON , To change Speed dynamically**/
+				$("#speed").change(function() {
+
+					SPEED = (this).value;
+
+				});
+
+				/**Motion Display Change Event **/
+				$("#motionType").change(function() {
+
+					motionType = $(this).is(':checked');
+					if (!$(this).is(':checked')) { 
+							//If MotionDisplay is Off
+						$("#speed").attr('disabled', 'disabled');
+						$("#containerTools").hide();
+						$("#divWindowSize").hide();
+
+					} else {
+							//If Motion Display is ON
+						$("#speed").removeAttr('disabled');
+
+						if ($("#selectLibrary").val() == "highcharts")
+							$("#divWindowSize").show();
+					}
+
+				});
+
+				/*Library change Event*/
+				$("#selectLibrary").change(function() {
+					library = (this).value;
+
+					if (this.value == "highcharts" && $("#motionType").is(":checked"))
+						$("#divWindowSize").show();
+					else
+						$("#divWindowSize").hide();
+
+				});
+
+				/*When Motion Display is ON, It changes window Size Dynamically*/
+				$("#windowSize").change(function() {
+
+					WINDOW_SIZE = (this).value;
+
+				});
+
+				/*
+				*	To Calculate Minimum & Maximum TimeStamp
+				*/
+				function calcTimeStamp() {
+					//Minimum TimeStamp
+					if (minTimeStamp == -1)
+						minTimeStamp = chart.series[0].data[0].x;
+
+					for ( i = 0; i < chart.series.length; i++) {
+
+						if (chart.series[i].data[0].x < minTimeStamp)
+							minTimeStamp = chart.series[i].data[0].x;
+					}
+
+					//Maximum TimeStamp
+					if (maxTimeStamp == -1)
+						maxTimeStamp = chart.series[0].data[chart.series[0].data.length - 1].x;
+					for ( i = 0; i < chart.series.length; i++) {
+
+						if (chart.series[i].data[chart.series[i].data.length - 1].x > maxTimeStamp)
+							maxTimeStamp = chart.series[i].data[chart.series[i].data.length - 1].x;
+					}
+				}
+
+				/*
+				* Description:This function takes the device name,selected set of sensors and start
+				* and end time and for each sensor makes a request to the Server to fetch the data
+				* It also calls the function appendElementToSeries which for each Sensor adds it to
+				* the charting library
+				*
+				* I/P:
+				* 1.Name of device
+				* 2.Array Of Selected Sensors
+				* 3.Start Time					//$.get("http://www.google.com" + "?secretkey=" + secretkey, function(data){
+
+				* 4.End Time
+				*
+				* O/P:
+				* 1.AJAX POST to UI Server+Adding the new series to the chart
+				*/
+
+				//function makeRequestAndDisplayChart(selectedDeviceName, selectedSensorArray, startTime, endTime) {
+				function makeRequestAndDisplayChart(startTime, endTime) {
+					//for(device in allSelectedItems
+					statsData = "";
+					var query = {};
+					query[QUERY_CONDITIONS] = {};
+					query[VPDS_NAME] = vpdsname;
+					query[QUERY_CONDITIONS][QUERY_CONDITIONS_FROM_TIME] = startTime;
+					query[QUERY_CONDITIONS][QUERY_CONDITIONS_TO_TIME] = endTime;
+					query[QUERY_USER_NAME] = username;
+					query[QUERY_IS_INTERACTIVE] = interactive;
+					var mode=interactive=="true"?"interactive":"non interactive";
+					var r =showNoty("Chart Loading in "+mode + " mode", "center", "off",500);
+					query[QUERY_DEVICE_ARRAY] = new Array();
+					var i = 0;
+					query[QUERY_DEVICE_ARRAY][i] = {};
+					query[QUERY_DEVICE_ARRAY][i][QUERY_DEVICE] = devicename;
+					var j = 0;
+					query[QUERY_DEVICE_ARRAY][i][QUERY_SENSOR_ARRAY] = new Array();
+					query[QUERY_DEVICE_ARRAY][i][QUERY_SENSOR_ARRAY][j] = {};
+					query[QUERY_DEVICE_ARRAY][i][QUERY_SENSOR_ARRAY][j][QUERY_SENSOR] = sensorname;
+
+					try {
+
+
+					$.post(URL_UI_SERVER+URL_QUERY_DATA, JSON.stringify(query), function(data) {
+							receivedData = data;
+						
+
+						});
+						if (!(receivedData.hasOwnProperty(RESPONSE_STATUS_CODE)))
+						//Means it contains data
+						{
+
+						
+							/************** -------------- Changes ---------------- ****************/
+							if (receivedData.hasOwnProperty("filename")) {
+								
+								$.noty.closeAll();
+								
+								$("#resizer").hide();
+								$("#imageDiv").show();
+								$("#tools").hide();
+								var s=receivedData["filename"];
+								$("#staticImage").attr("src","../public/"+s);
+								downloadData.push("The data cannot be downloaded. Please reduce the time");
+								$("#speed").attr("disabled","disabled");
+							} 
+							else if(receivedData=="No Data Found")
+							{	
+								$.noty.closeAll();
+								showNoty("No Data Found", "center", "off",5000);
+								$("#resizer").hide();
+								$("#imageDiv").hide();
+								$("#tools").hide();
+								//$.noty.closeAll();
+								
+					
+
+							}
+							else {
+							
+								$.noty.closeAll();
+								if($("#motionType").is(":checked")){
+									$("#speed").removeAttr("disabled");
+								}
+								else
+								{
+									$("#speed").attr("disabled","disabled");
+								}
+								$("#resizer").show();
+								$("#tools").show();
+								/************** -------------- Changes ---------------- ****************/
+								downloadData.push(receivedData);
+					
+								series = appendElementsToSeries(series, receivedData);
+							}
+						
+
+						} else {
+
+							var r = showNoty("Error occured in fetching data/Data does not exist for " + "center", "off",5000);
+						}
+
+					} catch(e) {
+					alert(e);
+					}
+					
+					
+					var textDownload = 'data:text/html;charset=utf-8,%3C%21DOCTYPE%20' + 'html%3E%0D%0A%3Chtml%20lang%3D%22en%22%3E%0D%0A%3Chead%' + '3E%3Ctitle%3EEmbedded%20Window%3C%2Ftitle%3E%3C%2Fhead%' + '3E%0D%0A%3Cbody%3E%3Ch5%3E' + JSON.stringify(downloadData) + '%3C%2Fh5%3E%3C%2Fbody%3E%0A' + '%3C%2Fhtml%3E%0A%0D%0A';
+					$("#downloadData").show();
+					$("#dialog").html(statsData);
+
+					$("#downloadDataAnchorTag").attr("onclick", "window.open('" + textDownload + "','_blank','height=300,width=400');return false;");
+					clearTimeout(motionInterval);
+
+					if (motionType) {
+						SPEED = $("#speed").val();
+						if (library == "highcharts") {
+							calcTimeStamp();
+							motionCounter = minTimeStamp;
+							motionRepeat();
+						} else if (library == "google") {
+							motionCounter = 0;
+							mapRepeat();
+						}
+
+					} else {
+
+					}
+
+				}
+
+
+				$("#dialog:ui-dialog").dialog("destroy");
+				var dlg = $("#dialog").dialog({
+					autoOpen : false,
+					draggable : true,
+					resizable : false,
+					width : 500,
+					modal : true
+				});
+
+				$("#buttonStats").click(function() {
+					dlg.dialog("open");
+
+					dlg.dialog("option", "position", {
+						//my: "center top",
+						//at: "right top",
+						//offset: "20 20"
+					});
+					return false;
+				});
+				
+				/*
+				 * Validate the parameters to query for visualization
+				 * I/p:
+				 * Device name,SelectedSensors,startTime,endTime
+				 * O/p:
+				 * An array of 2 objects:
+				 * 1.The error state:true/false
+				 * 2.Error Information associated
+				 */
+
+				function validateVisualizationQuery(startTime, endTime) {
+
+					$(".errorVisual").hide("");
+					$("#start_date_time,#end_date_time").removeClass("error");
+					errorState = false;
+					errorInformation = "";
+
+					if (startTime.length == 0) {
+						errorState = true;
+			
+						$("#start_date_time").addClass("error");
+						$("#spanStartTime").show('slow', function() {
+						});
+						$("#spanStartTime").html("Please select Start Time");
+
+					} else if (endTime.length == 0) {
+						errorState = true;
+						
+						$("#end_date_time").addClass("error");
+						$("#spanEndTime").show('slow', function() {
+						});
+						$("#spanEndTime").html("Please select End Time");
+					
+					} else if (startTime >= endTime) {
+						errorState = true;
+						
+						$("#spanEndTime").show('slow', function() {
+						});
+						$("#spanEndTime").html("Start Time should be less than end time");
+
+					}
+
+					return [errorState, errorInformation];
+				}
+
+				/*
+				 * Method to send the query
+				 * I/P
+				 * 1.Device Name
+				 * 2.Sensors under the device
+				 * 3.Start time and end time
+				 *
+				 * Validations
+				 * This method does validation on the all the specified fields
+				 * 1.Device must be selected(By default a None option is provided)
+				 * 2.Atleast one sensor must be selected
+				 * 3.Starttime should be less than the end time
+				 *
+				 * O/P
+				 * For each sensor in the selected list of sensors this function call would
+				 * make a call to the repository and fetch the daQUERY_CONDITIONSom it and append it to
+				 * the "series" variable which is passed as an argument to the charting library
+				 * If any of the validity tests fail then the corresponding information is alerted
+				 * to the user.In case all the validations pass a per sensor query of the format
+				 * defined in Constants.js is sent to the server component of the UI
+				 */
+				$("#IDSendQuery").click(function() {
+					motionStatus = true;
+					var prod = 0;
+
+					
+					var query = {};
+					var threshold = 0;
+
+					var selectedSensorArrayLength = 0;
+
+					var selectedDeviceName = devicename;
+
+					if ($(ID_START_DATE_TIME_DISPLAY).val().length > 0) {
+						startTime = datetimeToEpoch($(ID_START_DATE_TIME_DISPLAY).val());
+					} else {
+						startTime = $(ID_START_DATE_TIME_DISPLAY).val();
+					}
+					if ($(ID_END_DATE_TIME_DISPLAY).val().length > 0) {
+						endTime = datetimeToEpoch($(ID_END_DATE_TIME_DISPLAY).val());
+					} else {
+						endTime = $(ID_END_DATE_TIME_DISPLAY).val();
+					}
+
+					var errorStatus = validateVisualizationQuery(startTime, endTime);
+				
+					if (errorStatus[0]) {
+						return false;
+					} 
+
+					$("#motionStop").removeClass("play");	
+					$("#motionStop").addClass("pause");			//Setting the Pause button
+
+					$("#tools").hide();
+					if($("#motionType").is(":checked"))
+					{
+						
+						$("#containerTools").show();
+						$("#divWindowSize").show();
+					}
+					else
+					{
+						$("#containerTools").hide();
+						$("#divWindowSize").hide();
+						$("#speed").attr("disabled","disabled");
+						
+					}
+					if (library == "highcharts") {
+						
+						$("#resizer").show();
+						$("#container").show();
+					
+						$("#imageDiv").hide();
+					
+						createChart();
+						//Empty the previous entries
+						while (chart.series.length > 0) {
+
+							chart.series[0].remove();
+						}//CLearing data from previous calls
+
+					} else if (library == "google") {
+
+						$("#divWindowSize").hide();
+						$("#resizer").hide();
+						$("#imageDiv").hide();
+					}
+
+
+					//
+					//Now for each sensor in the selectedSensorList we would make a query and fetch the data and draw chart
+					//makeRequestAndDisplayChart(selectedDeviceName, selectedSensorArray, startTime, endTime);
+					var pointThreshold = 20000;
+					threshold = prod * (endTime - startTime);
+					interactive=threshold<1843200?"true":"false";
+				
+					makeRequestAndDisplayChart(startTime, endTime);
+				});
+
+				/*
+				 * Description:This function$(#IDSensorsSelect").append("<span class='errorVisual' id='spanSensor'></span>"); is used to append series to the chart
+				 *
+				 * I/P:Response to the query to view data which is of the form of
+				 * SAMPLE_QUERY_DATA_QUERY_RESPONSE in constants.js
+				 *
+				 *
+				 */
+				function appendElementsToSeries(series, receivedData) {
+					
+					
+					var numberOfSeries = receivedData["chartSeries"].length;
+					var numberofData = receivedData["chartSeries"][0]["data"].length;
+
+					//Adding Stats//
+					for (var i = 0; i < numberOfSeries; i++) {
+
+						statsData += "<br /><u><b>" + receivedData["chartSeriesStats"][i]["name"] + "</b></u>&nbsp&nbsp Min:" + receivedData["chartSeriesStats"][i]["min"].toFixed(2) + "&nbsp&nbspMax:" + receivedData["chartSeriesStats"][i]["max"].toFixed(2) + "&nbsp&nbspAvg:" + receivedData["chartSeriesStats"][i]["avg"].toFixed(2);
+					}
+					//Statistic Data Added//
+
+					if (library == "highcharts") {
+
+						for (var i = 0; i < numberOfSeries; i++) {
+							chart.addSeries(receivedData["chartSeries"][i]);
+						}
+						
+					} else if (library == "google") {
+
+						var myLatlng = new Array();
+						newPath = new Array();
+
+						//Initial Point
+
+						var m = receivedData["chartSeries"][0]["data"][0][1];
+						var n = receivedData["chartSeries"][1]["data"][0][1];
+						var myLatlng = new google.maps.LatLng(m, n);
+
+						var myOptions = {
+							center : myLatlng,
+							zoom : 14,
+							mapTypeId : google.maps.MapTypeId.ROADMAP
+						};
+
+						map = new google.maps.Map(document.getElementById("container"), myOptions);
+
+						var marker = new google.maps.Marker({
+							position : myLatlng,
+							map : map,
+							title : 'Initial Position'
+						});
+						overlays.push(marker);
+						//
+						for (var j = 0; j < numberofData; j++) {
+							var timestamp = receivedData["chartSeries"][0]["data"][j][0];
+							var latlng = new Array();
+							for (var i = 0; i < numberOfSeries; i++) {
+
+								latlng[i] = receivedData["chartSeries"][i]["data"][j][1];
+
+							}
+
+							newPath[j] = new google.maps.LatLng(latlng[0], latlng[1]);
+						}
+
+						if (!motionType) {
+							line = new google.maps.Polyline({
+								path : newPath,
+								strokeColor : '#ff0000',
+								strokeOpacity : 1.0,
+								strokeWeight : 3
+							});
+							line.setMap(map);
+							overlays.push(line);
+							
+
+							//Mid Marker
+							var midMarker = new google.maps.Marker({
+								position : newPath[Math.round((numberofData - 1) / 2)],
+								map : map,
+								title : 'Mid Point'
+							});
+							overlays.push(midMarker);
+
+							//End Point Marker
+							var endMarker = new google.maps.Marker({
+								position : newPath[numberofData - 1],
+								map : map,
+								title : 'Final Position'
+							});
+							overlays.push(endMarker);
+						} else {
+							line = new google.maps.Polyline({
+								path : tempPath,
+								strokeColor : '#ff0000',
+								strokeOpacity : 1.0,
+								strokeWeight : 3
+							});
+							line.setMap(map);
+							overlays.push(line);
+							motionMarker = new google.maps.Marker({
+								position : newPath[0],
+								map : map,
+								title : 'End Position'
+
+							});
+							overlays.push(motionMarker);
+						}
+
+					}
+
+					return series;
+				}
+
+				function motionRepeat() {
+
+					if (motionStatus) {
+						if (motionCounter < (maxTimeStamp - (WINDOW_SIZE - 2) * 1000)) {
+							chart.xAxis[0].setExtremes(motionCounter, motionCounter + WINDOW_SIZE * oneSECOND);
+							motionCounter += 1000;
+							motionInterval = setTimeout(motionRepeat, oneSECOND / SPEED);
+
+						} else {
+							$("#motionStop").removeClass("pause");
+							$("#motionStop").addClass("play");
+						}
+					}
+				}
+
+				function mapRepeat() {
+
+				
+					if (motionStatus) {
+
+						if (motionCounter < newPath.length) {
+
+							
+							poly = line.getPath();
+							poly.push(newPath[motionCounter]);
+							
+							motionMarker.setPosition(newPath[motionCounter]);
+
+							motionCounter++;
+							setTimeout(mapRepeat, oneSECOND / SPEED);
+						
+
+						} else {
+							$("#motionStop").removeClass("pause");
+							$("#motionStop").addClass("play");
+						}
+					}
+				}
+
+			});
+
+		</script>
+	</head>
+	<body id ="userdisplay">
+		<div id="header-container">
+			<header class="wrapper clearfix">
+				<h1 id="title">SensorAct
+				<br />
+				<br />
+				<span style="font-size:25px;">Sense - Interact - Actuate</span></h1>
+				<nav id="navHeader">					
+				</nav>
+				<br />
+				<br />
+				<nav>
+					<p class="pbox" style="margin-bottom:-20px;"> Welcome ${username} |
+						&nbsp<span id="logout">Logout</span>
+					</p>
+				</nav>
+
+			</header>
+		</div>
+		<div class="wrapper">
+			<div>
+				<h1 class="newfont" style="text-align:center;">Data Visualization</h1>
+				<hr>
+			</div>
+			<!-- Left Pane starts here-->
+			<div id="visualBox" style="">
+				<div class="leftDiv">
+					<label>Device : </label>
+				</div>
+				<div class="rightDiv">
+					<div id="selectedDevice">
+						<input type="text" readonly='true' value=${devicename} />
+					</div>
+				</div>
+
+				<div class="leftDiv">
+					<label>Sensor : </label>
+				</div>
+				<div class="rightDiv">
+					<div id="selectedSensor">
+						<input type="text" readonly='true' value=${sensorname} />
+					</div>
+				</div>
+			
+				<div class="leftDiv">
+					<label>Start Date :</label>
+				</div>
+				<div class="rightDiv">
+					<input type="text" id="start_date_time" name="start_date_time" readonly='true' />
+					<span class="errorVisual" id="spanStartTime"></span>
+				</div>
+				<div class="leftDiv">
+					<label>End Date Time :</label>
+				</div>
+				<div class="rightDiv">
+					<input type="text" id ="end_date_time" readonly='true' name="end_date_time" />
+					<span class="errorVisual" id="spanEndTime"></span>
+				</div>
+				
+				<br />
+			</div>
+			<!-- Left pane ends here -->
+
+			<!--Right Pane starts here-->
+			<div id="visualFunctions" style="float:right;">
+				<!--<div class="leftDiv">
+					Choose a Library
+				</div>
+				<div class="rightDiv">
+					<select id="selectLibrary">
+						<option value="highcharts">HighCharts</option>
+						<option value="google">Google</option>
+					</select>
+
+				</div>-->
+				<br />
+				<div class="leftDiv">
+					<label>Motion Display</label>
+				</div>
+				<div class="rightDiv">
+					<input type="checkbox" name="motionType" id="motionType" />
+				</div>
+				<div id="divWindowSize">
+					<div class="leftDiv">
+						<label>Choose Window Size</label>
+					</div>
+					<div class="rightDiv">
+						<select id="windowSize">
+							<option value="10">10</option>
+							<option value="20">20</option>
+						</select>
+					</div>
+				</div>
+				<div class="leftDiv">
+					<label>Speed:</label>
+				</div>
+				<div class="rightDiv">
+					<select id="speed">
+						<option value="0.25">0.25X</option>
+						<option value="0.5">0.5X</option>
+						<option value="1">1X</option>
+						<option value="2">2X</option>
+						<option value="10">10X</option>
+						<option value="30">30X</option>
+					</select>
+				</div>
+			</div>
+			<!-- Right Pane ends here-->
+			<div style="clear:both;text-align:center;">
+				<button class="google-button" id="IDSendQuery" >
+					View Data
+				</button>
+				<hr>
+
+			</div>
+
+			<div id="resizer">
+				<div id="inner-resizer">
+					<div id="container" style="height: 400px;clear:both;"></div>
+					<div id="containerTools" style="text-align:center;">
+						<button id="motionStop" class="pause">
+						Stop
+						</button>
+					</div>
+				</div>
+			</div>
+			
+			<div id="imageDiv" style="text-align:center;">
+				<img id="staticImage"></img>
+			</div>
+			<div id="tools" style="text-align:center;">
+				<div id="dialog" style="font-family:arial,font-size:-1;color:orange;"></div>
+				<div id="downloadData" style="display:none;">
+					<button class="google-button-blue" id="downloadDataAnchorTag">
+						Download Data
+					</button>
+					&nbsp&nbsp
+					<button class="google-button-red" id="buttonStats">
+						Statistics
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<hr>
+		</div>
+		<div id="iFields">
+			<input id="username"  type="hidden" value=${username}> 
+			<input id="usertype"  type="hidden" value=${usertype}> 
+			<input id="vpdsname"  type="hidden" value=${vpdsname}>
+			<input id="devicename"  type="hidden" value=${devicename}>
+			<input id="sensorname"  type="hidden" value=${sensorname}>
+		</div>
+
+		<div style="clear:both;" id="footer-container">
+		</div>
+
+	</body>
+
+</html>

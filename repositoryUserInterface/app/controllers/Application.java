@@ -342,6 +342,10 @@ public class Application extends Controller {
 		api.listActRequests.doProcess(request.params.get(Const.REQUEST_BODY));
 	}
 	
+	public static void listsharedevices() {		
+		api.listSharedDevices.doProcess();
+	}
+	
 	public static void cancelactuationrequests() {		
 		api.cancelActRequests.doProcess(request.params.get(Const.REQUEST_BODY));
 	}
