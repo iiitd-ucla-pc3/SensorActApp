@@ -46,7 +46,7 @@ figure { margin: 0; }
 
 form { margin: 0; }
 fieldset { border: 0; margin: 0; padding: 0; }
-label { cursor: pointer; }
+label { cursor: default; }
 legend { border: 0; *margin-left: -7px; padding: 0; }
 button, input, select, textarea { font-size: 100%; margin: 0; vertical-align: baseline; *vertical-align: middle; }
 button, input { line-height: normal; *overflow: visible; }
@@ -103,6 +103,34 @@ clear: both;
 #subtitle{ color:white; font-size:25px; font-family: 'Port Lligat Sans', sans-serif;}
 ::-moz-selection { background: #f16529; color: #fff; text-shadow: none; }
 ::selection      { background: #f16529; color: #fff; text-shadow: none; }
+
+
+/* ===================
+    ALL: Orange Theme
+   =================== */
+/*
+#header-container{ 
+	border-bottom: 20px solid #e44d26; }
+
+
+#footer-container{ border-top:    20px solid #e44d26;
+clear: both;
+ 
+}
+#main aside      { border-top:    20px solid #e44d26; }
+
+#header-container,
+#footer-container,
+#main aside{
+	background:#f16529;
+}
+.newfont{ font-family: 'Port Lligat Sans', sans-serif;}
+#title{ color:white; font-size:75px; font-family: 'Port Lligat Sans', sans-serif;}
+#subtitle{ color:white; font-size:25px; font-family: 'Port Lligat Sans', sans-serif;}
+::-moz-selection { background: #f16529; color: #fff; text-shadow: none; }
+::selection      { background: #f16529; color: #fff; text-shadow: none; }
+
+*/
 
 /* ==============
     MOBILE: Menu

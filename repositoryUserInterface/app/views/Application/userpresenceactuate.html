@@ -41,9 +41,11 @@
 				createHeaderUser();	
 				createFooter();
 
-				var devicename = $("#devicename").val();
-				var actuatorname = $("#actuatorname").val();
+				var deviceName = $("#devicename").val();
+				var actuatorName = $("#actuatorname").val();
+				var actuatorID = $("#actuatorid").val();
 				var vpdsname = $("#vpdsname").val();
+				var usertype = $("#usertype").val();
 
 				/**
 				 * Global Variables used during the lifecycle of the page
@@ -109,10 +111,9 @@
 				$("#spanDateTime").hide();	
 				$(".errorVisual").hide();			
 
-				function makeRequest(selectedActuator, actuatorID, fromTime, toTime, thresholdM, thresholdNM) {
+				function makeRequest(fromTime, toTime, thresholdM, thresholdNM) {
 					var tasklet = {};
 					var username = $("#username").val();
-					var actuatorName = selectedActuator;
 
 					var resource = username + ":" + deviceName + ":" + actuatorName + ":" + actuatorID;
 					var numRand = Math.floor(Math.random()*1000);
@@ -342,37 +343,6 @@
 						$("#spanMS" + removeSpace(deviceMSName)).show('slow', function() {
 						});
 						$("#spanMS" + removeSpace(deviceMSName)).html('Please select a motion sensor');	
-					}					
-					else{
-						//check whether there is an association for the selected actuator
-						var urlGuardRulesAssocGet =	URL_UI_SERVER+URL_ASSOC_GET_GUARD_RULE;
-						var getAssoc = {};
-						var guardRuleAssoc = [];
-						getAssoc[SECRET_KEY] = FAKE_SECRET_KEY;
-						getAssoc[GUARDASSOCRULE_DEVICENAME] = deviceMSName;
-						getAssoc[GUARDASSOCRULE_SENSORNAME] = selectedSItem;
-						getAssoc[GUARDASSOCRULE_SENSORID] = selectedItemId;
-
-						try{
-							$.post(urlGuardRulesAssocGet, JSON.stringify(getAssoc), function(data) {
-
-								guardRuleAssoc = data;
-
-							});
-						}
-						catch(e){}
-
-						if(guardRuleAssoc.hasOwnProperty(RESPONSE_STATUS_CODE)) {
-							if(guardRuleAssoc[RESPONSE_STATUS_CODE] == NO_GUARD_RULEASSOC_FOUND) {
-								
-								errorState = true;
-								var url = URL_UI_SERVER+URL_GUARD_RULE;
-
-								$("#spanMS" + removeSpace(deviceMSName)).show('slow', function() {
-								});
-								$("#spanMS" + removeSpace(deviceMSName)).html('This sensor is not associated with any guard rule. First <a href="'+url+'">Create an Association</a> for this sensor');
-							}						
-						}	
 					}
 
 					return errorState;
@@ -480,16 +450,14 @@
 
 				$("#IDActuateDevice").click(function() {
 
-					var selectedSItem,selectedAItem;
-					var selectedADeviceName = deviceName;
+					var selectedSItem;
 					var selectedSDeviceName = deviceMSName;
 					var thresholdM, thresholdNM, fromTime="", toTime="";
-					var actuatorID;						
 					
 					fromDay = $("#fromdayOfWeek").val();
 					toDay = $("#todayOfWeek").val();
 					thresholdM = $("#thresholdM").val();
-					thresholdNM = $("#thresholdNM").val();					
+					thresholdNM = $("#thresholdNM").val();		
 	
 
 					// Validating whether any device for motion sensor has been selected
@@ -510,18 +478,19 @@
 						if ($(this).prop("checked")) {
 
 							var property = $(this);
-							for (var index in receivedDeviceData[DEVICE_ARRAY]) {	
 							
-								if ( DEVICE_SENSORS in receivedDeviceData[DEVICE_ARRAY][index]) {
+							for (var index in responseFromServer[VIEW_SHARED]) {	
+							
+								if (responseFromServer[VIEW_SHARED][index][VIEW_SENSORS].length > 0) {
 								
-									var sensorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS];	
+									var sensorArray = responseFromServer[VIEW_SHARED][index][VIEW_SENSORS];	
 
-									for (var indexSensors in receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS]) {
+									for (var indexSensors in responseFromServer[VIEW_SHARED][index][VIEW_SENSORS]) {
 
 										var sensorName = sensorArray[indexSensors][DEVICE_SENSOR_NAME];											
 										if (sensorName == property.val()) {									
-											MotionSensor = sensorArray[indexSensors][DEVICE_SENSOR_NAME];
-											MotionSensorID = sensorArray[indexSensors][DEVICE_SENSOR_ID];
+											MotionSensor = sensorArray[indexSensors][SHARE_SENSOR_NAME];
+											MotionSensorID = sensorArray[indexSensors][SHARE_SENSOR_ID];
 											break;
 										}	
 									}
@@ -563,103 +532,102 @@
 				 * Displaying the list of devices and load the actuators associated with them
 				 */
 
-				//Getting Device List
-				try {
+				//Getting Sensor List shared by the owner with the user
 
-					$.get(URL_UI_SERVER+URL_LIST_ALL_DEVICES, function(data) {					
-						receivedDeviceData = data;					
-					});
-				} catch(e) {
+				var jsonToSend = {};
+				var responseFromServer = {};
+				jsonToSend[SECRET_KEY] = FAKE_SECRET_KEY;
+				jsonToSend[USERTYPE] = usertype;
 
-				}
-				//Make a get request to get all the devices available
-				if (!(receivedDeviceData.hasOwnProperty(RESPONSE_STATUS_CODE)))//Success
-				{
+				var urlGetShareDevices = URL_UI_SERVER + URL_VIEW_SHARED_DEVICES;
+				try{
+					$.post(urlGetShareDevices, JSON.stringify(jsonToSend), function(rData) {
 
-					if (receivedDeviceData[DEVICE_ARRAY].length > 0) {
+				    		responseFromServer = rData;
+				    });				    
+				    
+				    if (responseFromServer.hasOwnProperty(RESPONSE_STATUS_CODE)){
+				    	alertGetActuateError("Following errors occurred " + responseFromServer[RESPONSE_MESSAGE]);
+				    }
+				    else{
+				    	var numberOfDevices = responseFromServer[VIEW_SHARED].length;
+				    	if (numberOfDevices > 0) {
 
-						for (var index in receivedDeviceData[DEVICE_ARRAY]) {
-							var name = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_NAME];
+				    		for (var index in responseFromServer[VIEW_SHARED]) {
+				    			var dname = responseFromServer[VIEW_SHARED][index][VIEW_DEVICENAME];
 
-							if(!(typeof receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS] === 'undefined'))
-								$("#divMSensorSelect").append("<div class=\"msensor\" id=\"divMS" + removeSpace(name) + "\"><input type=\"radio\" name=\"IDMSensorSelect\" value=\"" + name + "\" />&nbsp&nbsp" + name + "</div>");
-						}
-
-						/*
-						 * Description:This function is used to change the HTML contents corresponding to a selected device
-						 * It basically adds relevant HTMl in accordance with the device selected
-						 *
-						 * Nature:Anonmyous function
-						 *
-						 * Called:Called every time a change occurs in the dropdown menu
-						 *
-						 */
-
-						var deviceName;
-						var deviceMSName;
-						var previousValue = {};
-						$("input[name=IDMSensorSelect]").click(function() {
-							
-							var clickedItem = $(this).attr('name')+this.value;		
-							//alert("Clicked device:" + clickedItem);		 
-
-							$("#spanDevice").hide();
-							$("#spanSensor").hide();
-							$(".errorVisual").hide();
-
-						    if(previousValue[clickedItem] == 'checked'){
-						    	//alert(previousValue[clickedItem]);
-						    	if($(this).attr('name') == "IDMSensorSelect") {
-						    		$("#divMS" + removeSpace(this.value)).children('.sensor').remove();
-						    		deviceMSName = "";
-						    	}
-
-							    $(this).attr("checked", false);							    
-								
-								previousValue[clickedItem] = "unchecked";  	     
-						        
-						    }
-						    else {
-						    	previousValue[clickedItem] = $(this).attr('checked');  							
-
-								if ($(this).attr('checked')) {
-
-									else if($(this).attr('name') == "IDMSensorSelect")
-										deviceMSName = this.value;
-									
-									for (var index in receivedDeviceData[DEVICE_ARRAY]) {
-										var name = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_NAME];
-								
-										if (name == this.value) {
-											
-											if ($("#IDMSensorSelect").is('.error')) {
-
-												$("#IDMSensorSelect").removeClass("error");
-												$("#spanSensor").hide();
-												$("#IDActuateDevice").removeAttr("disabled", "disabled");
-
-											}
-
-											if ( DEVICE_SENSORS in receivedDeviceData[DEVICE_ARRAY][index]) {
-											
-												var sensorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS];
-												
-												$("#divMS" + removeSpace(name)).append("<div class=\"sensor\"></div>");
-												for (var sensor in sensorArray) {
-													$("#divMS" + removeSpace(name)).children(".sensor").append("<input id=\"sensorID\" type=\"radio\" name = \"sensorID\" value=" + sensorArray[sensor][DEVICE_SENSOR_NAME] + ">&nbsp" + sensorArray[sensor][DEVICE_SENSOR_NAME] + "&nbsp&nbsp</input>");
-												}
-												$("#divMS" + removeSpace(name)).append("<span class=\"errorVisual\" id=\"spanMS" + removeSpace(name) + "\" style=\"display:none;\"></span>");
-
-												error = 0;
-											}
-										}
+				    			if(!(typeof responseFromServer[VIEW_SHARED][index][VIEW_SENSORS].length > 0)){
+				    				
+									if(!(typeof responseFromServer[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][SHARE_SENSOR_NAME] === 'undefined')) {
+										$("#divMSensorSelect").append("<div class=\"msensor\" id=\"divMS" + removeSpace(name) +count+ "\"><input type=\"radio\" name=\"IDMSensorSelect\" value=\"" + name + "\" />&nbsp;&nbsp;" + name + "</div>");
 									}
 								}
-																				
 							}
-							
-						});						
-					} 
+
+							var deviceMSName;
+							var previousValue = {};
+							$("input[name=IDMSensorSelect]").click(function() {
+								
+								var clickedItem = $(this).attr('name')+this.value;		
+								//alert("Clicked device:" + clickedItem);		 
+
+								$("#spanDevice").hide();
+								$("#spanSensor").hide();
+								$(".errorVisual").hide();
+
+							    if(previousValue[clickedItem] == 'checked'){
+							    	//alert(previousValue[clickedItem]);
+							    	if($(this).attr('name') == "IDMSensorSelect") {
+							    		$("#divMS" + removeSpace(this.value)).children('.msensor').remove();
+							    		deviceMSName = "";
+							    	}
+
+								    $(this).attr("checked", false);							    
+									
+									previousValue[clickedItem] = "unchecked";  	     
+							        
+							    }
+							    else {
+							    	previousValue[clickedItem] = $(this).attr('checked');  							
+
+									if ($(this).attr('checked')) {
+										
+										deviceMSName = this.value;
+										
+										for (var index in responseFromServer[VIEW_SHARED]) {
+				    						var name = responseFromServer[VIEW_SHARED][index][VIEW_DEVICENAME];
+									
+											if (name == this.value) {
+												
+												if ($("#IDMSensorSelect").is('.error')) {
+
+													$("#IDMSensorSelect").removeClass("error");
+													$("#spanSensor").hide();
+													$("#IDActuateDevice").removeAttr("disabled", "disabled");
+												}
+												if ( responseFromServer[VIEW_SHARED][index][VIEW_SENSORS].length > 0) {
+												
+													var sensorArray = responseFromServer[VIEW_SHARED][index][VIEW_SENSORS];
+
+													$("#divMS" + removeSpace(name)).append("<div class=\"sensor\"></div>");
+													for (var sensor in sensorArray) {
+													
+														$("#divMS" + removeSpace(name)).children(".sensor").append("<input id=\"sensorID\" type=\"radio\" name = \"sensorID\" value=" + sensorArray[sensor][SHARE_SENSOR_NAME] + ">&nbsp;" + sensorArray[sensor][SHARE_SENSOR_NAME] + "&nbsp;&nbsp;</input>");
+													
+													$("#divMS" + removeSpace(name)).append("<span class=\"errorVisual\" id=\"spanMS" + removeSpace(name) + "\" style=\"display:none;\"></span>");
+												}
+											}
+										}
+									}	
+								}
+							});	
+				    	}
+				    	else
+				    		alertActuateDeviceError("No sensors shared with you");
+			    	}
+				}
+				catch(e){
+				    alertActuateDeviceError("Error: " + e);
 				}
 
 				$("#dialog:ui-dialog").dialog("destroy");
@@ -838,8 +806,6 @@
 			</header>
 		</div>
 		<div class="wrapper" style="">
-			<p class="space"></p>
-			<div id="selectedVPDS" style="float:right; font-size: 12px"><b>Selected VPDS:</b><label id="labelVpdsname"></label></div>
 			<br/>
 			<h1 class="newfont" id="device" style="text-align:center;">Actuate a Device based on Presence</h1>
 			<hr>			
@@ -882,6 +848,7 @@
 							<input type="text" readonly='true' value=${actuatorname} />
 						</div>
 					</div>
+					<br>
 
 					<div class="leftDiv">
 						<label>Select a motion sensor:<sup>*</sup></label>
@@ -963,6 +930,7 @@
 			<input id="vpdsname"  type="hidden" value=${vpdsname}>
 			<input id="devicename"  type="hidden" value=${devicename}>
 			<input id="actuatorname"  type="hidden" value=${actuatorname}>
+			<input id="actuatorid"  type="hidden" value=${actuatorid}>
 		</div>
 		<div style="clear:both;" id="footer-container">
 			

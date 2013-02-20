@@ -137,8 +137,8 @@ var ASSOCRULE_ACTUATOR_ARRAY="actuatorsArray";
 var ASSOCRULE_REMOVE_ARRAY="removeArray";
 
 //Dictionary constants associated with Device Share
-var SHARE_DEVICE="device";
-var SHARE_DEVICE_PERMISSION="permission";
+var SHARE="share";
+var SHARE_DEVICE_NAME="devicename";
 var SHARE_SENSOR_NAME="sensorname";
 var SHARE_SENSOR_ID="sensorid";
 var SHARE_ACTUATOR_NAME="actuatorname";
@@ -148,9 +148,12 @@ var READ="read";
 var WRITE="write";
 
 //Dictionary constants associated with View Shared Devices with users
-var VIEW_SHARE_DEVICE_LIST="devicelist";
+var VIEW_SHARED="shared";
 var VIEW_SHARE_VONAME="voname";
 var VIEW_SHARE_VPDS_NAME="vpdsname";
+var VIEW_DEVICENAME="devicename";
+var VIEW_SENSORS="sensors";
+var VIEW_ACTUATORS="actuators";
 
 //Dictionary constants associated with VPDS registration
 var VPDS_NAME="vpdsname";

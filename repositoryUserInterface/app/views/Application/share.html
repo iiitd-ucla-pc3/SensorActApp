@@ -503,27 +503,25 @@
 					var jsonShareReq = {};
 					jsonShareReq[SECRET_KEY] = FAKE_SECRET_KEY;
 					jsonShareReq[VPDS_NAME] = selectedVPDSName;
-					jsonShareReq[SHARE_DEVICE_PERMISSION] = {};
 					jsonShareReq[USERNAME] = username;
-					jsonShareReq[EMAIL] = "";
-					jsonShareReq[SHARE_DEVICE] = {};
-					jsonShareReq[SHARE_DEVICE][DEVICE_NAME] = deviceName;
+					jsonShareReq[SHARE] = {};
+					jsonShareReq[SHARE][SHARE_DEVICE_NAME] = deviceName;
 
 					if(accessType == "data"){
-						jsonShareReq[SHARE_DEVICE][SHARE_SENSOR_NAME] = sensorName;
-						jsonShareReq[SHARE_DEVICE][SHARE_SENSOR_ID] = sensorID;
-						jsonShareReq[SHARE_DEVICE][SHARE_ACTUATOR_NAME] = null;
-						jsonShareReq[SHARE_DEVICE][SHARE_ACTUATOR_ID] = null;
+						jsonShareReq[SHARE][SHARE_SENSOR_NAME] = sensorName;
+						jsonShareReq[SHARE][SHARE_SENSOR_ID] = sensorID;
+						jsonShareReq[SHARE][SHARE_ACTUATOR_NAME] = null;
+						jsonShareReq[SHARE][SHARE_ACTUATOR_ID] = null;
 					}
 					else if (accessType == "control") {
-						jsonShareReq[SHARE_DEVICE][SHARE_SENSOR_NAME] = null;
-						jsonShareReq[SHARE_DEVICE][SHARE_SENSOR_ID] = null;
-						jsonShareReq[SHARE_DEVICE][SHARE_ACTUATOR_NAME] = actuatorName;
-						jsonShareReq[SHARE_DEVICE][SHARE_ACTUATOR_ID] = actuatorID;
+						jsonShareReq[SHARE][SHARE_SENSOR_NAME] = null;
+						jsonShareReq[SHARE][SHARE_SENSOR_ID] = null;
+						jsonShareReq[SHARE][SHARE_ACTUATOR_NAME] = actuatorName;
+						jsonShareReq[SHARE][SHARE_ACTUATOR_ID] = actuatorID;
 					}
 					
-					jsonShareReq[SHARE_DEVICE_PERMISSION][READ] = accessRead;
-					jsonShareReq[SHARE_DEVICE_PERMISSION][WRITE] = accessWrite;
+					jsonShareReq[SHARE][READ] = accessRead;
+					jsonShareReq[SHARE][WRITE] = accessWrite;
 
 					//alert(JSON.stringify(jsonShareReq));
 					var responseFromSBerver={};

@@ -211,6 +211,8 @@ public class Application extends Controller {
 	
 	public static void userdisplay() {
 
+		String usertype = session.get(Const.USERTYPE);
+		renderArgs.put(Const.USERTYPE, usertype);
 		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
 		renderArgs.put(Const.VPDSNAME, session.get(Const.VPDSNAME));
 		renderArgs.put(Const.DEVICENAME, session.get(Const.DEVICENAME));
@@ -220,7 +222,8 @@ public class Application extends Controller {
 	}
 	
 	public static void useractuate() {
-
+		String usertype = session.get(Const.USERTYPE);
+		renderArgs.put(Const.USERTYPE, usertype);
 		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
 		renderArgs.put(Const.VPDSNAME, session.get(Const.VPDSNAME));
 		renderArgs.put(Const.DEVICENAME, session.get(Const.DEVICENAME));
@@ -230,6 +233,8 @@ public class Application extends Controller {
 	}
 	
 	public static void userpresenceactuate() {
+		String usertype = session.get(Const.USERTYPE);
+		renderArgs.put(Const.USERTYPE, usertype);
 		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
 		renderArgs.put(Const.VPDSNAME, session.get(Const.VPDSNAME));
 		renderArgs.put(Const.DEVICENAME, session.get(Const.DEVICENAME));

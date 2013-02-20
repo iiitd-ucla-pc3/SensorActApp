@@ -70,47 +70,63 @@
 				    }
 				    else{
 				    	
-				    	var numberOfDevices = responseFromServer[VIEW_SHARE_DEVICE_LIST].length;
+				    	var numberOfDevices = responseFromServer[VIEW_SHARED].length;
 				    	var scount = 0, acount = 0;
 				    	if (numberOfDevices > 0) {		    		
-				    		for (var index in responseFromServer[VIEW_SHARE_DEVICE_LIST]) {
+				    		for (var index in responseFromServer[VIEW_SHARED]) {
+				    			var dname = responseFromServer[VIEW_SHARED][index][VIEW_DEVICENAME];
 
-				    			if(!(typeof responseFromServer[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][SHARE_SENSOR_NAME] === 'undefined')){
+				    			if(!(typeof responseFromServer[VIEW_SHARED][index][VIEW_SENSORS].length > 0)){
 
-				    				$("#sensor").show('slow', function() {});
-				    				$("#sensor .shareDevice").append('<tr><td><div class="leftDiv"> \
-										<input type = "radio" name ="select" value="sensor" id="i'+scount+'"/></div></td> \
-										<td><div class="leftDiv"> \
-				    					<label id="voname'+scount+'">'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][VIEW_SHARE_VONAME]+'</label><input id="vpdsname" type="hidden" value="'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][VIEW_SHARE_VPDS_NAME]+'"/></div></td> \
-				    					<td><div class="leftDiv">	\
-										<label id="devicename'+scount+'">'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][DEVICE_NAME]+'</label></div></td> \
-										<td><div class="leftDiv">	\
-										<label id="sensorName'+scount+'">'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][SHARE_SENSOR_NAME]+'</label><input id="sensorid" type="hidden" value="'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][SHARE_SENSOR_ID]+'"/></div></td> \
-										<td><div class="leftDiv" style="text-align:center"> \
-										<label id="readSensor'+scount+'">'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE_PERMISSION][READ]+'</label></td> \
-										<td style="border-width: 0;"><div class="leftDiv" style="text-align:center"> \
-										<label id="writeSensor'+scount+'">'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE_PERMISSION][WRITE]+'</label></div></td></tr>');
+				    				var sensorArray = {};
+				    				sensorArray = responseFromServer[VIEW_SHARED][index][VIEW_SENSORS];
+
+				    				for (var sensor in sensorArray) {
+
+					    				$("#sensor").show('slow', function() {});
+					    				$("#sensor .shareDevice").append('<tr><td><div class="leftDiv"> \
+											<input type = "radio" name ="select" value="sensor" id="i'+scount+'"/></div></td> \
+											<td><div class="leftDiv"> \
+					    					<label id="voname'+scount+'">'+responseFromServer[VIEW_SHARE_VONAME]+'</label><input id="vpdsname'+scount+'" type="hidden" value="'+responseFromServer[VIEW_SHARE_VPDS_NAME]+'"/></div></td> \
+					    					<td><div class="leftDiv">	\
+											<label id="devicename'+scount+'">'+dname+'</label></div></td> \
+											<td><div class="leftDiv">	\
+											<label id="sensorName">'+sensorArray[sensor][SHARE_SENSOR_NAME]+' - '+ sensorArray[sensor][SHARE_SENSOR_ID]+'</label> \
+											<input id="sensorName'+scount+'" type="hidden" value="'+sensorArray[sensor][SHARE_SENSOR_NAME]+'"/> \
+											<input id="sensorid'+scount+'" type="hidden" value="'+sensorArray[sensor][SHARE_SENSOR_ID]+'"/></div></td> \
+											<td><div class="leftDiv" style="text-align:center"> \
+											<label id="readSensor'+scount+'">'+sensorArray[sensor][READ]+'</label></td> \
+											<td style="border-width: 0;"><div class="leftDiv" style="text-align:center"> \
+											<label id="writeSensor'+scount+'">'+sensorArray[sensor][WRITE]+'</label></div></td></tr>');
 
 										scount++;
-
+									}
 				    			}
 
-				    			if(!(typeof responseFromServer[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][SHARE_ACTUATOR_NAME] === 'undefined')){
+				    			if(!(typeof responseFromServer[VIEW_SHARED][index][VIEW_ACTUATORS].length > 0)){
 
-				    				$("#actuator").show('slow', function() {});
-				    				$("#actuator .shareDevice").append('<tr><td><div class="leftDiv"> \
-										<input type = "radio" name ="select" value="actuator" id="i'+acount+'"/></div></td> \
-										<td><div class="leftDiv"> \
-				    					<label id="voname'+acount+'">'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][VIEW_SHARE_VONAME]+'</label><input id="vpdsname'+index+'" type="hidden" value="'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][VIEW_SHARE_VPDS_NAME]+'"/></div></td> \
-				    					<td><div class="leftDiv">	\
-										<label id="devicename'+acount+'">'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][DEVICE_NAME]+'</label></div></td> \
-										<td><div class="leftDiv">	\
-										<label id="actuatorName'+acount+'">'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][SHARE_ACTUATOR_NAME]+'</label><input id="actuatorid'+acount+'" type="hidden" value="'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][SHARE_ACTUATOR_ID]+'"/></div></td> \
-										<td><div class="leftDiv" style="text-align:center"> \
-										<label id="readActuator'+acount+'">'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE_PERMISSION][READ]+'</label></td> \
-										<td style="border-width: 0;"><div class="leftDiv" style="text-align:center"> \
-										<label id="writeActuator'+acount+'">'+responseFromServer[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE_PERMISSION][WRITE]+'</label></div></td></tr>');
+				    				var actuatorArray = {};
+				    				actuatorArray = responseFromServer[VIEW_SHARED][index][VIEW_ACTUATORS];
+
+				    				for (var actuator in actuatorArray) {
+
+					    				$("#actuator").show('slow', function() {});
+					    				$("#actuator .shareDevice").append('<tr><td><div class="leftDiv"> \
+											<input type = "radio" name ="select" value="actuator" id="i'+acount+'"/></div></td> \
+											<td><div class="leftDiv"> \
+					    					<label id="voname'+acount+'">'+responseFromServer[VIEW_SHARE_VONAME]+'</label><input id="vpdsname'+acount+'" type="hidden" value="'+responseFromServer[VIEW_SHARE_VPDS_NAME]+'"/></div></td> \
+					    					<td><div class="leftDiv">	\
+											<label id="devicename'+acount+'">'+dname+'</label></div></td> \
+											<td><div class="leftDiv">	\
+											<label id="actuatorName">'+actuatorArray[actuator][SHARE_ACTUATOR_NAME]+' - '+ actuatorArray[actuator][SHARE_ACTUATOR_ID]+'</label> \
+											<input id="actuatorName'+acount+'" type="hidden" value="'+actuatorArray[actuator][SHARE_ACTUATOR_NAME]+'"/> \
+											<input id="actuatorid'+acount+'" type="hidden" value="'+ actuatorArray[actuator][SHARE_ACTUATOR_ID]+'"/></div></td> \
+											<td><div class="leftDiv" style="text-align:center"> \
+											<label id="readActuator'+acount+'">'+actuatorArray[actuator][READ]+'</label></td> \
+											<td style="border-width: 0;"><div class="leftDiv" style="text-align:center"> \
+											<label id="writeActuator'+acount+'">'+actuatorArray[actuator][WRITE]+'</label></div></td></tr>');
 										acount++;
+									}
 				    			}
 
 				    		}
@@ -240,19 +256,16 @@
 					$("#errorDiv").hide();
 					$("#errorADiv").hide();
 
-					alert("Currently disabled!");
-					return false;
-
 					if(selectedDevice != "actuator") {
 						alertAddErrorActuation("Error: Please select an entry to actuate based on Presence");
 						return false;
 					}
 
-					var devicename = $("#devicename").html();
-					var vpdsname = $("#vpdsname").val();
-					var actuatorName = $("#actuatorName").html();
-					var actuatorid = $("#actuatorid").val();
-					var writePermission = $("#writeActuator").html();
+					var devicename = $("#devicename"+selectionIndex).html();
+					var vpdsname = $("#vpdsname"+selectionIndex).val();
+					var actuatorName = $("#actuatorName"+selectionIndex).html();
+					var actuatorid = $("#actuatorid"+selectionIndex).val();
+					var writePermission = $("#writeActuator"+selectionIndex).html();
 
 					if(!writePermission){
 						alert("Permission to actuate is disabled by the owner!");
