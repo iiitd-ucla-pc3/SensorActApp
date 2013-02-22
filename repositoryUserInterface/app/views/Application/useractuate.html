@@ -46,6 +46,12 @@
 				var actuatorID = $("#actuatorid").val();	
 				var vpdsname = $("#vpdsname").val();
 
+				if(deviceName == '') {
+					alert("Refresh not allowed. Taking you back to the selection page...");
+					window.location = URL_SHARED_DEVICES;
+				}
+					
+
 				/**
 				 * Global Variables used during the lifecycle of the page
 				 *
@@ -487,8 +493,7 @@
 				<br />
 				<br />
 				<nav>
-					<p class="pbox" style="margin-bottom:-20px;"> Welcome ${username} &nbsp | &nbsp
-						<span id="viewkey">View API key</span> &nbsp; | 
+					<p class="pbox" style="margin-bottom:-20px;"> Welcome ${username} &nbsp; | 
 						&nbsp<span id="logout">Logout</span>
 					</p>
 				</nav>
@@ -496,9 +501,7 @@
 			</header>
 		</div>
 		<div class="wrapper" style="">
-			<p class="space"></p>
-			<div id="selectedVPDS" style="float:right; font-size: 12px"><b>Selected VPDS:</b><label id="labelVpdsname"></label></div>
-			<br/>
+			
 			<h1 class="newfont" id="device" style="text-align:center;">Actuate a Device</h1>
 			<hr>
 			<div style="display: none;" id="getActuateErrorDiv" class="errorDiv"></div>

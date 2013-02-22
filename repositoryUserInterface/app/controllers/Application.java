@@ -68,16 +68,28 @@ public class Application extends Controller {
 	/*
 	 * If a user has not logged in,he is redirected to the index page
 	 */
+	
+	/*@Before
+	static void loginCheck(){
+	
+		System.out.println("UserMap" + usernameToSecretKeyMap.toString());
+		System.out.println("All Sessions"+session.all());
+	}*/
+	
 	@Before(unless = { "login", "index","registeruser" })
 	static void checkAuthentication() {
 		System.out.println("Session: " + session.get(Const.USERNAME));
 		if (session.get(Const.USERNAME) == null){
+			System.out.println("New session will be created1");
 			index();
-			System.out.println("New session will be created");
-		}		
+			System.out.println("New session will be created2");
+		}
+		else {
+			usernameToSecretKeyMap.put(session.get(Const.USERNAME),session.get(Const.SECRETKEY));
+		}
 
 		if (usernameToSecretKeyMap.get(session.get(Const.USERNAME)) == null) {
-			System.out.println("New session exists");
+			System.out.println("Page Check: Session exists");
 			index();
 
 		}
@@ -89,26 +101,29 @@ public class Application extends Controller {
 		System.out.println("Session VPDS URL: " + session.get(Const.VPDSURL));
 		if (session.get(Const.VPDSURL) == null)
 			home();
+		@SuppressWarnings("unused")
 		Global global=new Global(session.get(Const.VPDSURL), session.get(Const.VPDSKEY));
 	}
 	
 
 	public static void index() {
 		if (usernameToSecretKeyMap.get(session.get(Const.USERNAME)) != null) {
-			System.out.println("Session exists");
-			home();
-			
+			System.out.println("From Index page...Session exists");
+			home();			
 		}
 			
 		render();
 	}
-
-	public static void speak()
+	
+	public static void login() throws InvalidJsonException
 	{
-		render();
+		String loginBody = request.params.get(Const.REQUEST_BODY);
+		api.login.doProcess(loginBody);
+
 	}
 	
 	public static void logout() {
+		System.out.println(session.get(Const.USERNAME) + " Logging out...");
 		usernameToSecretKeyMap.remove(session.get(Const.USERNAME));
 		session.clear();
 		System.out.println("Proof: " + Http.Request.current().getBase());
@@ -155,7 +170,6 @@ public class Application extends Controller {
 	public static void managehome() {
 		flash.put(Const.USERNAME, session.get(Const.USERNAME));
 		String usertype = session.get(Const.USERTYPE);
-		System.out.println("Snsodjsdjs");	
 		renderArgs.put(Const.USERTYPE, usertype);
 		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
 		renderArgs.put(Const.VPDSNAME, session.get(Const.VPDSNAME));
@@ -166,6 +180,10 @@ public class Application extends Controller {
 	
 	public static void getsecretkey() {
 		api.getSecretKey.doProcess();
+	}
+	
+	public static void getVPDSInfo() {
+		api.getvpdsinfo.doProcess();
 	}
 	
 	public static void registervpds() {
@@ -214,10 +232,12 @@ public class Application extends Controller {
 		String usertype = session.get(Const.USERTYPE);
 		renderArgs.put(Const.USERTYPE, usertype);
 		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
-		renderArgs.put(Const.VPDSNAME, session.get(Const.VPDSNAME));
-		renderArgs.put(Const.DEVICENAME, session.get(Const.DEVICENAME));
-		renderArgs.put(Const.SENSORNAME, session.get(Const.SENSORNAME));
 		
+		renderArgs.put(Const.VPDSNAME, flash.get(Const.VPDSNAME));
+		renderArgs.put(Const.DEVICENAME, flash.get(Const.DEVICENAME));
+		renderArgs.put(Const.SENSORNAME, flash.get(Const.SENSORNAME));
+		renderArgs.put(Const.SENSORID, flash.get(Const.SENSORID));
+		System.out.println("FLash DeviceNAme:" + flash.get(Const.DEVICENAME));
 		render();
 	}
 	
@@ -225,9 +245,11 @@ public class Application extends Controller {
 		String usertype = session.get(Const.USERTYPE);
 		renderArgs.put(Const.USERTYPE, usertype);
 		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
-		renderArgs.put(Const.VPDSNAME, session.get(Const.VPDSNAME));
-		renderArgs.put(Const.DEVICENAME, session.get(Const.DEVICENAME));
-		renderArgs.put(Const.ACTUATORNAME, session.get(Const.ACTUATORNAME));
+		
+		renderArgs.put(Const.VPDSNAME, flash.get(Const.VPDSNAME));
+		renderArgs.put(Const.DEVICENAME, flash.get(Const.DEVICENAME));
+		renderArgs.put(Const.ACTUATORNAME, flash.get(Const.ACTUATORNAME));
+		renderArgs.put(Const.ACTUATORID, flash.get(Const.ACTUATORID));
 		
 		render();
 	}
@@ -236,9 +258,12 @@ public class Application extends Controller {
 		String usertype = session.get(Const.USERTYPE);
 		renderArgs.put(Const.USERTYPE, usertype);
 		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
-		renderArgs.put(Const.VPDSNAME, session.get(Const.VPDSNAME));
-		renderArgs.put(Const.DEVICENAME, session.get(Const.DEVICENAME));
-		renderArgs.put(Const.ACTUATORNAME, session.get(Const.ACTUATORNAME));
+		
+		
+		renderArgs.put(Const.VPDSNAME, flash.get(Const.VPDSNAME));
+		renderArgs.put(Const.DEVICENAME, flash.get(Const.DEVICENAME));
+		renderArgs.put(Const.ACTUATORNAME, flash.get(Const.ACTUATORNAME));
+		renderArgs.put(Const.ACTUATORID, flash.get(Const.ACTUATORID));		
 		
 		render();
 	}
@@ -506,13 +531,6 @@ public class Application extends Controller {
 		render();
 	}
 
-	public static void login() throws InvalidJsonException
-	{
-		String loginBody = request.params.get(Const.REQUEST_BODY);
-		api.login.doProcess(loginBody);
-
-	}
-
 	public static void getrepositoryinfo()
 
 	{
@@ -533,4 +551,10 @@ public class Application extends Controller {
 		api.soundInput.doProcess(userID);
 
 	}
+	
+	public static void speak()
+	{
+		render();
+	}
+	
 }

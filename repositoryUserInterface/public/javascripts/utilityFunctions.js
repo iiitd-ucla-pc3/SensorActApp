@@ -87,7 +87,7 @@ function createHeader() {
 	    });
 
 		$("#viewkey").click(function() {
-	    		alert("Your API Key is " + getsecretkey['secretkey']);
+	    		alert("Your Data Upload Key: " + getsecretkey[UPLOAD_KEY] +"\nYour Actuation Key: " + getsecretkey[ACTUATION_KEY] );
 	    });
 }
 

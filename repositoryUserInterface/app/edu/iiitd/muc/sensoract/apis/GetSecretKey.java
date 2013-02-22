@@ -59,13 +59,18 @@ public class GetSecretKey extends SensorActAPI {
 	 *            User credentials
 	 */
 	public final void doProcess() {
-		String secretkey = new SecretKey().getSecretKeyFromHashMap(session
-				.get(Const.USERNAME));
+		String secretkey = Global.VPDS_OWNER_KEY;
+	
 		String responseJson ="{\"secretkey\":\"" + secretkey + "\"}";
 		logger.info(Const.API_GETSECRETKEY, " "
 				+ responseJson);
-
-		renderJSON(responseJson);
+		
+		
+		HttpResponse responseFromBroker = new SendHTTPRequest()
+		.sendPostRequest(Global.URL_REPOSITORY_GET_KEY_LIST,
+				Const.MIME_TYPE_JSON, Const.API_GETSECRETKEY,
+				responseJson);
+		renderJSON(responseFromBroker.getString());
 	}
 
 }

@@ -302,10 +302,9 @@
 					
 					try {
 
-						var temp="http://"+document.location.hostname+":"+document.location.port+"/";
-
-						$.post(temp+URL_ACTUATE_DEVICE, JSON.stringify(tasklet), function(data) {
+						$.post(URL_UI_SERVER+URL_ACTUATE_DEVICE, JSON.stringify(tasklet), function(data) {
 								receivedData = data;
+								//alert(JSON.stringify(receivedData));
 						});
 						if(receivedData[RESPONSE_STATUS_CODE] == SUCCESS) {
 							alert("Actuation request made successfully!");
@@ -343,7 +342,7 @@
 						});
 						$("#spanMS" + removeSpace(deviceMSName)).html('Please select a motion sensor');	
 					}					
-					else{
+					/*else{
 						//check whether there is an association for the selected actuator
 						var urlGuardRulesAssocGet =	temp+URL_ASSOC_GET_GUARD_RULE;
 						var getAssoc = {};
@@ -373,7 +372,7 @@
 								$("#spanMS" + removeSpace(deviceMSName)).html('This sensor is not associated with any guard rule. First <a href="'+url+'">Create an Association</a> for this sensor');
 							}						
 						}	
-					}
+					}*/
 
 					return errorState;
 				}
@@ -390,7 +389,7 @@
 						$("#span" + removeSpace(deviceName)).html('Please select an actuator');				
 
 					}
-					else{
+					/*else{
 						//check whether there is an association for the selected actuator
 						var urlGuardRulesAssocGet =	temp+URL_ASSOC_GET_GUARD_RULE;
 						var getAssoc = {};
@@ -420,7 +419,7 @@
 								$("#span" + removeSpace(deviceName)).html('This actuator is not associated with any guard rule. First <a href="'+url+'">Create an Association</a> for this actuator');								
 							}						
 						}	
-					}
+					}*/
 
 					return errorState;
 				}

@@ -11,6 +11,7 @@
 		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/style.css'}">
 		<script src="@{'/public/js/libs/modernizr-2.0.6.min.js'}"></script>
 		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/jquery-ui-1.8.20.custom.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 		<script type="text/javascript" src="@{'/public/javascripts/utilityFunctions.js'}"></script>
 		<!--<script type="text/javascript" src="@{'/public/javascripts/speakClient.js'}"></script>-->
@@ -66,7 +67,11 @@
 				    
 				    
 				    if (responseFromServer.hasOwnProperty(RESPONSE_STATUS_CODE)){
-				    	alertAddError("Following errors occurred " + responseFromServer[RESPONSE_MESSAGE]);
+
+				    	if(responseFromServer[RESPONSE_STATUS_CODE] == NO_SHARED_DEVICE)
+				    		$("#device").prepend("No ");
+				    	else
+				    		alertAddError("Following errors occurred " + responseFromServer[RESPONSE_MESSAGE]);
 				    }
 				    else{
 				    	
@@ -118,7 +123,7 @@
 					    					<td><div class="leftDiv">	\
 											<label id="devicename'+acount+'">'+dname+'</label></div></td> \
 											<td><div class="leftDiv">	\
-											<label id="actuatorName">'+actuatorArray[actuator][SHARE_ACTUATOR_NAME]+' - '+ actuatorArray[actuator][SHARE_ACTUATOR_ID]+'</label> \
+											<label id="actuatorName"> '+ actuatorArray[actuator][SHARE_ACTUATOR_NAME]+' - '+ actuatorArray[actuator][SHARE_ACTUATOR_ID]+'</label> \
 											<input id="actuatorName'+acount+'" type="hidden" value="'+actuatorArray[actuator][SHARE_ACTUATOR_NAME]+'"/> \
 											<input id="actuatorid'+acount+'" type="hidden" value="'+ actuatorArray[actuator][SHARE_ACTUATOR_ID]+'"/></div></td> \
 											<td><div class="leftDiv" style="text-align:center"> \
@@ -159,10 +164,11 @@
 
 					var devicename = $("#devicename"+selectionIndex).html();
 					var vpdsname = $("#vpdsname"+selectionIndex).val();
-					var sensorName = $("#sensorName"+selectionIndex).html();					
-					var readPermission = $("#readSensor"+selectionIndex).html();
+					var sensorName = $("#sensorName"+selectionIndex).val();
+					var sensorID = $("#sensorid"+selectionIndex).val();
+					var readPermission = $("#readSensor"+selectionIndex).html();				
 
-					if(!readPermission){
+					if(readPermission == 'false'){
 						alert("Permission to visualize data is disabled by the owner!");
 						return false;
 					}
@@ -175,6 +181,7 @@
 					//jsonOpClassify[USERTYPE] = usertype;
 					jsonOpClassify[DEVICE_NAME] = devicename;
 					jsonOpClassify[SHARE_SENSOR_NAME] = sensorName;
+					jsonOpClassify[SHARE_SENSOR_ID] = sensorID;
 					jsonOpClassify[VIEW_SHARE_VPDS_NAME] = vpdsname;
 					jsonOpClassify[ORIGIN] = "visualize";
 					try{
@@ -211,11 +218,11 @@
 
 					var devicename = $("#devicename"+selectionIndex).html();
 					var vpdsname = $("#vpdsname"+selectionIndex).val();
-					var actuatorName = $("#actuatorName"+selectionIndex).html();
+					var actuatorName = $("#actuatorName"+selectionIndex).val();
 					var actuatorid = $("#actuatorid"+selectionIndex).val();
 					var writePermission = $("#writeActuator"+selectionIndex).html();
 
-					if(!writePermission){
+					if(writePermission == 'false'){
 						alert("Permission to actuate is disabled by the owner!");
 						return false;
 					}
@@ -263,11 +270,11 @@
 
 					var devicename = $("#devicename"+selectionIndex).html();
 					var vpdsname = $("#vpdsname"+selectionIndex).val();
-					var actuatorName = $("#actuatorName"+selectionIndex).html();
+					var actuatorName = $("#actuatorName"+selectionIndex).val();
 					var actuatorid = $("#actuatorid"+selectionIndex).val();
 					var writePermission = $("#writeActuator"+selectionIndex).html();
 
-					if(!writePermission){
+					if(writePermission == 'false'){
 						alert("Permission to actuate is disabled by the owner!");
 						return false;
 					}
@@ -303,6 +310,148 @@
 						alertAddError("Error: " + e);
 					}
 				});
+
+				/*//$("#dialog:ui-dialog").dialog("destroy");
+				var dlg = $("#dialog").dialog({
+					autoOpen : false,
+					draggable : true,
+					resizable : true,
+					width : 700,
+					modal : true
+				});
+
+				$( "#dialog" ).bind( "dialogbeforeclose", function(event, ui) {
+					$("#dialog").html("");
+				});
+
+				/* List all the actuation requests*/ 
+				/*$("#IDViewRequest").click(function() {
+
+					try {
+
+						var jsonList = {};
+						jsonList[VPDS_NAME]=vpdsname;
+						
+						$.post(URL_UI_SERVER+URL_LIST_ACTUATE_REQUEST, JSON.stringify(jsonList),function(data) {
+								receivedData = data;
+						});						
+
+						if (receivedData[RESPONSE_STATUS_CODE] != NO_ACTUATION_REQUEST_FOUND) {
+
+							if (receivedData[DEVICE_ACTLIST_ARRAY].length > 0)	{ //Success						
+								
+								$("#dialog").append("<div id =\"errorCDiv\" style=\"color: red;padding:5px; font-size: 1\"</div><br/>");
+								$("#errorCDiv").hide();
+								$("#dialog").append("<table id=\"actList\" style=\"font-size:15px\"><tr><td></td><td><b>Request Description</b></tr></th></table");
+								for (var index in receivedData[DEVICE_ACTLIST_ARRAY]) {
+									var name = receivedData[DEVICE_ACTLIST_ARRAY][index][ACTUATION_DESC];
+									var taskletId = receivedData[DEVICE_ACTLIST_ARRAY][index][ACTUATION_TASKLETID]; 
+									$("#actList").append("<tr><td><input type=\"checkbox\" id=\"chkCReq\" value=\""+ taskletId +"\" +</td><td>" + name + "</td></tr>");															
+								}
+								$("#dialog").append("<br><botton id=\"IDSelectAllButton\" class=\"google-button\" align=\"center\">Select/Deselect All</botton> &nbsp; <botton id=\"IDCancelReqButton\" class=\"google-button\" align=\"center\">Cancel Requests</botton>");
+								
+								var prevSelect = false;
+								$("#IDSelectAllButton").click(function() {
+
+									$("#dialog").find("input").each(function() {
+
+										if(prevSelect) {
+											$(this).attr('checked',false);
+										}											
+										else {
+											$(this).attr('checked',true);
+										}
+												
+									});
+
+									if (!prevSelect) {											
+										prevSelect = true;
+									}
+									else
+										prevSelect = false;
+
+								});
+
+								$("#IDCancelReqButton").click(function() {
+
+									var cancelReqList={};
+									var chkCount = 0;
+									var listCReq = new Array();
+									cancelReqList["secretkey"] = FAKE_SECRET_KEY;
+									cancelReqList["cancelRequestList"] = new Array();
+
+									$("#dialog").find("input").each(function() {
+
+										if ($(this).prop("checked")) {									
+											listCReq[chkCount] = $(this).val();
+											chkCount++;
+										}																									
+									});
+
+									if (chkCount < 1) {
+										var errorInformation = "Please select at least one request to cancel!";
+										$("#errorCDiv").show();
+										$("#errorCDiv").html(errorInformation);
+										$("#errorCDiv").fadeIn('slow');
+										return false;
+									}
+
+									cancelReqList["cancelRequestList"] = listCReq;
+									cancelReqList[VPDS_NAME] = vpdsname;
+									
+
+									try {
+										
+										$.post(URL_UI_SERVER+URL_CANCEL_ACTUATE_REQUEST, JSON.stringify(cancelReqList), function(data) {
+										receivedData = data;
+										});
+										if(receivedData[RESPONSE_STATUS_CODE] == SUCCESS) {
+
+											alert("Actuation requests successfully cancelled!");
+											window.location = URL_UI_SERVER + URL_ACTUATE;
+										}
+										else {
+											if(receivedData[RESPONSE_STATUS_CODE] == TASKLET_NOT_CANCELED) {
+												var errorInformation = "Request could not be canceled. Try again later";
+												$("#errorCDiv").html(errorInformation);
+												$("#errorCDiv").fadeIn('slow');
+											}
+											return false;
+										}
+											
+									}
+									catch(e) {
+										var errorInformation = receivedData[RESPONSE_MESSAGE];
+										$("#errorCDiv").html(errorInformation);
+										$("#errorCDiv").fadeIn('slow');
+										return false;
+									}
+
+
+								});						
+							}
+							else {
+								alertActuateDeviceError("Following error occured: " + receivedData[RESPONSE_MESSAGE]);
+							}
+
+							dlg.dialog("open");
+							
+							return false;
+
+						}
+						else
+							alertGetActuateError("You have not made any actuation request!");
+
+
+					} catch(e) {
+
+						if (receivedData[RESPONSE_STATUS_CODE] == ACTUATION_REQUEST_LISTFAILED) 
+							alertGetActuateError("Could not retrieve the list at this time. Please try again later.");
+						else
+							alertGetActuateError("Following error occured: " + receivedData[RESPONSE_MESSAGE]);
+					}
+
+				});*/
 			});
 			</script>
 			
@@ -391,7 +540,8 @@
 							</td>
 						</tr>										
 					</table>
-					<p class="space"></p>				
+					<p class="space"></p>	
+					<div id="dialog" title = "Actuation Requests Made" style="font-size:1;"></div>			
 					<div style="clear:both;text-align:center; clear:none; padding-top:20px">	
 						<button id="IDTimeActuate" class="google-button">
 							Time Actuation
@@ -400,6 +550,10 @@
 						<button id="IDPresenceActuate" class="google-button">
 							Presence Actuation
 						</button>
+						<!--&nbsp; &nbsp;
+						<button id="IDViewRequest" class="google-button">
+						View Scheduled Actuation Requests
+						</button>-->
 					</div>					
 					<br/>
 				</div>

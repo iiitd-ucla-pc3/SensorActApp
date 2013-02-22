@@ -43,6 +43,7 @@ var SUCCESS=0;
 var NO_ACTUATION_REQUEST_FOUND = 60;
 var ACTUATION_REQUEST_LISTFAILED = 61;
 var TASKLET_NOT_CANCELED = 54;
+var NO_SHARED_DEVICE = 33;
 var NO_GUARD_RULE_FOUND = 40;
 var NO_GUARD_RULEASSOC_FOUND = 41;
 var NO_REGISTERED_VPDS = 29;
@@ -53,7 +54,8 @@ var USERTYPE="usertype";
 var ORIGIN="origin";
 
 //Dictionary constants associated with user profile
-var USERNAME_ARRAY="usernamelist";
+var USERNAME_ARRAY="usernames";     //For VPDS
+var USERNAMEARRAY="usernamelist";     // For Broker
 
 //Dictionary constants associated with device profile
 var DEVICE_ARRAY="devicelist";
@@ -173,6 +175,9 @@ var QUERY_SENSOR_ARRAY = "sensorsArray";
 var QUERY_DEVICE = "device";
 var QUERY_SENSOR = "sensor";
 
+//Dictionary constants associated with Getting Key List
+var UPLOAD_KEY="uploadkey";
+var ACTUATION_KEY="actuationkey";
 
 var  oneSECOND=1000;
 
@@ -304,6 +309,7 @@ var URL_RELOGIN="relogin";
 // GET Requests
 
 var URL_GET_SECRET_KEY="getsecretkey"
+var URL_GET_VPDS_INFO="getVPDSinfo"
 var URL_GET_USER_LIST="getuserlist"
 
 var URL_HOME="home";

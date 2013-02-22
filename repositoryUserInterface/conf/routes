@@ -5,6 +5,7 @@
 # Home page
 GET     /                                       Application.index
 GET		/getsecretkey							Application.getsecretkey
+GET		/getVPDSInfo							Application.getVPDSInfo
 GET     /relogin								Application.relogin
 POST	/opclassifier							Application.opclassifier
 

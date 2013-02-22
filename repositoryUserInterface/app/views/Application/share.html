@@ -261,11 +261,11 @@
 				    else{
 				    	//alert(JSON.stringify(responseFromServer));
 				    	
-				    	var numberOfUsers = responseFromServer[USERNAME_ARRAY].length;
+				    	var numberOfUsers = responseFromServer[USERNAMEARRAY].length;
 				    	if (numberOfUsers > 0) {
 				    		
-				    		for (var index in responseFromServer[USERNAME_ARRAY]) responseFromServer
-				    			$("#user").append("<option value ='"+responseFromServer[USERNAME_ARRAY][index]+"'>"+ responseFromServer[USERNAME_ARRAY][index]+"</option>");
+				    		for (var index in responseFromServer[USERNAMEARRAY]) 
+				    			$("#user").append("<option value ='"+responseFromServer[USERNAMEARRAY][index]+"'>"+ responseFromServer[USERNAMEARRAY][index]+"</option>");
 				    	}
 				    	else
 				    		alertAddError("No users found");			    	
@@ -550,7 +550,7 @@
 					autoOpen : false,
 					draggable : true,
 					resizable : true,
-					width : 1000,
+					width : 1050,
 					modal : true
 				});
 
@@ -567,11 +567,13 @@
 						
 						$.post(URL_UI_SERVER+URL_LIST_SHARED_DEVICES, function(data) {
 								receivedData = data;
-						});						
+								//alert(JSON.stringify(receivedData));
+						});			
 
-						if (!receivedData.hasOwnProperty(RESPONSE_STATUS_CODE)) {
 
-							if (receivedData[VIEW_SHARE_DEVICE_LIST].length > 0)	{ //Success						
+						if (!receivedData.hasOwnProperty(RESPONSE_STATUS_CODE)) {							
+
+							if (receivedData.length > 0)	{ //Success						
 								
 								$("#dialogList").append("<div id =\"errorCDiv\" style=\"color: red;padding:5px; font-size: 1\"</div><br/>");
 								$("#errorCDiv").hide();
@@ -579,38 +581,81 @@
 									<tr id=\"listHeader\"><td>User Name</td> \
 										<td>VPDS Name</td> \
 										<td>Device Name</td> \
-										<td>Sensor Name</td> \
-										<td>Actuator Name</td> \
+										<td>Sensors</td> \
+										<td>Actuators</td> \
 										<td>Read Access</td> \
 										<td style=\"border-width:0px\">Write Access</td> \
 									</tr></table");
 								var sensor_name, actuator_name;
-								for (var index in receivedData[VIEW_SHARE_DEVICE_LIST]) {
 
-									if (typeof receivedData[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][SHARE_ACTUATOR_NAME] === 'undefined')
-										actuator_name = "--";
-									else
-										actuator_name = receivedData[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][SHARE_ACTUATOR_NAME];
-									if (typeof receivedData[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][SHARE_SENSOR_NAME] === 'undefined')
-										sensor_name = "--";
-									else
-										 sensor_name = receivedData[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][SHARE_SENSOR_NAME];
-										
-									$("#sList").append('<tr> \
-										<td><div class="leftDiv"> \
-				    					<label id="user">'+receivedData[VIEW_SHARE_DEVICE_LIST][index][SHARE_USERNAME]+'</label></div></td> \
-										<td><div class="leftDiv"> \
-				    					<label id="vpdsname">'+receivedData[VIEW_SHARE_DEVICE_LIST][index][VIEW_SHARE_VPDS_NAME]+'</label></div></td> \
-				    					<td><div class="leftDiv">	\
-										<label id="devicename">'+receivedData[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][DEVICE_NAME]+'</label></div></td> \
-										<td><div class="leftDiv">	\
-										<label id="sensorname">'+sensor_name+'</label><input id="sensorid" type="hidden" value="'+receivedData[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][SHARE_SENSOR_ID]+'"/></div></td> \
-										<td><div class="leftDiv">	\
-										<label id="actuatorname">'+actuator_name+'</label><input id="actuatorid" type="hidden" value="'+receivedData[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][SHARE_ACTUATOR_ID]+'"/></div></td> \
-										<td><div class="leftDiv" style="text-align:center"> \
-										<label id="readActuator">'+receivedData[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE_PERMISSION][READ]+'</label></td> \
-										<td style="border-width: 0;"><div class="leftDiv" style="text-align:center"> \
-										<label id="writeActuator">'+receivedData[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE_PERMISSION][WRITE]+'</label></div></td></tr>');															
+								for(var i in receivedData) {
+
+									var sharedDeviceList = receivedData[i][VIEW_SHARED];
+
+									for (var index in sharedDeviceList) {									
+
+										var dname = sharedDeviceList[index][VIEW_DEVICENAME];
+
+						    			if(!(typeof sharedDeviceList[index][VIEW_SENSORS].length > 0)){
+
+						    				var sensorArray = {};
+						    				sensorArray = sharedDeviceList[index][VIEW_SENSORS];
+
+						    				for (var sensor in sensorArray) {
+
+												if (typeof sensorArray[sensor][SHARE_SENSOR_NAME] === 'undefined')
+													sensor_name = "--";
+												else
+													 sensor_name = sensorArray[sensor][SHARE_SENSOR_NAME];
+													
+												$("#sList").append('<tr> \
+													<td><div class="leftDiv"> \
+							    					<label id="user">'+receivedData[i][SHARE_USERNAME]+'</label></div></td> \
+													<td><div class="leftDiv"> \
+							    					<label id="vpdsname">'+receivedData[i][VIEW_SHARE_VPDS_NAME]+'</label></div></td> \
+							    					<td><div class="leftDiv">	\
+													<label id="devicename">'+dname+'</label></div></td> \
+													<td><div class="leftDiv">	\
+													<label id="sensorname">'+sensor_name+'</label><input id="sensorid" type="hidden" value="'+sensorArray[sensor][SHARE_SENSOR_ID]+'"/></div></td> \
+													<td><div class="leftDiv">	\
+													<label id="actuatorname"> -- </label></div></td> \
+													<td><div class="leftDiv" style="text-align:center"> \
+													<label id="read">'+sensorArray[sensor][READ]+'</label></td> \
+													<td style="border-width: 0;"><div class="leftDiv" style="text-align:center"> \
+													<label id="write">'+sensorArray[sensor][WRITE]+'</label></div></td></tr>');
+											}
+										}
+
+										if(!(typeof sharedDeviceList[index][VIEW_ACTUATORS].length > 0)){
+
+						    				var actuatorArray = {};
+						    				actuatorArray = sharedDeviceList[index][VIEW_ACTUATORS];
+
+						    				for (var actuator in actuatorArray) {	
+
+						    					if (typeof actuatorArray[actuator][SHARE_ACTUATOR_NAME] === 'undefined')
+													actuator_name = "--";
+												else
+													actuator_name = actuatorArray[actuator][SHARE_ACTUATOR_NAME];
+
+												$("#sList").append('<tr> \
+													<td><div class="leftDiv"> \
+							    					<label id="user">'+receivedData[i][SHARE_USERNAME]+'</label></div></td> \
+													<td><div class="leftDiv"> \
+							    					<label id="vpdsname">'+receivedData[i][VIEW_SHARE_VPDS_NAME]+'</label></div></td> \
+							    					<td><div class="leftDiv">	\
+													<label id="devicename">'+dname+'</label></div></td> \
+													<td><div class="leftDiv">	\
+													<label id="sensorname">--</label></div></td> \
+													<td><div class="leftDiv">	\
+													<label id="actuatorname">'+actuator_name+'</label></div></td> \
+													<td><div class="leftDiv" style="text-align:center"> \
+													<label id="read">'+actuatorArray[actuator][READ]+'</label></td> \
+													<td style="border-width: 0;"><div class="leftDiv" style="text-align:center"> \
+													<label id="write">'+actuatorArray[actuator][WRITE]+'</label></div></td></tr>');
+						    				}	
+						    			}												
+									}
 								}
 								
 								//$("#dialog").append("<br><botton id=\"IDSelectAllButton\" class=\"google-button\" align=\"center\">Select/Deselect All</botton> &nbsp; <botton id=\"IDCancelReqButton\" class=\"google-button\" align=\"center\">Cancel Requests</botton>");
@@ -638,7 +683,7 @@
 								});	*/				
 							}
 							else {
-								alertAddError("Following error occured: " + receivedData[RESPONSE_MESSAGE]);
+								alertAddError("Error: " + receivedData[RESPONSE_MESSAGE]);
 							}
 
 							
@@ -691,7 +736,8 @@
 			<hr>
 			<div style="display: none;" id="getRegisterErrorDiv" class="errorDiv"></div>
 			<div style="display: none;" id="errorDiv" class="errorDiv"></div>
-			<label><sup>*</sup> <font size="1">Mandatory Fields</font></label>
+			<label><sup>*</sup> <font size="1">Mandatory Fields</font></label><br/>	
+			<font size="2">Instruction	: This screen is used for assigning permissions to users as well as editing the previously given permissions. Older permissions (for a sensor/actuator) will be replaced. </font>
 			<p class="space"></p>
 			<div id="shareAccess" align="center">
 				<!--Right Pane starts here-->

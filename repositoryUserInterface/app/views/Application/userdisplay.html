@@ -39,7 +39,13 @@
 
 				var devicename = $("#devicename").val();
 				var sensorname = $("#sensorname").val();
+				var sensorid = $("#sensorid").val();
 				var vpdsname = $("#vpdsname").val();
+
+				if(devicename == '') {
+					alert("Refresh not allowed. Taking you back to the selection page...");
+					window.location = URL_SHARED_DEVICES;
+				}
 
 				$(".errorVisual").hide();
 		
@@ -57,6 +63,7 @@
 					$("#speed").attr('disabled', 'disabled');//Disable Speed
 					$("#divWindowSize").hide();	//Disable WindowSize
 				}
+				
 				jQuery.ajaxSetup({
 					async : false
 				});
@@ -922,6 +929,7 @@
 			<input id="vpdsname"  type="hidden" value=${vpdsname}>
 			<input id="devicename"  type="hidden" value=${devicename}>
 			<input id="sensorname"  type="hidden" value=${sensorname}>
+			<input id="sensorid"  type="hidden" value=${sensorid}>
 		</div>
 
 		<div style="clear:both;" id="footer-container">

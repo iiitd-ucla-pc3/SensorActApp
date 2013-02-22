@@ -56,6 +56,8 @@ public class Global {
 	
 	public static String URL_REPOSITORY_GET_INFO;
 	
+	public static String URL_REPOSITORY_GET_KEY_LIST;
+	
 	public static String URL_REPOSITORY_GENERATE_SECRET_KEY;
 	
 	public Global()
@@ -138,6 +140,9 @@ public class Global {
 		
 		this.URL_REPOSITORY_GET_INFO = URL_REPOSITORY_SERVER
 				+ "repo/info";
+		
+		this.URL_REPOSITORY_GET_KEY_LIST = URL_REPOSITORY_SERVER
+				+ "key/list";
 		
 		this.URL_REPOSITORY_GENERATE_SECRET_KEY = URL_REPOSITORY_SERVER
 				+ "user/generate/repokey";

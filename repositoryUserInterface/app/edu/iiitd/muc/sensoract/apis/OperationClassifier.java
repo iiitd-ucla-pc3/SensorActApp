@@ -72,21 +72,22 @@ public class OperationClassifier extends SensorActAPI {
 					.toString())));
 		}
 		
-		session.put(Const.VPDSNAME,oprequest.vpdsname);
-		session.put(Const.DEVICENAME,oprequest.devicename);
+		flash.put(Const.VPDSNAME,oprequest.vpdsname);
+		flash.put(Const.DEVICENAME,oprequest.devicename);
 		
 		if(oprequest.origin.equals("visualize")) {
-			session.put(Const.SENSORNAME,oprequest.sensorname);
+			flash.put(Const.SENSORNAME,oprequest.sensorname);
+			flash.put(Const.SENSORID,oprequest.sensorid);
 			renderJSON("{\"url\": \"" + Http.Request.current().getBase() + "/userdisplay\"}");
 		}
 		else if (oprequest.origin.equals("actuate"))  {
-			session.put(Const.ACTUATORNAME,oprequest.actuatorname);
-			session.put(Const.ACTUATORID,oprequest.actuatorid);
+			flash.put(Const.ACTUATORNAME,oprequest.actuatorname);
+			flash.put(Const.ACTUATORID,oprequest.actuatorid);
 			renderJSON("{\"url\": \"" + Http.Request.current().getBase() + "/useractuate\"}");
 		}
 		else{
-			session.put(Const.ACTUATORNAME,oprequest.actuatorname);
-			session.put(Const.ACTUATORID,oprequest.actuatorid);
+			flash.put(Const.ACTUATORNAME,oprequest.actuatorname);
+			flash.put(Const.ACTUATORID,oprequest.actuatorid);
 			renderJSON("{\"url\": \"" + Http.Request.current().getBase() + "/userpresenceactuate\"}");
 		}
 		

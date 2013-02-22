@@ -40,6 +40,7 @@ public class OperationClassifierFormat {
 	public String vpdsname = null;
 	public String devicename = null;
 	public String sensorname = null;
+	public String sensorid = null;
 	public String actuatorname = null;
 	public String actuatorid = null;
 	public String origin = null;	

@@ -104,23 +104,24 @@ public class ActuateDevice extends SensorActAPI {
 			responseFromBroker = new SendHTTPRequest()
 			.sendPostRequest(Const.URL_BROKER_GET_ACCESS_KEY,
 					Const.MIME_TYPE_JSON, Const.API_ACTUATEDEVICE,
-					jsonGetAccessKey);
+					jsonGetAccessKey);			
+			
 			System.out.println("Get access key "+responseFromBroker.getString());
 			
 			GetAccessKeyResponseFormat response = gson.fromJson(
 					responseFromBroker.getString(),GetAccessKeyResponseFormat.class);
 			
 			//Set secretkey as accesskey
-			actRequest.secretkey = response.accesskey;
+			secretkey = response.accesskey;
 			vpdsURL = response.vpdsurl;
 		}
 		else if(usertype.equals(Const.OWNER)){
 			//Set secretkey as owner key
-			actRequest.secretkey = Global.VPDS_OWNER_KEY;			
+			secretkey = Global.VPDS_OWNER_KEY;			
 		}
 		
 		ActuateVPDSRequest toSend = new ActuateVPDSRequest(
-				actRequest.secretkey, actRequest.taskletname, actRequest.desc, actRequest.param,
+				secretkey, actRequest.taskletname, actRequest.desc, actRequest.param,
 				actRequest.input, actRequest.when, actRequest.execute);
 		
 		String jsonToSend = gson.toJson(toSend);

@@ -80,6 +80,7 @@ public class Login extends SensorActAPI {
 					secretkey = tokenizer.nextToken().trim();
 					
 					session.put(Const.USERNAME, loginUserRequest.username);
+					session.put(Const.SECRETKEY, secretkey);
 					session.put(Const.USERTYPE, usertype);
 					usernameToSecretKeyMap.put(loginUserRequest.username,
 							secretkey);

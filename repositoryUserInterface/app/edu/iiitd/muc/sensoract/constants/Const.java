@@ -81,6 +81,7 @@ public class Const {
 	public static final String API_FINDDEVICETEMPLATE = "finddevicetemplate";
 	public static final String API_GENERATESECRETKEY = "generatesecretkey";
 	public static final String API_GETSECRETKEY = "getsecretkey";
+	public static final String API_GETVPDSINFO = "getvpdsinfo";
 	public static final String API_LISTALLDEVICETEMPLATES = "listalldevicetemplates";
 	public static final String API_ACTUATEDEVICE = "actuatedevice";
 	public static final String API_LISTACTUATIONREQUEST = "listactuationrequests";
@@ -234,6 +235,7 @@ public class Const {
 	
 	public static final String DEVICENAME = "devicename";
 	public static final String SENSORNAME = "sensorname";
+	public static final String SENSORID = "sensorid";
 	public static final String ACTUATORNAME = "actuatorname";
 	public static final String ACTUATORID = "actuatorid";
 

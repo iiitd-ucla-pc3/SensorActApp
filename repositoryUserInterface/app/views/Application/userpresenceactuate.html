@@ -47,11 +47,17 @@
 				var vpdsname = $("#vpdsname").val();
 				var usertype = $("#usertype").val();
 
+				if(deviceName == '') {
+					alert("Refresh not allowed. Taking you back to the selection page...");
+					window.location = URL_SHARED_DEVICES;
+				}
+
 				/**
 				 * Global Variables used during the lifecycle of the page
 				 *
 				 */
 				var selectedDate;
+				var deviceMSName;
 				var fromDay, toDay;
 				var MotionSensor, MotionSensorID;
 
@@ -118,7 +124,10 @@
 					var resource = username + ":" + deviceName + ":" + actuatorName + ":" + actuatorID;
 					var numRand = Math.floor(Math.random()*1000);
 
+
+
 					tasklet[ACTUATION_SECRETKEY]= FAKE_SECRET_KEY;
+					tasklet[VPDS_NAME] = vpdsname;
 					tasklet[ACTUATION_TASKLETNAME]="actuate_" + deviceName + actuatorName + numRand;
 
 					tasklet[ACTUATION_PARAM] = {};
@@ -301,7 +310,8 @@
 										end';
 
 
-					//alert(JSON.stringify(tasklet));				
+					//alert(JSON.stringify(tasklet));
+					//return false;
 					
 					try {
 
@@ -322,6 +332,8 @@
 					}
 
 				}
+
+
 
 				/*
 				 * Validate the parameters for presence based actuation for visualization
@@ -487,10 +499,11 @@
 
 									for (var indexSensors in responseFromServer[VIEW_SHARED][index][VIEW_SENSORS]) {
 
-										var sensorName = sensorArray[indexSensors][DEVICE_SENSOR_NAME];											
+										var sensorName = sensorArray[indexSensors][SHARE_SENSOR_NAME];											
 										if (sensorName == property.val()) {									
 											MotionSensor = sensorArray[indexSensors][SHARE_SENSOR_NAME];
 											MotionSensorID = sensorArray[indexSensors][SHARE_SENSOR_ID];
+
 											break;
 										}	
 									}
@@ -557,19 +570,17 @@
 				    			var dname = responseFromServer[VIEW_SHARED][index][VIEW_DEVICENAME];
 
 				    			if(!(typeof responseFromServer[VIEW_SHARED][index][VIEW_SENSORS].length > 0)){
-				    				
-									if(!(typeof responseFromServer[VIEW_SHARE_DEVICE_LIST][index][SHARE_DEVICE][SHARE_SENSOR_NAME] === 'undefined')) {
-										$("#divMSensorSelect").append("<div class=\"msensor\" id=\"divMS" + removeSpace(name) +count+ "\"><input type=\"radio\" name=\"IDMSensorSelect\" value=\"" + name + "\" />&nbsp;&nbsp;" + name + "</div>");
-									}
+									
+									$("#divMSensorSelect").append("<div class=\"msensor\" id=\"divMS" + removeSpace(dname) + "\"><input type=\"radio\" name=\"IDMSensorSelect\" value=\"" + dname + "\" />&nbsp;&nbsp;" + dname + "</div>");
 								}
 							}
 
-							var deviceMSName;
+							
 							var previousValue = {};
 							$("input[name=IDMSensorSelect]").click(function() {
 								
-								var clickedItem = $(this).attr('name')+this.value;		
-								//alert("Clicked device:" + clickedItem);		 
+								var clickedItem = this.value;		
+									 
 
 								$("#spanDevice").hide();
 								$("#spanSensor").hide();
@@ -578,7 +589,7 @@
 							    if(previousValue[clickedItem] == 'checked'){
 							    	//alert(previousValue[clickedItem]);
 							    	if($(this).attr('name') == "IDMSensorSelect") {
-							    		$("#divMS" + removeSpace(this.value)).children('.msensor').remove();
+							    		$("#divMS" + removeSpace(this.value)).children('.sensor').remove();
 							    		deviceMSName = "";
 							    	}
 
@@ -593,6 +604,7 @@
 									if ($(this).attr('checked')) {
 										
 										deviceMSName = this.value;
+
 										
 										for (var index in responseFromServer[VIEW_SHARED]) {
 				    						var name = responseFromServer[VIEW_SHARED][index][VIEW_DEVICENAME];
@@ -605,12 +617,11 @@
 													$("#spanSensor").hide();
 													$("#IDActuateDevice").removeAttr("disabled", "disabled");
 												}
-												if ( responseFromServer[VIEW_SHARED][index][VIEW_SENSORS].length > 0) {
-												
+												if ( responseFromServer[VIEW_SHARED][index][VIEW_SENSORS].length > 0) {										
 													var sensorArray = responseFromServer[VIEW_SHARED][index][VIEW_SENSORS];
 
 													$("#divMS" + removeSpace(name)).append("<div class=\"sensor\"></div>");
-													for (var sensor in sensorArray) {
+													for (var sensor in sensorArray)
 													
 														$("#divMS" + removeSpace(name)).children(".sensor").append("<input id=\"sensorID\" type=\"radio\" name = \"sensorID\" value=" + sensorArray[sensor][SHARE_SENSOR_NAME] + ">&nbsp;" + sensorArray[sensor][SHARE_SENSOR_NAME] + "&nbsp;&nbsp;</input>");
 													
@@ -620,7 +631,7 @@
 										}
 									}	
 								}
-							});	
+							});
 				    	}
 				    	else
 				    		alertActuateDeviceError("No sensors shared with you");
@@ -719,7 +730,8 @@
 										return false;
 									}
 
-									cancelReqList["cancelRequestList"] = listCReq;											
+									cancelReqList["cancelRequestList"] = listCReq;
+									cancelReqList[VPDS_NAME] = vpdsname;
 
 									try {
 										
@@ -747,8 +759,6 @@
 										$("#errorCDiv").fadeIn('slow');
 										return false;
 									}
-
-
 								});						
 							}
 							else {
@@ -797,9 +807,8 @@
 				<br />
 				<br />
 				<nav>
-					<p class="pbox" style="margin-bottom:-20px;"> Welcome ${username} &nbsp | &nbsp
-						<span id="viewkey">View API key</span> &nbsp; | 
-						&nbsp<span id="logout">Logout</span>
+					<p class="pbox" style="margin-bottom:-20px;"> Welcome ${username} &nbsp; | 
+						&nbsp;<span id="logout">Logout</span>
 					</p>
 				</nav>
 
