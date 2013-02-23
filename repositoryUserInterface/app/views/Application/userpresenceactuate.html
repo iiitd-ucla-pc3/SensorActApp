@@ -553,6 +553,7 @@
 				jsonToSend[USERTYPE] = usertype;
 
 				var urlGetShareDevices = URL_UI_SERVER + URL_VIEW_SHARED_DEVICES;
+				var noSensorCount = 0;
 				try{
 					$.post(urlGetShareDevices, JSON.stringify(jsonToSend), function(rData) {
 
@@ -563,16 +564,20 @@
 				    	alertGetActuateError("Following errors occurred " + responseFromServer[RESPONSE_MESSAGE]);
 				    }
 				    else{
+				    	//alert(JSON.stringify(responseFromServer));
 				    	var numberOfDevices = responseFromServer[VIEW_SHARED].length;
 				    	if (numberOfDevices > 0) {
 
 				    		for (var index in responseFromServer[VIEW_SHARED]) {
 				    			var dname = responseFromServer[VIEW_SHARED][index][VIEW_DEVICENAME];
+				    			alert(responseFromServer[VIEW_SHARED][index][VIEW_SENSORS].length);
 
-				    			if(!(typeof responseFromServer[VIEW_SHARED][index][VIEW_SENSORS].length > 0)){
+				    			if(responseFromServer[VIEW_SHARED][index][VIEW_SENSORS].length > 0){
 									
 									$("#divMSensorSelect").append("<div class=\"msensor\" id=\"divMS" + removeSpace(dname) + "\"><input type=\"radio\" name=\"IDMSensorSelect\" value=\"" + dname + "\" />&nbsp;&nbsp;" + dname + "</div>");
 								}
+								else
+									noSensorCount++;
 							}
 
 							
@@ -633,7 +638,7 @@
 								}
 							});
 				    	}
-				    	else
+				    	if(numberOfDevices == noSensorCount)
 				    		alertActuateDeviceError("No sensors shared with you");
 			    	}
 				}

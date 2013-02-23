@@ -83,8 +83,9 @@ public class RegisterVPDSToBroker extends SensorActAPI {
 			renderJSON(responseFromBroker.getString());
 		}
 		else {
-			renderJSON(gson.toJson(new APIResponse(Const.API_REGISTER_VPDS, 1, responseFromBroker
-					.toString())));
+			//renderJSON(gson.toJson(new APIResponse(Const.API_REGISTER_VPDS, 1, responseFromBroker
+					//.toString())));
+			renderJSON(responseFromBroker.getString());
 		}
 
 	}

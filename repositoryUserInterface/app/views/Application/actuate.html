@@ -524,6 +524,9 @@
 						});						
 					} 
 				}
+				else if(receivedDeviceData[RESPONSE_STATUS_CODE] == NO_DEVICE_FOUND) {
+					alertGetActuateError("No devices added yet");
+				}
 
 				//$("#dialog:ui-dialog").dialog("destroy");
 				var dlg = $("#dialog").dialog({

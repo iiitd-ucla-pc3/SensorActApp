@@ -13,6 +13,7 @@
 		<script src="@{'/public/js/libs/modernizr-2.0.6.min.js'}"></script>
 		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 
+		<script src="@{'/public/javascripts/jquery.noty.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 		<script type="text/javascript" src="@{'/public/javascripts/utilityFunctions.js'}"></script>
 		<script src="@{'/public/javascripts/jquery-ui-1.8.20.custom.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
@@ -67,14 +68,34 @@
 						$("#spanVPDSKey").html("VPDS Key length should be between " + MIN_LENGTH_VPDS_KEY + " and "+  MAX_LENGTH_VPDS_KEY + " characters");
 						
 					}
-					else if(/^([a-z]([a-z]|\d|\+|-|\.)*):(\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?((\[(|(v[\da-f]{1,}\.(([a-z]|\d|-|\.|_|~)|[!\$&'\(\)\*\+,;=]|:)+))\])|((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=])*)(:\d*)?)(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*|(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)|((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)|((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)){0})(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(vpdsURL)) { }
-					else{
+					else if(!(/^([a-z]([a-z]|\d|\+|-|\.)*):(\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?((\[(|(v[\da-f]{1,}\.(([a-z]|\d|-|\.|_|~)|[!\$&'\(\)\*\+,;=]|:)+))\])|((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=])*)(:\d*)?)(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*|(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)|((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)|((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)){0})(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(vpdsURL))) {
+
 						errorState = true;
 						$("#vpdsURL").addClass("error");
 
 						$("#spanVPDSURL").show('slow',function(){});
 						$("#spanVPDSURL").html("Invalid URL! Please enter a valid URL");
 
+					}
+					else {
+						
+						var result = vpdsURL.split(':')[2];
+						if(typeof result === 'undefined'){
+							errorState = true;
+							$("#vpdsURL").addClass("error");
+
+							$("#spanVPDSURL").show('slow',function(){});
+							$("#spanVPDSURL").html("Invalid URL! Missing port number! Please add one.");
+						}
+						else if(parseInt(result) <= 1023){
+
+							errorState = true;
+							$("#vpdsURL").addClass("error");
+
+							$("#spanVPDSURL").show('slow',function(){});
+							$("#spanVPDSURL").html("Invalid URL! Port number is a reserved one. Please select another one.");
+
+						}
 					}
 					/*else if(vpdsURL.length < MIN_LENGTH_VPDS_URL  || vpdsURL.length > MAX_LENGTH_VPDS_URL) { 
 						errorState = true;
@@ -165,14 +186,18 @@
 					jsonReqObject[SECRET_KEY] = FAKE_SECRET_KEY;
 					jsonReqObject[VPDS_NAME] = vpdsName;
 					jsonReqObject[VPDS_KEY] = vpdsKey;
-					jsonReqObject[VPDS_URL] = vpdsURL;
 
-					//alert("After validation " + JSON.stringify(jsonReqObject));
+					var substring = vpdsURL.substr(vpdsURL.length-1,vpdsURL.length);
+					if(substring != '/') {
+						vpdsURL = vpdsURL + '/';
+					}
+					jsonReqObject[VPDS_URL] = vpdsURL;
 
 					var responseFromServer = {};
 					var urlRegisterVPDS = URL_UI_SERVER + URL_REGISTER_VPDS;
-					
+
 					// Make request to the broker to register the VPDS (URL_REGISTER_VPDS)
+					showNoty("Registering VPDS. Please wait...", "center", "off",5000);
 					try{
 
 						$.post(urlRegisterVPDS, JSON.stringify(jsonReqObject), function(rData) {
@@ -180,9 +205,10 @@
 				    		responseFromServer = rData;
 
 				    		if(responseFromServer[RESPONSE_STATUS_CODE] != 0){
-				    			alertAddRegisterError("Following errors occurred " + responseFromServer[RESPONSE_MESSAGE]);
+				    			alertAddRegisterError("Following errors occurred: " + responseFromServer[RESPONSE_MESSAGE]);
 				    		}
 				    		else{
+				    			$.noty.closeAll();
 				    			alert("VPDS Registered!");
 				    			window.location = URL_RELOGIN;
 
@@ -226,7 +252,9 @@
 			<hr>			
 			<div style="display: none;" id="getRegisterErrorDiv" class="errorDiv"></div>
 			<div style="display: none;" id="errorDiv" class="errorDiv"></div>
-			<label><sup>*</sup> <font size="1">Mandatory Fields</font></label>	
+			<label><sup>*</sup> <font size="1">Mandatory Fields</font></label><br/>	
+			<font size="2">Instruction	: Please start your VPDS service before you start the registration process here. Confirmation with the VPDS is a part of the process. </font>
+			
 			<p class="space"></p>
 			<div id="registerVPDS">
 				<!-- Left pane starts -->
@@ -253,30 +281,33 @@
 						<label>Enter VPDS Name:<sup>*</sup></label>
 						<div><font size="1">Please specify the VPDS name without spaces</font></div>
 						<input type="text" id="vpdsName"/>
+						<div class="rightDiv">
+							<span class="errorVisual" id="spanVPDSName"></span>
+						</div>
 					</div>
-					<div class="rightDiv">
-						<span class="errorVisual" id="spanVPDSName"></span>
-					</div>
+						
 
 					<div class="leftDiv">
 						<br/>
 						<label>Enter VPDS Key:<sup>*</sup></label>
 						<div><font size="1">Please select a secret key for your VPDS</font></div>
 						<input type="password" id="vpdsKey"/>
+						<div class="rightDiv">
+							<span class="errorVisual" id="spanVPDSKey"></span>
+						</div>
 					</div>
-					<div class="rightDiv">
-						<span class="errorVisual" id="spanVPDSKey"></span>
-					</div>
+					
 
 					<div class="leftDiv">
 						<br/>
 						<label>Enter VPDS URL:<sup>*</sup></label>
-						<div><font size="1">Please specify the URL to access your VPDS [ URL Format : http://IPAddress:PortNumber/ ]<br/> Make sure VPDS service has been started</font></div>
+						<div><font size="1">Please specify the URL to access your VPDS [ URL Format : http://IPAddress:PortNumber/ ]</font></div>
 						<input type="text" id="vpdsURL"/>
+						<div class="rightDiv">
+							<span class="errorVisual" id="spanVPDSURL"></span>
+						</div>
 					</div>
-					<div class="rightDiv">
-						<span class="errorVisual" id="spanVPDSURL"></span>
-					</div>
+					
 
 					<p class="space"></p>				
 					<div style="clear:both; padding-top:20px">	

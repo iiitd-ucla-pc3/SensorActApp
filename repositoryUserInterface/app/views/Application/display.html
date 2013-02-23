@@ -79,6 +79,13 @@
 						chart.setSize(this.offsetWidth - 20, this.offsetHeight - 20, false);
 					}
 				});
+
+				function alertAddError(errorInformation) {
+
+					$("#errorDiv").html(errorInformation);
+					$("#errorDiv").fadeIn('slow');
+					return false;
+				}
 			
 
 		//*****************************************Chart*****************************************************/
@@ -785,10 +792,10 @@
 							
 						});
 					} else {
-
+						alertAddError("No devices added yet");
 					}
-				} else {
-
+				} else if(receivedDeviceData[RESPONSE_STATUS_CODE] == NO_DEVICE_FOUND) {
+					alertAddError("No devices added yet");
 				}
 
 				/*
@@ -978,6 +985,7 @@
 				<h1 class="newfont" style="text-align:center;">Visualization</h1>
 				<hr>
 			</div>
+			<div style="display: none;" id="errorDiv" class="errorDiv"></div>
 			<!-- Left Pane starts here-->
 			<div id="visualBox" style="">
 				<div class="leftDiv">
