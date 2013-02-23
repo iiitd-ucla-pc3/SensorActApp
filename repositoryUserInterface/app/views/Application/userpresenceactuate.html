@@ -741,7 +741,7 @@
 										if(receivedData[RESPONSE_STATUS_CODE] == SUCCESS) {
 
 											alert("Actuation requests successfully cancelled!");
-											window.location = URL_UI_SERVER + URL_PRESENCE_ACTUATE;
+											window.location = URL_UI_SERVER + URL_SHARED_DEVICES;
 										}
 										else {
 											if(receivedData[RESPONSE_STATUS_CODE] == TASKLET_NOT_CANCELED) {
