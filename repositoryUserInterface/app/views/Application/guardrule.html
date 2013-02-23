@@ -266,12 +266,13 @@
 													device = guardRuleAssocList[GUARD_RULE_ASSOCARRAY][j][GUARDASSOCRULE_DEVICENAME];
 													sensor = guardRuleAssocList[GUARD_RULE_ASSOCARRAY][j][GUARDASSOCRULE_SENSORNAME];
 													actuator = guardRuleAssocList[GUARD_RULE_ASSOCARRAY][j][GUARDASSOCRULE_ACTUATORNAME];
-
-													if(targetop == "read") {																
+													
+													if(!(typeof sensor === "undefined")) {																
 														$(idSelector).children(".associations").append("<div id='devDiv' style='font-weight:bold;'><label id=\"newDeviceNameLabel\">Device</label><input id=newDeviceName value=" + device + " readonly='readonly'></input></div>");
 														$(idSelector).children(".associations").append("<div id=\"assoc\"><label>Sensor</label><input value=\"" + sensor + "\" readonly='readonly'></input></div><hr>");
 													}
-													else if(targetop == "write"){
+													else if(!(typeof actuator === "undefined")){
+														alert(targetop);
 														$(idSelector).children(".associations").append("<div id='devDiv' style='font-weight:bold;'><label id=\"newDeviceNameLabel\">Device</label><input id=newDeviceName value=" + device + " readonly='readonly'></input></div>");
 														$(idSelector).children(".associations").append("<div id=\"assoc\"><label>Actuator<br/>Name</label><input value=\"" + actuator + "\" readonly='readonly'></input></div><hr>");
 													}																								
@@ -355,10 +356,10 @@
 			<hr>
 			<div id="accordion"></div>			
 			<hr>
-			<!--<div id="errorDiv" class="errorDiv"></div>-->
+			<!--<div id="errorDiv" class="errorDiv"></div>
 			<button id="addGuardRule" class="google-button-blue">
 				Create New Guard Rule
-			</button>			
+			</button>-->			
 			<input type="hidden"  id ="username" value =${username}></input>
 		</div>
 		<br/>

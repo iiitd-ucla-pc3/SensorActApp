@@ -205,7 +205,7 @@ public class QueryData extends SensorActAPI {
 			}
 
 			for (int i = 0; i < numberOfWavesegs; i++) {
-				long timestamp = wa.wavesegmentArray.get(i).data.timestamp;
+				long timestamp = wa.wavesegmentArray.get(i).data.timestamp * 1000;
 				int samplingPeriod = 1;
 				System.out.println(timestamp);
 
@@ -327,7 +327,7 @@ public class QueryData extends SensorActAPI {
 
 			for (int a = 0; a < numberOfWavesegs; a++) {
 
-				long timestamp = wa.wavesegmentArray.get(a).data.timestamp;
+				long timestamp = wa.wavesegmentArray.get(a).data.timestamp * 1000;
 				int samplingPeriod = 1;
 
 				for (int j = 0; j < numberOfSeries; j++) {

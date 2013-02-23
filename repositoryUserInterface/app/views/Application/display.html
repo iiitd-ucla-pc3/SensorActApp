@@ -155,7 +155,6 @@
 		
 				}
 	//*****************************************Chart*****************************************************/
-				var temp="http://"+document.location.hostname+":"+document.location.port+"/";
 
 				//Setting the correct datetime format to start and end time dialog
 				
@@ -363,9 +362,7 @@
 					
 					try {
 
-
-					var temp="http://"+document.location.hostname+":"+document.location.port+"/";
-					$.post(temp+URL_QUERY_DATA, JSON.stringify(query), function(data) {
+					$.post(URL_UI_SERVER+URL_QUERY_DATA, JSON.stringify(query), function(data) {
 							receivedData = data;
 						
 
@@ -373,7 +370,6 @@
 						if (!(receivedData.hasOwnProperty(RESPONSE_STATUS_CODE)))
 						//Means it contains data
 						{
-
 						
 							/************** -------------- Changes ---------------- ****************/
 							if (receivedData.hasOwnProperty("filename")) {
@@ -697,9 +693,8 @@
 
 				//Getting Device List
 				try {
-					var temp="http://"+document.location.hostname+":"+document.location.port+"/";
 
-					$.get(temp+URL_LIST_ALL_DEVICES, function(data) {
+					$.get(URL_UI_SERVER+URL_LIST_ALL_DEVICES, function(data) {
 					
 						receivedDeviceData = data;
 					
