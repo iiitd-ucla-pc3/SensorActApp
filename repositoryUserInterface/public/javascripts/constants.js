@@ -102,6 +102,7 @@ var QUERY_CONDITIONS_FROM_TIME="fromtime";
 var QUERY_CONDITIONS_TO_TIME="totime";
 var QUERY_DEVICE_NAME="devicename";
 var QUERY_SENSOR_NAME="sensorname";
+var QUERY_SENSOR_ID="sensorid";
 var QUERY_USER_NAME="username";
 var QUERY_IS_INTERACTIVE="interactive";
 

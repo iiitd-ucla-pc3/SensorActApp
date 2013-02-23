@@ -344,6 +344,7 @@
 					var mode=interactive=="true"?"interactive":"non interactive";
 					var r =showNoty("Chart Loading in "+mode + " mode", "center", "off",500);
 					query[QUERY_DEVICE_ARRAY] = new Array();
+					
 					var i = 0;
 					for (device in allSelectedItems) {
 
@@ -354,15 +355,17 @@
 						for (sensor in allSelectedItems[device]) {
 
 							query[QUERY_DEVICE_ARRAY][i][QUERY_SENSOR_ARRAY][j] = {};
-							query[QUERY_DEVICE_ARRAY][i][QUERY_SENSOR_ARRAY][j][QUERY_SENSOR] = allSelectedItems[device][sensor];
+							query[QUERY_DEVICE_ARRAY][i][QUERY_SENSOR_ARRAY][j][QUERY_SENSOR_NAME] = allSelectedItems[device][sensor]['sname'];
+							query[QUERY_DEVICE_ARRAY][i][QUERY_SENSOR_ARRAY][j][QUERY_SENSOR_ID] = allSelectedItems[device][sensor]['sid'];
+							
 							j++;
 						}
 						i++;
 					}
 					
 					try {
-
-					$.post(URL_UI_SERVER+URL_QUERY_DATA, JSON.stringify(query), function(data) {
+						
+						$.post(URL_UI_SERVER+URL_QUERY_DATA, JSON.stringify(query), function(data) {
 							receivedData = data;
 						
 
@@ -576,24 +579,32 @@
 
 					for (var i = 0; i < selectedDeviceName.length; i++) {
 						allSelectedItems[selectedDeviceName[i]] = [];
+						var sensorCount = 0;
 						$("#div" + removeSpace(selectedDeviceName[i])).children('.sensor').find("input").each(function() {
 					
 							if ($(this).prop("checked")) {
 
-								var prop = $(this);
+								var sensorProp = $(this);
+								var sensorObject = {};
 								for (var index in receivedDeviceData[DEVICE_ARRAY]) {
 								
 									if ( DEVICE_SENSORS in receivedDeviceData[DEVICE_ARRAY][index]) {
 									
 										var sensorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS];
-										
 
 										for (var indexSensors in receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS]) {
+											
+											//allSelectedItems[selectedDeviceName[i]][sensorCount] = {};
 
 											var sensorName = sensorArray[indexSensors]["name"];
-
 									
-											if (sensorName == prop.val()) {
+											if (sensorName == sensorProp.val()) {
+
+												sensorCount++;
+												var sensorID = sensorArray[indexSensors]["sid"];
+
+												sensorObject['sname'] = $(this).val();
+												sensorObject['sid'] = sensorID;
 										
 												if ( DEVICE_CHANNELS in sensorArray[indexSensors]) {
 													var channelArray = sensorArray[indexSensors][DEVICE_CHANNELS];
@@ -609,15 +620,11 @@
 
 												}
 											}
-										}
-									}
+										}										
+									}									
 								}
-							
-
-								allSelectedItems[selectedDeviceName[i]].push(($(this).val()));
-
+								allSelectedItems[selectedDeviceName[i]].push(sensorObject);							
 							}
-
 						});
 					}
 
@@ -766,9 +773,9 @@
 										else {
 											$(this).attr("checked",false);
 
-											alert("Please select a device which contains sensors!!");
+											alert("No Sensors attached in this device. Please select a device which contains sensors.");
 								
-												}
+										}
 									}
 								}
 							} else {

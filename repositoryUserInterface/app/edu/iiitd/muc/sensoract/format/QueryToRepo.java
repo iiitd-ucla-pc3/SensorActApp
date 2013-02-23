@@ -41,14 +41,16 @@ public class QueryToRepo extends SensorActAPI {
 	public QueryConditions conditions;
 	public String devicename;
 	public String sensorname;
+	public String sensorid;
 	public String username;
 	public String secretkey;
 
 	public QueryToRepo(QueryConditions conditions, String devicename,
-			String sensorname, String username, String secretkey) {
+			String sensorname, String sensorid, String username, String secretkey) {
 		this.conditions = conditions;
 		this.devicename = devicename;
 		this.sensorname = sensorname;
+		this.sensorid = sensorid;
 		this.username = username;
 		this.secretkey = secretkey;
 	}

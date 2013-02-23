@@ -121,7 +121,8 @@ public class QueryData extends SensorActAPI {
 				QueryToRepo queryToRepo = new QueryToRepo(
 						queryRequest.conditions,
 						devicename,
-						queryRequest.devicesArray.get(i).sensorsArray.get(j).sensor,
+						queryRequest.devicesArray.get(i).sensorsArray.get(j).sensorname,
+						queryRequest.devicesArray.get(i).sensorsArray.get(j).sensorid,
 						queryRequest.username, secretkey);
 				String queryBodyWithSecretKey = gson.toJson(queryToRepo);
 				
