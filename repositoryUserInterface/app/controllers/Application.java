@@ -111,7 +111,7 @@ public class Application extends Controller {
 			System.out.println("From Index page...Session exists");
 			home();			
 		}
-			
+		//System.out.println(Play.configuration.getProperty(Const.BROKER_NAME));
 		render();
 	}
 	

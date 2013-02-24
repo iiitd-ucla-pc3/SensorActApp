@@ -42,6 +42,7 @@ package edu.iiitd.muc.sensoract.constants;
 
 import controllers.Application;
 import edu.iiitd.muc.sensoract.apis.Global;
+import play.Play;
 
 /**
  * Defines all constants for SensorAct
@@ -166,10 +167,15 @@ public class Const {
 	public static final String UNREGISTERED_SECRETKEY = "Unregistered secretkey";
 
 	/*
+	 * Configuration variables
+	 */
+	public static final String BROKER_NAME = "broker.url";
+
+	/*
 	 * URL's
 	 */
 	public static final String URL_UI_SERVER = "http://localhost:9003/";
-	public static final String URL_BROKER_SERVER = "http://localhost:9001/";
+	public static final String URL_BROKER_SERVER = Play.configuration.getProperty(BROKER_NAME);
 	//public static final String URL_REPOSITORY_SERVER = "http://localhost:9000/";
 	public String URL_REPOSITORY_SERVER="dfhdsf";
 	//VPDS APIs

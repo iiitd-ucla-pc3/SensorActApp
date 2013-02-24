@@ -80,36 +80,36 @@ body{ font:16px/24px Helvetica, Helvetica Neue, Arial, sans-serif; }
 }
 
 /* ===================
-    ALL: Changed Theme
+    ALL: GREEN Theme
    =================== */
+/*
+#header-container{ 
+	border-bottom: 20px solid #7BAB36; }
 
-/*#header-container{ 
-	border-bottom: 20px solid #BFA130; }
 
-
-#footer-container{ border-top:    20px solid #BFA130;
+#footer-container{ border-top:    20px solid #7BAB36;
 clear: both;
  
 }
-#main aside      { border-top:    20px solid #BFA130; }
+#main aside      { border-top:    20px solid #7BAB36; }
 
 #header-container,
 #footer-container,
 #main aside{
-	background:#FFB700;
+	background:#A9D568;
 }
 .newfont{ font-family: 'Port Lligat Sans', sans-serif;}
 #title{ color:white; font-size:75px; font-family: 'Port Lligat Sans', sans-serif;}
 #subtitle{ color:white; font-size:25px; font-family: 'Port Lligat Sans', sans-serif;}
-::-moz-selection { background: #FFB700; color: #fff; text-shadow: none; }
-::selection      { background: #FFB700; color: #fff; text-shadow: none; }
+::-moz-selection { background: #A9D568; color: #fff; text-shadow: none; }
+::selection      { background: #A9D568; color: #fff; text-shadow: none; }
 
 nav a,.pbox{
 	display:block;
 	margin-bottom:10px;
 	padding:1x 0;
 
-	background:#BFA130;
+	background:#7BAB36;
 	color:white;
 
 	text-align:center;
@@ -125,7 +125,7 @@ nav .loginbox{
 	margin-left:2px;
 	padding:1x 0;
 
-	background:#BFA130;
+	background:#A9D568;
 	color:white;
 
 	text-align:center;
@@ -135,8 +135,8 @@ nav .loginbox{
 	width:60%;
 	position:relative;
 	left:20%;
-}
-*/
+}*/
+
 
 /* ===================
     ALL: Orange Theme
@@ -183,6 +183,7 @@ nav a,.pbox{
 }
 
 /* Added here*/
+
 nav .loginbox{
 	display:block;
 	margin-bottom:10px;
