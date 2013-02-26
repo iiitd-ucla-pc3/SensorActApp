@@ -95,7 +95,7 @@ public class Application extends Controller {
 		}
 	}
 	
-	@Before(only={"device","guardrule","actuate","presenceactuate", 
+	@Before(only={"managehome","device","guardrule","actuate","presenceactuate", 
 			"display","addguardrule","assocguardrule", "editdevice","editguardrule"})
 	static void checkVPDSDetails() {
 		System.out.println("Session VPDS URL: " + session.get(Const.VPDSURL));
