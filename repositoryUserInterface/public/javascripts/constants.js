@@ -311,7 +311,7 @@ var URL_RELOGIN="relogin";
 // GET Requests
 
 var URL_GET_SECRET_KEY="getsecretkey"
-var URL_GET_VPDS_INFO="getVPDSinfo"
+var URL_GET_VPDS_INFO="getVPDSInfo"
 var URL_GET_USER_LIST="getuserlist"
 
 var URL_HOME="home";
