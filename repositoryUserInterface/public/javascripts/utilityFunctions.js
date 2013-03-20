@@ -76,7 +76,7 @@ function createHeader() {
 
 	    $("#logout").click(function() {
 
-	    	window.location = URL_LOGOUT_USER;
+	    	window.location = URL_UI_SERVER + URL_LOGOUT_USER;
 	    });
 
 
