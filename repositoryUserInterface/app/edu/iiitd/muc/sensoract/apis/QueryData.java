@@ -255,7 +255,7 @@ public class QueryData extends SensorActAPI {
 	}
 
 	public String createChart(ArrayList<WaveSegmentArray> arrayOfResponses) {
-		System.out.println("Array of Responese"+arrayOfResponses);	
+		System.out.println("Array of Response"+arrayOfResponses);	
 		XYDataset dataset = createDataset(arrayOfResponses);
 		JFreeChart chart = createJFreeChart(dataset);
 		String uuid = UUID.randomUUID().toString();
@@ -288,9 +288,9 @@ public class QueryData extends SensorActAPI {
 		chart.setBackgroundPaint(Color.white);
 
 		XYPlot plot = (XYPlot) chart.getPlot();
-		plot.setBackgroundPaint(Color.lightGray);
-		plot.setDomainGridlinePaint(Color.white);
-		plot.setRangeGridlinePaint(Color.white);
+		plot.setBackgroundPaint(Color.white);
+		plot.setDomainGridlinePaint(Color.black);
+		plot.setRangeGridlinePaint(Color.black);
 		plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
 		plot.setDomainCrosshairVisible(true);
 		plot.setRangeCrosshairVisible(true);
