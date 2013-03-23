@@ -45,6 +45,7 @@ POST    /adddevice                              Application.adddevice
 POST    /adddevicetemplate                      Application.adddevicetemplate
 POST    /deletedevice                           Application.deletedevice
 POST    /deletedevicetemplate                   Application.deletedevicetemplate
+POST	/getdevice								Application.getdevice
 GET     /listalldevices							Application.listalldevices
 GET     /listalldevicetemplates					Application.listalldevicetemplates
 

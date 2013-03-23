@@ -35,6 +35,7 @@
  ******************************************************************************/
 package edu.iiitd.muc.sensoract.apis;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -80,7 +81,7 @@ public class QueryData extends SensorActAPI {
 		String usertype = session.get(Const.USERTYPE);
 		String secretkey = null;
 		String vpdsURL = null;
-		HttpResponse responseFromBroker = null;
+		HttpResponse responseFromServer = null;
 		
 		if(usertype.equals(Const.USER)){
 			
@@ -93,13 +94,13 @@ public class QueryData extends SensorActAPI {
 			logger.info(Const.API_QUERYDATA, "For "+ usertype + " " +jsonGetAccessKey);
 			
 			// Make request
-			responseFromBroker = new SendHTTPRequest()
+			responseFromServer = new SendHTTPRequest()
 			.sendPostRequest(Const.URL_BROKER_GET_ACCESS_KEY,
 					Const.MIME_TYPE_JSON, Const.API_QUERYDATA,
 					jsonGetAccessKey);
-			System.out.println("Get access key "+responseFromBroker.getString());
+			System.out.println("Get access key "+responseFromServer.getString());
 			GetAccessKeyResponseFormat response = gson.fromJson(
-					responseFromBroker.getString(),GetAccessKeyResponseFormat.class);
+					responseFromServer.getString(),GetAccessKeyResponseFormat.class);
 			
 			//Set secretkey as accesskey
 			secretkey = response.accesskey;
@@ -127,21 +128,21 @@ public class QueryData extends SensorActAPI {
 				String queryBodyWithSecretKey = gson.toJson(queryToRepo);
 				
 				if(usertype.equals(Const.USER)){
-					responseFromBroker = new SendHTTPRequest()
+					responseFromServer = new SendHTTPRequest()
 					.sendPostRequest(vpdsURL + "data/query",
 							Const.MIME_TYPE_JSON, Const.API_QUERYDATA,
 							queryBodyWithSecretKey);
 				}
 				else {
-					responseFromBroker = new SendHTTPRequest()
+					responseFromServer = new SendHTTPRequest()
 					.sendPostRequest(Global.URL_REPOSITORY_QUERY_DATA,
 							Const.MIME_TYPE_JSON, Const.API_QUERYDATA,
 							queryBodyWithSecretKey);
 				}
 				
-				System.out.println("Data response: "+responseFromBroker.getString());
+				System.out.println("Data response: "+responseFromServer.getString());
 				WaveSegmentArray wa = gson.fromJson(
-						responseFromBroker.getString(), WaveSegmentArray.class);
+						responseFromServer.getString(), WaveSegmentArray.class);
 				/*
 				 * If the size of WaveSegmentArray is 0, that is no data is found, then in that 
 				 * case, it is not to be added to arrayOfResponses
@@ -298,12 +299,13 @@ public class QueryData extends SensorActAPI {
 		XYItemRenderer r = plot.getRenderer();
 		if (r instanceof XYLineAndShapeRenderer) {
 			XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
-
+			//renderer.setSeriesStroke(0, new BasicStroke(1.1f));
+			//plot.setRenderer(renderer);
 		}
 
 		DateAxis axis = (DateAxis) plot.getDomainAxis();
 		axis.setDateFormatOverride(new SimpleDateFormat("d-M-yy H:m:s"));
-
+		
 		return chart;
 	}
 

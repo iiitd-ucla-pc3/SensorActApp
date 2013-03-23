@@ -570,7 +570,51 @@
 				
 					if (errorStatus[0]) {
 						return false;
-					} 
+					}
+
+					var jsonGetDevice = {};
+					jsonGetDevice[VPDS_NAME] = vpdsname;
+					jsonGetDevice[DEVICE_NAME] = devicename;
+
+					//Getting Device Info
+					try {
+
+						$.post(URL_UI_SERVER + URL_GET_DEVICE, JSON.stringify(jsonGetDevice), function(data) {
+						
+							receivedDeviceData = data;			
+						});
+					} catch(e) {
+
+					}
+								
+					if ( DEVICE_SENSORS in receivedDeviceData) {
+					
+						var sensorArray = receivedDeviceData[DEVICE_SENSORS];
+
+						for (var indexSensors in receivedDeviceData[DEVICE_SENSORS]) {
+
+							var sName = sensorArray[indexSensors]["name"];
+					
+							if (sName == sensorname) {
+								
+								var sensorID = sensorArray[indexSensors]["sid"];
+						
+								if ( DEVICE_CHANNELS in sensorArray[indexSensors]) {
+									var channelArray = sensorArray[indexSensors][DEVICE_CHANNELS];
+							
+									for (var indexChannels in sensorArray[indexSensors][DEVICE_CHANNELS]) {
+									
+										var samplingperiod = sensorArray[indexSensors][DEVICE_CHANNELS][indexChannels]["samplingperiod"];
+										var type = 64;
+										prod += (1 / samplingperiod) * type;
+									
+
+									}
+
+								}
+							}
+						}										
+					}
 
 					$("#motionStop").removeClass("play");	
 					$("#motionStop").addClass("pause");			//Setting the Pause button

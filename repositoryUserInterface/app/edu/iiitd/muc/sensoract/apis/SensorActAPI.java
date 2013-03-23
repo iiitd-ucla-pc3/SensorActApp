@@ -46,6 +46,7 @@ public class SensorActAPI extends Application {
 	public static Gson gson = new Gson();
 	public static RegisterUser registeruser = new RegisterUser();
 	public static UserList listAllUsers = new UserList();
+	public static GetDevice getDevice = new GetDevice();
 	public static ListAllDevices listAllDevices = new ListAllDevices();
 	public static ListAllVPDSDevices listAllVPDSDevices = new ListAllVPDSDevices();
 	public static ListAllDeviceTemplates listAllDeviceTemplates = new ListAllDeviceTemplates();

@@ -379,6 +379,10 @@ public class Application extends Controller {
 	public static void cancelactuationrequests() {		
 		api.cancelActRequests.doProcess(request.params.get(Const.REQUEST_BODY));
 	}
+	
+	public static void getdevice() {		
+		api.getDevice.doProcess(request.params.get(Const.REQUEST_BODY));
+	}
 
 	public static void listalldevices() {
 		api.listAllDevices.doProcess();

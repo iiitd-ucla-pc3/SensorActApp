@@ -25,6 +25,8 @@ public class Global {
 	public static String URL_REPOSITORY_DELETE_DEVICE;
 	
 	public static String URL_REPOSITORY_DELETE_DEVICE_TEMPLATE;
+	
+	public static String URL_REPOSITORY_GET_DEVICE;
 
 	public static String URL_REPOSITORY_LIST_ALL_DEVICES;
 	
@@ -96,6 +98,9 @@ public class Global {
 		this.URL_REPOSITORY_DELETE_DEVICE_TEMPLATE = URL_REPOSITORY_SERVER
 				+ "device/template/delete";
 
+		this.URL_REPOSITORY_GET_DEVICE = URL_REPOSITORY_SERVER
+				+ "device/get";
+		
 		this.URL_REPOSITORY_LIST_ALL_DEVICES = URL_REPOSITORY_SERVER
 				+ "device/list";
 		
