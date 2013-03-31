@@ -40,6 +40,7 @@
 
 				createHeader();
 				createFooter();
+				var vpdsname = $("#vpdsname").val();
 
 				/**
 				 * Global Variables used during the lifecycle of the page
@@ -545,123 +546,132 @@
 				$("#IDViewRequest").click(function() {
 
 					try {
+
+						var jsonList = {};
+						jsonList[VPDS_NAME]=vpdsname;
 						
-						var temp="http://"+document.location.hostname+":"+document.location.port+"/";
-						$.post(temp+URL_LIST_ACTUATE_REQUEST, function(data) {
+						$.post(URL_UI_SERVER +URL_LIST_ACTUATE_REQUEST, JSON.stringify(jsonList), function(data) {
 								receivedData = data;
-						});						
+						});	
 
-						if (receivedData[RESPONSE_STATUS_CODE] != NO_ACTUATION_REQUEST_FOUND) {
+						if (receivedData == null)	
+							alertGetActuateError("You have not made any actuation request!");
+						else {
+							if (receivedData[RESPONSE_STATUS_CODE] != NO_ACTUATION_REQUEST_FOUND) {
 
-							if (receivedData[DEVICE_ACTLIST_ARRAY].length > 0)	{ //Success
-								
-								// TODO: Replace tasklet name with tasklet description
-								$("#dialog").append("<div id =\"errorCDiv\" style=\"color: red;padding:5px; font-size: 1\"</div><br/>");
-								$("#errorCDiv").hide();
-								$("#dialog").append("<table id=\"actList\" style=\"font-size:15px\"><tr><td></td><td><b>Request Description</b></tr></th></table");
-								for (var index in receivedData[DEVICE_ACTLIST_ARRAY]) {
-									var name = receivedData[DEVICE_ACTLIST_ARRAY][index][ACTUATION_DESC];
-									var taskletId = receivedData[DEVICE_ACTLIST_ARRAY][index][ACTUATION_TASKLETID]; 
-									$("#actList").append("<tr><td><input type=\"checkbox\" id=\"chkCReq\" value=\""+ taskletId +"\" +</td><td>" + name + "</td></tr>");															
-								}
-								$("#dialog").append("<br><botton id=\"IDSelectAllButton\" class=\"google-button\" align=\"center\">Select/Deselect All</botton> &nbsp; <botton id=\"IDCancelReqButton\" class=\"google-button\" align=\"center\">Cancel Requests</botton>");
-								
-								var prevSelect = false;
-								$("#IDSelectAllButton").click(function() {
-
-									$("#dialog").find("input").each(function() {
-
-										if(prevSelect) {
-											$(this).attr('checked',false);
-										}											
-										else {
-											$(this).attr('checked',true);
-										}
-												
-									});
-
-									if (!prevSelect) {											
-										prevSelect = true;
-									}
-									else
-										prevSelect = false;
-
-								});
-
-								$("#IDCancelReqButton").click(function() {
-
-									var cancelReqList={};
-									var chkCount = 0;
-									var listCReq = new Array();
-									cancelReqList["secretkey"] = FAKE_SECRET_KEY;
-									cancelReqList["cancelRequestList"] = new Array();
-
-									$("#dialog").find("input").each(function() {
-
-										if ($(this).prop("checked")) {									
-											listCReq[chkCount] = $(this).val();
-											chkCount++;
-										}																									
-									});
-
-									if (chkCount < 1) {
-										var errorInformation = "Please select at least one request to cancel!";
-										$("#errorCDiv").show();
-										$("#errorCDiv").html(errorInformation);
-										$("#errorCDiv").fadeIn('slow');
-										return false;
-									}
-
-									cancelReqList["cancelRequestList"] = listCReq;	
+								if (receivedData[DEVICE_ACTLIST_ARRAY].length > 0)	{ //Success
 									
+									// TODO: Replace tasklet name with tasklet description
+									$("#dialog").append("<div id =\"errorCDiv\" style=\"color: red;padding:5px; font-size: 1\"</div><br/>");
+									$("#errorCDiv").hide();
+									$("#dialog").append("<table id=\"actList\" style=\"font-size:15px\"><tr><td></td><td><b>Request Description</b></tr></th></table");
+									for (var index in receivedData[DEVICE_ACTLIST_ARRAY]) {
+										var name = receivedData[DEVICE_ACTLIST_ARRAY][index][ACTUATION_DESC];
+										var taskletId = receivedData[DEVICE_ACTLIST_ARRAY][index][ACTUATION_TASKLETID]; 
+										$("#actList").append("<tr><td><input type=\"checkbox\" id=\"chkCReq\" value=\""+ taskletId +"\" +</td><td>" + name + "</td></tr>");															
+									}
+									$("#dialog").append("<br><botton id=\"IDSelectAllButton\" class=\"google-button\" align=\"center\">Select/Deselect All</botton> &nbsp; <botton id=\"IDCancelReqButton\" class=\"google-button\" align=\"center\">Cancel Requests</botton>");
+									
+									var prevSelect = false;
+									$("#IDSelectAllButton").click(function() {
 
-									try {
-										//var temp="http://"+document.location.hostname+":"+document.location.port+"/";
-										$.post(temp+URL_CANCEL_ACTUATE_REQUEST, JSON.stringify(cancelReqList), function(data) {
-										receivedData = data;
-										});
-										if(receivedData[RESPONSE_STATUS_CODE] == SUCCESS) {
+										$("#dialog").find("input").each(function() {
 
-											alert("Actuation requests successfully cancelled!");
-											window.location = temp + URL_ACTUATE;
-										}
-										else {
-											if(receivedData[RESPONSE_STATUS_CODE] == TASKLET_NOT_CANCELED) {
-												var errorInformation = "Request could not be canceled. Try again later";
-												$("#errorCDiv").html(errorInformation);
-												$("#errorCDiv").fadeIn('slow');
+											if(prevSelect) {
+												$(this).attr('checked',false);
+											}											
+											else {
+												$(this).attr('checked',true);
 											}
+													
+										});
+
+										if (!prevSelect) {											
+											prevSelect = true;
+										}
+										else
+											prevSelect = false;
+
+									});
+
+									$("#IDCancelReqButton").click(function() {
+
+										var cancelReqList={};
+										var chkCount = 0;
+										var listCReq = new Array();
+										cancelReqList["secretkey"] = FAKE_SECRET_KEY;
+										cancelReqList["vpdsname"] = vpdsname;
+										cancelReqList["cancelRequestList"] = new Array();
+
+										$("#dialog").find("input").each(function() {
+
+											if ($(this).prop("checked")) {									
+												listCReq[chkCount] = $(this).val();
+												chkCount++;
+											}																									
+										});
+
+										if (chkCount < 1) {
+											var errorInformation = "Please select at least one request to cancel!";
+											$("#errorCDiv").show();
+											$("#errorCDiv").html(errorInformation);
+											$("#errorCDiv").fadeIn('slow');
 											return false;
 										}
-											
-									}
-									catch(e) {
-										var errorInformation = receivedData[RESPONSE_MESSAGE];
-										$("#errorCDiv").html(errorInformation);
-										$("#errorCDiv").fadeIn('slow');
-										return false;
-									}
+
+										cancelReqList["cancelRequestList"] = listCReq;	
+										
+
+										try {
+											//var temp="http://"+document.location.hostname+":"+document.location.port+"/";
+											$.post(temp+URL_CANCEL_ACTUATE_REQUEST, JSON.stringify(cancelReqList), function(data) {
+											receivedData = data;
+											});
+											if(receivedData[RESPONSE_STATUS_CODE] == SUCCESS) {
+
+												alert("Actuation requests successfully cancelled!");
+												window.location = temp + URL_ACTUATE;
+											}
+											else {
+												if(receivedData[RESPONSE_STATUS_CODE] == TASKLET_NOT_CANCELED) {
+													var errorInformation = "Request could not be canceled. Try again later";
+													$("#errorCDiv").html(errorInformation);
+													$("#errorCDiv").fadeIn('slow');
+												}
+												return false;
+											}
+												
+										}
+										catch(e) {
+											var errorInformation = receivedData[RESPONSE_MESSAGE];
+											$("#errorCDiv").html(errorInformation);
+											$("#errorCDiv").fadeIn('slow');
+											return false;
+										}
 
 
-								});						
+									});						
+								}
+								else {
+									alertActuateDeviceError("Following error occured: " + receivedData[RESPONSE_MESSAGE]);
+								}
+
+								
+
+								dlg.dialog("open");
+								/*dlg.dialog("option", "position", {
+									//my: "center top",
+									//at: "right top",
+									//offset: "20 20"
+								});*/
+								return false;
+
 							}
-							else {
-								alertActuateDeviceError("Following error occured: " + receivedData[RESPONSE_MESSAGE]);
-							}
+							else
+								alertGetActuateError("You have not made any actuation request!");
+						}			
 
-							
-
-							dlg.dialog("open");
-							/*dlg.dialog("option", "position", {
-								//my: "center top",
-								//at: "right top",
-								//offset: "20 20"
-							});*/
-							return false;
-
-						}
-						else
-							alertGetActuateError("You have not made any actuation request!");
+						
 
 
 					} catch(e) {

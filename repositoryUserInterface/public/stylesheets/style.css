@@ -845,3 +845,10 @@ div #selectedVPDS{
 	font-size:15px;
 	font-weight: bold;
 }
+
+.newParam {
+	padding:10px;
+	margin-top: 10px;
+	background-color: #EBECE4;
+	border-radius: 6px;
+}

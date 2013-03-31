@@ -34,10 +34,10 @@
  * *
  ******************************************************************************/
 /*
- * Name: PresenceActuateDevice.java
+ * Name: ListActuationRequest.java
  * Project: SensorAct, MUC@IIIT-Delhi 
  * Version: 1.0
- * Date: 2012-12-26
+ * Date: 2012-12-23
  * Author: Manaswi Saha
  */
 
@@ -48,70 +48,91 @@ package edu.iiitd.muc.sensoract.apis;
  */
 import play.libs.WS.HttpResponse;
 import edu.iiitd.muc.sensoract.constants.Const;
-import edu.iiitd.muc.sensoract.format.GuardRuleAddFormat;
-import edu.iiitd.muc.sensoract.format.GuardRuleAddFormat.RuleFormat;
-import edu.iiitd.muc.sensoract.format.GuardRuleFormat;
-import edu.iiitd.muc.sensoract.format.RegisterUserRequest;
+import edu.iiitd.muc.sensoract.format.ActuateRequest;
+import edu.iiitd.muc.sensoract.format.ActuateVPDSRequest;
+import edu.iiitd.muc.sensoract.format.GetAccessKeyResponseFormat;
+import edu.iiitd.muc.sensoract.format.ListActuateRequest;
 import edu.iiitd.muc.sensoract.utilities.SecretKey;
 import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 
-public class AddGuardRule extends SensorActAPI {
-	
+public class ListTasklet extends SensorActAPI {
 	
 	/**
-	 * Services the /addguardrule API.
+	 * Services the listasklet API.
 	 * <p>
 	 * Followings are the steps to be followed to add a new device profile
 	 * successfully to the repository.
 	 * <ol>
-	 * <li>Gets the JSON string containing guard rule from UI
+	 * <li>Gets the JSON string containing list actuation request from UI
 	 * <li>Since the validation had been performed at the UI,this request is
 	 * just tunneled to the repository
 	 * <li>Replaces the secret key with the actual secret key
-	 * <li>If the addition has been successful,the successful Response
+	 * <li>If the list request is successful,the successful Response
 	 * format is sent to the UI which interprets the same and reloads the page
-	 * <li>If the addition fails then corresponding error
+	 * <li>If the list request fails then corresponding error
 	 * message is sent to the UI
 	 * </ol>
 	 * <p>
 	 * 
+	 * @param listActnRequest
+	 *            actuation request in Json
 	 */
-	 
-	 /**
-	  *  @param addGuardRuleJson
-	  *   add guard rule request in Json
-	 */
-	public final void doProcess(String addGuardRuleJson) {
-		String secretkey = Global.VPDS_OWNER_KEY;
-
-		String addGuardRuleBodyWithSecretKey = addGuardRuleJson.replace(
-				Const.FAKE_SECRET_KEY, secretkey);		
+	public final void doProcess(String body) {
 		
-		// Get the guard rule and replace the condition clause with a string of usernames
+		//Differentiate between a user and an owner
+		String usertype = session.get(Const.USERTYPE);
+		String secretkey = null;
+		String vpdsURL = null;
+		HttpResponse responseFromBroker = null;	
 		
-		//GuardRuleFormat guardRule = gson.fromJson(addGuardRuleBodyWithSecretKey, GuardRuleFormat.class);
-		GuardRuleAddFormat guardRuleToSend = gson.fromJson(addGuardRuleBodyWithSecretKey, GuardRuleAddFormat.class);
+		ListActuateRequest actRequest = gson
+				.fromJson(body, ListActuateRequest.class);
 		
-		/*String condition = "";
-		for(String username : guardRule.rule.condition){
-			condition = condition + username + ",";
+		if(usertype.equals(Const.USER)){
+			
+			/* Get accesskey from Broker */
+			
+			// From Json - vpdsname and secretkey
+			String usersecretkey = new SecretKey().getSecretKeyFromHashMap(session
+					.get(Const.USERNAME));
+			String jsonGetAccessKey = "{\"secretkey\" : \"" + usersecretkey + "\",\"vpdsname\": \""+ actRequest.vpdsname + "\"}";
+			logger.info(Const.API_LISTASKLET, "For "+ usertype + " " +jsonGetAccessKey);
+			
+			// Make request
+			responseFromBroker = new SendHTTPRequest()
+			.sendPostRequest(Const.URL_BROKER_GET_ACCESS_KEY,
+					Const.MIME_TYPE_JSON, Const.API_LISTASKLET,
+					jsonGetAccessKey);
+			System.out.println("Get access key "+responseFromBroker.getString());
+			GetAccessKeyResponseFormat response = gson.fromJson(
+					responseFromBroker.getString(),GetAccessKeyResponseFormat.class);
+			
+			//Set secretkey as accesskey
+			secretkey = response.accesskey;
+			vpdsURL = response.vpdsurl;
 		}
-		condition = condition.substring(0, condition.length()-1);
-		System.out.println("Condition list:" + condition);*/
+		else if(usertype.equals(Const.OWNER)){
+			//Set secretkey as owner key
+			secretkey = Global.VPDS_OWNER_KEY;			
+		}
+
+		String listTaskletWithSecretKey = "{\"secretkey\":\"" + secretkey + "\"}";
 		
-		//GuardRuleAddFormat guardRuleToSend = new GuardRuleAddFormat();
-		/*RuleFormat rule = guardRuleToSend.new RuleFormat(guardRule.rule.name,
-				guardRule.rule.description, guardRule.rule.targetOperation, guardRule.rule.priority,
-				condition, guardRule.rule.action);
-		guardRuleToSend = new GuardRuleAddFormat(guardRule.secretkey, rule);*/
+		logger.info(Const.API_LISTASKLET, secretkey + " " + listTaskletWithSecretKey);
 		
-		addGuardRuleJson = gson.toJson(guardRuleToSend);
-		logger.info(Const.API_ADDGUARDRULE, secretkey + " " + addGuardRuleJson);
-		
-		HttpResponse responseFromVPDS = new SendHTTPRequest()
-				.sendPostRequest(Global.URL_REPOSITORY_ADD_GUARD_RULE,
-						Const.MIME_TYPE_JSON, Const.API_ADDGUARDRULE,
-						addGuardRuleJson);
-		renderJSON(responseFromVPDS.getString());
+		if(usertype.equals(Const.USER)){
+			responseFromBroker = new SendHTTPRequest()
+			.sendPostRequest(vpdsURL + "tasklet/list",
+					Const.MIME_TYPE_JSON, Const.API_LISTASKLET,
+					listTaskletWithSecretKey);
+		}
+		else {
+			responseFromBroker = new SendHTTPRequest()
+			.sendPostRequest(Global.URL_REPOSITORY_LIST_TASKLET,
+					Const.MIME_TYPE_JSON, Const.API_LISTASKLET,
+					listTaskletWithSecretKey);
+		}		
+
+		renderJSON(responseFromBroker.getString());
 	}
 }

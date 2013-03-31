@@ -38,6 +38,8 @@ public class Global {
 	
 	public static String URL_REPOSITORY_CANCEL_ACTUATION_REQUEST ;
 	
+	public static String URL_REPOSITORY_LIST_TASKLET ;
+	
 	public static String URL_REPOSITORY_ADD_GUARD_RULE;
 	
 	public static String URL_REPOSITORY_DELETE_GUARD_RULE;
@@ -115,6 +117,9 @@ public class Global {
 		
 		this.URL_REPOSITORY_CANCEL_ACTUATION_REQUEST = URL_REPOSITORY_SERVER
 				+ "device/actuationrequest/cancel";
+		
+		this.URL_REPOSITORY_LIST_TASKLET = URL_REPOSITORY_SERVER
+				+ "tasklet/list";
 		
 		this.URL_REPOSITORY_ADD_GUARD_RULE = URL_REPOSITORY_SERVER
 				+ "guardrule/add";

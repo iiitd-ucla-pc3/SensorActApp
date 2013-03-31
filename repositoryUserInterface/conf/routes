@@ -57,6 +57,8 @@ POST	/actuatedevice							Application.actuatedevice
 POST	/listactuationrequests					Application.listactuationrequests
 POST	/cancelactuationrequests				Application.cancelactuationrequests
 
+GET		/createtasklet							Application.createtasklet
+POST	/listasklet								Application.listasklet
 
 GET		/guardrule								Application.guardrule
 POST	/addguardrule							Application.addGuardRule

@@ -372,6 +372,10 @@ public class Application extends Controller {
 		api.listActRequests.doProcess(request.params.get(Const.REQUEST_BODY));
 	}
 	
+	public static void listasklet() {		
+		api.listTasklet.doProcess(request.params.get(Const.REQUEST_BODY));
+	}
+	
 	public static void listsharedevices() {		
 		api.listSharedDevices.doProcess();
 	}
@@ -449,6 +453,14 @@ public class Application extends Controller {
 		render();
 	}
 	
+	public static void createtasklet() {
+		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		renderArgs.put(Const.VPDSNAME, session.get(Const.VPDSNAME));
+		renderArgs.put(Const.VPDSURL, session.get(Const.VPDSURL));
+		renderArgs.put(Const.VPDSKEY, session.get(Const.VPDSKEY));
+		
+		render();
+	}
 	
 	public static void guardrule() {
 		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));

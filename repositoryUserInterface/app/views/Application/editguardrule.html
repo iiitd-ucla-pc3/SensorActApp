@@ -99,7 +99,7 @@ lang="en">
 					
 					$(".errorVisual").hide("");
 					$("#newGuardRuleName,#newGuardRuleDesc,#newGuardRulePriority,#selectUsers").removeClass("error");
-					
+
 					if(((rulename.val().length) < MIN_LENGTH_GUARDRULE_NAME ) || ((rulename.val().length) > MAX_LENGTH_GUARDRULE_NAME)) { 				
 						errorState = true;
 						rulename.addClass("error");
@@ -116,7 +116,7 @@ lang="en">
 						$("#erRuleDesc").html("Rule description length should be between 5 and 100 characters");
 						
 					}					
-					else if (priority.val().length > 0 && isNaN(priority.val())) {						
+					else if (priority.val().length == 0 || isNaN(priority.val())) {	
 						errorState = true;
 						priority.addClass("error");
 						
@@ -129,39 +129,12 @@ lang="en">
 						condition.addClass("error");
 						
 						$("#erRuleCond").show('slow', function() {});
-						$("#erRuleCond").html("Please select a user");
+						$("#erRuleCond").html("Please enter a condition");
 
 					}
 
 					return errorState;
 				}
-
-				var getUsers = URL_UI_SERVER + URL_LIST_USERS;
-				var receivedUserList = {};
-
-				// Get the list of users to allow/deny access
-				try{
-					$.post(getUsers, function(data) {
-						receivedUserList = data;
-
-					});
-
-					//Successfully received data
-					if(receivedUserList.hasOwnProperty(RESPONSE_STATUS_CODE)) {
-						alertGetDeviceError("Following errors occurred " + receivedUserList[RESPONSE_MESSAGE]);
-					} else {
-
-						var userListCount = receivedUserList[USERNAME_ARRAY].length;
-						
-						$("#divSelectUsers").append('<select id="selectUsers" rows="5" multiple="multiple"></select');						
-						for(var username in receivedUserList[USERNAME_ARRAY])
-							$("#selectUsers").append('<option value='+receivedUserList[USERNAME_ARRAY][username]+'>'+receivedUserList[USERNAME_ARRAY][username]+'</option>');
-					}
-				}
-				catch(e){
-					alertGetDeviceError(e);
-				}
-
 
 				var editGuardRule = {};
 				editGuardRule[GUARDRULE_NAME] = guardRuleToEdit;
@@ -199,11 +172,7 @@ lang="en">
 								$("#newGuardRuleDesc").val(receivedData[GUARDRULE_DESC]);
 								$("#newGuardRulePriority").val(receivedData[GUARDRULE_PRIORITY]);
 								
-								// Select all the usernames who are given/ denied access
-								var usernames = receivedData[GUARDRULE_CONDITION].split(',');
-								for(var index in usernames)
-									$("#selectUsers option[value='"+usernames[index]+"']").attr('selected', 'selected');
-								
+								$("#newGuardRuleCond").val(receivedData[GUARDRULE_CONDITION]);
 								$("#newGuardRuleAction").val(receivedData[GUARDRULE_ACTION]);
 								$("#newGuardRuleOp").val(receivedData[GUARDRULE_TARGETOP]);
 
@@ -231,13 +200,14 @@ lang="en">
 				$("#addGuardRule").click(function() {
 					errorState = false;					
 					
-					var error = validFields($("#newGuardRuleName"), $("#newGuardRuleDesc"), $("#newGuardRulePriority"), $("#selectUsers"));
+					var error = validFields($("#newGuardRuleName"), $("#newGuardRuleDesc"), $("#newGuardRulePriority"), $("#newGuardRuleCond"));
 					
 					
 					if(error == true) {
 						return false;
 						
 					} 
+					
 					//Hide error div
 					$("#errorDiv").html("");
 					$("#errorDiv").hide();						
@@ -245,7 +215,7 @@ lang="en">
 					guardRuleObject[GUARDRULE_NAME] = removeSpace($("#newGuardRuleName").val());
 					guardRuleObject[GUARDRULE_DESC] = $("#newGuardRuleDesc").val();
 					guardRuleObject[GUARDRULE_PRIORITY] = $("#newGuardRulePriority").val();					
-					guardRuleObject[GUARDRULE_CONDITION] = $("#selectUsers").val();
+					guardRuleObject[GUARDRULE_CONDITION] = $("#newGuardRuleCond").val();
 					guardRuleObject[GUARDRULE_ACTION] = $("#newGuardRuleAction").val();
 					guardRuleObject[GUARDRULE_TARGETOP] = $("#newGuardRuleOp").val();	
 
@@ -259,7 +229,7 @@ lang="en">
 					var addGuardRuleURL = URL_UI_SERVER+URL_ADD_GUARD_RULE;
 					var delGuardRuleURL = URL_UI_SERVER+URL_DEL_GUARD_RULE;
 
-					//alert(JSON.stringify(addRequestToSend));	
+					alert(JSON.stringify(addRequestToSend));	
 					
 					function postToDeleteGR(){
 						try {
@@ -372,16 +342,11 @@ lang="en">
 				<br><br>
 				<label id="newGuardRulePriorityLabel">Priority </label>
 				<div><font size="1">Enter a numeric value (lower the value, higher is the priority)</font></div>
-				<input id="newGuardRulePriority" type="text" maxlength = "5" size = "5">
+				<input id="newGuardRulePriority" type="text" maxlength = "5" size = "10" style="width: 30px">
 				<span style='color:red;' id="erRulePriority" class="errorVisual"></span>
 				<br><br>				
-				<div id="newGuardRuleCond" type="text">
-					<label id="newGuardRuleCondLabel">Condition </label>
-					<div id="divSelectUsers"><label>Select Users to grant/deny access:</label>
-						<div><font size="1">To select multiple entries, press Ctrl while selecting</font></div>
-					</div>
-					<button id="selectAll" class="google-button">Select All</button>
-				</div>
+				<label id="newGuardRuleCondLabel">Condition </label>
+				<textarea id="newGuardRuleCond" rows="3" cols="20">Specify condition</textarea>
 				<span style='color:red;' id="erRuleCond" class="errorVisual"></span>
 				<br><br>
 				<label id="newGuardRuleOpLabel">Target Operation </label>

@@ -87,6 +87,7 @@ public class Const {
 	public static final String API_ACTUATEDEVICE = "actuatedevice";
 	public static final String API_LISTACTUATIONREQUEST = "listactuationrequests";
 	public static final String API_CANCELACTUATIONREQUEST = "cancelactuationrequests";
+	public static final String API_LISTASKLET = "listasklet";
 	public static final String API_ADDGUARDRULE = "addguardrule";
 	public static final String API_DELGUARDRULE = "delguardrule";
 	public static final String API_GETGUARDRULE = "getguardrule";

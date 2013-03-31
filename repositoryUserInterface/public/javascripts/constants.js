@@ -40,6 +40,7 @@ var FAKE_GUARD_RULE_NAME="aaaaa";
 var SECRET_KEY="secretkey";
 var USERNAME="username";
 var SUCCESS=0;
+var NO_TASKLET_FOUND = 50;
 var NO_ACTUATION_REQUEST_FOUND = 60;
 var ACTUATION_REQUEST_LISTFAILED = 61;
 var TASKLET_NOT_CANCELED = 54;
@@ -117,6 +118,17 @@ var ACTUATION_WHEN="when";
 var ACTUATION_EXECUTE_SCRIPT="execute";
 
 var ACTUATION_TASKLETID="taskletId";
+
+//Dictionary constants associated with tasklets
+var TSK_SECRETKEY="secretkey";
+var TSK_TASKLETNAME="taskletname";
+var TSK_DESC="desc";
+var TSK_PARAM="param";
+var TSK_INPUT="input";
+var TSK_WHEN="when";
+var TSK_EXECUTE="execute";
+
+var TSK_TASKLETID="taskletId";
 
 //Dictionary constants associated with guard rules
 var GUARDRULE="rule";
@@ -303,6 +315,8 @@ var URL_LIST_ALL_DEVICE_TEMPLATES="listalldevicetemplates";
 var URL_LIST_ACTUATE_REQUEST="listactuationrequests";
 var URL_CANCEL_ACTUATE_REQUEST="cancelactuationrequests";
 
+var URL_LIST_TASKLET="listasklet";
+
 var URL_REGISTER_VPDS="registerVPDSToBroker";
 var URL_GET_VPDS_DETAILS="getvpdsdetails";
 var URL_VPDS_LIST="listvpds";
@@ -330,6 +344,7 @@ var URL_PRESENCE_ACTUATE="presenceactuate";
 var URL_GUARD_RULE="guardrule";
 var URL_GENERATE_SECRET_KEY="generatesecretkey";
 var URL_VISUALIZATION="display";
+var URL_TASKLETS="createtasklet";
 
 // Unused pages
 var URL_REPOSITORY_INFO="repository";

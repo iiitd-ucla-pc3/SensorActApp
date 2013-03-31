@@ -61,6 +61,8 @@ public class SensorActAPI extends Application {
 	public static ListActuationRequest listActRequests = new ListActuationRequest();
 	public static CancelActuationRequest cancelActRequests = new CancelActuationRequest();
 	
+	public static ListTasklet listTasklet = new ListTasklet();
+	
 	public static AddGuardRule addGuardRule = new AddGuardRule();
 	public static DeleteGuardRule delGuardRule = new DeleteGuardRule();
 	public static GetGuardRule getGuardRule = new GetGuardRule();

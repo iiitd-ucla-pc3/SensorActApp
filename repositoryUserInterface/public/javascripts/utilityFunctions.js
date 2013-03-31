@@ -48,7 +48,8 @@ function createHeader() {
 			"Guard Rules" : URL_GUARD_RULE,
 			"Time Actuation" : URL_ACTUATE,
 			"Presence Actuation" : URL_PRESENCE_ACTUATE,
-			"Visualization" : URL_VISUALIZATION
+			"Visualization" : URL_VISUALIZATION,
+			"Tasklets" : URL_TASKLETS
 			//"Repository" : URL_REPOSITORY_INFO,
 			//"Speak" : URL_SPEAK_INPUT
 		};
