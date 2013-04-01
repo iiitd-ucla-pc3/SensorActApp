@@ -146,7 +146,8 @@
 											if(!confirm("Do you want to Remove the Device?"))
 												return false;
 											var deviceIndex = this.id.toString();
-											deviceIndex = parseInt(deviceIndex.substr(deviceIndex.length - 1));
+											var tempStr = deviceIndex.split("_");
+											deviceIndex = parseInt(tempStr[1]);
 											var deviceToBeRemoved = deviceOrTemplateDataList[index][DEVICE_OR_TEMPLATE_ARRAY][deviceIndex][DEVICE_OR_TEMPLATE_NAME];
 											var messageToDeleteDevice = {}
 											messageToDeleteDevice[DEVICE_OR_TEMPLATE_NAME] = deviceToBeRemoved;
@@ -165,7 +166,8 @@
 										$('#' + editDeviceButton).click(function() {
 
 											var deviceIndex = this.id.toString();
-											deviceIndex = parseInt(deviceIndex.substr(deviceIndex.length - 1));
+											var tempStr = deviceIndex.split("_");
+											deviceIndex = parseInt(tempStr[1]);
 											var deviceToBeEdited = deviceOrTemplateDataList[index][DEVICE_OR_TEMPLATE_ARRAY][deviceIndex][DEVICE_OR_TEMPLATE_NAME];
 											var messageToEditDevice = {}
 											messageToEditDevice[DEVICE_OR_TEMPLATE_NAME] = deviceToBeEdited;
@@ -176,7 +178,8 @@
 										$('#' + saveAsButton).click(function() {
 
 											var deviceIndex = this.id.toString();
-											deviceIndex = parseInt(deviceIndex.substr(deviceIndex.length - 1));
+											var tempStr = deviceIndex.split("_");
+											deviceIndex = parseInt(tempStr[1]);
 											var deviceToBeEdited = deviceOrTemplateDataList[index][DEVICE_OR_TEMPLATE_ARRAY][deviceIndex][DEVICE_OR_TEMPLATE_NAME];
 											var messageToEditDevice = {}
 											messageToEditDevice[DEVICE_OR_TEMPLATE_NAME] = deviceToBeEdited;
