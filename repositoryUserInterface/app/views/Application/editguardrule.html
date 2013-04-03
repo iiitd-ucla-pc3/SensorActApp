@@ -100,7 +100,7 @@ lang="en">
 					$(".errorVisual").hide("");
 					$("#newGuardRuleName,#newGuardRuleDesc,#newGuardRulePriority,#selectUsers").removeClass("error");
 
-					if(((rulename.val().length) < MIN_LENGTH_GUARDRULE_NAME ) || ((rulename.val().length) > MAX_LENGTH_GUARDRULE_NAME)) { 				
+					if(((removeSpace(rulename.val()).length) < MIN_LENGTH_GUARDRULE_NAME ) || ((removeSpace(rulename.val()).length) > MAX_LENGTH_GUARDRULE_NAME)) { 				
 						errorState = true;
 						rulename.addClass("error");
 
@@ -108,7 +108,7 @@ lang="en">
 						$("#erRuleName").html("Rule name length should be between 5 and 20 characters");
 						
 					}
-					else if(((ruledesc.val().length) < MIN_LENGTH_GUARDRULE_DESC ) || ((ruledesc.val().length) > MAX_LENGTH_GUARDRULE_DESC)) { 
+					else if(((removeSpace(ruledesc.val()).length) < MIN_LENGTH_GUARDRULE_DESC ) || ((removeSpace(ruledesc.val()).length) > MAX_LENGTH_GUARDRULE_DESC)) { 
 						errorState = true;
 						ruledesc.addClass("error");
 
@@ -116,7 +116,7 @@ lang="en">
 						$("#erRuleDesc").html("Rule description length should be between 5 and 100 characters");
 						
 					}					
-					else if (priority.val().length == 0 || isNaN(priority.val())) {	
+					else if (removeSpace(priority.val()).length == 0 || isNaN(removeSpace(priority.val()))) {	
 						errorState = true;
 						priority.addClass("error");
 						
@@ -124,7 +124,7 @@ lang="en">
 						$("#erRulePriority").html("Please enter a numeric value");
 
 					}
-					else if (condition.val() == null) {						
+					else if (removeSpace(condition.val()).length == 0 || $.trim(condition.val()) == "Specify condition") {			
 						errorState = true;
 						condition.addClass("error");
 						
@@ -214,7 +214,7 @@ lang="en">
 					
 					guardRuleObject[GUARDRULE_NAME] = removeSpace($("#newGuardRuleName").val());
 					guardRuleObject[GUARDRULE_DESC] = $("#newGuardRuleDesc").val();
-					guardRuleObject[GUARDRULE_PRIORITY] = $("#newGuardRulePriority").val();					
+					guardRuleObject[GUARDRULE_PRIORITY] = removeSpace($("#newGuardRulePriority").val());			
 					guardRuleObject[GUARDRULE_CONDITION] = $("#newGuardRuleCond").val();
 					guardRuleObject[GUARDRULE_ACTION] = $("#newGuardRuleAction").val();
 					guardRuleObject[GUARDRULE_TARGETOP] = $("#newGuardRuleOp").val();	

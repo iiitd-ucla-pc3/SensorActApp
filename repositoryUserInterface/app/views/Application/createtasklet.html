@@ -46,7 +46,9 @@
 				 *
 				 */
 				var vpdsname = $("#vpdsname").val();
-				var noOfParam = 0;
+				var username = $("#username").val();
+				var paramIdCount = 0;
+				var idCount = [];
 				var errorParam = false;
 
 				/*
@@ -106,20 +108,23 @@
 					var username = $("#username").val();
 
 					tasklet[TSK_SECRETKEY]= FAKE_SECRET_KEY;
-					tasklet[TSK_TASKLETNAME]= $("#tname").val();
-					tasklet[TSK_DESC]= $("#tdesc").val();
+					tasklet[TSK_TASKLETNAME]= $.trim($("#tname").val());
+					tasklet[TSK_DESC]= $.trim($("#tdesc").val());
 					tasklet[TSK_PARAM] = {};
 
 					//Parameters
-					for(var i = 1; i <= noOfParam; i++){
-						var pname = $("#p"+i).val();
-						var pval = $("#val"+i).val();
+					var id;
+					for (var i in idCount){					
+						id = idCount[i];
+						var pname = $.trim($("#p"+id).val());
+						var pval = $("#val"+id).val();
 						tasklet[TSK_PARAM][pname] = pval;
 					}					
 					
 					tasklet[TSK_EXECUTE]= $("#texecute").val();
 
-					tasklet[TSK_WHEN] = $("#twhen").val();
+					//tasklet[TSK_WHEN] = $("#twhen").val();
+					tasklet[TSK_WHEN] = "timer";
 					tasklet[TSK_INPUT] = {};
 					tasklet[TSK_INPUT][tasklet[TSK_WHEN]] = $("#cronexp").val();
 					
@@ -168,7 +173,7 @@
 					
 					try {
 
-						//alert(JSON.stringify(tasklet));
+						//alert(JSON.stringify(tasklet));return false;
 						
 						$.post(URL_UI_SERVER + URL_ACTUATE_DEVICE, JSON.stringify(tasklet), function(data) {
 								receivedData = data;
@@ -192,13 +197,15 @@
 
 					$(".errorVisual").hide("");
 					$("#divParamSelect,#tname,#tdesc,#twhen,#cronexp,#texecute").removeClass("error");
-					for (var i = 1; i <= noOfParam; i++){
-						$("#newParam"+i).removeClass("error");
+					var id;
+					for (var i in idCount){					
+						id = idCount[i];		
+						$("#newParam"+id).removeClass("error");
 					}
 					errorState = false;
 					errorInformation = "";					
 
-					if (tname.length == 0 || tname == " ") {
+					if (removeSpace(tname).length == 0) {
 						errorState = true;
 
 						$("#tname").addClass("error");
@@ -207,7 +214,7 @@
 						$("#spanTName").html("Enter tasklet name");						
 
 					}
-					else if (tdesc.length == 0) {
+					else if (removeSpace(tdesc).length == 0) {
 						errorState = true;
 
 						$("#tdesc").addClass("error");
@@ -216,17 +223,21 @@
 						$("#spanTDesc").html("Enter a description");
 
 					}
-					else if ((noOfParam > 0 && !errorParam) || errorParam) {
-						for (var i = 1; i <= noOfParam; i++){
-							var pname = $("#p"+i).val();
-							var pval = $("#val"+i).val();
+					else if ((idCount.length > 0 && !errorParam) || errorParam) {
+						var id;
+						for (var i in idCount){
+							
+							id = idCount[i];
+							var pname = removeSpace($("#p"+id).val());
+							var pval = removeSpace($("#val"+id).val());
+							
 							if(pname.length == 0 || pval.length == 0){
 								errorState = true;
 								errorParam = true;
-								$("#newParam"+i).addClass("error");
-								$("#spanParamSelect").show('slow', function() {
+								$("#newParam"+id).addClass("error");
+								$("#spanParamSelect"+id).show('slow', function() {
 								});
-								$("#spanParamSelect").html("Enter parameter details");
+								$("#spanParamSelect"+id).html("Enter parameter details");
 								$("#divParamSelect").focus();
 								break;
 							}
@@ -234,9 +245,9 @@
 								errorParam = false;
 						}
 					}
-					if(errorParam)
+					if(errorParam || errorState)
 						return [errorState, errorInformation];
-					if (twhen.length == 0) {
+					/*if (twhen.length == 0) {
 						errorState = true;
 
 						$("#twhen").addClass("error");
@@ -245,7 +256,7 @@
 						$("#spanTWhen").html("Enter token name for the cron expression");
 
 					}
-					else if (cronexp.length == 0) {
+					else */if (removeSpace(cronexp).length == 0) {
 						errorState = true;
 
 						$("#cronexp").addClass("error");
@@ -254,7 +265,7 @@
 						$("#spanTWhen").html("Cron Expression missing!");
 
 					}
-					else if (texecute.length == 0) {						
+					else if (removeSpace(texecute).length == 0) {						
 						errorState = true;
 						
 						$("#spanTExecute").show('slow', function() {
@@ -289,19 +300,171 @@
 				// Adding new parameters
 
 				$("#addNewParameter").click(function() {
-					noOfParam++;
-					$("#divParamSelect").append('<div id="newParam'+noOfParam+'" class="newParam"> \
-						&nbsp;&nbsp;&nbsp;Param'+noOfParam+': &nbsp; &nbsp; <input type="text" id="p'+ noOfParam +'"><br>\
-						&nbsp;&nbsp;&nbsp;Value: &nbsp; &nbsp; &nbsp;&nbsp; <input type="text" id="val'+ noOfParam +'"><br>\
-						</div>');
+					paramIdCount++;
+					var idParam = paramIdCount;					
+					idCount.push(idParam);
+					$("#divParamSelect").append('<div id="newParam'+idParam+'" class="newParam" style="overflow:hidden"> \
+						&nbsp;&nbsp;&nbsp;Param Name: &nbsp; &nbsp; <input type="text" id="p'+ idParam +'">&nbsp;&nbsp;&nbsp;<font size="1">(parameter name without spaces)</font><br>\
+						&nbsp;&nbsp;&nbsp;Value: &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;\
+						<input type="text" id="val'+ idParam +'"><br>\
+						<br/><span class="errorVisual" id="spanParamSelect'+idParam+'"></span><button style="float:right" class="google-button-red"  id="delParameter'+idParam+'">Delete parameter</button></div>');
+					$("#delParameter"+idParam).click(function() {						
+						$("#divParamSelect #newParam"+idParam).remove();						
+						idCount.splice(idCount.indexOf(idParam),1);
+						$(".errorVisual").hide("");
+					});
 				});
 
-				$("#delParameter").click(function() {
-					if(noOfParam > 0) {
-						$("#divParamSelect").find("#newParam"+noOfParam).remove();
-						noOfParam--;
-					}					
+				//Getting Device List
+				try {
+
+					$.get(URL_UI_SERVER + URL_LIST_ALL_DEVICES, function(data) {					
+						receivedDeviceData = data;					
+					});
+				} catch(e) {
+
+				}
+
+				$("#addDeviceParameter").click(function() {
+					paramIdCount++;
+					var idParam = paramIdCount;
+					idCount.push(idParam);
+					$("#divParamSelect").append('<div id="newParam'+idParam+'" class="newParam" style="overflow:hidden"> \
+						&nbsp;&nbsp;&nbsp;Device Param Name: &nbsp; &nbsp; <input type="text" id="p'+ idParam +'"> &nbsp;&nbsp;&nbsp;<font size="1">(parameter name without spaces)</font><br>\
+						&nbsp;&nbsp;&nbsp;<div id="divDeviceSelect">Select a device:</div>\
+						<input type="hidden" id="val'+ idParam +'">\
+						<br/><span class="errorVisual" id="spanParamSelect'+idParam+'"></span><button style="float:right; display:block" class="google-button-red"  id="delParameter'+idParam+'">Delete parameter</button></div>');
+
+					/*
+					 * Displaying the list of devices and load the sensors/actuators associated with them
+					 */
+
+					//Make a request to get all the devices available
+					if (!(receivedDeviceData.hasOwnProperty(RESPONSE_STATUS_CODE)))//Success
+					{
+
+						if (receivedDeviceData[DEVICE_ARRAY].length > 0) {
+
+							$("#newParam"+idParam+" #divDeviceSelect").append("&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;<select id=\"selectDev\"><option value='Select Device'>Select Device</option></select><br/>");
+							for (var index in receivedDeviceData[DEVICE_ARRAY]) {
+								var name = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_NAME];
+
+								$("#newParam"+idParam+" #divDeviceSelect #selectDev").append("<option name=\""+removeSpace(name)+"\" value=\"" + removeSpace(name) + "\" >" + removeSpace(name) + "</option>");								
+							}
+
+							/*
+							 * Description:This function is used to change the HTML contents corresponding to a selected device
+							 * It basically adds relevant HTMl in accordance with the device selected
+							 *
+							 * Nature:Anonmyous function
+							 *
+							 * Called:Called every time a change occurs in the dropdown menu
+							 *
+							 */
+
+							var deviceName;
+							var sensorName, sensorID, actuatorName, actuatorID;
+							$("#newParam"+idParam+" #selectDev").change(function() {
+
+								$("#newParam"+idParam+" #divDeviceSelect .device").remove();
+								$("#newParam"+idParam+" #val"+ idParam).val("");
+								$("#newParam"+idParam+" .errorVisual").hide();								
+								//var clickedItem = this.value;		
+								//alert("Clicked device:" + clickedItem);
+
+							    deviceName = this.value;
+
+							    $("#newParam"+idParam+" #divDeviceSelect").append("<div class=\"device\"><input type=\"radio\" name=\"subtype\" value=\"Sen\" /> &nbsp;  Sensor? &nbsp; &nbsp; <input type=\"radio\" name=\"subtype\" value=\"Act\" /> &nbsp;  Actuator?</div>");
+
+
+							    $("#newParam"+idParam+" input[name=subtype]").click(function() {
+
+							    	$("#newParam"+idParam+" #divDeviceSelect .device .sensor").remove();
+							    	$("#newParam"+idParam+" #divDeviceSelect .device .actuator").remove();
+							    	$("#newParam"+idParam+" .errorVisual").hide();
+
+							    	if(this.value == "Sen"){
+							    		$("#newParam"+idParam+" #divDeviceSelect .device").append("<div class=\"sensor\">Select sensor &nbsp;<select id='selSensor'><option value='Select Sensor'>Select Sensor</option></select></div>");
+							    		for (var index in receivedDeviceData[DEVICE_ARRAY]) {
+											var name = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_NAME];
+									
+											if (name == deviceName) {
+
+												if ( DEVICE_SENSORS in receivedDeviceData[DEVICE_ARRAY][index]) {
+												
+													var sensorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS];
+													for (var sensor in sensorArray) {
+														var senName =  sensorArray[sensor][DEVICE_SENSOR_NAME];
+														var senId =  sensorArray[sensor][DEVICE_SENSOR_ID];
+														$("#newParam"+idParam+" #selSensor").append("<option id ='"+ senId +"' value='" + senName + "'>"+ senName + "</option>");
+													}
+												}
+												else {
+													$("#spanParamSelect"+idParam).show('slow', function() {
+													});
+													$("#spanParamSelect"+idParam).html("No sensors found!");
+													$("#newParam"+idParam+" .sensor").hide();
+												}
+											}
+										}
+							    	}
+							    	else if (this.value == "Act"){
+							    		$("#newParam"+idParam+" #divDeviceSelect .device").append("<div class=\"actuator\">Select actuator &nbsp;<select id='selActuator'><option value='Select Actuator'>Select Actuator</option></select></div>");
+							    		for (var index in receivedDeviceData[DEVICE_ARRAY]) {
+											var name = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_NAME];
+									
+											if (name == deviceName) {				
+
+												if ( DEVICE_ACTUATORS in receivedDeviceData[DEVICE_ARRAY][index]) {
+												
+													var actuatorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_ACTUATORS];
+
+													for (var actuator in actuatorArray) {
+														var actName = actuatorArray[actuator][DEVICE_ACTUATOR_NAME];
+														var actId = actuatorArray[actuator][DEVICE_ACTUATOR_ID];
+														$("#newParam"+idParam+" #selActuator").append("<option id ='"+ actId +"' value='" + actName + "'>"+ actName + "</option>");
+													}
+												}
+												else{
+													$("#spanParamSelect"+idParam).show('slow', function() {
+													});
+													$("#spanParamSelect"+idParam).html("No actuators found!");
+													$("#newParam"+idParam+" .actuator").hide();
+												}
+													
+											}
+										}
+							    	}
+							    	// Set val hidden value
+
+									$("#newParam"+idParam+" #selSensor").click(function(){
+										sensorName = this.value;
+										sensorID = $(this).find(':selected')[0].id;	
+										var valueDevParam = username + ":" + deviceName + ":" + sensorName + ":" + sensorID;
+										$("#newParam"+idParam+" #val"+ idParam).val(valueDevParam);
+									});
+
+									$("#newParam"+idParam+" #selActuator").click(function(){
+										actuatorName = this.value;
+										actuatorID = $(this).find(':selected')[0].id;
+										var valueDevParam = username + ":" + deviceName + ":" + actuatorName + ":" + actuatorID;
+										$("#newParam"+idParam+" #val"+ idParam).val(valueDevParam);
+									});
+							    });
+							});						
+						} 
+					}
+					else if(receivedDeviceData[RESPONSE_STATUS_CODE] == NO_DEVICE_FOUND) {
+						alertGetActuateError("No devices added yet");
+					}
+
+					$("#delParameter"+idParam).click(function() {						
+						$("#divParamSelect #newParam"+idParam).remove();
+						idCount.splice(idCount.indexOf(idParam),1);
+						$(".errorVisual").hide("");
+					});
 				});
+
 				
 				//$("#dialog:ui-dialog").dialog("destroy");
 				var dlg = $("#dialog").dialog({
@@ -508,28 +671,25 @@
 					<div class="leftDiv">
 						<br>						
 							Parameters :  &nbsp;&nbsp;&nbsp;
+								<button class='google-button-blue'  id="addDeviceParameter">
+								Add Device Parameter
+								</button>&nbsp;&nbsp;&nbsp;
 								<button class='google-button-blue'  id="addNewParameter">
 								Add parameter
-								</button>&nbsp;&nbsp;&nbsp;
-								<button class='google-button-blue'  id="delParameter">
-								Delete parameter
 								</button>						
 							
 							<div id="divParamSelect">
 							
 							</div>
-					</div>
-					<div class="rightDiv">						
-						<span class="errorVisual" id="spanParamSelect"></span>
-					</div>	
+					</div>						
 				
 					<div class="leftDiv">
 						<br>
 						<div id="divWhenSelect">
 							<label>When to Schedule:<sup>*</sup></label>
-							 &nbsp;&nbsp;&nbsp;Token Name: 
+							 <!--&nbsp;&nbsp;&nbsp;Token Name: 
 							 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="twhen" /><br/> 
-							 &nbsp;&nbsp;&nbsp;<font size="1">(Enter a token name for the cron expression Eg. timer1) </font><br/>
+							 &nbsp;&nbsp;&nbsp;<font size="1">(Enter a token name for the cron expression Eg. timer1) </font><br/>-->
 							 &nbsp;&nbsp;&nbsp;Cron expression: &nbsp;&nbsp;<input type="text" id = "cronexp">
 							 <br/> &nbsp;&nbsp;&nbsp;<font size="1">(Specify a cron expression for scheduling the tasklet Eg. 0 0/2 10-18 * * ? *)</font>
 						</div>
