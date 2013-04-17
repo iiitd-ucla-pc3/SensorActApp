@@ -30,53 +30,13 @@
 				createHeaderVO();
 				createFooter();
 
-				$("#dialog:ui-dialog").dialog("destroy");
-				var dlg = $("#dialog").dialog({
-					autoOpen : false,
-					draggable : true,
-					resizable : true,
-					width : 500,
-					modal : true
-				});
-
-				$( "#dialog" ).bind( "dialogbeforeclose", function(event, ui) {
-					$("#dialog").html("");
-				});
 
 				$(".shareDevice").hide();
 				$("input:checkbox").prop("disabled",true);
 				$("input:checkbox").prop("checked", false);
 				$("input:radio").prop("checked", false);
 
-				$("#infoImg,#infoImg1").click(function() {
-
-					$("#dialog").html("<table id=\"tableInfo\" style=\"border: 1; font-size:10px\"> \
-										<tr> \
-											<td></td> \
-											<td><b>Read</b></td> \
-											<td><b>Write</b></td> \
-										</tr> \
-										<tr> \
-											<td><b>Data</b></td> \
-											<td>Read data from the sensors</td> \
-											<td>Set the status of the sensors</td> \
-										</tr> \
-										<tr> \
-											<td><b>Control</b></td> \
-											<td>Get the status of the Actuators (On/Off)</td> \
-											<td>Set the status of the Actuators (actuating devices) </td> \
-										</tr> \
-										</table>");		
-					
-					dlg.dialog("open");
-					dlg.dialog("option", "position", {
-						//my: "center top",
-						//at: "right top",
-						//offset: "20 20"
-					});
-					return false;
-				});
-
+				
 				/*
 				var getsecretkey = {};
 
@@ -545,6 +505,49 @@
 					}
 				});
 
+				$("#dialog:ui-dialog").dialog("destroy");
+				var dlg = $("#dialog").dialog({
+					autoOpen : false,
+					draggable : true,
+					resizable : true,
+					width : 500,
+					modal : true
+				});
+
+				$( "#dialog" ).bind( "dialogbeforeclose", function(event, ui) {
+					$("#dialog").html("");
+				});
+
+				$("#infoImg,#infoImg1").click(function() {
+
+					$("#dialog").append("<table id=\"tableInfo\" style=\"border: 1; font-size:10px\"> \
+										<tr> \
+											<td></td> \
+											<td><b>Read</b></td> \
+											<td><b>Write</b></td> \
+										</tr> \
+										<tr> \
+											<td><b>Data</b></td> \
+											<td>Read data from the sensors</td> \
+											<td>Set the status of the sensors</td> \
+										</tr> \
+										<tr> \
+											<td><b>Control</b></td> \
+											<td>Get the status of the Actuators (On/Off)</td> \
+											<td>Set the status of the Actuators (actuating devices) </td> \
+										</tr> \
+										</table>");		
+					
+					dlg.dialog("open");
+					/*dlg.dialog("option", "position", {
+						//my: "center top",
+						//at: "right top",
+						//offset: "20 20"
+					});*/
+					return false;
+				});
+
+
 				$("#dialogList:ui-dialog").dialog("destroy");
 				var dlg1 = $("#dialogList").dialog({
 					autoOpen : false,
@@ -744,7 +747,7 @@
 				<!--Right Pane starts here-->
 					<div id="displaySharedDevices" style="float:right;">
 						<div class="leftDiv" style="clear:both;text-align:center;">
-							<div id="dialog" title = "Devices Shared By Me" style="font-size:1;"></div>
+							<div id="dialogList" title = "Devices Shared By You" style="font-size:1;"></div>	
 							<button id="IDViewRequest" class="google-button">
 							View Devices Shared By Me
 							</button>
@@ -759,8 +762,7 @@
 				<!-- Left pane starts -->
 				<div id="visualBox" style="">
 
-					<div id="dialog" title = "Permissions Information" style="font-size:1;"></div>
-					<div id="dialogList" title = "Devices Shared By You" style="font-size:1;"></div>	
+					<div id="dialog" title = "Permissions Information" style="font-size:1;"></div>				
 
 					<div id="divUser">
 						<div class="leftDiv">
