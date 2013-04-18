@@ -175,17 +175,21 @@ public class QueryData extends SensorActAPI {
 
 	public void processNonInteractive(
 			ArrayList<WaveSegmentArray> arrayOfResponses) {
-		String a = createChart(arrayOfResponses);
+		long t1 = new Date().getTime();
+		String a = createChart(arrayOfResponses);		
 		String re = "{\"filename\":\"" + a + ".png\"}";
+		long t2 = new Date().getTime();
+		System.out.println("Time to create non-interactive graph:" + (t2-t1)/1000 + " seconds");
 		renderJSON(re);
 
 	}
 
 	private void processInteractive(ArrayList<WaveSegmentArray> arrayOfResponses) {
+		long t1 = new Date().getTime();
 		int size = arrayOfResponses.size();
 		int seriesOffset = 0;
 		ChartSeriesArray ca = new ChartSeriesArray();
-		System.out.println("Data Size:" + size);
+		System.out.println("Interactive:: Data Size:" + size);
 		for (int a = 0; a < size; a++) {
 			//System.out.println("For waveseg " + Integer.toString(a) + " ");
 			WaveSegmentArray wa = arrayOfResponses.get(a);
@@ -252,12 +256,14 @@ public class QueryData extends SensorActAPI {
 
 		}
 		// System.out.println(gson.toJson(ca));
+		long t2 = new Date().getTime();
+		System.out.println("Time to create non-interactive graph:" + (t2-t1)/1000 );
 		renderJSON(gson.toJson(ca));
 
 	}
 
 	public String createChart(ArrayList<WaveSegmentArray> arrayOfResponses) {
-		System.out.println("Data Size:" + arrayOfResponses.size());	
+		System.out.println("Static Graph:: Data Size:" + arrayOfResponses.size());	
 		XYDataset dataset = createDataset(arrayOfResponses);
 		JFreeChart chart = createJFreeChart(dataset);
 		String uuid = UUID.randomUUID().toString();
