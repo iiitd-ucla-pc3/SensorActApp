@@ -140,7 +140,7 @@ public class QueryData extends SensorActAPI {
 							queryBodyWithSecretKey);
 				}
 				
-				System.out.println("Data response: "+responseFromServer.getString());
+				//System.out.println("Data response: "+responseFromServer.getString());
 				WaveSegmentArray wa = gson.fromJson(
 						responseFromServer.getString(), WaveSegmentArray.class);
 				/*
@@ -256,7 +256,7 @@ public class QueryData extends SensorActAPI {
 	}
 
 	public String createChart(ArrayList<WaveSegmentArray> arrayOfResponses) {
-		System.out.println("Array of Response"+arrayOfResponses);	
+		//System.out.println("Array of Response"+arrayOfResponses);	
 		XYDataset dataset = createDataset(arrayOfResponses);
 		JFreeChart chart = createJFreeChart(dataset);
 		String uuid = UUID.randomUUID().toString();
