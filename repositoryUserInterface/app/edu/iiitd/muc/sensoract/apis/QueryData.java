@@ -185,8 +185,9 @@ public class QueryData extends SensorActAPI {
 		int size = arrayOfResponses.size();
 		int seriesOffset = 0;
 		ChartSeriesArray ca = new ChartSeriesArray();
+		System.out.println("Data Size:" + size);
 		for (int a = 0; a < size; a++) {
-			System.out.println("For waveseg " + Integer.toString(a) + " ");
+			//System.out.println("For waveseg " + Integer.toString(a) + " ");
 			WaveSegmentArray wa = arrayOfResponses.get(a);
 
 			int numberOfWavesegs = wa.wavesegmentArray.size();
@@ -256,7 +257,7 @@ public class QueryData extends SensorActAPI {
 	}
 
 	public String createChart(ArrayList<WaveSegmentArray> arrayOfResponses) {
-		//System.out.println("Array of Response"+arrayOfResponses);	
+		System.out.println("Data Size:" + arrayOfResponses.size());	
 		XYDataset dataset = createDataset(arrayOfResponses);
 		JFreeChart chart = createJFreeChart(dataset);
 		String uuid = UUID.randomUUID().toString();
@@ -276,7 +277,7 @@ public class QueryData extends SensorActAPI {
 	}
 
 	public JFreeChart createJFreeChart(XYDataset dataset) {
-		System.out.println(dataset);
+		//System.out.println(dataset);
 		JFreeChart chart = ChartFactory.createTimeSeriesChart("Visualization", // title
 				"Date-Time", // x-axis label
 				"Readings", // y-axis label
