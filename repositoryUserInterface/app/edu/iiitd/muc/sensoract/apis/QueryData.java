@@ -126,7 +126,7 @@ public class QueryData extends SensorActAPI {
 						queryRequest.devicesArray.get(i).sensorsArray.get(j).sensorid,
 						queryRequest.username, secretkey);
 				String queryBodyWithSecretKey = gson.toJson(queryToRepo);
-				
+				logger.info(Const.API_QUERYDATA, "------Sending Request to VPDS--------");
 				if(usertype.equals(Const.USER)){
 					responseFromServer = new SendHTTPRequest()
 					.sendPostRequest(vpdsURL + "data/query",
@@ -139,7 +139,7 @@ public class QueryData extends SensorActAPI {
 							Const.MIME_TYPE_JSON, Const.API_QUERYDATA,
 							queryBodyWithSecretKey);
 				}
-				
+				logger.info(Const.API_QUERYDATA, "------Finished Receiving Data--------");
 				//System.out.println("Data response: "+responseFromServer.getString());
 				WaveSegmentArray wa = gson.fromJson(
 						responseFromServer.getString(), WaveSegmentArray.class);
@@ -257,7 +257,7 @@ public class QueryData extends SensorActAPI {
 		}
 		// System.out.println(gson.toJson(ca));
 		long t2 = new Date().getTime();
-		logger.info(Const.API_QUERYDATA, "Time to create non-interactive graph:" + (t2-t1)/1000 );
+		logger.info(Const.API_QUERYDATA, "Time to create interactive graph:" + (t2-t1)/1000 +" seconds");
 		renderJSON(gson.toJson(ca));
 
 	}
