@@ -60,6 +60,7 @@ import org.jfree.ui.RectangleInsets;
 
 import play.libs.WS.HttpResponse;
 import edu.iiitd.muc.sensoract.constants.Const;
+import edu.iiitd.muc.sensoract.format.APIResponse;
 import edu.iiitd.muc.sensoract.format.ChartSeries;
 import edu.iiitd.muc.sensoract.format.ChartSeriesArray;
 import edu.iiitd.muc.sensoract.format.ChartSeriesStats;
@@ -140,17 +141,27 @@ public class QueryData extends SensorActAPI {
 							queryBodyWithSecretKey);
 				}
 				logger.info(Const.API_QUERYDATA, "------Finished Receiving Data--------");
-				System.out.println("Data response: "+responseFromServer.getString());
-				WaveSegmentArray wa = gson.fromJson(
-						responseFromServer.getString(), WaveSegmentArray.class);
-				/*
-				 * If the size of WaveSegmentArray is 0, that is no data is found, then in that 
-				 * case, it is not to be added to arrayOfResponses
-				 */
-				if (wa.wavesegmentArray.size()>0)
-				{
-					arrayOfResponses.add(wa);
+				//System.out.println("Data response: "+responseFromServer.getString());
+				APIResponse apiResponse = gson.fromJson(
+						responseFromServer.getString(), APIResponse.class);
+				try {
+					if(apiResponse.statuscode > 0)
+						renderJSON(gson.toJson(new APIResponse(Const.API_QUERYDATA, 1, "Error retrieving data!")));
+					WaveSegmentArray wa = gson.fromJson(
+							responseFromServer.getString(), WaveSegmentArray.class);
+					/*
+					 * If the size of WaveSegmentArray is 0, that is no data is found, then in that 
+					 * case, it is not to be added to arrayOfResponses
+					 */
+					if (wa.wavesegmentArray.size()>0)
+					{
+						arrayOfResponses.add(wa);
+					}
 				}
+				catch (NullPointerException e) {
+					renderJSON(gson.toJson(new APIResponse(Const.API_QUERYDATA, 1, "Error retrieving data!")));
+				}
+				
 
 			}
 
