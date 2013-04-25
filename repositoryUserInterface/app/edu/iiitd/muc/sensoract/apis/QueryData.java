@@ -140,7 +140,7 @@ public class QueryData extends SensorActAPI {
 							queryBodyWithSecretKey);
 				}
 				logger.info(Const.API_QUERYDATA, "------Finished Receiving Data--------");
-				//System.out.println("Data response: "+responseFromServer.getString());
+				System.out.println("Data response: "+responseFromServer.getString());
 				WaveSegmentArray wa = gson.fromJson(
 						responseFromServer.getString(), WaveSegmentArray.class);
 				/*
