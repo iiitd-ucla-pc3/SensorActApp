@@ -142,11 +142,9 @@ public class QueryData extends SensorActAPI {
 				}
 				logger.info(Const.API_QUERYDATA, "------Finished Receiving Data--------");
 				//System.out.println("Data response: "+responseFromServer.getString());
-				APIResponse apiResponse = gson.fromJson(
-						responseFromServer.getString(), APIResponse.class);
+				
 				try {
-					if(apiResponse.statuscode > 0)
-						renderJSON(gson.toJson(new APIResponse(Const.API_QUERYDATA, 1, "Error retrieving data!")));
+					
 					WaveSegmentArray wa = gson.fromJson(
 							responseFromServer.getString(), WaveSegmentArray.class);
 					/*

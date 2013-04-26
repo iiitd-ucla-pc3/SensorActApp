@@ -377,7 +377,7 @@
 						//Means it contains data
 						{
 
-						
+						alert("Data there");
 							/************** -------------- Changes ---------------- ****************/
 							if (receivedData.hasOwnProperty("filename")) {
 								
@@ -423,8 +423,8 @@
 						
 
 						} else {
-
-							var r = showNoty("Error occured in fetching data/Data does not exist for " + "center", "off",5000);
+							$.noty.closeAll();
+							var r = showNoty("Error occured in fetching data/Data does not exist for your query" , "center", "off",5000);
 						}
 
 					} catch(e) {
