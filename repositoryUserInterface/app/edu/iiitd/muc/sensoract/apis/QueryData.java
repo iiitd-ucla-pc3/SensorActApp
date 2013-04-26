@@ -225,7 +225,7 @@ public class QueryData extends SensorActAPI {
 			for (int i = 0; i < numberOfWavesegs; i++) {
 				long timestamp = wa.wavesegmentArray.get(i).data.timestamp * 1000;
 				int samplingPeriod = 1;
-				System.out.println(timestamp);
+				//System.out.println(timestamp);
 
 				for (int j = 0; j < numberOfSeries; j++) {
 
