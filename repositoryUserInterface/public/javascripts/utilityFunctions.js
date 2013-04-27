@@ -155,7 +155,7 @@ function createHeaderVO() {
 }
  
 function createFooter() {     
-	$("#footer-container").append("<footer class=\"wrapper\"><h4 align=\"center\">&copy;2012 |MUC, IIIT-Delhi</h4></footer>");
+	$("#footer-container").append("<footer class=\"wrapper\"><h4 align=\"center\">&copy;2012 |MUC, IIIT-Delhi & NESL, UCLA</h4></footer>");
 }
 
 function includeHiddenFields() {
