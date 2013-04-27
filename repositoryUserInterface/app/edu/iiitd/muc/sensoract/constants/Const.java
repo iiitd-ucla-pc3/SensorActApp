@@ -76,6 +76,7 @@ public class Const {
 	public static final String API_LISTALLDEVICES = "listalldevices";
 	public static final String API_LISTALLVPDSDEVICES = "listallvpdsdevices";
 	public static final String API_QUERYDATA = "querydata";
+	public static final String API_DOWNLOADATA = "downloadata";
 	public static final String API_ADDDEVICETEMPLATE = "adddevicetemplate";
 	public static final String API_DELETEDEVICETEMPLATE = "deletedevicetemplate";
 	public static final String API_FINDDEVICE = "finddevice";

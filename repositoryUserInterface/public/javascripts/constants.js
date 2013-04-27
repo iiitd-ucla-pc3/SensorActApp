@@ -308,6 +308,7 @@ var URL_ASSOC_LIST_GUARD_RULE="listassocguardrules";
 
 var URL_REGISTER_USER=URL_UI_SERVER+"register";
 var URL_QUERY_DATA="querydata2";
+var URL_DOWNLOAD_DATA="downloadata";
 var URL_GET_DEVICE="getdevice";
 var URL_LIST_ALL_DEVICES="listalldevices";
 var URL_LIST_ALL_VPDS_DEVICES="listallvpdsdevices";

@@ -362,7 +362,13 @@ public class Application extends Controller {
 		String queryBody = request.params.get(Const.REQUEST_BODY);
 		api.queryData.doProcess(queryBody);
 	}
-
+	
+	public static void downloadata() {
+		String queryBody = request.params.get(Const.REQUEST_BODY);
+		api.downloadData.doProcess(queryBody);
+	}
+	
+	// Unused
 	public static void querydata2() {
 		String queryBody = request.params.get(Const.REQUEST_BODY);
 		api.queryData2.doProcess(queryBody);

@@ -74,6 +74,7 @@ public class SensorActAPI extends Application {
 	public static ListAssocGuardRule listAssocGuardRule = new ListAssocGuardRule();
 	
 	public static QueryData queryData = new QueryData();
+	public static DownloadData downloadData = new DownloadData();
 	public static QueryData2 queryData2 = new QueryData2();
 
 	public static Login login = new Login();

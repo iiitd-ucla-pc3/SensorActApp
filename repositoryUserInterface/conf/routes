@@ -75,6 +75,9 @@ GET     /assocguardrule/{guardrulename}/{mode} 	Application.assocguardrule
 
 
 POST    /querydata                              Application.querydata
+POST	/downloadata							Application.downloadata
+
+#Unused
 POST    /querydata2                             Application.querydata
 GET     /speak									Application.speak
 POST    /speak									Application.speak

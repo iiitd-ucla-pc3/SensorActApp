@@ -387,8 +387,6 @@
 								$("#tools").hide();
 								var s=receivedData["filename"];
 								$("#staticImage").attr("src","../public/"+s);
-								downloadData.push("The data cannot be downloaded. Please reduce the time");
-								$("#speed").attr("disabled","disabled");
 							} 
 							else if(receivedData=="No Data Found")
 							{	
@@ -451,6 +449,66 @@
 
 					} else {
 
+					}
+
+				}
+
+				function makeRequestAndDownload(startTime, endTime) {
+					var query = {};
+					query[QUERY_CONDITIONS] = {};
+					query[VPDS_NAME] = vpdsname;
+					query[QUERY_CONDITIONS][QUERY_CONDITIONS_FROM_TIME] = startTime;
+					query[QUERY_CONDITIONS][QUERY_CONDITIONS_TO_TIME] = endTime;
+					query[QUERY_USER_NAME] = username;
+					var r =showNoty("Fetching Data and converting to CSV", "center", "off", 500);
+					query[QUERY_DEVICE_ARRAY] = new Array();
+					var i = 0;
+					query[QUERY_DEVICE_ARRAY][i] = {};
+					query[QUERY_DEVICE_ARRAY][i][QUERY_DEVICE] = devicename;
+					var j = 0;
+					query[QUERY_DEVICE_ARRAY][i][QUERY_SENSOR_ARRAY] = new Array();
+					query[QUERY_DEVICE_ARRAY][i][QUERY_SENSOR_ARRAY][j] = {};
+					query[QUERY_DEVICE_ARRAY][i][QUERY_SENSOR_ARRAY][j][QUERY_SENSOR_NAME] = sensorname;
+					query[QUERY_DEVICE_ARRAY][i][QUERY_SENSOR_ARRAY][j][QUERY_SENSOR_ID] = sensorid;
+
+					try {
+
+
+					$.post(URL_UI_SERVER+URL_DOWNLOAD_DATA, JSON.stringify(query), function(data) {
+							receivedData = data;
+						
+
+						});
+						if (!(receivedData.hasOwnProperty(RESPONSE_STATUS_CODE)))
+						//Means it contains data
+						{
+						
+							/************** -------------- Changes ---------------- ****************/
+							if (receivedData.hasOwnProperty("filename")) {
+								
+								$.noty.closeAll();								
+								
+								var s=receivedData["filename"];
+								$("#downloadCSV").attr("href","../public/"+s);
+								$("#downloadCSV").html("Click to download CSV");
+							} 
+							else if(receivedData=="No Data Found")
+							{	
+								$.noty.closeAll();
+								showNoty("No Data Found", "center", "off",5000);
+								$("#resizer").hide();
+								$("#imageDiv").hide();
+								$("#tools").hide();
+								//$.noty.closeAll();
+							}						
+
+						} else {
+							$.noty.closeAll();
+							var r = showNoty("Error occured in fetching data/Data does not exist for your query" , "center", "off",5000);
+						}
+
+					} catch(e) {
+					alert(e);
 					}
 
 				}
@@ -662,6 +720,32 @@
 					interactive=threshold<1843200?"true":"false";
 				
 					makeRequestAndDisplayChart(startTime, endTime);
+				});
+
+				$("#IDDownloadCSV").click(function() {
+					
+					var query = {};
+
+					var selectedDeviceName = devicename;
+
+					if ($(ID_START_DATE_TIME_DISPLAY).val().length > 0) {
+						startTime = datetimeToEpoch($(ID_START_DATE_TIME_DISPLAY).val());
+					} else {
+						startTime = $(ID_START_DATE_TIME_DISPLAY).val();
+					}
+					if ($(ID_END_DATE_TIME_DISPLAY).val().length > 0) {
+						endTime = datetimeToEpoch($(ID_END_DATE_TIME_DISPLAY).val());
+					} else {
+						endTime = $(ID_END_DATE_TIME_DISPLAY).val();
+					}
+
+					var errorStatus = validateVisualizationQuery(startTime, endTime);
+				
+					if (errorStatus[0]) {
+						return false;
+					}
+
+					makeRequestAndDownload(startTime, endTime);
 				});
 
 				/*
@@ -930,9 +1014,12 @@
 			</div>
 			<!-- Right Pane ends here-->
 			<div style="clear:both;text-align:center;">
-				<button class="google-button" id="IDSendQuery" >
+				<button class="google-button" id="IDSendQuery">
 					View Data
 				</button>
+				<button class="google-button" id="IDDownloadCSV">
+					Generate CSV
+				</button>				
 				<hr>
 
 			</div>
@@ -950,6 +1037,9 @@
 			
 			<div id="imageDiv" style="text-align:center;">
 				<img id="staticImage"></img>
+			</div>
+			<div id="imageDiv" style="text-align:center;">
+				<a id="downloadCSV"></a>
 			</div>
 			<div id="tools" style="text-align:center;">
 				<div id="dialog" style="font-family:arial,font-size:-1;color:orange;"></div>
