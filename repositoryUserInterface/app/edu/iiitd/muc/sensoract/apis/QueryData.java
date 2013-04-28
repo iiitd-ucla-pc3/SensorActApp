@@ -226,39 +226,44 @@ public class QueryData extends SensorActAPI {
 				//System.out.println(timestamp);
 
 				for (int j = 0; j < numberOfSeries; j++) {
+					try{
 
-					int numberOfReadings = wa.wavesegmentArray.get(i).data.channels
-							.get(j).readings.size();
+						int numberOfReadings = wa.wavesegmentArray.get(i).data.channels
+								.get(j).readings.size();
 
-					Double min = wa.wavesegmentArray.get(i).data.channels
-							.get(j).readings.get(0);
-					Double max = wa.wavesegmentArray.get(i).data.channels
-							.get(j).readings.get(0);
-					Double avg = 0.0;
+						Double min = wa.wavesegmentArray.get(i).data.channels
+								.get(j).readings.get(0);
+						Double max = wa.wavesegmentArray.get(i).data.channels
+								.get(j).readings.get(0);
+						Double avg = 0.0;
 
-					for (int k = 0; k < numberOfReadings; k++) {
-						double[] d = new double[2];
-						d[0] = timestamp + k * samplingPeriod * 1000;
-						d[1] = wa.wavesegmentArray.get(i).data.channels.get(j).readings
-								.get(k);
+						for (int k = 0; k < numberOfReadings; k++) {
+							double[] d = new double[2];
+							d[0] = timestamp + k * samplingPeriod * 1000;
+							d[1] = wa.wavesegmentArray.get(i).data.channels.get(j).readings
+									.get(k);
 
-						ca.chartSeries.get(j + seriesOffset).data.add(d);
-						// Min Value
-						if (min > d[1])
-							min = d[1];
+							ca.chartSeries.get(j + seriesOffset).data.add(d);
+							// Min Value
+							if (min > d[1])
+								min = d[1];
 
-						// Max Value
-						if (max < d[1])
-							max = d[1];
+							// Max Value
+							if (max < d[1])
+								max = d[1];
 
-						// Avg Value
-						avg += d[1];
+							// Avg Value
+							avg += d[1];
+						}
+
+						ca.chartSeriesStats.get(j + seriesOffset).min = min;
+						ca.chartSeriesStats.get(j + seriesOffset).max = max;
+						ca.chartSeriesStats.get(j + seriesOffset).avg = avg
+								/ numberOfReadings;
 					}
-
-					ca.chartSeriesStats.get(j + seriesOffset).min = min;
-					ca.chartSeriesStats.get(j + seriesOffset).max = max;
-					ca.chartSeriesStats.get(j + seriesOffset).avg = avg
-							/ numberOfReadings;
+					catch(NullPointerException e){
+						logger.error(Const.API_QUERYDATA + ": NullPointerError: Check packet. Possible error - readings missing");
+					}
 				}
 			}
 			seriesOffset += numberOfSeries;
@@ -350,22 +355,28 @@ public class QueryData extends SensorActAPI {
 				int samplingPeriod = 1;
 
 				for (int j = 0; j < numberOfSeries; j++) {
+					
+					try{
 
-					int numberOfReadings = wa.wavesegmentArray.get(a).data.channels
-							.get(j).readings.size();
+						int numberOfReadings = wa.wavesegmentArray.get(a).data.channels
+								.get(j).readings.size();
 
-					for (int k = 0; k < numberOfReadings; k++) {
+						for (int k = 0; k < numberOfReadings; k++) {
 
-						Millisecond x = new Millisecond(new Date(
-								new Double((timestamp + k * samplingPeriod
-										* 1000)).longValue()));
+							Millisecond x = new Millisecond(new Date(
+									new Double((timestamp + k * samplingPeriod
+											* 1000)).longValue()));
 
-						double y = wa.wavesegmentArray.get(a).data.channels
-								.get(j).readings.get(k);
+							double y = wa.wavesegmentArray.get(a).data.channels
+									.get(j).readings.get(k);
 
-						s1[j].addOrUpdate(x, y);
-						
+							s1[j].addOrUpdate(x, y);
 
+
+						}
+					}
+					catch(NullPointerException e){
+						logger.error(Const.API_QUERYDATA + ": Null Pointer: Check packet. Possible error - readings missing");
 					}
 
 				}

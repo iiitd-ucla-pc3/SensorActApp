@@ -63,6 +63,7 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
+import org.jfree.util.Log;
 
 import play.libs.WS.HttpResponse;
 import edu.iiitd.muc.sensoract.constants.Const;
@@ -193,6 +194,7 @@ public class DownloadData extends SensorActAPI {
 	private void createCSV(ArrayList<WaveSegmentArray> arrayOfResponses) {
 		long t1 = new Date().getTime();
 		int size = arrayOfResponses.size();
+		logger.info("NoOfSensors:" + size);
 		ArrayList<String> fileList = new ArrayList<String>();
 		
 		for (int sIndex = 0; sIndex < size; sIndex++){			
@@ -217,23 +219,28 @@ public class DownloadData extends SensorActAPI {
 					long timestamp = wa.wavesegmentArray.get(i).data.timestamp;
 					//TODO: get it from the UI client side
 					int samplingPeriod = 1;
-
+					
 					for (int j = 0; j < numberOfChannels; j++) {
-						int numberOfReadings = wa.wavesegmentArray.get(i).data.channels
-								.get(j).readings.size();
+						try{
+							int numberOfReadings = wa.wavesegmentArray.get(i).data.channels
+									.get(j).readings.size();
 						
-						// From readings array, separate out into a single record for each second
-						for (int k = 0; k < numberOfReadings; k++) {							
-						
-							long timestampSensorValue = timestamp + k * samplingPeriod; 	//timestamp value
-							double value = wa.wavesegmentArray.get(i).data.channels.get(j).readings
-									.get(k);						//single reading							
-							writer.append(String.valueOf(timestampSensorValue) + ',' +
+							// From readings array, separate out into a single record for each second
+							for (int k = 0; k < numberOfReadings; k++) {							
+
+								long timestampSensorValue = timestamp + k * samplingPeriod; 	//timestamp value
+								double value = wa.wavesegmentArray.get(i).data.channels.get(j).readings
+										.get(k);						//single reading							
+								writer.append(String.valueOf(timestampSensorValue) + ',' +
 										wa.wavesegmentArray.get(i).data.channels.get(j).cname + ',' +
 										String.valueOf(value));
-						    writer.append('\n');							
-						}						
-					}
+								writer.append('\n');							
+							}
+						}
+						catch(NullPointerException e){
+							logger.error(Const.API_DOWNLOADATA + ": Null Pointer: Check packet. Possible error - readings missing");
+						}
+					}					
 				}
 				writer.flush();
 			    writer.close();
@@ -285,7 +292,6 @@ public class DownloadData extends SensorActAPI {
 		
 		File file = new File(fileName);
 		String fileEntry = fileName.replace(Const.BASE_OUTPUTCSV_URL, "");
-		System.out.println(fileEntry);
 		FileInputStream fis = new FileInputStream(file);
 		ZipEntry zipEntry = new ZipEntry(fileEntry);
 		zos.putNextEntry(zipEntry);
@@ -298,5 +304,6 @@ public class DownloadData extends SensorActAPI {
 
 		zos.closeEntry();
 		fis.close();
+		file.delete();
 	}
 }

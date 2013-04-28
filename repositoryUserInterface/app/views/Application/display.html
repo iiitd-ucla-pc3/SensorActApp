@@ -42,6 +42,7 @@
 		
 				$("#resizer").hide();
 				$("#imageDiv").hide();
+				$("#csvDiv").hide();
 				$("#tools").hide();
 
 				/***When Selected library is not Highcharts**/
@@ -340,7 +341,7 @@
 
 				//function makeRequestAndDisplayChart(selectedDeviceName, selectedSensorArray, startTime, endTime) {
 				function makeRequestAndDisplayChart(allSelectedItems, startTime, endTime) {
-					//for(device in allSelectedItems
+					
 					statsData = "";
 					var query = {};
 					query[QUERY_CONDITIONS] = {};
@@ -460,6 +461,75 @@
 
 				}
 
+				function makeRequestAndDownload(allSelectedItems, startTime, endTime) {
+					
+					var query = {};
+					query[QUERY_CONDITIONS] = {};
+					query[QUERY_CONDITIONS][QUERY_CONDITIONS_FROM_TIME] = startTime;
+					query[QUERY_CONDITIONS][QUERY_CONDITIONS_TO_TIME] = endTime;
+					query[QUERY_USER_NAME] = username;
+					
+					showNoty("Fetching Data and converting to CSV", "center", "off", 500);
+					query[QUERY_DEVICE_ARRAY] = new Array();
+					
+					var i = 0;
+					for (device in allSelectedItems) {
+
+						query[QUERY_DEVICE_ARRAY][i] = {};
+						query[QUERY_DEVICE_ARRAY][i][QUERY_DEVICE] = device;
+						var j = 0;
+						query[QUERY_DEVICE_ARRAY][i][QUERY_SENSOR_ARRAY] = new Array();
+						for (sensor in allSelectedItems[device]) {
+
+							query[QUERY_DEVICE_ARRAY][i][QUERY_SENSOR_ARRAY][j] = {};
+							query[QUERY_DEVICE_ARRAY][i][QUERY_SENSOR_ARRAY][j][QUERY_SENSOR_NAME] = allSelectedItems[device][sensor]['sname'];
+							query[QUERY_DEVICE_ARRAY][i][QUERY_SENSOR_ARRAY][j][QUERY_SENSOR_ID] = allSelectedItems[device][sensor]['sid'];
+							
+							j++;
+						}
+						i++;
+					}
+
+					try {
+
+						$.post(URL_UI_SERVER+URL_DOWNLOAD_DATA, JSON.stringify(query), function(data) {
+							receivedData = data;
+						
+
+						});
+						if (!(receivedData.hasOwnProperty(RESPONSE_STATUS_CODE)))
+						//Means it contains data
+						{
+						
+							/************** -------------- Changes ---------------- ****************/
+							if (receivedData.hasOwnProperty("filename")) {
+								
+								$.noty.closeAll();								
+								$("#csvDiv").show();
+								var s=receivedData["filename"];
+								$("#downloadCSV").attr("href","../public/csv/"+s);
+								$("#downloadCSV").html("Click to download CSV");
+							} 
+							else if(receivedData=="No Data Found")
+							{	
+								$.noty.closeAll();
+								showNoty("No Data Found", "center", "off",5000);
+								$("#resizer").hide();
+								$("#csvDiv").hide();
+								$("#tools").hide();
+								//$.noty.closeAll();
+							}						
+
+						} else {
+							$.noty.closeAll();
+							showNoty("Error occured in fetching data/Data does not exist for your query" , "center", "off",5000);
+						}
+
+					} catch(e) {
+					alert(e);
+					}
+
+				}
 
 				$("#dialog:ui-dialog").dialog("destroy");
 				var dlg = $("#dialog").dialog({
@@ -585,6 +655,8 @@
 
 					var selectedDeviceName = deviceName;
 
+					$("#csvDiv").hide();
+
 					for (var i = 0; i < selectedDeviceName.length; i++) {
 						allSelectedItems[selectedDeviceName[i]] = [];
 						var sensorCount = 0;
@@ -704,6 +776,76 @@
 					interactive=threshold<1843200?"true":"false";
 				
 					makeRequestAndDisplayChart(allSelectedItems, startTime, endTime);
+				});
+
+				$("#IDDownloadCSV").click(function() {
+					
+					var allSelectedItems = {};
+					var selectedSensorArray = new Array();
+
+					var selectedSensorArrayLength = 0;
+
+					var selectedDeviceName = deviceName;
+
+					$("#imageDiv").hide();
+
+					for (var i = 0; i < selectedDeviceName.length; i++) {
+						allSelectedItems[selectedDeviceName[i]] = [];
+						var sensorCount = 0;
+						$("#div" + removeSpace(selectedDeviceName[i])).children('.sensor').find("input").each(function() {
+					
+							if ($(this).prop("checked")) {
+
+								var sensorProp = $(this);
+								var sensorObject = {};
+								for (var index in receivedDeviceData[DEVICE_ARRAY]) {
+								
+									if ( DEVICE_SENSORS in receivedDeviceData[DEVICE_ARRAY][index]) {
+									
+										var sensorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS];
+
+										for (var indexSensors in receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS]) {
+											
+											//allSelectedItems[selectedDeviceName[i]][sensorCount] = {};
+
+											var sensorName = sensorArray[indexSensors]["name"];
+									
+											if (sensorName == sensorProp.val()) {
+
+												sensorCount++;
+												var sensorID = sensorArray[indexSensors]["sid"];
+
+												sensorObject['sname'] = $(this).val();
+												sensorObject['sid'] = sensorID;
+											}
+										}										
+									}									
+								}
+								allSelectedItems[selectedDeviceName[i]].push(sensorObject);							
+							}
+						});
+					}
+
+					if ($(ID_START_DATE_TIME_DISPLAY).val().length > 0) {
+						startTime = datetimeToEpoch($(ID_START_DATE_TIME_DISPLAY).val());
+					} else {
+						startTime = $(ID_START_DATE_TIME_DISPLAY).val();
+					}
+					if ($(ID_END_DATE_TIME_DISPLAY).val().length > 0) {
+						endTime = datetimeToEpoch($(ID_END_DATE_TIME_DISPLAY).val());
+					} else {
+						endTime = $(ID_END_DATE_TIME_DISPLAY).val();
+					}
+
+
+					var errorStatus = validateVisualizationQuery(allSelectedItems, startTime, endTime);
+				
+					if (errorStatus[0]) {
+
+						return false;
+					} 
+				
+					makeRequestAndDownload(allSelectedItems, startTime, endTime);
 				});
 
 				//Getting Device List
@@ -1067,8 +1209,14 @@
 				<button class="google-button" id="IDSendQuery" >
 					View Data
 				</button>
+				<button class="google-button" id="IDDownloadCSV">
+					Generate CSV
+				</button>				
 				<hr>
+			</div>
 
+			<div id="csvDiv" style="text-align:center;">
+				<a id="downloadCSV"></a><hr>
 			</div>
 
 			<div id="resizer">
