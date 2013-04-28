@@ -51,6 +51,7 @@
 		
 				$("#resizer").hide();
 				$("#imageDiv").hide();
+				$("#csvDiv").hide();
 				$("#tools").hide();
 
 				/***When Selected library is not Highcharts**/
@@ -367,7 +368,6 @@
 
 					try {
 
-
 					$.post(URL_UI_SERVER+URL_QUERY_DATA, JSON.stringify(query), function(data) {
 							receivedData = data;
 						
@@ -487,9 +487,9 @@
 							if (receivedData.hasOwnProperty("filename")) {
 								
 								$.noty.closeAll();								
-								
+								$("#csvDiv").show();
 								var s=receivedData["filename"];
-								$("#downloadCSV").attr("href","../public/"+s);
+								$("#downloadCSV").attr("href","../public/csv/"+s);
 								$("#downloadCSV").html("Click to download CSV");
 							} 
 							else if(receivedData=="No Data Found")
@@ -497,7 +497,7 @@
 								$.noty.closeAll();
 								showNoty("No Data Found", "center", "off",5000);
 								$("#resizer").hide();
-								$("#imageDiv").hide();
+								$("#csvDiv").hide();
 								$("#tools").hide();
 								//$.noty.closeAll();
 							}						
@@ -629,6 +629,8 @@
 						return false;
 					}
 
+					$("#csvDiv").hide();
+
 					var jsonGetDevice = {};
 					jsonGetDevice[VPDS_NAME] = vpdsname;
 					jsonGetDevice[DEVICE_NAME] = devicename;
@@ -716,7 +718,7 @@
 					//Now for each sensor in the selectedSensorList we would make a query and fetch the data and draw chart
 					//makeRequestAndDisplayChart(selectedDeviceName, selectedSensorArray, startTime, endTime);
 					var pointThreshold = 20000;
-					threshold = prod * (endTime - startTime);
+					threshold = prod * (endTime - startTime);					
 					interactive=threshold<1843200?"true":"false";
 				
 					makeRequestAndDisplayChart(startTime, endTime);
@@ -1021,7 +1023,10 @@
 					Generate CSV
 				</button>				
 				<hr>
+			</div>
 
+			<div id="csvDiv" style="text-align:center;">
+				<a id="downloadCSV"></a><hr>
 			</div>
 
 			<div id="resizer">
@@ -1033,14 +1038,11 @@
 						</button>
 					</div>
 				</div>
-			</div>
-			
+			</div>			
 			<div id="imageDiv" style="text-align:center;">
 				<img id="staticImage"></img>
 			</div>
-			<div id="imageDiv" style="text-align:center;">
-				<a id="downloadCSV"></a>
-			</div>
+			
 			<div id="tools" style="text-align:center;">
 				<div id="dialog" style="font-family:arial,font-size:-1;color:orange;"></div>
 				<div id="downloadData" style="display:none;">

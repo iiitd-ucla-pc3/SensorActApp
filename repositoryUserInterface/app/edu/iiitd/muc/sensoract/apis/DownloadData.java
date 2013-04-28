@@ -38,12 +38,18 @@ package edu.iiitd.muc.sensoract.apis;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
@@ -71,6 +77,15 @@ import edu.iiitd.muc.sensoract.format.QueryToRepo;
 import edu.iiitd.muc.sensoract.format.WaveSegmentArray;
 import edu.iiitd.muc.sensoract.utilities.SecretKey;
 import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
+
+/** 
+ * /downloadata API: Retrieves data values and generates a CSV for each sensor request
+ * input: request containing the time period and the sensor info
+ * output: zip file containing all the CSVs for the sensors as per request
+ * 
+ * @author: Manaswi Saha
+ * 
+ */
 
 public class DownloadData extends SensorActAPI {
 
@@ -170,214 +185,118 @@ public class DownloadData extends SensorActAPI {
 		{
 			renderText("No Data Found");
 		}
-
-		/*
-		 * @TODO : Automatically do mode checking based on size of data
-		 */
-		/*if (queryRequest.interactive.equals("false")) {
-			processNonInteractive(arrayOfResponses);
-		} else {
-			processInteractive(arrayOfResponses);
-		}*/
-
+		
+		createCSV(arrayOfResponses);
 	}
-
-	public void processNonInteractive(
-			ArrayList<WaveSegmentArray> arrayOfResponses) {
-		long t1 = new Date().getTime();
-		String a = createChart(arrayOfResponses);		
-		String re = "{\"filename\":\"" + a + ".png\"}";
-		long t2 = new Date().getTime();
-		logger.info(Const.API_DOWNLOADATA, "Time to create non-interactive graph:" + (t2-t1)/1000 + " seconds");
-		renderJSON(re);
-
-	}
-
-	private void processInteractive(ArrayList<WaveSegmentArray> arrayOfResponses) {
+	
+	/** Step 1: Create CSV for each sensor data response **/
+	private void createCSV(ArrayList<WaveSegmentArray> arrayOfResponses) {
 		long t1 = new Date().getTime();
 		int size = arrayOfResponses.size();
-		int seriesOffset = 0;
-		ChartSeriesArray ca = new ChartSeriesArray();
-		logger.info(Const.API_DOWNLOADATA, "Interactive:: Data Size:" + size);
-		for (int a = 0; a < size; a++) {
-			//System.out.println("For waveseg " + Integer.toString(a) + " ");
-			WaveSegmentArray wa = arrayOfResponses.get(a);
-
+		ArrayList<String> fileList = new ArrayList<String>();
+		
+		for (int sIndex = 0; sIndex < size; sIndex++){			
+			
+			WaveSegmentArray wa = arrayOfResponses.get(sIndex);
 			int numberOfWavesegs = wa.wavesegmentArray.size();
-			int numberOfSeries = wa.wavesegmentArray.get(0).data.channels
+			int numberOfChannels = wa.wavesegmentArray.get(0).data.channels
 					.size();
+			String filename = session.get(Const.USERNAME) + "_" + wa.wavesegmentArray.get(0).data.dname + "_" + 
+					wa.wavesegmentArray.get(0).data.sname + "_" + wa.wavesegmentArray.get(0).data.sid +".csv";
+			
+			try {
+				
+				String path = DownloadData.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+				String decodedPath = URLDecoder.decode(path, "UTF-8");
+				String sFileName = decodedPath + "/" + Const.BASE_OUTPUTCSV_URL + filename ;
+				FileWriter writer = new FileWriter(sFileName);
+				writer.append("timestamp,channel,value");
+			    writer.append('\n');
+				
+				for (int i = 0; i < numberOfWavesegs; i++) {
+					long timestamp = wa.wavesegmentArray.get(i).data.timestamp;
+					//TODO: get it from the UI client side
+					int samplingPeriod = 1;
 
-			for (int i = 0; i < numberOfSeries; i++) {
-				ca.chartSeries.add(new ChartSeries(
-						wa.wavesegmentArray.get(0).data.channels.get(i).cname
-								+ " " + wa.wavesegmentArray.get(0).data.sname
-								+ " " + wa.wavesegmentArray.get(0).data.dname));
-
-				ca.chartSeriesStats.add(new ChartSeriesStats(
-						wa.wavesegmentArray.get(0).data.channels.get(i).cname
-								+ " " + wa.wavesegmentArray.get(0).data.sname
-								+ " " + wa.wavesegmentArray.get(0).data.dname));
-
-			}
-
-			for (int i = 0; i < numberOfWavesegs; i++) {
-				long timestamp = wa.wavesegmentArray.get(i).data.timestamp * 1000;
-				int samplingPeriod = 1;
-				//System.out.println(timestamp);
-
-				for (int j = 0; j < numberOfSeries; j++) {
-
-					int numberOfReadings = wa.wavesegmentArray.get(i).data.channels
-							.get(j).readings.size();
-
-					Double min = wa.wavesegmentArray.get(i).data.channels
-							.get(j).readings.get(0);
-					Double max = wa.wavesegmentArray.get(i).data.channels
-							.get(j).readings.get(0);
-					Double avg = 0.0;
-
-					for (int k = 0; k < numberOfReadings; k++) {
-						double[] d = new double[2];
-						d[0] = timestamp + k * samplingPeriod * 1000;
-						d[1] = wa.wavesegmentArray.get(i).data.channels.get(j).readings
-								.get(k);
-
-						ca.chartSeries.get(j + seriesOffset).data.add(d);
-						// Min Value
-						if (min > d[1])
-							min = d[1];
-
-						// Max Value
-						if (max < d[1])
-							max = d[1];
-
-						// Avg Value
-						avg += d[1];
+					for (int j = 0; j < numberOfChannels; j++) {
+						int numberOfReadings = wa.wavesegmentArray.get(i).data.channels
+								.get(j).readings.size();
+						
+						// From readings array, separate out into a single record for each second
+						for (int k = 0; k < numberOfReadings; k++) {							
+						
+							long timestampSensorValue = timestamp + k * samplingPeriod; 	//timestamp value
+							double value = wa.wavesegmentArray.get(i).data.channels.get(j).readings
+									.get(k);						//single reading							
+							writer.append(String.valueOf(timestampSensorValue) + ',' +
+										wa.wavesegmentArray.get(i).data.channels.get(j).cname + ',' +
+										String.valueOf(value));
+						    writer.append('\n');							
+						}						
 					}
-
-					ca.chartSeriesStats.get(j + seriesOffset).min = min;
-					ca.chartSeriesStats.get(j + seriesOffset).max = max;
-					ca.chartSeriesStats.get(j + seriesOffset).avg = avg
-							/ numberOfReadings;
 				}
+				writer.flush();
+			    writer.close();
 			}
-			seriesOffset += numberOfSeries;
-
+			catch (IOException e){
+			     e.printStackTrace();
+			}	
+			fileList.add(filename);
 		}
-		// System.out.println(gson.toJson(ca));
 		long t2 = new Date().getTime();
-		logger.info(Const.API_DOWNLOADATA, "Time to create interactive graph:" + (t2-t1)/1000 +" seconds");
-		renderJSON(gson.toJson(ca));
-
+		logger.info(Const.API_DOWNLOADATA, "Time to create csv files:" + (t2-t1)/1000 + " seconds");
+		createAndSendZipFile(fileList);		
 	}
 
-	public String createChart(ArrayList<WaveSegmentArray> arrayOfResponses) {
-		logger.info(Const.API_DOWNLOADATA, "Static Graph:: Data Size:" + arrayOfResponses.size());	
-		XYDataset dataset = createDataset(arrayOfResponses);
-		JFreeChart chart = createJFreeChart(dataset);
-		String uuid = UUID.randomUUID().toString();
-
+	private void createAndSendZipFile(ArrayList<String> fileList) {
+		// Create zip file and delete associated csv files
+		long t1 = new Date().getTime();
 		try {
 			String path = DownloadData.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 			String decodedPath = URLDecoder.decode(path, "UTF-8");
-			ChartUtilities.saveChartAsPNG(new File(decodedPath+"/"+Const.BASE_IMAGE_URL + uuid
-					+ ".png").getCanonicalFile(), chart, 800, 800);
+			String csvFilePath = decodedPath + "/" + Const.BASE_OUTPUTCSV_URL;
+			String uuid = UUID.randomUUID().toString();
+			String zipFile = session.get(Const.USERNAME) + uuid + ".zip";
+			try {
+				FileOutputStream fos = new FileOutputStream(csvFilePath + zipFile);
+				ZipOutputStream zos = new ZipOutputStream(fos);
+				
+				for(int i = 0; i < fileList.size(); i++)
+					addToZipFile(Const.BASE_OUTPUTCSV_URL + fileList.get(i), zos);
+				
+				zos.close();
+				fos.close();
+
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			
+			String re = "{\"filename\":\""+ zipFile+ "\"}";
+			long t2 = new Date().getTime();
+			logger.info(Const.API_DOWNLOADATA, "Time to create zip file + " + zipFile + ": " + (t2-t1)/1000 + " seconds");
+			renderJSON(re);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-
-		return uuid;
-
-	}
-
-	public JFreeChart createJFreeChart(XYDataset dataset) {
-		//System.out.println(dataset);
-		JFreeChart chart = ChartFactory.createTimeSeriesChart("Visualization", // title
-				"Date-Time", // x-axis label
-				"Readings", // y-axis label
-				dataset, // data
-				true, // create legend?
-				true, // generate tooltips?
-				false // generate URLs?
-				);
-
-		chart.setBackgroundPaint(Color.white);
-
-		XYPlot plot = (XYPlot) chart.getPlot();
-		plot.setBackgroundPaint(Color.white);
-		plot.setDomainGridlinePaint(Color.black);
-		plot.setRangeGridlinePaint(Color.black);
-		plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
-		plot.setDomainCrosshairVisible(true);
-		plot.setRangeCrosshairVisible(true);
-
-		XYItemRenderer r = plot.getRenderer();
-		if (r instanceof XYLineAndShapeRenderer) {
-			XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
-			//renderer.setSeriesStroke(0, new BasicStroke(1.1f));
-			//plot.setRenderer(renderer);
-		}
-
-		DateAxis axis = (DateAxis) plot.getDomainAxis();
-		axis.setDateFormatOverride(new SimpleDateFormat("d-M-yy H:m:s"));
+		}		
 		
-		return chart;
 	}
 
-	public XYDataset createDataset(ArrayList<WaveSegmentArray> arrayOfResponses) {
-		TimeSeriesCollection dataset = new TimeSeriesCollection();
-		int numberOfResponses = arrayOfResponses.size();
-		if (numberOfResponses>0)
-		for (int i = 0; i < numberOfResponses; i++) {
-			WaveSegmentArray wa = arrayOfResponses.get(i);
-			int numberOfSeries = wa.wavesegmentArray.get(0).data.channels
-					.size();
-			int numberOfWavesegs = wa.wavesegmentArray.size();
-			TimeSeries s1[] = new TimeSeries[numberOfSeries];
-			for (int j = 0; j < numberOfSeries; j++) {
-				s1[j] = new TimeSeries(
-						wa.wavesegmentArray.get(0).data.channels.get(j).cname
-								+ " " + wa.wavesegmentArray.get(0).data.sname
-								+ " " + wa.wavesegmentArray.get(0).data.dname,
-						Millisecond.class);
+	private void addToZipFile(String fileName, ZipOutputStream zos) throws FileNotFoundException, IOException {
+		
+		File file = new File(fileName);
+		String fileEntry = fileName.replace(Const.BASE_OUTPUTCSV_URL, "");
+		System.out.println(fileEntry);
+		FileInputStream fis = new FileInputStream(file);
+		ZipEntry zipEntry = new ZipEntry(fileEntry);
+		zos.putNextEntry(zipEntry);
 
-			}
-
-			for (int a = 0; a < numberOfWavesegs; a++) {
-
-				long timestamp = wa.wavesegmentArray.get(a).data.timestamp * 1000;
-				int samplingPeriod = 1;
-
-				for (int j = 0; j < numberOfSeries; j++) {
-
-					int numberOfReadings = wa.wavesegmentArray.get(a).data.channels
-							.get(j).readings.size();
-
-					for (int k = 0; k < numberOfReadings; k++) {
-
-						Millisecond x = new Millisecond(new Date(
-								new Double((timestamp + k * samplingPeriod
-										* 1000)).longValue()));
-
-						double y = wa.wavesegmentArray.get(a).data.channels
-								.get(j).readings.get(k);
-
-						s1[j].addOrUpdate(x, y);
-						
-
-					}
-
-				}
-
-			}
-			for (int j = 0; j < numberOfSeries; j++) {
-				dataset.addSeries(s1[j]);
-			}
-
+		byte[] bytes = new byte[1024];
+		int length;
+		while ((length = fis.read(bytes)) >= 0) {
+			zos.write(bytes, 0, length);
 		}
 
-		// TODO Auto-generated method stub
-		return dataset;
+		zos.closeEntry();
+		fis.close();
 	}
 }
