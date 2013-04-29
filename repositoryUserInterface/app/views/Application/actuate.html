@@ -50,10 +50,6 @@
 				var actuateAt;
 				var turnONorOFF;
 				var selectedDate;
-
-				var temp="http://"+document.location.hostname+":"+document.location.port+"/";
-
-
 				/*
 				 * Setting the AJAX to work in sycnhronous fashion
 				 */
@@ -200,14 +196,13 @@
 					
 					try {
 
-						var temp="http://"+document.location.hostname+":"+document.location.port+"/";
-						alert(JSON.stringify(tasklet));return false;
-						$.post(temp+URL_ACTUATE_DEVICE, JSON.stringify(tasklet), function(data) {
+						//alert(JSON.stringify(tasklet));return false;
+						$.post(URL_UI_SERVER+URL_ACTUATE_DEVICE, JSON.stringify(tasklet), function(data) {
 								receivedData = data;
 						});
 						if(receivedData[RESPONSE_STATUS_CODE] == SUCCESS) {
 							alert("Actuation request made successfully!");
-							window.location = temp + URL_ACTUATE;
+							window.location = URL_UI_SERVER + URL_ACTUATE;
 						}
 						else {
 							alertActuateDeviceError("Following error occured: " + receivedData[RESPONSE_MESSAGE]);
@@ -429,9 +424,8 @@
 
 				//Getting Device List
 				try {
-					var temp="http://"+document.location.hostname+":"+document.location.port+"/";
 
-					$.get(temp+URL_LIST_ALL_DEVICES, function(data) {					
+					$.get(URL_UI_SERVER+URL_LIST_ALL_DEVICES, function(data) {					
 						receivedDeviceData = data;					
 					});
 				} catch(e) {
@@ -623,14 +617,13 @@
 										
 
 										try {
-											//var temp="http://"+document.location.hostname+":"+document.location.port+"/";
-											$.post(temp+URL_CANCEL_ACTUATE_REQUEST, JSON.stringify(cancelReqList), function(data) {
+											$.post(URL_UI_SERVER+URL_CANCEL_ACTUATE_REQUEST, JSON.stringify(cancelReqList), function(data) {
 											receivedData = data;
 											});
 											if(receivedData[RESPONSE_STATUS_CODE] == SUCCESS) {
 
 												alert("Actuation requests successfully cancelled!");
-												window.location = temp + URL_ACTUATE;
+												window.location = URL_UI_SERVER + URL_ACTUATE;
 											}
 											else {
 												if(receivedData[RESPONSE_STATUS_CODE] == TASKLET_NOT_CANCELED) {
