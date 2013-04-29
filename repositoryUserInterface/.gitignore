@@ -1,2 +1,11 @@
 eclipse
 /precompiled
+.classpath
+.project
+.settings
+tmp
+/bin
+/resources
+/test-result
+/logs
+/test
