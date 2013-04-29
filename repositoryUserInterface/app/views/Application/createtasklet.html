@@ -50,6 +50,7 @@
 				var paramIdCount = 0;
 				var idCount = [];
 				var errorParam = false;
+				var scheduleType, deviceEventInfo = "";
 
 				/*
 				 * Setting the AJAX to work in sycnhronous fashion
@@ -68,6 +69,8 @@
 				$("#errorDiv").hide();
 				$("#getActuateErrorDiv").hide();
 				$(".errorVisual").hide();
+				$("#divWhenSelectPeriodic").hide();
+				$("#divWhenSelectEvent").hide();
 
 				/*createDateTimePicker(ID_DATE_TIME_ACTUATE);
 				createDateTimePicker(ID_TIME_ACTUATE);
@@ -102,201 +105,193 @@
 					return false;
 				}
 				
+				/* Schedule type */
+				$("#divTypeSelect").click(function() {
 
-				function makeRequest() {
-					var tasklet = {};
-					var username = $("#username").val();
-
-					tasklet[TSK_SECRETKEY]= FAKE_SECRET_KEY;
-					tasklet[TSK_TASKLETNAME]= $.trim($("#tname").val());
-					tasklet[TSK_DESC]= $.trim($("#tdesc").val());
-					tasklet[TSK_PARAM] = {};
-
-					//Parameters
-					var id;
-					for (var i in idCount){					
-						id = idCount[i];
-						var pname = $.trim($("#p"+id).val());
-						var pval = $("#val"+id).val();
-						tasklet[TSK_PARAM][pname] = pval;
-					}					
-					
-					tasklet[TSK_EXECUTE]= $("#texecute").val();
-
-					//tasklet[TSK_WHEN] = $("#twhen").val();
-					tasklet[TSK_WHEN] = "timer";
-					tasklet[TSK_INPUT] = {};
-					tasklet[TSK_INPUT][tasklet[TSK_WHEN]] = $("#cronexp").val();
-					
-
-					// to convert to a cron expression
-					/*var date = "", Seconds = "", Minutes = "", Hour = "", dayOfMon = "", month ="", year ="", cronExp ="";
-					if(actuateAt != "Now") {
-
-						date = new Date(actuationTime);
-					
-						Seconds = date.getSeconds();
-						Minutes = date.getMinutes();
-						Hour = date.getHours();
-
-						var time = {
-									hour: Hour,
-								    minute: Minutes,
-								    second: Seconds
-								    };
+					$("#spanScheduleTypeSelect").hide();	
+					$(".errorVisual").hide();
 						
-						if($("#actDate").attr('checked')) {
-							dayOfMon = date.getDate();
-							month =  date.getMonth() + 1;
-							year = date.getFullYear();
-							tasklet[TSK_DESC] = "Turn " + turnONorOFF + " " + actuatorName + " on " + $.datepicker.formatDate('dd-M-yy', date) + " at " + getFormattedTime("hh:mm TT",time,{ampm: true});
-						}					
-						else {
-
-							dayOfMon = "*";
-							month =  "*";
-							year = "*";							
-							tasklet[TSK_DESC] = "Turn " + turnONorOFF + " "+ actuatorName + " at " + getFormattedTime("hh:mm TT",time,{ampm: true}) + " everyday";
-						}
-
-						cronExp = Seconds + " " + Minutes + " " + Hour + " " + dayOfMon + " " + month + " ? " + year;
-
-						tasklet[TSK_WHEN] = "timer";					
-						tasklet[TSK_INPUT]["timer"] = cronExp;				
-
-					}
-					else
-						tasklet[TSK_DESC] = "Actuate Now";
-
-					var resource = username + ":" + deviceName + ":" + actuatorName + ":" + actuatorID;
-					var numRand = Math.floor(Math.random()*1000);*/					
 					
-					try {
-
-						//alert(JSON.stringify(tasklet));return false;
+					if($("#tPeriodic").attr('checked')) {
+						$("#divWhenSelectPeriodic").show();
+						$("#divWhenSelectEvent").hide();	
+					}
 						
-						$.post(URL_UI_SERVER + URL_ACTUATE_DEVICE, JSON.stringify(tasklet), function(data) {
-								receivedData = data;
-						});
-						if(receivedData[RESPONSE_STATUS_CODE] == SUCCESS) {
-							alert("Tasklet scheduled successfully!");
-							window.location = URL_UI_SERVER + URL_TASKLETS;
-						}
-						else {
-							alertActuateDeviceError("Following error occured: " + receivedData[RESPONSE_MESSAGE]);
-
-						}
-
-					} catch(e) {
-						alertGetActuateError("Following error occured: " + receivedData[RESPONSE_MESSAGE]);
-					}			
-
-				}
-				
-				function validateRequest(tname,tdesc,twhen,cronexp,texecute) {
-
-					$(".errorVisual").hide("");
-					$("#divParamSelect,#tname,#tdesc,#twhen,#cronexp,#texecute").removeClass("error");
-					var id;
-					for (var i in idCount){					
-						id = idCount[i];		
-						$("#newParam"+id).removeClass("error");
+					else if($("#tEvent").attr('checked')){
+						$("#divWhenSelectPeriodic").hide();
+						$("#divWhenSelectEvent").show();
 					}
-					errorState = false;
-					errorInformation = "";					
+					else {
+						$("#divWhenSelectPeriodic").hide();
+						$("#divWhenSelectEvent").hide();
+					}									
 
-					if (removeSpace(tname).length == 0) {
-						errorState = true;
-
-						$("#tname").addClass("error");
-						$("#spanTName").show('slow', function() {
-						});
-						$("#spanTName").html("Enter tasklet name");						
-
-					}
-					else if (removeSpace(tdesc).length == 0) {
-						errorState = true;
-
-						$("#tdesc").addClass("error");
-						$("#spanTDesc").show('slow', function() {
-						});
-						$("#spanTDesc").html("Enter a description");
-
-					}
-					else if ((idCount.length > 0 && !errorParam) || errorParam) {
-						var id;
-						for (var i in idCount){
-							
-							id = idCount[i];
-							var pname = removeSpace($("#p"+id).val());
-							var pval = removeSpace($("#val"+id).val());
-							
-							if(pname.length == 0 || pval.length == 0){
-								errorState = true;
-								errorParam = true;
-								$("#newParam"+id).addClass("error");
-								$("#spanParamSelect"+id).show('slow', function() {
-								});
-								$("#spanParamSelect"+id).html("Enter parameter details");
-								$("#divParamSelect").focus();
-								break;
-							}
-							else
-								errorParam = false;
-						}
-					}
-					if(errorParam || errorState)
-						return [errorState, errorInformation];
-					/*if (twhen.length == 0) {
-						errorState = true;
-
-						$("#twhen").addClass("error");
-						$("#spanTWhen").show('slow', function() {
-						});
-						$("#spanTWhen").html("Enter token name for the cron expression");
-
-					}
-					else */if (removeSpace(cronexp).length == 0) {
-						errorState = true;
-
-						$("#cronexp").addClass("error");
-						$("#spanTWhen").show('slow', function() {
-						});
-						$("#spanTWhen").html("Cron Expression missing!");
-
-					}
-					else if (removeSpace(texecute).length == 0) {						
-						errorState = true;
-						
-						$("#spanTExecute").show('slow', function() {
-						});
-						$("#spanTExecute").html("Script missing!");
-
-					}
-
-					return [errorState, errorInformation];
-				}
-
-
-				/* 'Schedule Tasklet' button functionality*/
-
-				$("#IDScheduleTasklet").click(function() {
-					var status;
-					var tname = $("#tname").val();
-					var tdesc = $("#tdesc").val();
-					var twhen = $("#twhen").val();
-					var cronexp = $("#cronexp").val();
-					var texecute = $("#texecute").val();
-
-					var errorStatus = validateRequest(tname,tdesc,twhen,cronexp, texecute);
-				
-					if (errorStatus[0]) {
-						return false;
-					}			
-					
-					makeRequest();
 				});
 
+				$("input[name=scheduleType]").click(function() {
+						scheduleType = this.value;
+						$("#tPeriodic").removeClass("error");
+						$("#tEvent").removeClass("error");
+						$("#selectDeviceEvent").removeClass("error");
+						$("#tEventToken").removeClass("error");
+						$("#cronexp").removeClass("error");
+						if(scheduleType == "event")	
+							displayDeviceEventSelection();
+
+				});
+
+				//Getting Device List -make a request to get all the devices available
+				try {
+
+					$.get(URL_UI_SERVER + URL_LIST_ALL_DEVICES, function(data) {					
+						receivedDeviceData = data;					
+					});
+				} catch(e) {
+
+				}
+
+				function displayDeviceEventSelection() {
+					/*
+					 * Displaying the list of devices and load the sensors/actuators associated with them
+					 */
+					if (!(receivedDeviceData.hasOwnProperty(RESPONSE_STATUS_CODE)))//Success
+					{
+
+						if (receivedDeviceData[DEVICE_ARRAY].length > 0) {
+
+							for (var index in receivedDeviceData[DEVICE_ARRAY]) {
+								var name = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_NAME];
+
+								$("#selectDeviceEvent").append("<option name=\""+removeSpace(name)+"\" value=\"" + removeSpace(name) + "\" >" + removeSpace(name) + "</option>");					
+							}
+
+							/*
+							 * Description:This function is used to change the HTML contents corresponding to a selected device
+							 * It basically adds relevant HTMl in accordance with the device selected
+							 *
+							 * Nature:Anonmyous function
+							 *
+							 * Called:Called every time a change occurs in the dropdown menu
+							 *
+							 */
+
+							var deviceName;
+							var sensorName, sensorID, actuatorName, actuatorID;
+							$("#selectDeviceEvent").change(function() {
+
+								$("#divSelectDeviceEvent .device").remove();
+								$(".errorVisual").hide();
+								$("#selectDeviceEvent").removeClass("error");
+								deviceEventInfo = "";
+								//var clickedItem = this.value;		
+								//alert("Clicked device:" + clickedItem);
+
+							    deviceName = this.value;
+
+							    $("#divSelectDeviceEvent").append("<div class=\"device\"><input type=\"radio\" name=\"subDtype\" value=\"Sen\" /> &nbsp;  Sensor? &nbsp; &nbsp; <input type=\"radio\" name=\"subDtype\" value=\"Act\" /> &nbsp;  Actuator?</div>");
+
+
+							    $("#divSelectDeviceEvent input[name=subDtype]").click(function() {
+
+							    	$("#divSelectDeviceEvent .device .sensor").remove();
+							    	$("#divSelectDeviceEvent .device .actuator").remove();
+							    	$(".errorVisual").hide();
+
+							    	if(this.value == "Sen"){
+							    		$("#divSelectDeviceEvent .device").append("<div class=\"sensor\">Select sensor &nbsp;<select id='selectSensor'><option value='Select Sensor'>Select Sensor</option></select></div>");
+							    		for (var index in receivedDeviceData[DEVICE_ARRAY]) {
+											var name = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_NAME];
+									
+											if (name == deviceName) {
+
+												if ( DEVICE_SENSORS in receivedDeviceData[DEVICE_ARRAY][index]) {
+												
+													var sensorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_SENSORS];
+													for (var sensor in sensorArray) {
+														var senName =  sensorArray[sensor][DEVICE_SENSOR_NAME];
+														var senId =  sensorArray[sensor][DEVICE_SENSOR_ID];
+														$("#selectSensor").append("<option id ='"+ senId +"' value='" + senName + "'>"+ senName + "</option>");
+													}
+												}
+												else {
+													$("#spanDeviceEvent").show('slow', function() {
+													});
+													$("#spanDeviceEvent").html("No sensors found!");
+													$("#divSelectDeviceEvent .sensor").hide();
+												}
+											}
+										}
+							    	}
+							    	else if (this.value == "Act"){
+							    		$("#divSelectDeviceEvent .device").append("<div class=\"actuator\">Select actuator &nbsp;<select id='selectActuator'><option value='Select Actuator'>Select Actuator</option></select></div>");
+							    		for (var index in receivedDeviceData[DEVICE_ARRAY]) {
+											var name = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_NAME];
+									
+											if (name == deviceName) {				
+
+												if ( DEVICE_ACTUATORS in receivedDeviceData[DEVICE_ARRAY][index]) {
+												
+													var actuatorArray = receivedDeviceData[DEVICE_ARRAY][index][DEVICE_ACTUATORS];
+
+													for (var actuator in actuatorArray) {
+														var actName = actuatorArray[actuator][DEVICE_ACTUATOR_NAME];
+														var actId = actuatorArray[actuator][DEVICE_ACTUATOR_ID];
+														$("#selectActuator").append("<option id ='"+ actId +"' value='" + actName + "'>"+ actName + "</option>");
+													}
+												}
+												else{
+													$("#spanDeviceEvent").show('slow', function() {
+													});
+													$("#spanDeviceEvent").html("No actuators found!");
+													$("#divSelectDeviceEvent .actuator").hide();
+												}
+													
+											}
+										}
+							    	}
+							    	// Set val hidden value
+
+									$("#selectSensor").click(function(){
+										$(".errorVisual").hide();
+										sensorName = this.value;
+										if(sensorName == "Select Sensor"){
+											$("#spanDeviceEvent").show('slow', function() {
+											});
+											$("#spanDeviceEvent").html("Select a sensor");
+											deviceEventInfo = "";
+										}
+										else{
+											sensorID = $(this).find(':selected')[0].id;	
+											deviceEventInfo = username + ":" + deviceName + ":" + sensorName + ":" + sensorID;
+										}
+										
+									});
+
+									$("#selectActuator").click(function(){
+										$(".errorVisual").hide();
+										actuatorName = this.value;
+										if(actuatorName == "Select Actuator"){
+											$("#spanDeviceEvent").show('slow', function() {
+											});
+											$("#spanDeviceEvent").html("Select an actuator");
+											deviceEventInfo = "";
+										}
+										else{
+										actuatorID = $(this).find(':selected')[0].id;
+										deviceEventInfo = username + ":" + deviceName + ":" + actuatorName + ":" + actuatorID;
+										}
+									});
+							    });
+							});						
+						} 
+					}
+					else if(receivedDeviceData[RESPONSE_STATUS_CODE] == NO_DEVICE_FOUND) {
+						alertGetActuateError("No devices added yet");
+					}
+
+				}
+
+				
 				// Adding new parameters
 
 				$("#addNewParameter").click(function() {
@@ -313,17 +308,7 @@
 						idCount.splice(idCount.indexOf(idParam),1);
 						$(".errorVisual").hide("");
 					});
-				});
-
-				//Getting Device List
-				try {
-
-					$.get(URL_UI_SERVER + URL_LIST_ALL_DEVICES, function(data) {					
-						receivedDeviceData = data;					
-					});
-				} catch(e) {
-
-				}
+				});				
 
 				$("#addDeviceParameter").click(function() {
 					paramIdCount++;
@@ -339,7 +324,6 @@
 					 * Displaying the list of devices and load the sensors/actuators associated with them
 					 */
 
-					//Make a request to get all the devices available
 					if (!(receivedDeviceData.hasOwnProperty(RESPONSE_STATUS_CODE)))//Success
 					{
 
@@ -478,6 +462,195 @@
 				$( "#dialog" ).bind( "dialogbeforeclose", function(event, ui) {
 					$("#dialog").html("");
 				});
+
+				function makeRequest() {
+					var tasklet = {};
+					var username = $("#username").val();
+
+					tasklet[TSK_SECRETKEY]= FAKE_SECRET_KEY;
+					tasklet[TSK_TASKLETNAME]= removeSpace($("#tname").val());
+					tasklet[TSK_DESC]= $.trim($("#tdesc").val());
+					tasklet[TSK_PARAM] = {};
+					tasklet[TSK_WHEN] = "";
+					tasklet[TSK_INPUT] = {};
+
+					//Parameters
+					var id;
+					for (var i in idCount){					
+						id = idCount[i];
+						var pname = removeSpace($("#p"+id).val());
+						var pval = $("#val"+id).val();
+						tasklet[TSK_PARAM][pname] = pval;
+					}					
+					
+					tasklet[TSK_EXECUTE]= $("#texecute").val();
+
+					
+										
+					
+					if (scheduleType == "periodic") {
+						tasklet[TSK_WHEN] = "timer";
+						tasklet[TSK_INPUT][tasklet[TSK_WHEN]] = $("#cronexp").val();
+					}
+					else if (scheduleType == "event") {
+						tasklet[TSK_WHEN] = removeSpace($("#tEventToken").val());
+						tasklet[TSK_INPUT][tasklet[TSK_WHEN]] = deviceEventInfo;
+					}
+					
+					try {
+
+						//alert(JSON.stringify(tasklet));return false;
+						
+						$.post(URL_UI_SERVER + URL_ACTUATE_DEVICE, JSON.stringify(tasklet), function(data) {
+								receivedData = data;
+						});
+						if(receivedData[RESPONSE_STATUS_CODE] == SUCCESS) {
+							alert("Tasklet scheduled successfully!");
+							window.location = URL_UI_SERVER + URL_TASKLETS;
+						}
+						else {
+							alertActuateDeviceError("Following error occured: " + receivedData[RESPONSE_MESSAGE]);
+
+						}
+
+					} catch(e) {
+						alertGetActuateError("Following error occured: " + receivedData[RESPONSE_MESSAGE]);
+					}			
+
+				}
+				
+				function validateRequest(tname,tdesc,tEventToken,cronexp,texecute) {
+
+					$(".errorVisual").hide("");
+					$("#divParamSelect,#tname,#tdesc,#tEventToken,#cronexp,#texecute,#divWhenSelectEvent").removeClass("error");
+					var id;
+					for (var i in idCount){					
+						id = idCount[i];		
+						$("#newParam"+id).removeClass("error");
+					}
+					errorState = false;
+					errorInformation = "";	
+					defaultScriptText = "Enter your script here";
+
+					if (removeSpace(tname).length == 0) {
+						errorState = true;
+
+						$("#tname").addClass("error");
+						$("#spanTName").show('slow', function() {
+						});
+						$("#spanTName").html("Enter tasklet name");						
+
+					}
+					else if (removeSpace(tdesc).length == 0) {
+						errorState = true;
+
+						$("#tdesc").addClass("error");
+						$("#spanTDesc").show('slow', function() {
+						});
+						$("#spanTDesc").html("Enter a description");
+
+					}
+					else if ((idCount.length > 0 && !errorParam) || errorParam) {
+						var id;
+						for (var i in idCount){
+							
+							id = idCount[i];
+							var pname = removeSpace($("#p"+id).val());
+							var pval = removeSpace($("#val"+id).val());
+							
+							if(pname.length == 0 || pval.length == 0){
+								errorState = true;
+								errorParam = true;
+								$("#newParam"+id).addClass("error");
+								$("#spanParamSelect"+id).show('slow', function() {
+								});
+								$("#spanParamSelect"+id).html("Enter parameter details");
+								$("#divParamSelect").focus();
+								break;
+							}
+							else
+								errorParam = false;
+						}
+					}
+					if(errorParam || errorState)
+						return [errorState, errorInformation];
+					
+					if (typeof scheduleType === 'undefined') {
+						errorState = true;
+
+						$("#spanScheduleTypeSelect").show('slow', function() {
+						});
+						$("#spanScheduleTypeSelect").html("Please select schedule type of the task");
+						$("#divTypeSelect").focus();
+
+					}
+					else if (scheduleType == "event" && tEventToken.length == 0) {
+						errorState = true;
+
+						$("#tEventToken").addClass("error");
+						$("#spanTWhen").show('slow', function() {
+						});
+						$("#spanTWhen").html("Enter device event name");
+
+					}
+					else if (scheduleType == "event" && $("#selectDeviceEvent").val() == "Select Device"){
+						errorState = true;
+
+						$("#selectDeviceEvent").addClass("error");
+						$("#spanTWhen").show('slow', function() {
+						});
+						$("#spanTWhen").html("Select Device");
+					}
+					else if (scheduleType == "event" && removeSpace(deviceEventInfo).length == 0) {
+						errorState = true;
+
+						$("#divWhenSelectEvent").addClass("error");
+						$("#spanTWhen").show('slow', function() {
+						});
+						$("#spanTWhen").html("Device Event not selected properly!");
+					}
+					else if (scheduleType == "periodic" && removeSpace(cronexp).length == 0) {
+						errorState = true;
+
+						$("#cronexp").addClass("error");
+						$("#spanTWhen").show('slow', function() {
+						});
+						$("#spanTWhen").html("Cron Expression missing!");
+
+					}
+					else if (removeSpace(texecute).length == 0 || removeSpace(texecute) == removeSpace(defaultScriptText)) {						
+						errorState = true;
+						
+						$("#texecute").addClass("error");
+						$("#spanTExecute").show('slow', function() {
+						});
+						$("#spanTExecute").html("Script missing!");
+
+					}
+
+					return [errorState, errorInformation];
+				}
+
+
+				/* 'Schedule Tasklet' button functionality*/
+
+				$("#IDScheduleTasklet").click(function() {
+					var status;
+					var tname = $("#tname").val();
+					var tdesc = $("#tdesc").val();
+					var tEventToken = $("#tEventToken").val();
+					var cronexp = $("#cronexp").val();
+					var texecute = $("#texecute").val();
+
+					var errorStatus = validateRequest(tname,tdesc,tEventToken,cronexp, texecute);
+				
+					if (errorStatus[0]) {
+						return false;
+					}			
+					
+					makeRequest();
+				});
+
 
 				/* List all the actuation requests*/ 
 				$("#IDViewRequest").click(function() {
@@ -681,17 +854,45 @@
 							<div id="divParamSelect">
 							
 							</div>
-					</div>						
+							<br>
+					</div>
+
+					<div class = "leftDiv">
+						<div id="divTypeSelect">							
+							<label>Schedule tasklet: </label>							
+							<input type="radio" id="tNow" name="scheduleType" value="now"/> Immediately and only Once
+							&nbsp;&nbsp;&nbsp;&nbsp;
+							<input type="radio" id="tPeriodic" name="scheduleType" value="periodic"/> Periodically &nbsp;&nbsp;
+							<input type="radio" id="tEvent" name="scheduleType" value="event"/> Based on device events &nbsp;&nbsp;
+							
+						</div>
+					</div>
+					<div class="rightDiv">						
+						<span class="errorVisual" id="spanScheduleTypeSelect"></span>
+					</div>
+
+
 				
 					<div class="leftDiv">
-						<br>
-						<div id="divWhenSelect">
+					<br/>						
+						<div id="divWhenSelectPeriodic" class="newParam">
 							<label>When to Schedule:<sup>*</sup></label>
 							 <!--&nbsp;&nbsp;&nbsp;Token Name: 
 							 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="twhen" /><br/> 
 							 &nbsp;&nbsp;&nbsp;<font size="1">(Enter a token name for the cron expression Eg. timer1) </font><br/>-->
 							 &nbsp;&nbsp;&nbsp;Cron expression: &nbsp;&nbsp;<input type="text" id = "cronexp">
 							 <br/> &nbsp;&nbsp;&nbsp;<font size="1">(Specify a cron expression for scheduling the tasklet Eg. 0 0/2 10-18 * * ? *)</font>
+						</div>
+						<div id="divWhenSelectEvent" class="newParam">
+							<label>Schedule based on Device Events:<sup>*</sup></label>
+							 &nbsp;&nbsp;&nbsp;Event Name: 
+							 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="tEventToken" />&nbsp;<font size="1">(event name without spaces)</font><br/> 
+							 &nbsp;&nbsp;&nbsp;<font size="1">(Enter a device event name to use Eg. motionEvent1) </font><br/>
+							 <div id="divSelectDeviceEvent">
+							 	&nbsp;&nbsp;&nbsp;Select Device:<sup>*</sup>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							 	<select id="selectDeviceEvent"><option value="Select Device">Select Device</option></select><br/>
+							 	<span class="errorVisual" id="spanDeviceEvent"></span>
+							</div>
 						</div>
 					</div>					
 					<div class="rightDiv">						

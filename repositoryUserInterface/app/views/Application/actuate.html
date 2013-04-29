@@ -201,7 +201,7 @@
 					try {
 
 						var temp="http://"+document.location.hostname+":"+document.location.port+"/";
-						//alert(JSON.stringify(tasklet));
+						alert(JSON.stringify(tasklet));return false;
 						$.post(temp+URL_ACTUATE_DEVICE, JSON.stringify(tasklet), function(data) {
 								receivedData = data;
 						});
@@ -230,7 +230,7 @@
 				 * 2.Error Information associated
 				 */
 
-				 function validateARequest(selectedActuator, selectedActuatorId) {
+				function validateARequest(selectedActuator, selectedActuatorId) {
 
 					$(".errorVisual").hide("");
 					$("#IDDeviceSelect,#date_time,#attime").removeClass("error");
