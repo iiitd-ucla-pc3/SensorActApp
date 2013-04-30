@@ -190,6 +190,21 @@ public class DownloadData extends SensorActAPI {
 		createCSV(arrayOfResponses);
 	}
 	
+	private String getCSVPath() {
+		
+		String csvFilePath = "";
+		try{
+			String path = DownloadData.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+			String decodedPath = URLDecoder.decode(path, "UTF-8");
+			csvFilePath = decodedPath + "/" + Const.BASE_OUTPUTCSV_URL;			
+		}
+		catch (IOException e){
+			logger.error("downloadata: Exception in getCSVPath()");
+		    e.printStackTrace();
+		}
+		return csvFilePath;
+	}
+	
 	/** Step 1: Create CSV for each sensor data response **/
 	private void createCSV(ArrayList<WaveSegmentArray> arrayOfResponses) {
 		long t1 = new Date().getTime();
@@ -208,9 +223,8 @@ public class DownloadData extends SensorActAPI {
 			
 			try {
 				
-				String path = DownloadData.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-				String decodedPath = URLDecoder.decode(path, "UTF-8");
-				String sFileName = decodedPath + "/" + Const.BASE_OUTPUTCSV_URL + filename ;
+				String csvFilePath = getCSVPath();
+				String sFileName = csvFilePath + filename ;
 				FileWriter writer = new FileWriter(sFileName);
 				writer.append("timestamp,channel,value");
 			    writer.append('\n');
@@ -259,9 +273,7 @@ public class DownloadData extends SensorActAPI {
 		// Create zip file and delete associated csv files
 		long t1 = new Date().getTime();
 		try {
-			String path = DownloadData.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-			String decodedPath = URLDecoder.decode(path, "UTF-8");
-			String csvFilePath = decodedPath + "/" + Const.BASE_OUTPUTCSV_URL;
+			String csvFilePath = getCSVPath();
 			String uuid = UUID.randomUUID().toString();
 			String zipFile = session.get(Const.USERNAME) + uuid + ".zip";
 			try {
@@ -269,7 +281,7 @@ public class DownloadData extends SensorActAPI {
 				ZipOutputStream zos = new ZipOutputStream(fos);
 				
 				for(int i = 0; i < fileList.size(); i++)
-					addToZipFile(Const.BASE_OUTPUTCSV_URL + fileList.get(i), zos);
+					addToZipFile(csvFilePath + fileList.get(i), zos);
 				
 				zos.close();
 				fos.close();
@@ -291,7 +303,8 @@ public class DownloadData extends SensorActAPI {
 	private void addToZipFile(String fileName, ZipOutputStream zos) throws FileNotFoundException, IOException {
 		
 		File file = new File(fileName);
-		String fileEntry = fileName.replace(Const.BASE_OUTPUTCSV_URL, "");
+		String csvFilePath = getCSVPath();
+		String fileEntry = fileName.replace(csvFilePath, "");
 		FileInputStream fis = new FileInputStream(file);
 		ZipEntry zipEntry = new ZipEntry(fileEntry);
 		zos.putNextEntry(zipEntry);

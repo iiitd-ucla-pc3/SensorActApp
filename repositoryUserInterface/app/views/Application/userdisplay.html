@@ -387,6 +387,7 @@
 								$("#tools").hide();
 								var s=receivedData["filename"];
 								$("#staticImage").attr("src","../public/generatedImages/"+s);
+								$("#speed").attr("disabled","disabled");
 							} 
 							else if(receivedData=="No Data Found")
 							{	
