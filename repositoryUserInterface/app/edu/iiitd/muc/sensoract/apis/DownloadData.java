@@ -161,17 +161,19 @@ public class DownloadData extends SensorActAPI {
 				//System.out.println("Data response: "+responseFromServer.getString());
 				
 				try {
-					
+					logger.info(Const.API_DOWNLOADATA, "Array creation for the sensors started");
 					WaveSegmentArray wa = gson.fromJson(
 							responseFromServer.getString(), WaveSegmentArray.class);
 					/*
 					 * If the size of WaveSegmentArray is 0, that is no data is found, then in that 
 					 * case, it is not to be added to arrayOfResponses
 					 */
+					
 					if (wa.wavesegmentArray.size()>0)
 					{
 						arrayOfResponses.add(wa);
 					}
+					logger.info(Const.API_DOWNLOADATA, "---Array created!!---");
 				}
 				catch (NullPointerException e) {
 					renderJSON(gson.toJson(new APIResponse(Const.API_DOWNLOADATA, 1, "Error retrieving data!")));
