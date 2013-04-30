@@ -1,0 +1,310 @@
+<!doctype html> <!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+	<!--<![endif]-->
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title> Tasklets</title>
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/style.css'}">
+		<link rel="shortcut icon" href="@{'/public/images/favicon.png'}" type="image/x-icon">
+		<!-- link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/styles1.css'}">  -->
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery-ui-1.8.21.custom.css'}">
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery-ui-timepicker-addon.css'}">
+
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/jquery.noty.css'}">
+		<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/noty_theme_twitter.css'}">
+
+		<script src="@{'/public/js/libs/modernizr-2.0.6.min.js'}"></script>
+		<script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/jquery.noty.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/jquery-ui-1.8.20.custom.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script src="@{'/public/javascripts/constants.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script type="text/javascript" src="@{'/public/javascripts/utilityFunctions.js'}"></script>
+		<script src="@{'/public/javascripts/exporting.js'}" type="text/javascript" charset="${_response_encoding}"></script>		
+		<script src="@{'/public/javascripts/jquery-ui-timepicker-addon.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<style type="text/css">
+			div.errorDiv
+			{
+				background: #000230;
+				color: #fff;
+				padding:10px;
+			}
+		</style>
+		<script type="text/javascript">
+			$(document).ready(function() {
+
+				var usertype = $("#usertype").val();
+
+				createHeader();
+				createFooter();
+				var vpdsname = $("#vpdsname").val();
+
+				/*
+				 * Setting the AJAX to work in sycnhronous fashion
+				 */
+				jQuery.ajaxSetup({
+					async : false
+				});
+
+				/**
+				 * @param :Error Information
+				 * This function appends the passed string to the AddDeviceErrorDiv and shows the relevant error container
+				 * Now only in use for catch elements of unexpected errors
+				 */
+
+				function alertActuateDeviceError(errorInformation) {
+
+					$("#errorDiv").html(errorInformation);
+					$("#errorDiv").fadeIn('slow');
+					return false;
+				}
+
+				/**
+				 * @param :Error Information
+				 * This function appends the passed string to the GetDeviceErrorDiv and shows the relevant error container
+				 */
+				function alertGetActuateError(errorInformation) {
+					$("#getActuateErrorDiv").html(errorInformation);
+					$("#getActuateErrorDiv").fadeIn('slow');
+					return false;
+				}
+
+				var dlg = $("#dialog").dialog({
+					autoOpen : false,
+					draggable : true,
+					resizable : true,
+					width : 700,
+					modal : true
+				});
+
+				$( "#dialog" ).bind( "dialogbeforeclose", function(event, ui) {
+					$("#dialog").html("");
+				});
+
+				/* List all the actuation requests*/ 
+				$("#IDViewRequest").click(function() {
+
+					try {
+						jsonListTasklet = {};
+						jsonListTasklet[VPDS_NAME] = vpdsname;
+						$.post(URL_UI_SERVER + URL_LIST_TASKLET, JSON.stringify(jsonListTasklet), function(data) {
+								receivedData = data;
+						});						
+
+						if (receivedData[RESPONSE_STATUS_CODE] != NO_TASKLET_FOUND) {
+
+							if (receivedData[DEVICE_ACTLIST_ARRAY].length > 0)	{ //Success
+								
+								// TODO: Replace tasklet name with tasklet description
+								$("#dialog").append("<div id =\"errorCDiv\" style=\"color: red;padding:5px; font-size: 1\"</div><br/>");
+								$("#errorCDiv").hide();
+								$("#dialog").append("<table id=\"actList\" style=\"font-size:15px\"><tr><td></td><td><b>Request Description</b></tr></th></table");
+								for (var index in receivedData[DEVICE_ACTLIST_ARRAY]) {
+									var name = receivedData[DEVICE_ACTLIST_ARRAY][index][TSK_DESC];
+									var taskletId = receivedData[DEVICE_ACTLIST_ARRAY][index][TSK_TASKLETID]; 
+									$("#actList").append("<tr><td><input type=\"checkbox\" id=\"chkCReq\" value=\""+ taskletId +"\" +</td><td>" + name + "</td></tr>");															
+								}
+								$("#dialog").append("<br><botton id=\"IDSelectAllButton\" class=\"google-button\" align=\"center\">Select/Deselect All</botton> &nbsp; <botton id=\"IDCancelReqButton\" class=\"google-button\" align=\"center\">Cancel Requests</botton>");
+								
+								var prevSelect = false;
+								$("#IDSelectAllButton").click(function() {
+
+									$("#dialog").find("input").each(function() {
+
+										if(prevSelect) {
+											$(this).attr('checked',false);
+										}											
+										else {
+											$(this).attr('checked',true);
+										}
+												
+									});
+
+									if (!prevSelect) {											
+										prevSelect = true;
+									}
+									else
+										prevSelect = false;
+
+								});
+
+								$("#IDCancelReqButton").click(function() {
+
+									var cancelReqList={};
+									var chkCount = 0;
+									var listCReq = new Array();
+									cancelReqList["secretkey"] = FAKE_SECRET_KEY;
+									cancelReqList["cancelRequestList"] = new Array();
+
+									$("#dialog").find("input").each(function() {
+
+										if ($(this).prop("checked")) {									
+											listCReq[chkCount] = $(this).val();
+											chkCount++;
+										}																									
+									});
+
+									if (chkCount < 1) {
+										var errorInformation = "<font size='2'>Please select at least one tasklet to cancel!</font>";
+										$("#errorCDiv").show();
+										$("#errorCDiv").html(errorInformation);
+										$("#errorCDiv").fadeIn('slow');
+										return false;
+									}
+
+									cancelReqList[SECRET_KEY] = FAKE_SECRET_KEY;
+									cancelReqList["cancelRequestList"] = listCReq;
+									cancelReqList["vpdsname"] = vpdsname;	
+									
+
+									try {
+										
+										$.post(URL_UI_SERVER +URL_CANCEL_ACTUATE_REQUEST, JSON.stringify(cancelReqList), function(data) {
+											receivedData = data;
+										});
+										if(receivedData[RESPONSE_STATUS_CODE] == SUCCESS) {
+
+											alert("Tasklets successfully cancelled!");
+											window.location = URL_UI_SERVER + URL_TASKLETS;
+										}
+										else {
+											if(receivedData[RESPONSE_STATUS_CODE] == TASKLET_NOT_CANCELED) {
+												var errorInformation = "Tasklet could not be canceled. Try again later";
+												$("#errorCDiv").html(errorInformation);
+												$("#errorCDiv").fadeIn('slow');
+											}
+											return false;
+										}
+											
+									}
+									catch(e) {
+										var errorInformation = receivedData[RESPONSE_MESSAGE];
+										$("#errorCDiv").html(errorInformation);
+										$("#errorCDiv").fadeIn('slow');
+										return false;
+									}
+
+
+								});						
+							}
+							else {
+								alertActuateDeviceError("Following error occured: " + receivedData[RESPONSE_MESSAGE]);
+							}
+
+							
+
+							dlg.dialog("open");
+							/*dlg.dialog("option", "position", {
+								//my: "center top",
+								//at: "right top",
+								//offset: "20 20"
+							});*/
+							return false;
+
+						}
+						else
+							alertGetActuateError("You have not scheduled any tasklet!");
+
+
+					} catch(e) {
+
+						if (receivedData[RESPONSE_STATUS_CODE] == ACTUATION_REQUEST_LISTFAILED) 
+							alertGetActuateError("Could not retrieve the list at this time. Please try again later.");
+						else
+							alertGetActuateError("Following error occured: " + receivedData[RESPONSE_MESSAGE]);
+					}
+
+				});
+
+				
+			});
+			</script>
+			
+			
+	</head>
+	<!--<body onload="setup()">-->
+		<body>
+		<div id="header-container">
+			<header class="wrapper clearfix">
+				<h1 id="title">SensorAct
+				<br />
+				<br />
+				<span style="font-size:25px;">Sense - Interact - Actuate</span></h1>
+				<nav id="navHeader">
+				</nav>
+				<br />
+				<br />
+				<nav>
+					<p class="pbox" style="margin-bottom:-20px;"> Welcome ${username} &nbsp | &nbsp
+						<span id="viewkey">View API key</span> &nbsp; |
+						&nbsp;<span id="logout">Logout</span>
+					</p>
+				</nav>
+			</header>
+		</div>
+		<div class="wrapper" style="text-align:center;">
+			<p class="space"></p>
+			<div id="selectedVPDS" style="float:right; font-size: 12px"><b>Selected VPDS:</b><label id="labelVpdsname"></label></div>
+			<br/>
+			<h1 class="newfont" id="device" style="text-align:center;">Tasklets</h1>
+			<hr/>
+			<div style="display: none;" id="getActuateErrorDiv" class="errorDiv"></div>
+			<div style="display: none;" id="errorDiv" class="errorDiv"></div>
+
+			<div id="newTasklet">
+				<div><b>You have three choices for creation of tasklets. First two choices are preset and the third gives the capability to make advanced/custom tasklets</b></div>
+				<!--Right Pane starts here-->
+				<div id="displayTasklets" style="float:right;">
+					<div class="leftDiv" style="clear:both;text-align:center;">
+						<div id="dialog" title = "Scheduled Tasklets" style="font-size:1;"></div>
+						<button id="IDViewRequest" class="google-button">
+						View Scheduled Tasklets
+						</button>
+						<br/>
+					</div>
+					<div class="rightDiv">
+						<span class="errorVisual" id="spanViewRequest"></span>
+					</div>
+					<br />
+				</div>
+				<!-- Right Pane ends here-->
+				<!-- Left Pane starts here-->
+				<div id="visualBox" style="">					
+					<div class="leftDiv">
+						<label>Select type of tasklet to create </label>
+						&nbsp;&nbsp;&nbsp;&nbsp;						 
+						<ul>
+						<!--<input type="radio" name="creationType" value="acT"/>-->
+							<li><a href="actuate"> Create Actuation Tasklet based on Time </a> </li>
+						
+						<!--&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="creationType" value="pacT"/>-->  
+							<li><a href="presenceactuate"> Create Actuation Tasklet based on Presence </a> </li>
+						
+						<!--&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="creationType" value="cusT"/>-->  
+							<li><a href="createtasklet"> Create Custom Tasklet </a></li>
+						</ul>
+						<br /> <br/>
+					</div>
+					<div class="rightDiv">						
+						<span class="errorVisual" id="spanCreateTasklet"></span>
+					</div>
+					
+				</div>
+				<!-- Left pane ends here-->						
+			</div>			
+		</div>
+		<div id="iFields">
+			<input id="username"  type="hidden" value=${username}> 
+			<input id="usertype"  type="hidden" value=${usertype}> 
+			<input id="vpdsname"  type="hidden" value=${vpdsname}> 
+			<input id="vpdsurl"  type="hidden" value=${vpdsurl}>
+			<input id="vpdskey"  type="hidden" value=${vpdskey}>
+		</div>
+		<div style="clear:both;" id="footer-container">
+
+		</div>
+	</body>
+</html>

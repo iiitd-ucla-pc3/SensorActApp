@@ -345,7 +345,8 @@ var URL_PRESENCE_ACTUATE="presenceactuate";
 var URL_GUARD_RULE="guardrule";
 var URL_GENERATE_SECRET_KEY="generatesecretkey";
 var URL_VISUALIZATION="display";
-var URL_TASKLETS="createtasklet";
+var URL_TASKLETS="tasklets";
+var URL_CREATE_TASKLET="createtasklet";
 
 // Unused pages
 var URL_REPOSITORY_INFO="repository";

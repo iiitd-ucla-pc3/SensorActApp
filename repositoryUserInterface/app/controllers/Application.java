@@ -438,7 +438,6 @@ public class Application extends Controller {
 		render();
 	}
 	
-	
 	public static void actuatedevice() {
 		String deviceActuateBody = request.params.get(Const.REQUEST_BODY);
 		renderArgs.put(Const.VPDSNAME, session.get(Const.VPDSNAME));
@@ -447,6 +446,15 @@ public class Application extends Controller {
 		
 		api.actuateDevice.doProcess(deviceActuateBody);
 
+	}
+	
+	public static void tasklets() {
+		renderArgs.put(Const.USERNAME, session.get(Const.USERNAME));
+		renderArgs.put(Const.VPDSNAME, session.get(Const.VPDSNAME));
+		renderArgs.put(Const.VPDSURL, session.get(Const.VPDSURL));
+		renderArgs.put(Const.VPDSKEY, session.get(Const.VPDSKEY));
+		
+		render();
 	}
 	
 	

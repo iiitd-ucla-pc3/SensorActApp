@@ -58,6 +58,7 @@ POST	/listactuationrequests					Application.listactuationrequests
 POST	/cancelactuationrequests				Application.cancelactuationrequests
 
 GET		/createtasklet							Application.createtasklet
+GET		/tasklets								Application.tasklets
 POST	/listasklet								Application.listasklet
 
 GET		/guardrule								Application.guardrule

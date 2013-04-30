@@ -39,6 +39,9 @@
 
 /*
  * Description: Renders the navigation header
+
+			"Time Actuation" : URL_ACTUATE,
+			"Presence Actuation" : URL_PRESENCE_ACTUATE,
  */ 
 function createHeader() {    
 
@@ -46,10 +49,8 @@ function createHeader() {
 			"Home" : URL_VPDSHOME,
 			"Devices" : URL_DEVICES,
 			"Guard Rules" : URL_GUARD_RULE,
-			"Time Actuation" : URL_ACTUATE,
-			"Presence Actuation" : URL_PRESENCE_ACTUATE,
-			"Visualization" : URL_VISUALIZATION,
-			"Tasklets" : URL_TASKLETS
+			"Tasklets" : URL_TASKLETS,
+			"Visualization" : URL_VISUALIZATION,			
 			//"Repository" : URL_REPOSITORY_INFO,
 			//"Speak" : URL_SPEAK_INPUT
 		};
