@@ -780,6 +780,7 @@
 
 				$("#IDDownloadCSV").click(function() {
 					
+					
 					var allSelectedItems = {};
 					var selectedSensorArray = new Array();
 
@@ -788,6 +789,7 @@
 					var selectedDeviceName = deviceName;
 
 					$("#imageDiv").hide();
+					$("#csvDiv").hide();
 
 					for (var i = 0; i < selectedDeviceName.length; i++) {
 						allSelectedItems[selectedDeviceName[i]] = [];

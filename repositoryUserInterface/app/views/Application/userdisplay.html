@@ -727,10 +727,11 @@
 
 				$("#IDDownloadCSV").click(function() {
 					
-					var query = {};
+					var query = {};					
 
 					var selectedDeviceName = devicename;
 					$("#imageDiv").hide();
+					$("#csvDiv").hide();
 
 					if ($(ID_START_DATE_TIME_DISPLAY).val().length > 0) {
 						startTime = datetimeToEpoch($(ID_START_DATE_TIME_DISPLAY).val());
