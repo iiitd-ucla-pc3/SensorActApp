@@ -178,7 +178,10 @@ public class DownloadData extends SensorActAPI {
 				catch (NullPointerException e) {
 					renderJSON(gson.toJson(new APIResponse(Const.API_DOWNLOADATA, 1, "Error retrieving data!")));
 				}
-				
+				catch (Exception e) {
+					e.printStackTrace();
+					renderJSON(gson.toJson(new APIResponse(Const.API_QUERYDATA, 1, "Error retrieving data!")));
+				}
 
 			}
 
