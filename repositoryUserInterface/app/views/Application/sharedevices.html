@@ -75,11 +75,11 @@
 				    		alertAddError("Following errors occurred " + responseFromServer[RESPONSE_MESSAGE]);
 				    }
 				    else if(responseListFromServer.length > 0) {
-
+				    	var scount = 0, acount = 0;
 			    		for (var i = 0; i < responseListFromServer.length; i++) {
 			    			responseFromServer = responseListFromServer[i];
 					    	var numberOfDevices = responseFromServer[VIEW_SHARED].length;
-					    	var scount = 0, acount = 0;
+					    	
 					    	if (numberOfDevices > 0) {		    		
 					    		for (var index in responseFromServer[VIEW_SHARED]) {
 					    			var dname = responseFromServer[VIEW_SHARED][index][VIEW_DEVICENAME];
@@ -151,7 +151,7 @@
 				$("input[name=select]").change(function(){
 					selectedDevice = $(this).val();
 					var selectedId = this.id;
-					selectionIndex = parseInt(selectedId.substr(selectedId.length - 1));
+					selectionIndex = parseInt(selectedId.substr(selectedId.length - 1));				
 
 				});
 
