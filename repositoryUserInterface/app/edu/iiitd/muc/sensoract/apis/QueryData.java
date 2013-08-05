@@ -64,6 +64,7 @@ import edu.iiitd.muc.sensoract.format.APIResponse;
 import edu.iiitd.muc.sensoract.format.ChartSeries;
 import edu.iiitd.muc.sensoract.format.ChartSeriesArray;
 import edu.iiitd.muc.sensoract.format.ChartSeriesStats;
+import edu.iiitd.muc.sensoract.format.DeviceProfileFormat;
 import edu.iiitd.muc.sensoract.format.GetAccessKeyResponseFormat;
 import edu.iiitd.muc.sensoract.format.QueryRequest;
 import edu.iiitd.muc.sensoract.format.QueryToRepo;
@@ -72,6 +73,8 @@ import edu.iiitd.muc.sensoract.utilities.SecretKey;
 import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
 
 public class QueryData extends SensorActAPI {
+	
+	private static String userkey;
 
 	public final void doProcess(String queryBody) {
 
@@ -104,12 +107,12 @@ public class QueryData extends SensorActAPI {
 					responseFromServer.getString(),GetAccessKeyResponseFormat.class);
 			
 			//Set secretkey as accesskey
-			secretkey = response.accesskey;
+			secretkey = userkey = response.accesskey;
 			vpdsURL = response.vpdsurl;
 		}
 		else if(usertype.equals(Const.OWNER)){
 			//Set secretkey as owner key
-			secretkey = Global.VPDS_OWNER_KEY;			
+			secretkey = userkey = Global.VPDS_OWNER_KEY;			
 		}
 
 		int numberOfDevicesRequest = queryRequest.devicesArray.size();
@@ -179,17 +182,17 @@ public class QueryData extends SensorActAPI {
 		 */
 		if (queryRequest.interactive.equals("false")) {
 
-			processNonInteractive(arrayOfResponses);
+			processNonInteractive(arrayOfResponses, vpdsURL);
 		} else {
-			processInteractive(arrayOfResponses);
+			processInteractive(arrayOfResponses, vpdsURL);
 		}
 
 	}
 
 	public void processNonInteractive(
-			ArrayList<WaveSegmentArray> arrayOfResponses) {
+			ArrayList<WaveSegmentArray> arrayOfResponses, String vpdsURL) {
 		long t1 = new Date().getTime();
-		String a = createChart(arrayOfResponses);		
+		String a = createChart(arrayOfResponses, vpdsURL);		
 		String re = "{\"filename\":\"" + a + ".png\"}";
 		long t2 = new Date().getTime();
 		logger.info(Const.API_QUERYDATA, "Time to create non-interactive graph:" + (t2-t1)/1000 + " seconds");
@@ -197,19 +200,46 @@ public class QueryData extends SensorActAPI {
 
 	}
 
-	private void processInteractive(ArrayList<WaveSegmentArray> arrayOfResponses) {
+	private void processInteractive(ArrayList<WaveSegmentArray> arrayOfResponses, String vpdsURL) {
 		long t1 = new Date().getTime();
 		int size = arrayOfResponses.size();
 		int seriesOffset = 0;
+		String usertype = session.get(Const.USERTYPE);
+		HttpResponse responseFromServer = null;
+		
 		ChartSeriesArray ca = new ChartSeriesArray();
 		logger.info(Const.API_QUERYDATA, "Interactive:: Data Size:" + size);
+		
 		for (int a = 0; a < size; a++) {
 			//System.out.println("For waveseg " + Integer.toString(a) + " ");
 			WaveSegmentArray wa = arrayOfResponses.get(a);
+			
+			String devicename = wa.wavesegmentArray.get(0).data.dname;
+			// Get device details
+			
+			String getDeviceProfile = "{\"secretkey\" : \"" + userkey +"\", \"devicename\": \""+devicename+"\" }";
+			//System.out.println("Get device request" + getDeviceProfile);
+			if(usertype.equals(Const.USER)){
+				responseFromServer = new SendHTTPRequest()
+				.sendPostRequest(vpdsURL + "device/get",
+						Const.MIME_TYPE_JSON, Const.API_GETDEVICE,
+						getDeviceProfile);
+			}
+			else {
+				responseFromServer = new SendHTTPRequest()
+				.sendPostRequest(Global.URL_REPOSITORY_GET_DEVICE,
+						Const.MIME_TYPE_JSON, Const.API_GETDEVICE,
+						getDeviceProfile);
+			}
+			
+			DeviceProfileFormat device = gson.fromJson(
+					responseFromServer.getString(),DeviceProfileFormat.class);
+			//System.out.println("Get device response" + responseFromServer.getString());
 
 			int numberOfWavesegs = wa.wavesegmentArray.size();
 			int numberOfSeries = wa.wavesegmentArray.get(0).data.channels
 					.size();
+			String sensorname = wa.wavesegmentArray.get(0).data.sname;
 
 			for (int i = 0; i < numberOfSeries; i++) {
 				ca.chartSeries.add(new ChartSeries(
@@ -223,9 +253,18 @@ public class QueryData extends SensorActAPI {
 								+ " " + wa.wavesegmentArray.get(0).data.dname));
 
 			}
+			// Get sensor index of the sensor whose data is being processed
+			// to compare it to the device profile retrieved from the VPDS
+			
+			int sindex = 0;
+			for (int i = 0; i< device.sensors.size(); i++)
+				if (device.sensors.get(i).name.equals(sensorname))
+					sindex = i;
 
 			for (int i = 0; i < numberOfWavesegs; i++) {
 				long timestamp = wa.wavesegmentArray.get(i).data.timestamp * 1000;
+				
+				//initialization of sampling period
 				int samplingPeriod = 1;
 				//System.out.println(timestamp);
 
@@ -234,12 +273,18 @@ public class QueryData extends SensorActAPI {
 
 						int numberOfReadings = wa.wavesegmentArray.get(i).data.channels
 								.get(j).readings.size();
+						String channelname = wa.wavesegmentArray.get(i).data.channels
+								.get(j).cname; 
 
 						Double min = wa.wavesegmentArray.get(i).data.channels
 								.get(j).readings.get(0);
 						Double max = wa.wavesegmentArray.get(i).data.channels
 								.get(j).readings.get(0);
 						Double avg = 0.0;
+						if (device.sensors.get(sindex).channels.get(j).name.equals(channelname))
+							samplingPeriod = device.sensors.get(sindex).channels.get(j).samplingperiod;
+						
+						System.out.println();
 
 						for (int k = 0; k < numberOfReadings; k++) {
 							double[] d = new double[2];
@@ -280,9 +325,9 @@ public class QueryData extends SensorActAPI {
 
 	}
 
-	public String createChart(ArrayList<WaveSegmentArray> arrayOfResponses) {
+	public String createChart(ArrayList<WaveSegmentArray> arrayOfResponses, String vpdsURL) {
 		logger.info(Const.API_QUERYDATA, "Static Graph:: Data Size:" + arrayOfResponses.size());	
-		XYDataset dataset = createDataset(arrayOfResponses);
+		XYDataset dataset = createDataset(arrayOfResponses, vpdsURL);
 		JFreeChart chart = createJFreeChart(dataset);
 		String uuid = UUID.randomUUID().toString();
 
@@ -334,16 +379,48 @@ public class QueryData extends SensorActAPI {
 		return chart;
 	}
 
-	public XYDataset createDataset(ArrayList<WaveSegmentArray> arrayOfResponses) {
+	public XYDataset createDataset(ArrayList<WaveSegmentArray> arrayOfResponses, String vpdsURL) {
 		TimeSeriesCollection dataset = new TimeSeriesCollection();
+		
+						
 		int numberOfResponses = arrayOfResponses.size();
+		String usertype = session.get(Const.USERTYPE);
+		HttpResponse responseFromServer = null;
+		
 		if (numberOfResponses>0)
 		for (int i = 0; i < numberOfResponses; i++) {
 			WaveSegmentArray wa = arrayOfResponses.get(i);
+			
+			String devicename = wa.wavesegmentArray.get(0).data.dname;
+			// Get device details
+			
+			String getDeviceProfile = "{\"secretkey\" : \"" + userkey +"\", \"devicename\": \""+devicename+"\" }";
+			System.out.println("Get device request" + getDeviceProfile);
+			if(usertype.equals(Const.USER)){
+				responseFromServer = new SendHTTPRequest()
+				.sendPostRequest(vpdsURL + "device/get",
+						Const.MIME_TYPE_JSON, Const.API_GETDEVICE,
+						getDeviceProfile);
+			}
+			else {
+				responseFromServer = new SendHTTPRequest()
+				.sendPostRequest(Global.URL_REPOSITORY_GET_DEVICE,
+						Const.MIME_TYPE_JSON, Const.API_GETDEVICE,
+						getDeviceProfile);
+			}
+			
+			DeviceProfileFormat device = gson.fromJson(
+					responseFromServer.getString(),DeviceProfileFormat.class);
+			System.out.println("Get device response" + responseFromServer.getString());
+
+			
 			int numberOfSeries = wa.wavesegmentArray.get(0).data.channels
 					.size();
 			int numberOfWavesegs = wa.wavesegmentArray.size();
+			String sensorname = wa.wavesegmentArray.get(0).data.sname;
+			
 			TimeSeries s1[] = new TimeSeries[numberOfSeries];
+			
 			for (int j = 0; j < numberOfSeries; j++) {
 				s1[j] = new TimeSeries(
 						wa.wavesegmentArray.get(0).data.channels.get(j).cname
@@ -352,10 +429,20 @@ public class QueryData extends SensorActAPI {
 						Millisecond.class);
 
 			}
+			
+			// Get sensor index of the sensor whose data is being processed
+			// to compare it to the device profile retrieved from the VPDS
+
+			int sindex = 0;
+			for (int idx = 0; idx < device.sensors.size(); idx++)
+				if (device.sensors.get(i).name.equals(sensorname))
+					sindex = idx;
 
 			for (int a = 0; a < numberOfWavesegs; a++) {
 
 				long timestamp = wa.wavesegmentArray.get(a).data.timestamp * 1000;
+				
+				// initialization of sampling period
 				int samplingPeriod = 1;
 
 				for (int j = 0; j < numberOfSeries; j++) {
@@ -364,6 +451,10 @@ public class QueryData extends SensorActAPI {
 
 						int numberOfReadings = wa.wavesegmentArray.get(a).data.channels
 								.get(j).readings.size();
+						String channelname = wa.wavesegmentArray.get(i).data.channels
+								.get(j).cname; 
+						if (device.sensors.get(sindex).channels.get(j).name.equals(channelname))
+							samplingPeriod = device.sensors.get(sindex).channels.get(j).samplingperiod;
 
 						for (int k = 0; k < numberOfReadings; k++) {
 
