@@ -141,7 +141,7 @@ public class QueryData extends SensorActAPI {
 					responseFromServer = new SendHTTPRequest()
 					.sendPostRequest(Global.URL_REPOSITORY_QUERY_DATA,
 							Const.MIME_TYPE_JSON, Const.API_QUERYDATA,
-							queryBodyWithSecretKey);
+							queryBodyWithSecretKey); 
 				}
 				logger.info(Const.API_QUERYDATA, "------Finished Receiving Data--------");
 				//System.out.println("Data response: "+responseFromServer.getString());
@@ -439,7 +439,7 @@ public class QueryData extends SensorActAPI {
 			for (int idx = 0; idx < device.sensors.size(); idx++)
 				if (device.sensors.get(i).name.equals(sensorname))
 					sindex = idx;
-
+			System.out.println("Sindex: " + sindex);
 			for (int a = 0; a < numberOfWavesegs; a++) {
 
 				long timestamp = wa.wavesegmentArray.get(a).data.timestamp * 1000;
@@ -457,7 +457,7 @@ public class QueryData extends SensorActAPI {
 								.get(j).cname; 
 						if (device.sensors.get(sindex).channels.get(j).name.equals(channelname))
 							samplingPeriod = device.sensors.get(sindex).channels.get(j).samplingperiod;
-						System.out.println("sampling period:" + samplingPeriod);
+						System.out.println("sampling period:" + samplingPeriod + "number of readings" + numberOfReadings);
 						for (int k = 0; k < numberOfReadings; k++) {
 
 							Millisecond x = new Millisecond(new Date(
