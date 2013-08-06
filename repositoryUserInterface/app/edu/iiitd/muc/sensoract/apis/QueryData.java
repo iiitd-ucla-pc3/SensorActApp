@@ -160,6 +160,7 @@ public class QueryData extends SensorActAPI {
 					}
 				}
 				catch (NullPointerException e) {
+					e.printStackTrace();
 					renderJSON(gson.toJson(new APIResponse(Const.API_QUERYDATA, 1, "Error retrieving data!")));
 				}
 				catch (Exception e) {
