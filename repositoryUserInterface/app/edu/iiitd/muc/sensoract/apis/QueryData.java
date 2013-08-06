@@ -240,7 +240,7 @@ public class QueryData extends SensorActAPI {
 			int numberOfSeries = wa.wavesegmentArray.get(0).data.channels
 					.size();
 			String sensorname = wa.wavesegmentArray.get(0).data.sname;
-
+			
 			for (int i = 0; i < numberOfSeries; i++) {
 				ca.chartSeries.add(new ChartSeries(
 						wa.wavesegmentArray.get(0).data.channels.get(i).cname
@@ -262,7 +262,7 @@ public class QueryData extends SensorActAPI {
 					sindex = i;
 
 			for (int i = 0; i < numberOfWavesegs; i++) {
-				long timestamp = wa.wavesegmentArray.get(i).data.timestamp * 1000;
+				long timestamp = wa.wavesegmentArray.get(i).data.timestamp;
 				
 				//initialization of sampling period
 				int samplingPeriod = 1;
@@ -284,13 +284,14 @@ public class QueryData extends SensorActAPI {
 						if (device.sensors.get(sindex).channels.get(j).name.equals(channelname))
 							samplingPeriod = device.sensors.get(sindex).channels.get(j).samplingperiod;
 						
-						System.out.println();
+						//System.out.println("sampling period:" + samplingPeriod);
 
 						for (int k = 0; k < numberOfReadings; k++) {
 							double[] d = new double[2];
-							d[0] = timestamp + k * samplingPeriod * 1000;
+							d[0] = (timestamp + k * samplingPeriod)* 1000;
 							d[1] = wa.wavesegmentArray.get(i).data.channels.get(j).readings
 									.get(k);
+							System.out.println("d[0]: " + d[0] + " d[1]:" + d[1]);
 
 							ca.chartSeries.get(j + seriesOffset).data.add(d);
 							// Min Value
@@ -440,7 +441,7 @@ public class QueryData extends SensorActAPI {
 
 			for (int a = 0; a < numberOfWavesegs; a++) {
 
-				long timestamp = wa.wavesegmentArray.get(a).data.timestamp * 1000;
+				long timestamp = wa.wavesegmentArray.get(a).data.timestamp;
 				
 				// initialization of sampling period
 				int samplingPeriod = 1;
@@ -459,7 +460,7 @@ public class QueryData extends SensorActAPI {
 						for (int k = 0; k < numberOfReadings; k++) {
 
 							Millisecond x = new Millisecond(new Date(
-									new Double((timestamp + k * samplingPeriod
+									new Double(((timestamp + k * samplingPeriod)
 											* 1000)).longValue()));
 
 							double y = wa.wavesegmentArray.get(a).data.channels
