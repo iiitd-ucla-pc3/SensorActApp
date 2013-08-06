@@ -891,6 +891,7 @@ lang="en">
 					deviceRequestToSend[SECRET_KEY] = secretkey;
 					var addDeviceOrTemplateURL;
 					var validationResult = true;
+
 					var temp="http://"+document.location.hostname+":"+document.location.port+"/";
 
 					if($("#deviceOrTemplateSelect").find(":selected").text() == "Device") {
@@ -901,16 +902,15 @@ lang="en">
 						deviceObject[DEVICE_TEMPLATE_NAME] = removeSpace($("#newDeviceName").val());
 					}
 				
-					function postToDeleteDevice(){
+					function postToAddDevice(){
 						try {
-								//alert(JSON.stringify(deviceRequestToSend));
+								//alert(JSON.stringify(deviceRequestToSend));								
 								$.post(addDeviceOrTemplateURL, JSON.stringify(deviceRequestToSend), function(data) {
 									if(data[RESPONSE_STATUS_CODE] == 0) {
 										window.location = temp+"device";
 									} else {
-										alertAddDeviceError("Following error occured: " + data[RESPONSE_MESSAGE]);
 										validationResult = false;
-
+										alertAddDeviceError("Following error occured: " + data[RESPONSE_MESSAGE]);
 									}
 
 								});
@@ -918,7 +918,7 @@ lang="en">
 								alertAddDeviceError(e);
 							}
 					}
-			/**************----------------------Changes Made Here---------------------****************/
+			       /**************------Changes Made Here-----------****************/
 
 					if(deviceToEdit != FAKE_DEVICE_NAME) {
 
@@ -929,46 +929,29 @@ lang="en">
 						//Delete older device
 						if(mode == "update" && (validationResult == true && errorState == false)) {
 							var isDeleteSuccessful = false;
-
 							try {
 								//alert("Validation Successful");
-
 								$.post(deleteDeviceOrTemplate, JSON.stringify(messageToDeleteDevice), function(data) {
-
-									if(data[RESPONSE_STATUS_CODE] == SUCCESS) {
+									if(data[RESPONSE_STATUS_CODE] == SUCCESS)
 										isDeleteSuccessful = true;
-									} else {
+									else
 										alertGetDeviceError(data[RESPONSE_MESSAGE]);
-									}
-
 								});
 							} catch(e) {
 								alertAddDeviceError(e);
 							}
-							if(isDeleteSuccessful) {
-
-/**************----------------------Changes Made Here---------------------****************/
-								postToDeleteDevice();
-/**************----------------------Changes Made Here---------------------****************/								
-							}
-						} else {
-						/**************----------------------Changes Made Here---------------------****************/
-							postToDeleteDevice();
-							
-						/**************----------------------Changes Made Here---------------------****************/
-						}
+							if(isDeleteSuccessful)
+								postToAddDevice();
+						} 
+						else
+							postToAddDevice(); 
 					}
-					else {
-						//Device/Template was added from scratch
-						/**************----------------------Changes Made Here---------------------****************/
-						postToDeleteDevice();
-						
-						/**************----------------------Changes Made Here---------------------****************/
-					}//End else
+					else
+						postToAddDevice();
 
 					return false;
 
-				});
+				}); // done device section ends
 			});
 
 		</script>
