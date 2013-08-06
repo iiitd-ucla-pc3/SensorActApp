@@ -441,8 +441,8 @@ public class QueryData extends SensorActAPI {
 
 			for (int a = 0; a < numberOfWavesegs; a++) {
 
-				long timestamp = wa.wavesegmentArray.get(a).data.timestamp;
-				
+				long timestamp = wa.wavesegmentArray.get(a).data.timestamp * 1000;
+				System.out.println(timestamp);
 				// initialization of sampling period
 				int samplingPeriod = 1;
 
@@ -456,15 +456,18 @@ public class QueryData extends SensorActAPI {
 								.get(j).cname; 
 						if (device.sensors.get(sindex).channels.get(j).name.equals(channelname))
 							samplingPeriod = device.sensors.get(sindex).channels.get(j).samplingperiod;
-
+						System.out.println("sampling period:" + samplingPeriod);
 						for (int k = 0; k < numberOfReadings; k++) {
 
 							Millisecond x = new Millisecond(new Date(
-									new Double(((timestamp + k * samplingPeriod)
+									new Double((timestamp + k * samplingPeriod
 											* 1000)).longValue()));
+							//double x = (timestamp + k * samplingPeriod)* 1000;
 
 							double y = wa.wavesegmentArray.get(a).data.channels
 									.get(j).readings.get(k);
+							
+							System.out.println("d[0]: " + x + " d[1]:" + y);
 
 							s1[j].addOrUpdate(x, y);
 
