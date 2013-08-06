@@ -292,7 +292,7 @@ public class QueryData extends SensorActAPI {
 							d[0] = (timestamp + k * samplingPeriod)* 1000;
 							d[1] = wa.wavesegmentArray.get(i).data.channels.get(j).readings
 									.get(k);
-							System.out.println("d[0]: " + d[0] + " d[1]:" + d[1]);
+							//System.out.println("d[0]: " + d[0] + " d[1]:" + d[1]);
 
 							ca.chartSeries.get(j + seriesOffset).data.add(d);
 							// Min Value
@@ -436,16 +436,17 @@ public class QueryData extends SensorActAPI {
 			// to compare it to the device profile retrieved from the VPDS
 
 			int sindex = 0;
-			for (int idx = 0; idx < device.sensors.size(); idx++) {
-				System.out.println("sensorname: " + sensorname + "sen[idx]" + device.sensors.get(idx).name);
-				if (device.sensors.get(idx).name.equals(sensorname))
+			for (int idx = 0; idx < device.sensors.size(); idx++) {				
+				if (device.sensors.get(idx).name.equals(sensorname)) {
 					sindex = idx;
+					break;
+				}					
 			}
-			System.out.println("Sindex: " + sindex);
+			//System.out.println("Sindex: " + sindex);
 			for (int a = 0; a < numberOfWavesegs; a++) {
 
 				long timestamp = wa.wavesegmentArray.get(a).data.timestamp * 1000;
-				System.out.println(timestamp);
+				//System.out.println(timestamp);
 				// initialization of sampling period
 				int samplingPeriod = 1;
 
@@ -459,7 +460,7 @@ public class QueryData extends SensorActAPI {
 								.get(j).cname; 
 						if (device.sensors.get(sindex).channels.get(j).name.equals(channelname))
 							samplingPeriod = device.sensors.get(sindex).channels.get(j).samplingperiod;
-						System.out.println("sampling period:" + samplingPeriod + "number of readings" + numberOfReadings);
+						//System.out.println("sampling period:" + samplingPeriod + "number of readings" + numberOfReadings);
 						for (int k = 0; k < numberOfReadings; k++) {
 
 							Millisecond x = new Millisecond(new Date(
@@ -470,7 +471,7 @@ public class QueryData extends SensorActAPI {
 							double y = wa.wavesegmentArray.get(a).data.channels
 									.get(j).readings.get(k);
 							
-							System.out.println("d[0]: " + x + " d[1]:" + y);
+							//System.out.println("d[0]: " + x + " d[1]:" + y);
 
 							s1[j].addOrUpdate(x, y);
 
