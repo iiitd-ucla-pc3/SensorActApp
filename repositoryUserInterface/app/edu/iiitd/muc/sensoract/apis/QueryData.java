@@ -436,9 +436,11 @@ public class QueryData extends SensorActAPI {
 			// to compare it to the device profile retrieved from the VPDS
 
 			int sindex = 0;
-			for (int idx = 0; idx < device.sensors.size(); idx++)
-				if (device.sensors.get(i).name.equals(sensorname))
+			for (int idx = 0; idx < device.sensors.size(); idx++) {
+				System.out.println("sensorname: " + sensorname + "sen[idx]" + device.sensors.get(idx).name);
+				if (device.sensors.get(idx).name.equals(sensorname))
 					sindex = idx;
+			}
 			System.out.println("Sindex: " + sindex);
 			for (int a = 0; a < numberOfWavesegs; a++) {
 
