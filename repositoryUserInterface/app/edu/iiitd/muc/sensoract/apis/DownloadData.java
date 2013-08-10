@@ -71,6 +71,7 @@ import edu.iiitd.muc.sensoract.format.APIResponse;
 import edu.iiitd.muc.sensoract.format.ChartSeries;
 import edu.iiitd.muc.sensoract.format.ChartSeriesArray;
 import edu.iiitd.muc.sensoract.format.ChartSeriesStats;
+import edu.iiitd.muc.sensoract.format.DeviceProfileFormat;
 import edu.iiitd.muc.sensoract.format.DownloadDataRequest;
 import edu.iiitd.muc.sensoract.format.GetAccessKeyResponseFormat;
 import edu.iiitd.muc.sensoract.format.QueryRequest;
@@ -89,6 +90,8 @@ import edu.iiitd.muc.sensoract.utilities.SendHTTPRequest;
  */
 
 public class DownloadData extends SensorActAPI {
+	
+	private static String userkey;
 
 	public final void doProcess(String queryBody) {
 
@@ -121,7 +124,7 @@ public class DownloadData extends SensorActAPI {
 					responseFromServer.getString(),GetAccessKeyResponseFormat.class);
 			
 			//Set secretkey as accesskey
-			secretkey = response.accesskey;
+			secretkey = userkey = response.accesskey;
 			vpdsURL = response.vpdsurl;
 		}
 		else if(usertype.equals(Const.OWNER)){
@@ -192,7 +195,7 @@ public class DownloadData extends SensorActAPI {
 			renderText("No Data Found");
 		}
 		
-		createCSV(arrayOfResponses);
+		createCSV(arrayOfResponses,vpdsURL);
 	}
 	
 	private String getCSVPath() {
@@ -211,21 +214,54 @@ public class DownloadData extends SensorActAPI {
 	}
 	
 	/** Step 1: Create CSV for each sensor data response **/
-	private void createCSV(ArrayList<WaveSegmentArray> arrayOfResponses) {
+	private void createCSV(ArrayList<WaveSegmentArray> arrayOfResponses, String vpdsURL) {
 		long t1 = new Date().getTime();
 		int size = arrayOfResponses.size();
+		String usertype = session.get(Const.USERTYPE);
+		HttpResponse responseFromServer = null;
+		
 		logger.info("NoOfSensors:" + size);
 		ArrayList<String> fileList = new ArrayList<String>();
 		
 		for (int sIndex = 0; sIndex < size; sIndex++){			
 			
 			WaveSegmentArray wa = arrayOfResponses.get(sIndex);
+			
+			String devicename = wa.wavesegmentArray.get(0).data.dname;
+			
+			// Get device details			
+			String getDeviceProfile = "{\"secretkey\" : \"" + userkey +"\", \"devicename\": \""+devicename+"\" }";
+			//System.out.println("Get device request" + getDeviceProfile);
+			if(usertype.equals(Const.USER)){
+				responseFromServer = new SendHTTPRequest()
+				.sendPostRequest(vpdsURL + "device/get",
+						Const.MIME_TYPE_JSON, Const.API_GETDEVICE,
+						getDeviceProfile);
+			}
+			else {
+				responseFromServer = new SendHTTPRequest()
+				.sendPostRequest(Global.URL_REPOSITORY_GET_DEVICE,
+						Const.MIME_TYPE_JSON, Const.API_GETDEVICE,
+						getDeviceProfile);
+			}
+			
+			DeviceProfileFormat device = gson.fromJson(
+					responseFromServer.getString(),DeviceProfileFormat.class);
+			
 			int numberOfWavesegs = wa.wavesegmentArray.size();
 			int numberOfChannels = wa.wavesegmentArray.get(0).data.channels
 					.size();
+			String sensorname = wa.wavesegmentArray.get(0).data.sname;
 			String filename = session.get(Const.USERNAME) + "_" + wa.wavesegmentArray.get(0).data.dname + "_" + 
 					wa.wavesegmentArray.get(0).data.sname + "_" + wa.wavesegmentArray.get(0).data.sid +".csv";
 			
+			// Get sensor index of the sensor whose data is being processed
+			// to compare it to the device profile retrieved from the VPDS
+						
+			int sindex = 0;
+			for (int i = 0; i< device.sensors.size(); i++)
+				if (device.sensors.get(i).name.equals(sensorname))
+					sindex = i;
 			try {
 				
 				String csvFilePath = getCSVPath();
@@ -236,13 +272,18 @@ public class DownloadData extends SensorActAPI {
 				
 				for (int i = 0; i < numberOfWavesegs; i++) {
 					long timestamp = wa.wavesegmentArray.get(i).data.timestamp;
-					//TODO: get it from the UI client side
 					int samplingPeriod = 1;
 					
 					for (int j = 0; j < numberOfChannels; j++) {
 						try{
 							int numberOfReadings = wa.wavesegmentArray.get(i).data.channels
 									.get(j).readings.size();
+							String channelname = wa.wavesegmentArray.get(i).data.channels
+									.get(j).cname;
+							if (device.sensors.get(sindex).channels.get(j).name.equals(channelname))
+								samplingPeriod = device.sensors.get(sindex).channels.get(j).samplingperiod;
+							
+							System.out.println("sampling period:" + samplingPeriod);
 						
 							// From readings array, separate out into a single record for each second
 							for (int k = 0; k < numberOfReadings; k++) {							
