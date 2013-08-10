@@ -129,7 +129,7 @@ public class DownloadData extends SensorActAPI {
 		}
 		else if(usertype.equals(Const.OWNER)){
 			//Set secretkey as owner key
-			secretkey = Global.VPDS_OWNER_KEY;			
+			secretkey = userkey = Global.VPDS_OWNER_KEY;			
 		}
 
 		int numberOfDevicesRequest = queryRequest.devicesArray.size();
