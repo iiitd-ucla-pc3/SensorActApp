@@ -220,7 +220,7 @@ public class DownloadData extends SensorActAPI {
 		String usertype = session.get(Const.USERTYPE);
 		HttpResponse responseFromServer = null;
 		
-		logger.info("NoOfSensors:" + size);
+		logger.info("NoOfSensors:" + size + "Userkey:" + userkey);
 		ArrayList<String> fileList = new ArrayList<String>();
 		
 		for (int sIndex = 0; sIndex < size; sIndex++){			
@@ -231,7 +231,7 @@ public class DownloadData extends SensorActAPI {
 			
 			// Get device details			
 			String getDeviceProfile = "{\"secretkey\" : \"" + userkey +"\", \"devicename\": \""+devicename+"\" }";
-			//System.out.println("Get device request" + getDeviceProfile);
+			System.out.println("Get device request" + getDeviceProfile);
 			if(usertype.equals(Const.USER)){
 				responseFromServer = new SendHTTPRequest()
 				.sendPostRequest(vpdsURL + "device/get",
@@ -244,6 +244,7 @@ public class DownloadData extends SensorActAPI {
 						Const.MIME_TYPE_JSON, Const.API_GETDEVICE,
 						getDeviceProfile);
 			}
+			System.out.println("Get device response" + responseFromServer.getString());
 			
 			DeviceProfileFormat device = gson.fromJson(
 					responseFromServer.getString(),DeviceProfileFormat.class);
