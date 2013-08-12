@@ -369,10 +369,10 @@ public class Application extends Controller {
 	}
 	
 	// Unused
-	public static void querydata2() {
+	/*public static void querydata2() {
 		String queryBody = request.params.get(Const.REQUEST_BODY);
 		api.queryData2.doProcess(queryBody);
-	}
+	}*/
 	
 	public static void listactuationrequests() {		
 		api.listActRequests.doProcess(request.params.get(Const.REQUEST_BODY));

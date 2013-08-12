@@ -203,7 +203,7 @@ public class QueryData extends SensorActAPI {
 
 	private void processInteractive(ArrayList<WaveSegmentArray> arrayOfResponses, String vpdsURL) {
 		long t1 = new Date().getTime();
-		int size = arrayOfResponses.size();
+		int size = arrayOfResponses.size();	// Number of sensors
 		int seriesOffset = 0;
 		String usertype = session.get(Const.USERTYPE);
 		HttpResponse responseFromServer = null;
@@ -211,6 +211,7 @@ public class QueryData extends SensorActAPI {
 		ChartSeriesArray ca = new ChartSeriesArray();
 		logger.info(Const.API_QUERYDATA, "Interactive:: Data Size:" + size);
 		
+		//Loop through the wavesegment array for 'a' requested sensors
 		for (int a = 0; a < size; a++) {
 			//System.out.println("For waveseg " + Integer.toString(a) + " ");
 			WaveSegmentArray wa = arrayOfResponses.get(a);
@@ -384,7 +385,7 @@ public class QueryData extends SensorActAPI {
 	public XYDataset createDataset(ArrayList<WaveSegmentArray> arrayOfResponses, String vpdsURL) {
 		TimeSeriesCollection dataset = new TimeSeriesCollection();
 		
-						
+		//Number of sensor specific wavesegment array				
 		int numberOfResponses = arrayOfResponses.size();
 		String usertype = session.get(Const.USERTYPE);
 		HttpResponse responseFromServer = null;
@@ -456,7 +457,7 @@ public class QueryData extends SensorActAPI {
 
 						int numberOfReadings = wa.wavesegmentArray.get(a).data.channels
 								.get(j).readings.size();
-						String channelname = wa.wavesegmentArray.get(i).data.channels
+						String channelname = wa.wavesegmentArray.get(a).data.channels
 								.get(j).cname; 
 						if (device.sensors.get(sindex).channels.get(j).name.equals(channelname))
 							samplingPeriod = device.sensors.get(sindex).channels.get(j).samplingperiod;
@@ -489,7 +490,7 @@ public class QueryData extends SensorActAPI {
 				dataset.addSeries(s1[j]);
 			}
 
-		}
+		} // arrayOfResponses loop ended
 
 		// TODO Auto-generated method stub
 		return dataset;
